@@ -11759,7 +11759,7 @@ chss.t3.sl=()=>{global.flags.inside=true; d_loc('Dojo, lobby'); global.lst_loc =
         if(dlr===0) chs('"Instructor: There\'s nothing I can take from you"',true); else{
           chs('"Instructor: For all your stuff I can fetch you '+dlr+' '+(dom.coincopper)+' copper. How does that sound?"',true);
           chs('"Accept"',false,'lime').addEventListener('click',()=>{ 
-            msg(stash.length+" Items returned back to dojo",'ghostwhite'); global.stat.ivtntdj+=stash.length;giveWealth(dlr); for(let a in stash) removeItem(stash[a]); if(global.stat.ivtntdj>=300)giveTitle(ttl.tqtm); smove(chss.t3,false);
+            msg(stash.length+" Items returned back to dojo",'ghostwhite'); global.stat.ivtntdj+=stash.length;giveWealth(dlr); for(let a in stash) removeItem(stash[a]); if(global.stat.ivtntdj>=60)giveTitle(ttl.tqtm); smove(chss.t3,false);
           });
         }
         chs('"<= Go back"',false).addEventListener('click',()=>{
@@ -12868,7 +12868,7 @@ chss.home.sl=()=>{d_loc('Your Home'); global.lst_loc = 111;
             document.body.removeChild(a);
           }
         },20);
-        tcat.data.mood=tcat.data.mood-.01<=0?0:tcat.data.mood-.01; if(tcat.data.mood>=0.01)skl.pet.use();});    
+        tcat.data.mood=tcat.data.mood-.001<=0?0:tcat.data.mood-.001; if(tcat.data.mood>=0.001)skl.pet.use();});    
           chs('"<= Return"',false).addEventListener('click',()=>{
             smove(chss.home,false); clearInterval(timers.caupd); 
           });
@@ -13834,7 +13834,7 @@ function lvlup(p,t){
 }
 
 function giveExp(exp,r,g,b){
-  if(!r) exp = Math.round((exp*you.exp_t*(0.4+you.efficiency()*0.6)))-(you.lvl-1); exp=exp<=0?1:exp;
+  if(!r) exp = Math.round((exp*you.exp_t*(0.4+you.efficiency()*0.6)))-(you.lvl-1); exp=exp<=0?1:exp; exp+=1;
   if(!b) {if(global.flags.m_blh===false) if(!g) {msg('EXP: +'+formatw(exp),'hotpink');global.stat.exptotl+=exp}}else {msg('EXP: +'+formatw(exp),'hotpink');global.stat.exptotl+=exp}
   if(you.exp+exp<you.expnext_t) you.exp+=exp;
   else {
