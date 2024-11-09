@@ -1805,7 +1805,7 @@ skl.hmrc.bname = 'Hammer Mastery';
 skl.hmrc.desc = 'Ability to fight using blunt weaponry'+dom.dseparator+'<small style="color:darkorange">Slightly increases attack power when holding a club/hammer</small>';
 skl.hmrc.use=function(x,y){you.str+=you.str/100*(this.lvl*5);}
 skl.hmrc.mlstn=[{lv:2,f:()=>{you.exp_t+=0.01;you.agla+=1;you.stat_r();},g:false,p:"AGL +1, EXP Gain +1%"},
-                {lv:4,f:()=>{you.agla+=1;you.stra+=1;you.exp_t+=0.05;you.mods.sbonus+=0.01;you.stat_r()},g:false,p:"AGL +1, STR +1, EXP Gain +5%, Energy Effectiveness +1%"},
+                {lv:3,f:()=>{you.agla+=1;you.stra+=1;you.exp_t+=0.05;you.mods.sbonus+=0.01;you.stat_r()},g:false,p:"AGL +1, STR +1, EXP Gain +5%, Energy Effectiveness +1%"},
                 {lv:4,f:()=>{you.stra+=1;you.stat_r();},g:false,p:"STR +1"},
                 {lv:5,f:()=>{you.stra+=1;you.stat_r();giveTitle(ttl.stk)},g:false,p:"STR +1, New Title"},
                 {lv:6,f:()=>{you.agla+=1;you.stra+=2;you.exp_t+=0.05;you.mods.sbonus+=0.01;you.stat_r()},g:false,p:"AGL +1, STR +2, EXP Gain +5%, Energy Effectiveness +1%"},
