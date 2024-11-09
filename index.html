@@ -5596,7 +5596,7 @@ item.bfsnwt.name = '"Beggar Fashion"';
 item.bfsnwt.desc = 'Some nonsence illustration with a name, featuring a group of peasants in rags posing awkwardly. What even is this?';
 item.bfsnwt.stype = 4; item.bfsnwt.data.time=HOUR*4;
 item.bfsnwt.use = function(){if(canRead()){if(this.data.timep>=this.cmax){ 
-   let dt=0; dt+=giveRcp(rcp.ptchpts); dt+=giveRcp(rcp.ptchct); 
+   let dt=0; dt+=giveRcp(rcp.ptchpts); dt+=giveRcp(rcp.ptchct);  dt+=giveRcp(rcp.ptchhd); dt+=giveRcp(rcp.ptchglv);
    if(dt===0) msg('You haven\'t learned anything new...','lightgrey')
    this.data.read=false; this.amount-- ; 
 }else chss.trd.sl(this);}
