@@ -7632,7 +7632,11 @@ creature.wdummy.cls = [-1,2,4];
 creature.wdummy.str_r = 3;
 creature.wdummy.ctype = 2;
 creature.wdummy.rnk=1;
-creature.wdummy.drop =[{item:eqp.pnt,chance:.008,cond:()=>{return you.lvl<=20}},{item:eqp.vst,chance:.007,cond:()=>{return you.lvl<=20}},{item:eqp.bnd,chance:.01,cond:()=>{return you.lvl<=20}},{item:item.wdc,chance:.03},{item:wpn.wsrd2,chance:.002,cond:()=>{return you.lvl<=20}}];
+creature.wdummy.drop =[{item:eqp.pnt,chance:.008,cond:()=>{return you.lvl<=50}},
+  {item:eqp.vst,chance:.007,cond:()=>{return you.lvl<=50}},
+  {item:eqp.bnd,chance:.01,cond:()=>{return you.lvl<=50}},
+  {item:item.wdc,chance:.03},
+  {item:wpn.wsrd2,chance:.002,cond:()=>{return you.lvl<=50}}];
 creature.wdummy.battle_ai = function(x,y,z){
   if(random()<=.001) return attack(x,y,abl.rstab);
   return attack(x,y)
@@ -8196,7 +8200,7 @@ area.tst.onEnd = function(){};
 area.frstn1a2 = new Area(); area.frstn1a2.id = 109;
 area.frstn1a2.name = 'Western forest hunting area';
 area.frstn1a2.pop = [{crt:creature.rbt1,lvlmin:1,lvlmax:5,c:.20},{crt:creature.slm1,lvlmin:1,lvlmax:6,c:.40},{crt:creature.slm2,lvlmin:1,lvlmax:6,c:.40}];
-area.frstn1a2.size = 60; z_bake(area.frstn1a2);
+area.frstn1a2.size = 20; z_bake(area.frstn1a2);
 area.frstn1a2.onEnd = function(){
   roll(item.acrn,.2,1,3); roll(item.wbrs,.2,1,3); roll(item.cp,.5,1,5); roll(wpn.knf2,.06);roll(wpn.ktn1,.04); roll(item.hrb1,.6,1,4);
   roll(wpn.stk1,.3); roll(item.sbone,.1,1,3); giveItem(item.wbrs,rand(1,2)); roll(item.wdc,1,7,22); roll(item.spb,.7);
@@ -8222,7 +8226,7 @@ area.trne1.onEnd = function(){this.size=1;if(!global.flags.trne1e1)smove(chss.tr
 area.frstn2a2 = new Area(); area.frstn2a2.id = 112;
 area.frstn2a2.name = 'Western forest hunting area';
 area.frstn2a2.pop = [{crt:creature.rbt1,lvlmin:1,lvlmax:7,c:.25},{crt:creature.slm1,lvlmin:1,lvlmax:8,c:.20},{crt:creature.slm2,lvlmin:1,lvlmax:8,c:.20},{crt:creature.slm3,lvlmin:1,lvlmax:5,c:.25}];
-area.frstn2a2.size = 50; z_bake(area.frstn2a2);
+area.frstn2a2.size = 20; z_bake(area.frstn2a2);
 area.frstn2a2.onEnd = function(){
   roll(item.acrn,.2,1,3);  roll(item.cp,.2,1,8); roll(wpn.knf2,.03);roll(wpn.ktn1,.04); roll(item.hrb1,.4,2,5);
   roll(wpn.stk1,.4); roll(item.sbone,.2,1,3); giveItem(item.wbrs,rand(1,3)); roll(item.wdc,1,5,17); roll(item.spb,.6);
@@ -8267,7 +8271,7 @@ area.trne4.onEnd = function(){this.size=1;if(!global.flags.trne4e1)smove(chss.tr
 area.frstn9a1 = new Area(); area.frstn9a1.id = 118;
 area.frstn9a1.name = 'Southern forest hunting area';
 area.frstn9a1.pop = [{crt:creature.wolf1,lvlmin:7,lvlmax:8,c:.25},{crt:creature.slm5,lvlmin:10,lvlmax:11,c:.75}];
-area.frstn9a1.size = 48; z_bake(area.frstn9a1);
+area.frstn9a1.size = 28; z_bake(area.frstn9a1);
 area.frstn9a1.onEnd = function(){
   roll(item.acrn,.2,1,5);  roll(item.mshr,.35,1,3);
   roll(wpn.stk1,.15); roll(item.sbone,.3,1,3);  roll(item.wdc,1,5,17); roll(item.appl,.25,2,5); roll(item.pcn,.5,1,3); 
