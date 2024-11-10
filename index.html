@@ -13850,7 +13850,7 @@ function giveExp(exp,r,g,b){
   dom.d5_2_1.update(); 
 }
 
-function giveSkExp(skl,exp,res){ exp=(skl.lvl ? skl.lvl+1 : 1)*5*res===false?exp:exp*skl.p; //skl.lastupd = time.minute+2;
+function giveSkExp(skl,exp,res){ exp=((you.lvl / 10) + 1) * (skl.lvl ? skl.lvl+1 : 1)*5*res===false?exp:exp*skl.p; //skl.lastupd = time.minute+2;
   if(skl.exp+exp<skl.expnext_t) skl.exp+=exp; 
   else {
     let extra = (skl.exp+exp)-skl.expnext_t;
