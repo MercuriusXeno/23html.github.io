@@ -8205,7 +8205,7 @@ area.frstn1a2.onEnd = function(){
   roll(item.acrn,.2,1,3); roll(item.wbrs,.2,1,3); roll(item.cp,.5,1,5); roll(wpn.knf2,.06);roll(wpn.ktn1,.04); roll(item.hrb1,.6,1,4);
   roll(wpn.stk1,.3); roll(item.sbone,.1,1,3); giveItem(item.wbrs,rand(1,2)); roll(item.wdc,1,7,22); roll(item.spb,.7);
   roll(item.pcn,.1,1,2);
-  this.size=rand(40)+30;smove(chss.frstn1a2);
+  this.size=rand(20)+10;smove(chss.frstn1a2);
 }; area.frstn1a2.drop=[{item:item.hrb1,c:.02},{item:item.wdc,c:.05}]
 
 area.hmbsmnt = new Area(); area.hmbsmnt.id = 110;
@@ -8231,7 +8231,7 @@ area.frstn2a2.onEnd = function(){
   roll(item.acrn,.2,1,3);  roll(item.cp,.2,1,8); roll(wpn.knf2,.03);roll(wpn.ktn1,.04); roll(item.hrb1,.4,2,5);
   roll(wpn.stk1,.4); roll(item.sbone,.2,1,3); giveItem(item.wbrs,rand(1,3)); roll(item.wdc,1,5,17); roll(item.spb,.6);
   roll(item.pcn,.3,1,3); if(!global.flags.wp2sgt) roll(item.wp2s,.2);
-  this.size=rand(50)+40;
+  this.size=rand(20)+10;
   if(!global.flags.frstn1a3u){msg('You have discovered a new hunting area','lime');global.flags.frstn1a3u=true;smove(chss.frstn1main)} else smove(chss.frstn1a2);
 }; area.frstn2a2.drop=[{item:item.hrb1,c:.03},{item:item.wdc,c:.06}]
 
@@ -8275,7 +8275,7 @@ area.frstn9a1.size = 28; z_bake(area.frstn9a1);
 area.frstn9a1.onEnd = function(){
   roll(item.acrn,.2,1,5);  roll(item.mshr,.35,1,3);
   roll(wpn.stk1,.15); roll(item.sbone,.3,1,3);  roll(item.wdc,1,5,17); roll(item.appl,.25,2,5); roll(item.pcn,.5,1,3); 
-  this.size=rand(20)+40; smove(chss.frstn3main)
+  this.size=rand(20)+10; smove(chss.frstn3main)
 }; area.frstn9a1.drop=[{item:item.hrb1,c:.03},{item:item.wdc,c:.06}]
 
 
