@@ -184,7 +184,7 @@ global.flags={btl:false,m_freeze:false,msd:false,m_blh:false,crti:false,to_pause
               tmmode:1,ssngaijin:true,rptbncgt:false};
 global.spirits=100;global.bestiary=[{a:false}]; global.shortcuts=[];
 global.msgs_max = 36; global.text=new Object(); global.text.nt=['K','M','B','T','Qa','Qi','Sx','Sp','Oc','No','De','Un','DDe','TDe','QaDe','QiDe','Lc'];
-global.fps = 4;global.text.wecs=[['grey','inherit'],['white','inherit'],['cyan','cyan'],['lime','green'],['yellow','red'],['orange','orange'],['purple','white']];
+global.fps = 2;global.text.wecs=[['grey','inherit'],['white','inherit'],['cyan','cyan'],['lime','green'],['yellow','red'],['orange','orange'],['purple','white']];
 global.text.lunarp=[['🌑','New Moon'],['🌒','Waxing Crescent Moon'],['🌓','First Quarter Moon'],
                    ['🌔','Waxing Gibbous Moon'],['🌕','Full Moon'],['🌖','Waning Gibbous Moon'],
                    ['🌗','Last Quarter Moon'],['🌘','Waning Crescent Moon']];
@@ -13950,7 +13950,7 @@ function giveExp(exp,r,g,b){
 }
 
 function giveSkExp(skl,exp,res){ 
-  exp = (res === false ? exp : exp * skl.p); //skl.lastupd = time.minute+2;
+  exp = (skl.lvl + 1) * (1 + (you.lvl / 10)) (res === false ? exp : exp * skl.p); //skl.lastupd = time.minute+2;
   if (skl.exp+exp < skl.expnext_t) skl.exp += exp; 
   else {
     let extra = (skl.exp+exp)-skl.expnext_t;
