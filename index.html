@@ -2318,8 +2318,8 @@ item.hrb1.name='Cure Grass'; item.hrb1.val = 7
 item.hrb1.desc='Herb with minor healing properties. Has to be processed before use. Can somewhat speed up recovery of tiny cuts and bruises if applied directly'+dom.dseparator+'Restores<span style=\'color:lime\'> '+item.hrb1.val+' </span>health';
 item.hrb1.stype=4; 
 item.hrb1.use=function(){ global.stat.medst++
-  you.hp+this.val>you.hpmax?you.hp=you.hpmax:you.hp+=this.val;
-  this.amount--; dom.d5_1_1.update(); msg('Restored '+this.val+' hp','lime');
+  you.hp+this.val * ((you.inta / 10) + 1) + (you.inta ** 0.5)>you.hpmax?you.hp=you.hpmax:you.hp+=this.val * ((you.inta / 10) + 1) + (you.inta ** 0.5);
+  this.amount--; dom.d5_1_1.update(); msg('Restored '+this.val * ((you.inta / 10) + 1) + (you.inta ** 0.5)+' hp','lime');
 }
 item.hrb1.onGet=function(){
   if(this.amount>=50) {giveRcp(rcp.hlstw); this.onGet=function(){}}
@@ -2349,8 +2349,8 @@ item.hlpd.name='Low-grade Healing Powder'; item.hlpd.val = 16;
 item.hlpd.desc='Finely crushed cure grass. Used as a base to make weak medicine'+dom.dseparator+'Restores<span style=\'color:lime\'> '+item.hlpd.val+' </span>health';
 item.hlpd.stype=4; 
 item.hlpd.use=function(){ global.stat.medst++
-  you.hp+this.val>you.hpmax?you.hp=you.hpmax:you.hp+=this.val;
-  this.amount--; dom.d5_1_1.update(); msg('Restored '+this.val+' hp','lime');
+  you.hp+this.val * ((you.inta / 10) + 1) + (you.inta ** 0.5)>you.hpmax?you.hp=you.hpmax:you.hp+=this.val * ((you.inta / 10) + 1) + (you.inta ** 0.5);
+  this.amount--; dom.d5_1_1.update(); msg('Restored '+this.val * ((you.inta / 10) + 1) + (you.inta ** 0.5)+' hp','lime');
 }
 
 item.smm = new Item(); item.smm.id = 3005;
@@ -2403,8 +2403,8 @@ item.hptn1.name='Lesser Healing Potion'; item.hptn1.val = 50;
 item.hptn1.desc='Weakest healing potion you can possibly find. Nearly useless for actual healing, but can act as a headache reliever'+dom.dseparator+'Restores<span style=\'color:lime\'> '+item.hptn1.val+' </span>health';
 item.hptn1.stype=4; 
 item.hptn1.use=function(){ 
-  you.hp+this.val>you.hpmax?you.hp=you.hpmax:you.hp+=this.val; global.stat.potnst++; global.stat.medst++
-  this.amount--; dom.d5_1_1.update(); msg('Restored '+this.val+' hp','lime');
+  you.hp+this.val * ((you.inta / 10) + 1) + (you.inta ** 0.5)>you.hpmax?you.hp=you.hpmax:you.hp+=this.val * ((you.inta / 10) + 1) + (you.inta ** 0.5); global.stat.potnst++; global.stat.medst++
+  this.amount--; dom.d5_1_1.update(); msg('Restored '+this.val * ((you.inta / 10) + 1) + (you.inta ** 0.5)+' hp','lime');
 }
 
 item.lckl = new Item(); item.lckl.id = 3011;
@@ -2563,8 +2563,8 @@ item.hptn2.name='Minor Healing Potion'; item.hptn2.val = 450;
 item.hptn2.desc='Healing potion with weak healing powers. It is usually used by commoners as first aid before deciding whether to go see a doctor or not'+dom.dseparator+'Restores<span style=\'color:lime\'> '+item.hptn2.val+' </span>health';
 item.hptn2.stype=4; 
 item.hptn2.use=function(){ 
-  you.hp+this.val>you.hpmax?you.hp=you.hpmax:you.hp+=this.val; global.stat.potnst++; global.stat.medst++
-  this.amount--; dom.d5_1_1.update(); msg('Restored '+this.val+' hp','lime');
+  you.hp+this.val * ((you.inta / 10) + 1) + (you.inta ** 0.5)>you.hpmax?you.hp=you.hpmax:you.hp+=this.val * ((you.inta / 10) + 1) + (you.inta ** 0.5); global.stat.potnst++; global.stat.medst++
+  this.amount--; dom.d5_1_1.update(); msg('Restored '+this.val * ((you.inta / 10) + 1) + (you.inta ** 0.5)+' hp','lime');
 }
 
 item.hptn3 = new Item(); item.hptn3.id = 3026;
@@ -2572,8 +2572,8 @@ item.hptn3.name='Healing Potion'; item.hptn3.val = 2100;
 item.hptn3.desc='Startand healing potion of common quality. It can heal wounds, bruises, burns, sprains and other minor injuries. Novice adventurers and hunters should carry a few of these at all times'+dom.dseparator+'Restores<span style=\'color:lime\'> '+item.hptn3.val+' </span>health';
 item.hptn3.stype=4; 
 item.hptn3.use=function(){ 
-  you.hp+this.val>you.hpmax?you.hp=you.hpmax:you.hp+=this.val; global.stat.potnst++; global.stat.medst++
-  this.amount--; dom.d5_1_1.update(); msg('Restored '+this.val+' hp','lime');
+  you.hp+this.val * ((you.inta / 10) + 1) + (you.inta ** 0.5)>you.hpmax?you.hp=you.hpmax:you.hp+=this.val * ((you.inta / 10) + 1) + (you.inta ** 0.5); global.stat.potnst++; global.stat.medst++
+  this.amount--; dom.d5_1_1.update(); msg('Restored '+this.val * ((you.inta / 10) + 1) + (you.inta ** 0.5)+' hp','lime');
 }
 
 item.hptn4 = new Item(); item.hptn4.id = 3027;
@@ -2581,8 +2581,8 @@ item.hptn4.name='Major Healing Potion'; item.hptn4.val = 7900;
 item.hptn4.desc='Potions given to the knights in times of war. Can heal moderate wounds and dull out the pain. These potions sneak their way into the market by all kinds of illegal means, yet actually selling them isn\'t prohibited'+dom.dseparator+'Restores<span style=\'color:lime\'> '+item.hptn4.val+' </span>health';
 item.hptn4.stype=4; item.hptn4.rar=2; 
 item.hptn4.use=function(){ 
-  you.hp+this.val>you.hpmax?you.hp=you.hpmax:you.hp+=this.val; global.stat.potnst++; global.stat.medst++
-  this.amount--; dom.d5_1_1.update(); msg('Restored '+this.val+' hp','lime');
+  you.hp+this.val * ((you.inta / 10) + 1) + (you.inta ** 0.5)>you.hpmax?you.hp=you.hpmax:you.hp+=this.val * ((you.inta / 10) + 1) + (you.inta ** 0.5); global.stat.potnst++; global.stat.medst++
+  this.amount--; dom.d5_1_1.update(); msg('Restored '+this.val * ((you.inta / 10) + 1) + (you.inta ** 0.5)+' hp','lime');
 }
 
 item.lsstn = new Item(); item.lsstn.id = 3028;
