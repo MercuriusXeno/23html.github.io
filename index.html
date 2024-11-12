@@ -13950,7 +13950,8 @@ function giveExp(exp,r,g,b){
 }
 
 function giveSkExp(skl,exp,res){ 
-  exp = ((skl.lvl + 1) ** 0.5) * (1 + (you.lvl / 10)) * (res === false ? exp : exp * skl.p); //skl.lastupd = time.minute+2;
+  exp = (res === false ? exp : exp * skl.p * ((skl.lvl + 1) ** 0.5) * (1 + (you.lvl / 10)) * (you.inta ** 0.5)); //skl.lastupd = time.minute+2;
+  console.log('adding exp ' + exp);
   if (skl.exp+exp < skl.expnext_t) skl.exp += exp; 
   else {
     let extra = (skl.exp+exp)-skl.expnext_t;
