@@ -1831,7 +1831,7 @@ skl.shdc = new Skill(); skl.shdc.id = 109; skl.shdc.type=1;
 skl.shdc.name = 'Shield M';
 skl.shdc.bname = 'Shield Mastery';
 skl.shdc.desc = 'Ability to use shields better';
-skl.shdc.use=function(x,y){giveSkExp(this,x||10); you.str+=you.str/100*(this.lvl*5);you.int+=you.int/100*(this.lvl*3);}
+skl.shdc.use=function(x,y){giveSkExp(this,x||1); you.str+=you.str/100*(this.lvl*5);you.int+=you.int/100*(this.lvl*3);}
 skl.shdc.mlstn=[{lv:2,f:()=>{you.exp_t+=0.03;skl.painr.p+=.01;you.stat_r();},g:false,p:"EXP Gain +3%, Pain Resistance EXP Gain +1%"},
                 {lv:3,f:()=>{you.agla+=1;you.stra+=1;you.exp_t+=0.05;you.mods.sbonus+=0.01;you.stat_r()},g:false,p:"AGL +1, STR +1, EXP Gain +5%, Energy Effectiveness +1%"},
                 {lv:4,f:()=>{you.hpa+=12;skl.painr.p+=.02;you.stat_r();dom.d5_3_1.update()},g:false,p:"HP +12, Pain Resistance EXP Gain +2%"},
@@ -1846,7 +1846,7 @@ skl.shdc.mlstn=[{lv:2,f:()=>{you.exp_t+=0.03;skl.painr.p+=.01;you.stat_r();},g:f
 skl.sleep = new Skill(); skl.sleep.id = 110; skl.sleep.type=4;
 skl.sleep.name = 'Sleeping';
 skl.sleep.desc = 'The rest of Body'+dom.dseparator+'<small style="color:darkorange">Increases health gain during sleep</small>';
-skl.sleep.use=function(x,y){giveSkExp(this,x.sq||10); return 5*this.lvl*x.sq}
+skl.sleep.use=function(x,y){giveSkExp(this,x.sq||1); return 5*this.lvl*x.sq}
 skl.sleep.mlstn=[{lv:2,f:()=>{you.hpa+=12;you.stat_r();dom.d5_1_1.update()},g:false,p:"HP +12"},
                  {lv:3,f:()=>{you.hpa+=18;you.stat_r();dom.d5_1_1.update()},g:false,p:"HP +18"},
                  {lv:4,f:()=>{you.hpa+=24;you.stat_r();dom.d5_1_1.update()},g:false,p:"HP +24"},
@@ -1878,7 +1878,7 @@ skl.seye.mlstn=[{lv:1,f:()=>{you.agla+=1;you.stat_r();},g:false,p:"AGL +1"},
 skl.pet = new Skill(); skl.pet.id = 112; skl.pet.type=10;
 skl.pet.name = 'Patting';
 skl.pet.desc = 'Mastery of petting animals'+dom.dseparator+'<small style="color:darkorange">Makes animals love you</small>';
-skl.pet.use=function(x,y){giveSkExp(this,x||10);}
+skl.pet.use=function(x,y){giveSkExp(this,x||1);}
 skl.pet.mlstn=[{lv:2,f:()=>{you.luck+=1;you.stat_r();},g:false,p:"LUCK +1"},
                {lv:3,f:()=>{you.agla+=1;you.luck+=1;you.exp_t+=0.05;you.mods.sbonus+=0.01;you.stat_r()},g:false,p:"AGL +1, LUCK +1, EXP Gain +5%, Energy Effectiveness +1%"},
                {lv:4,f:()=>{you.agla+=1;you.stat_r();},g:false,p:"AGL +1"},
@@ -1893,7 +1893,7 @@ skl.pet.mlstn=[{lv:2,f:()=>{you.luck+=1;you.stat_r();},g:false,p:"LUCK +1"},
 skl.walk = new Skill(); skl.walk.id = 113;  skl.walk.type=4;
 skl.walk.name = 'Walking';
 skl.walk.desc = 'Ability to walk';
-skl.walk.use=function(x,y){giveSkExp(this,15);}
+skl.walk.use=function(x,y){giveSkExp(this,.5);}
 skl.walk.mlstn=[{lv:1,f:()=>{you.agla+=1;you.stat_r();giveAction(act.demo)},g:false,p:"AGL +1"},
                 {lv:2,f:()=>{you.agla+=1;you.spda+=1;you.exp_t+=0.05;you.mods.sbonus+=0.01;you.stat_r()},g:false,p:"AGL +1, SPD +1, EXP Gain +5%, Energy Effectiveness +1%"},
                 {lv:3,f:()=>{giveTitle(ttl.wlk);you.hpa+=5;you.stat_r()},g:false,p:"HP +5, New Title"},
@@ -1909,7 +1909,7 @@ skl.walk.mlstn=[{lv:1,f:()=>{you.agla+=1;you.stat_r();giveAction(act.demo)},g:fa
 skl.dice = new Skill(); skl.dice.id = 114;  skl.dice.type=10;
 skl.dice.name = 'Gambling';
 skl.dice.desc = 'Skill of chances';
-skl.dice.use=function(x,y){giveSkExp(this,x||10);}
+skl.dice.use=function(x,y){giveSkExp(this,x||1);}
 skl.dice.mlstn=[{lv:1,f:()=>{you.luck+=1;you.stat_r();},g:false,p:"LUCK +1"},
                 {lv:2,f:()=>{you.agla+=1;you.luck+=1;you.exp_t+=0.05;you.mods.sbonus+=0.01;you.stat_r()},g:false,p:"AGL +1, LUCK +1, EXP Gain +5%, Energy Effectiveness +1%"},
                 {lv:3,f:()=>{you.agla+=2;you.stat_r();},g:false,p:"AGL +2"},
@@ -1924,7 +1924,7 @@ skl.dice.mlstn=[{lv:1,f:()=>{you.luck+=1;you.stat_r();},g:false,p:"LUCK +1"},
 skl.glt = new Skill(); skl.glt.id = 115;  skl.glt.type=4;
 skl.glt.name = 'Gluttony';
 skl.glt.desc = 'Mastery of eating';
-skl.glt.use=function(x,y){giveSkExp(this,x||10);return this.lvl||1}
+skl.glt.use=function(x,y){giveSkExp(this,x||1);return this.lvl||1}
 skl.glt.mlstn=[{lv:1,f:function(){you.sata+=15;you.stat_r();dom.d5_3_1.update()},g:false,p:"SAT +15"},
                {lv:2,f:()=>{you.sata+=15;you.hpa+=5;you.stat_r();dom.d5_3_1.update()},g:false,p:"SAT +15, HP +5"},
                {lv:3,f:()=>{giveTitle(ttl.eat1);you.sata+=20;you.hpa+=5;you.stat_r();dom.d5_3_1.update()},g:false,p:"SAT +20, HP +5, New Title"},
@@ -1957,7 +1957,7 @@ skl.rdg.mlstn=[{lv:1,f:()=>{you.inta+=1;you.stat_r();},g:false,p:"INT +1"},
 skl.cook = new Skill(); skl.cook.id = 117; skl.cook.type=5;
 skl.cook.name = 'Cooking';
 skl.cook.desc = 'The art of Cooking'+dom.dseparator+'<small style="color:darkorange">Reduces chances to cook a failed product</small>';
-skl.cook.use=function(x,y){giveSkExp(this,x||10);return this.lvl||1}
+skl.cook.use=function(x,y){giveSkExp(this,x||1);return this.lvl||1}
 skl.cook.mlstn=[{lv:1,f:()=>{you.inta+=1;you.agla+=1;giveRcp(rcp.rsmt);giveRcp(rcp.segg);you.stat_r();},g:false,p:"INT +1, AGL +1"},
                 {lv:2,f:()=>{giveTitle(ttl.coo1);giveRcp(rcp.bcrc);giveRcp(rcp.bcrrt);you.exp_t+=0.05;you.stra+=1;you.stat_r();},g:false,p:"STR +1, EXP Gain +5%, New Title"},
                 {lv:4,f:()=>{you.exp_t+=0.01;you.sata+=20;you.hpa+=15;you.stat_r();dom.d5_3_1.update()},g:false,p:"SAT +20, HP +15, EXP Gain +1%"},
@@ -1988,7 +1988,7 @@ skl.mdt.mlstn=[{lv:1,f:()=>{you.inta+=1;you.stat_r();},g:false,p:"INT +1"},
 skl.crft = new Skill(); skl.crft.id = 119; skl.crft.type=5;
 skl.crft.name = 'Crafting';
 skl.crft.desc = 'The art of Creation'+dom.dseparator+'<small style="color:darkorange">Makes autocrafting faster</small>';
-skl.crft.use=function(x,y){giveSkExp(this,x||10);return this.lvl||1}
+skl.crft.use=function(x,y){giveSkExp(this,x||1);return this.lvl||1}
 skl.crft.mlstn=[{lv:1,f:()=>{you.inta+=1;you.stat_r();},g:false,p:"INT +1"},
                 {lv:2,f:()=>{you.exp_t+=0.04;you.stra+=1;you.stat_r();},g:false,p:"STR +1, EXP Gain +4%"},
                 {lv:3,f:()=>{you.exp_t+=0.06;you.stat_r();},g:false,p:"EXP Gain +6%"},
@@ -2040,7 +2040,7 @@ skl.bwc.use=function(x,y){you.str+=you.str/100*(this.lvl*5);}
 skl.ntst = new Skill(); skl.ntst.id = 123;  skl.ntst.type=3;
 skl.ntst.name = 'Nightsight';
 skl.ntst.desc = 'Ability to see better in the darkness'+dom.dseparator+'<small style="color:darkorange">Mitigates hit penalty while fighting in darkness</small>';
-skl.ntst.use=function(x,y){giveSkExp(this,x||10)}
+skl.ntst.use=function(x,y){giveSkExp(this,x||1)}
 skl.ntst.mlstn=[{lv:1,f:()=>{you.agla+=1;you.stat_r();},g:false,p:"AGL +1"},
                 {lv:2,f:()=>{you.agla+=1;you.luck+=1;you.exp_t+=0.05;you.mods.sbonus+=0.01;you.stat_r()},g:false,p:"AGL +1, LUCK +1, EXP Gain +5%, Energy Effectiveness +1%"},
                 {lv:3,f:()=>{you.stra+=1;you.exp_t+=0.04;you.stat_r()},g:false,p:"STR +1, EXP Gain +4%"},
@@ -2055,7 +2055,7 @@ skl.ntst.mlstn=[{lv:1,f:()=>{you.agla+=1;you.stat_r();},g:false,p:"AGL +1"},
 skl.evas = new Skill(); skl.evas.id = 124; skl.evas.type=3;
 skl.evas.name = 'Evasion';
 skl.evas.desc = 'Ability to dodge attacks';
-skl.evas.use=function(x,y){giveSkExp(this,x||10)}
+skl.evas.use=function(x,y){giveSkExp(this,x||1)}
 
 skl.gred = new Skill(); skl.gred.id = 125; skl.gred.type=4;
 skl.gred.name = 'Greed';
@@ -13950,7 +13950,7 @@ function giveExp(exp,r,g,b){
 }
 
 function giveSkExp(skl,exp,res){ 
-  exp = ((you.lvl / 10) + 1) * (skl.lvl > 0 ? skl.lvl : 1) * 5 * (res===false? exp : exp * skl.p); //skl.lastupd = time.minute+2;
+  exp = (res === false ? exp : exp * skl.p); //skl.lastupd = time.minute+2;
   if (skl.exp+exp < skl.expnext_t) skl.exp += exp; 
   else {
     let extra = (skl.exp+exp)-skl.expnext_t;
