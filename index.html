@@ -2314,12 +2314,14 @@ item.rcs.use=function(){
 }
 
 function healingEfficacy() { 
-  let extra = ((you.inta / 10) + 1) + (you.inta ** 0.5);
-  console.log("healing efficacy of " + this.name + " is " + this.val + " plus " + extra);
-  return this.val * ((you.inta / 10) + 1) + (you.inta ** 0.5); }
+  let extra = Math.round(((you.inta / 10) + 1) + (you.inta ** 0.5));
+  let healing = Math.round(this.val * ((you.inta / 10) + 1) + (you.inta ** 0.5));
+  console.log("healing efficacy of " + this.name + " is " + this.val + " plus " + extra + " total: " + healing);
+  return healing; }
 function healingFunction () { global.stat.medst++; you.hp = Math.min(you.hpmax, you.hp + this.heal());
   this.amount--; dom.d5_1_1.update(); msg('Restored '+this.heal()+' hp','lime');
 }
+
 
 item.hrb1 = new Item(); item.hrb1.id = 3001;
 item.hrb1.name='Cure Grass'; item.hrb1.val = 7;
