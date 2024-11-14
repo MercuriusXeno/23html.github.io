@@ -2314,12 +2314,13 @@ item.rcs.use=function(){
 }
 
 function healingEfficacy() { 
-  let extra = Math.round(((you.inta / 10) + 1) + (you.inta ** 0.5));
-  let healing = Math.round(this.val * ((you.inta / 10) + 1) + (you.inta ** 0.5));
-  console.log("healing efficacy of " + this.name + " is " + this.val + " plus " + extra + " total: " + healing);
+  let scaling = Math.round(((you.inta / 10.0) + 1.0) * 100.0) / 100.0;
+  let extra = Math.floor(you.inta ** 0.5);
+  let healing = Math.round(this.val * scaling + extra);
+  console.log("healing efficacy of " + this.name + " is " + this.val + " times " + scaling + " plus " + extra + " total: " + healing);
   return healing; }
 function healingFunction () { global.stat.medst++; you.hp = Math.min(you.hpmax, you.hp + this.heal());
-  this.amount--; dom.d5_1_1.update(); msg('Restored '+this.heal()+' hp','lime');
+  this.amount--; dom.d5_1_1.update(); msg('Restored '+ this.heal() +' hp','lime');
 }
 
 
