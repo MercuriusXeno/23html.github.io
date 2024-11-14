@@ -2313,18 +2313,18 @@ item.rcs.use=function(){
   msg('placeholder');
 }
 
-healingEfficacy = function() { 
+function healingEfficacy() { 
   let extra = ((you.inta / 10) + 1) + (you.inta ** 0.5);
   console.log("healing efficacy of " + this.name + " is " + this.val + " plus " + extra);
   return this.val * ((you.inta / 10) + 1) + (you.inta ** 0.5); }
-healingFunction = function() { global.stat.medst++; you.hp = Math.min(you.hpmax, you.hp + this.heal());
+function healingFunction () { global.stat.medst++; you.hp = Math.min(you.hpmax, you.hp + this.heal());
   this.amount--; dom.d5_1_1.update(); msg('Restored '+this.heal()+' hp','lime');
 }
 
 item.hrb1 = new Item(); item.hrb1.id = 3001;
 item.hrb1.name='Cure Grass'; item.hrb1.val = 7;
-item.hrb1.heal= function() { return healingEfficacy.bind(this) };
-item.hrb1.use=healingFunction.bind(item.hrb1);
+item.hrb1.heal= healingEfficacy.bind(item.hrb1);
+item.hrb1.use= healingFunction.bind(item.hrb1);
 item.hrb1.desc=function(){return 'Herb with minor healing properties. Has to be processed before use. Can somewhat speed up recovery of tiny cuts and bruises if applied directly'+dom.dseparator+'Restores<span style=\'color:lime\'> '+item.hrb1.heal()+' </span>health';}
 item.hrb1.stype=4; 
 item.hrb1.onGet=function(){
