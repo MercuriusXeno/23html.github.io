@@ -2313,7 +2313,10 @@ item.rcs.use=function(){
   msg('placeholder');
 }
 
-healingEfficacy = function() { return (this.val * ((you.inta / 10) + 1) + (you.inta ** 0.5)); }
+healingEfficacy = function() { 
+  let extra = ((you.inta / 10) + 1) + (you.inta ** 0.5);
+  console.log("healing efficacy of " + this.name + " is " + this.val + " plus " + extra);
+  return (this.val * ((you.inta / 10) + 1) + (you.inta ** 0.5)); }
 healingFunction = function() { global.stat.medst++; you.hp = Math.min(you.hpmax, you.hp + this.heal());
   this.amount--; dom.d5_1_1.update(); msg('Restored '+this.heal()+' hp','lime');
 }
