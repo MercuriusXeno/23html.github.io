@@ -13911,14 +13911,17 @@ function rfeff(what){
 }
 
 function lvlup(p,t){
+  let isMaxedRolls = p.id === you.id;
   if(t===0) {
     p.hp=p.hp_r;p.str=p.str_r;p.agl=p.agl_r;p.spd=p.spd_r;
   } else{ t=t||1
   p.lvl+=t;
-  let sb =randf(t*p.stat_p[1],2*t*p.stat_p[1]); p.str_r+=sb;
-  let sa =randf(t*p.stat_p[2],2*t*p.stat_p[2]); p.agl_r+=sa;
-  let si =randf(t*p.stat_p[3],2*t*p.stat_p[3]); p.int_r+=si;  
-  let hpp; if(p.id===you.id) hpp = Math.round(rand(1.4*Math.log(p.lvl)*t*p.stat_p[0],1.8*p.lvl*t*p.stat_p[0]));
+  let min = (isMaxedRolls ? 2 : 1) * t;
+  let max = 2 * t;
+  let sb =randf(min*p.stat_p[1],max*p.stat_p[1]); p.str_r+=sb;
+  let sa =randf(min*p.stat_p[2],max*p.stat_p[2]); p.agl_r+=sa;
+  let si =randf(min*p.stat_p[3],max*p.stat_p[3]); p.int_r+=si;    
+  let hpp; if(isMaxedRolls) hpp = Math.round(rand(1.8*Math.log(p.lvl)*t*p.stat_p[0],2.2*p.lvl*t*p.stat_p[0]));
   else hpp = Math.round(rand(1.8*Math.log(p.lvl)*t*p.stat_p[0],2.2*p.lvl*t*p.stat_p[0]));
    p.hp_r+=hpp; p.hpmax+=hpp; p.hp+=hpp; if(p.id!==you.id) p.hp=p.hpmax=p.hp_r;
   if(p.id!=you.id) p.exp=p.exp*(1+t/5)+1<<0;
