@@ -2314,8 +2314,8 @@ item.rcs.use=function(){
 }
 
 function healingEfficacy() { 
-  let scaling = 1 + Math.log(you.int + 1) / (10 * Math.log2(you.int + 1));
-  let extra = Math.floor(Math.max(0, you.int - 1) ** 0.5);
+  let scaling = 1 + Math.log(you.int_r + 1) / (10 * Math.log2(you.int_r + 1));
+  let extra = Math.floor(Math.max(0, you.int_r - 1) ** 0.5);
   let healing = Math.floor(this.val * scaling + extra);
   return healing; }
 function healingFunction () { global.stat.medst++; you.hp = Math.min(you.hpmax, you.hp + this.heal());
