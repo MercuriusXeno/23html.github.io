@@ -2314,10 +2314,9 @@ item.rcs.use=function(){
 }
 
 function healingEfficacy() { 
-  let scaling = 1 + Math.log(you.int) / (10 * Math.log2());
+  let scaling = 1 + Math.log(you.int + 1) / (10 * Math.log2(you.int + 1));
   let extra = Math.floor(Math.max(0, you.int - 1) ** 0.5);
   let healing = Math.floor(this.val * scaling + extra);
-  // console.log("healing efficacy of " + this.name + " is " + this.val + " times " + scaling + " plus " + extra + " total: " + healing);
   return healing; }
 function healingFunction () { global.stat.medst++; you.hp = Math.min(you.hpmax, you.hp + this.heal());
   this.amount--; dom.d5_1_1.update(); msg('Restored '+ this.heal() +' hp','lime');
@@ -7648,7 +7647,7 @@ creature.spd1.battle_ai = function(x,y,z){
   return attack(x,y)
 }
 
-creature.tdummy = new Creature(); creature.tdummy.id = 103;
+creature.tdummy = new Creature(); creature.tdummy.id = 102;
 creature.tdummy.name = 'Training dummy';
 creature.tdummy.desc = 'He\'s made of fabric'; 
 creature.tdummy.drop =[{item:wpn.knf1,chance:.01,cond:()=>{return you.lvl<=50}},{item:eqp.brc,chance:.03,cond:()=>{return you.lvl<=50}},{item:item.hrb1,chance:.04}];
