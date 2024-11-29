@@ -8305,7 +8305,8 @@ area.frstn1a3 = new Area(); area.frstn1a3.id = 115;
 area.frstn1a3.name = 'Western forest hunting area';
 area.frstn1a3.pop = [{crt:creature.rbt1,lvlmin:3,lvlmax:8,c:.35},{crt:creature.slm1,lvlmin:3,lvlmax:9,c:.15},{crt:creature.slm2,lvlmin:3,lvlmax:9,c:.15},{crt:creature.slm3,lvlmin:2,lvlmax:5,c:.2}];
 area.frstn1a3.size = -1; z_bake(area.frstn1a3); area.frstn1a3.protected=true
-area.frstn1a3.drop=[{item:item.hrb1,c:.009},{item:item.wdc,c:.025},{item:item.acrn,c:.001},{item:item.mshr,c:.002},{item:item.cp,c:.002},{item:wpn.knf2,c:.00009},{item:wpn.ktn1,c:.00006},{item:wpn.stk1,c:.0007},{item:item.sbone,c:.0009},{item:item.wbrs,c:.003},{item:item.spb,c:.0004},{item:item.pcn,c:.001},{item:item.fwd1,c:.0009}]
+area.frstn1a3.drop=[{item:item.hrb1,c:.009},{item:item.wdc,c:.025},{item:item.acrn,c:.001},{item:item.mshr,c:.002},{item:item.cp,c:.002},
+{item:wpn.knf2,c:.00009},{item:wpn.ktn1,c:.00006},{item:wpn.stk1,c:.0007},{item:item.sbone,c:.0009},{item:item.wbrs,c:.003},{item:item.spb,c:.0004},{item:item.pcn,c:.001},{item:item.fwd1,c:.0009}]
 
 area.frstn1a4 = new Area(); area.frstn1a4.id = 116;
 area.frstn1a4.name = 'Western forest hidden area';
@@ -14033,7 +14034,7 @@ function disassembleGeneric(obj){
     if(obj.dss[a].max) if(am>obj.dss[a].max) am = obj.dss[a].max;
     let c = 1; if(obj.slot) c = obj.dp/obj.dpmax; am=Math.ceil(am/(2-c));
     giveItem(obj.dss[a].item,am)
-  } giveSkExp(skl.dssmb,(2**obj.rar||1)*5-9.5); global.stat.dsst++;
+  } giveSkExp(skl.dssmb,(2**Math.max(obj.rar, 1)||1)*5-9.5); global.stat.dsst++;
   if(obj.slot)removeItem(obj);else{obj.amount--;if(obj.amount<=0) removeItem(obj); else if(obj.stype===global.sm)updateInv(global.sinv.indexOf(obj));else if(global.sm===1) updateInv(inv.indexOf(obj))}
 }
 
