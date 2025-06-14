@@ -134,8 +134,8 @@ body{scrollbar-color:#5fc3ff;scrollbar-width:thin}
 #d_l,#intfffx{line-height:13px}
 .spc_a{padding-top:0px}
 
-} 
-
+} //gmsgs rgb(40,30,70)
+//crf_r linear-gradient(0deg,rgb(32,7,41),rgb(36,21,68))
 </style>
 <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"> 
 </head>
@@ -1695,7 +1695,7 @@ function Skill(){
   this.lvl=0;
   this.type=0;
   this.p=1; this.sp;
-  this.expnext=function(){return Math.round((50+((this.lvl+1)**Math.log(6*this.lvl+1))))}; this.expnext_t=this.expnext(); ///(i*.12)
+  this.expnext=function(){return Math.round((50+((this.lvl+1)**Math.log(9*this.lvl+1))))}; this.expnext_t=this.expnext(); ///(i*.12)
   this.onLevel=function(){};
   this.onGive=function(x){};
   this.use = function(x,y){};
@@ -1706,17 +1706,14 @@ skl.fgt.name = 'Fighting';
 skl.fgt.desc = 'Ability to perform better in a fight'+dom.dseparator+'<small style="color:darkorange">Slightly increases overall attack power</small>';
 skl.fgt.use=function(x,y){return you.str*(this.lvl*.02)}
 skl.fgt.mlstn=[{lv:2,f:()=>{you.exp_t+=0.02;you.stat_r();},g:false,p:"EXP Gain +2%"},
-               {lv:3,f:()=>{you.agla+=1;you.mods.sbonus+=0.01;you.stat_r()},g:false,p:"AGL +1, Energy Effectiveness +1%"},
                {lv:5,f:()=>{you.stra+=1;you.stat_r();giveTitle(ttl.cvl)},g:false,p:"STR +1, New Title"},
-               {lv:6,f:()=>{you.stra+=1;you.mods.sbonus+=0.01;you.stat_r()},g:false,p:"STR +1, Energy Effectiveness +1%"},
-               {lv:8,f:()=>{you.exp_t+=0.03;you.stat_r()},g:false,p:"EXP Gain +3%"},
-               {lv:9,f:()=>{you.spda+=1;you.mods.sbonus+=0.01;you.stat_r()},g:false,p:"SPD +1, Energy Effectiveness +1%"},
+               {lv:8,f:()=>{you.exp_t+=0.02;you.stat_r()},g:false,p:"EXP Gain +3%"},
                {lv:10,f:()=>{you.exp_t+=0.05;you.mods.sbonus+=0.01;you.stat_r();giveTitle(ttl.tcvl)},g:false,p:"EXP Gain +5%, Energy Effectiveness +1%, New Title"},
                {lv:11,f:function(){skl.unc.p+=.1;skl.srdc.p+=.1;skl.knfc.p+=.1;skl.axc.p+=.1;skl.plrmc.p+=.1;skl.stfc.p+=.1;skl.bwc.p+=.1;skl.hmrc.p+=.1;},g:false,p:"All Masteries EXP Gain +10%"},
                {lv:12,f:()=>{giveTitle(ttl.fgt);you.stra+=1;skl.war.p+=.05;you.stat_r()},g:false,p: "STR +1, War EXP Gain +5%, New Title"},
                {lv:13,f:()=>{you.agla+=2;you.stat_r()},g:false,p:"AGL +2"},
                {lv:14,f:()=>{you.exp_t+=0.06;},g:false,p:"EXP Gain +6%"},               
-               {lv:15,f:()=>{you.exp_t+=0.08;skl.unc.p+=.15;skl.srdc.p+=.15;skl.knfc.p+=.15;skl.axc.p+=.15;skl.plrmc.p+=.15;skl.stfc.p+=.15;skl.bwc.p+=.15;skl.hmrc.p+=.15;giveTitle(ttl.rok)},g:false,p:"EXP Gain +8%, All Masteries EXP Gain +15%, New Title"},    
+               {lv:15,f:()=>{you.exp_t+=0.08;skl.unc.p+=.1;skl.srdc.p+=.1;skl.knfc.p+=.1;skl.axc.p+=.1;skl.plrmc.p+=.1;skl.stfc.p+=.1;skl.bwc.p+=.1;skl.hmrc.p+=.1;giveTitle(ttl.rok)},g:false,p:"EXP Gain +8%, All Masteries EXP Gain +10%, New Title"},    
                ];
 
 
@@ -1726,14 +1723,10 @@ skl.unc.bname = 'Unarmed Mastery';
 skl.unc.desc = 'Mastery of unarmed combat'+dom.dseparator+'<small style="color:darkorange">Slightly increases attack power when fighting unarmed</small>';
 skl.unc.use=function(x,y){you.str+=you.str/100*(this.lvl*6);}
 skl.unc.mlstn=[{lv:2,f:()=>{you.stra+=1;you.stat_r();},g:false,p:"STR +1"},
-               {lv:3,f:()=>{you.agla+=1;you.mods.sbonus+=0.01;you.stat_r()},g:false,p:"AGL +1, Energy Effectiveness +1%"},
                {lv:5,f:()=>{you.agla+=1;you.stat_r();giveTitle(ttl.pbg)},g:false,p:"AGL +1, New Title"},
-               {lv:6,f:()=>{you.agla+=1;you.stra+=1;you.mods.sbonus+=0.01;you.stat_r()},g:false,p:"AGL +1, STR +1, Energy Effectiveness +1%"},
-               {lv:8,f:()=>{you.exp_t+=0.02;you.stat_r()},g:false,p:"EXP Gain +2%"},
-               {lv:9,f:()=>{you.agla+=1;you.spda+=1;you.mods.sbonus+=0.01;you.stat_r()},g:false,p:"AGL +1, SPD +1, Energy Effectiveness +1%"},
+               {lv:8,f:()=>{you.exp_t+=0.01;you.stat_r()},g:false,p:"EXP Gain +1%"},
                {lv:10,f:()=>{you.exp_t+=0.05;you.mods.sbonus+=0.02;you.stat_r();giveTitle(ttl.bll)},g:false,p:"EXP Gain +5%, Energy Effectiveness +2%, New Title"},
                {lv:11,f:()=>{skl.fgt.p+=.03;you.stat_r();},g:false,p:"Fighting EXP Gain +3%"},
-               {lv:12,f:()=>{you.agla+=2;you.mods.sbonus+=0.02;you.stat_r()},g:false,p:"AGL +2, Energy Effectiveness +2%"},
                ];
 skl.srdc = new Skill(); skl.srdc.id = 103; skl.srdc.type=1;
 skl.srdc.name = 'Sword M';
@@ -1741,15 +1734,11 @@ skl.srdc.bname = 'Sword Mastery';
 skl.srdc.desc = 'Ability to fight using swords'+dom.dseparator+'<small style="color:darkorange">Slightly increases attack power when holding a sword</small>';
 skl.srdc.use=function(x,y){you.str+=you.str/100*(this.lvl*5);}
 skl.srdc.mlstn=[{lv:1,f:()=>{you.stra+=1;you.stat_r();},g:false,p:"STR +1"},
-                {lv:2,f:()=>{you.agla+=1;you.mods.sbonus+=0.01;you.stat_r()},g:false,p:"AGL +1, Energy Effectiveness +1%"},
                 {lv:3,f:()=>{you.agla+=1;you.stat_r();},g:false,p:"AGL +1"},
-                {lv:4,f:()=>{you.agla+=1;you.stra+=1;you.mods.sbonus+=0.01;you.stat_r()},g:false,p:"AGL +1, STR +1, Energy Effectiveness +1%"},
                 {lv:5,f:()=>{you.stra+=1;you.agla+=1;you.stat_r();giveTitle(ttl.srd1)},g:false,p:"STR +1, AGL +1, New Title"},
-                {lv:6,f:()=>{you.stra+=1;you.spda+=1;you.mods.sbonus+=0.01;you.stat_r()},g:false,p:"STR +1, SPD +1, Energy Effectiveness +1%"},
                 {lv:8,f:()=>{you.exp_t+=0.03;you.stat_r()},g:false,p:"EXP Gain +3%"},
                 {lv:10,f:()=>{you.exp_t+=0.05;you.mods.sbonus+=0.01;you.stat_r();giveTitle(ttl.srd2)},g:false,p:"EXP Gain +5%, Energy Effectiveness +1%, New Title"},
                 {lv:11,f:()=>{skl.fgt.p+=.03;you.stat_r();},g:false,p:"Fighting EXP Gain +3%"},
-                {lv:12,f:()=>{you.stra+=1;you.agla+=1;you.mods.sbonus+=0.02;you.stat_r()},g:false,p:"STR +1, AGL +1, Energy Effectiveness +2%"},
                 ];
 
 skl.knfc = new Skill(); skl.knfc.id = 104; skl.knfc.type=1;
@@ -1759,14 +1748,10 @@ skl.knfc.desc = 'Ability to fight using knives and daggers'+dom.dseparator+'<sma
 skl.knfc.use=function(x,y){you.str+=you.str/100*(this.lvl*5);}
 skl.knfc.mlstn=[{lv:2,f:()=>{you.agla+=1;you.stat_r();},g:false,p:"AGL +1"},
                 {lv:3,f:()=>{you.exp_t+=0.01;you.agla+=2;you.stat_r();},g:false,p:"AGL +2, EXP Gain +1%"},
-                {lv:4,f:()=>{you.agla+=1;you.luck+=1;you.mods.sbonus+=0.01;you.stat_r()},g:false,p:"AGL +1, LUCK +1, Energy Effectiveness +1%"},
                 {lv:5,f:()=>{you.stra+=1;you.stat_r();giveTitle(ttl.plm)},g:false,p:"STR +1, New Title"},
-                {lv:6,f:()=>{you.agla+=1;you.stra+=1;you.mods.sbonus+=0.01;you.stat_r()},g:false,p:"AGL +1, STR +1, Energy Effectiveness +1%"},
                 {lv:8,f:()=>{you.stra+=1;you.agla+=1;you.exp_t+=0.02;},g:false,p:"AGL +1, STR +1, EXP Gain +2%"},
-                {lv:9,f:()=>{you.agla+=1;you.spda+=1;you.mods.sbonus+=0.01;you.stat_r()},g:false,p:"AGL +1, SPD +1, Energy Effectiveness +1%"},
                 {lv:10,f:()=>{you.mods.cpwr+=.1;giveTitle(ttl.knf)},g:false,p:"Critical Damage +10%, New Title"},
                 {lv:11,f:()=>{skl.fgt.p+=.03;you.stat_r();},g:false,p:"Fighting EXP Gain +3%"},
-                {lv:12,f:()=>{you.stra+=1;you.agla+=1;you.mods.sbonus+=0.02;you.stat_r()},g:false,p:"STR +1, AGL +1, Energy Effectiveness +2%"},
                 ];
                 
 skl.axc = new Skill(); skl.axc.id = 105; skl.axc.type=1;
@@ -1776,14 +1761,10 @@ skl.axc.desc = 'Ability to fight using axes'+dom.dseparator+'<small style="color
 skl.axc.use=function(x,y){you.str+=you.str/100*(this.lvl*5);}
 skl.axc.mlstn=[{lv:2,f:()=>{you.stra+=1;you.stat_r();},g:false,p:"STR +1"},
                {lv:3,f:()=>{you.exp_t+=0.02;you.stra+=1;you.stat_r();},g:false,p:"STR +1, EXP Gain +2%"},
-               {lv:4,f:()=>{you.agla+=1;you.stra+=1;you.mods.sbonus+=0.01;you.stat_r()},g:false,p:"AGL +1, STR +1, Energy Effectiveness +1%"},
                {lv:5,f:()=>{you.hpa+=30;you.ccls[2]+=1; you.stat_r();giveTitle(ttl.axc1)},g:false,p:"HP +30, Blunt DEF +1, New Title"},
-               {lv:6,f:()=>{you.agla+=1;you.stra+=1;you.mods.sbonus+=0.01;you.stat_r()},g:false,p:"AGL +1, STR +1, Energy Effectiveness +1%"},
                {lv:8,f:()=>{you.stra+=1;you.agla+=1;you.exp_t+=0.02;you.stat_r()},g:false,p:"AGL +1, STR +1, EXP Gain +2%"},
-               {lv:9,f:()=>{you.agla+=1;you.stra+=2;you.mods.sbonus+=0.01;you.stat_r()},g:false,p:"AGL +1, STR +2, Energy Effectiveness +1%"},
                {lv:10,f:()=>{you.mods.sbonus+=0.02;you.stat_p[1]+=.05;giveTitle(ttl.axc2)},g:false,p:"Energy Effectiveness +2%, STR training Potential +5%, New Title"},
                {lv:11,f:()=>{skl.fgt.p+=.03;you.stat_r();},g:false,p:"Fighting EXP Gain +3%"},
-               {lv:12,f:()=>{you.stra+=2;you.mods.sbonus+=0.02;you.stat_r()},g:false,p:"STR +2, Energy Effectiveness +2%"},
                ];
 
 skl.plrmc = new Skill(); skl.plrmc.id = 106; skl.plrmc.type=1;
@@ -1793,14 +1774,10 @@ skl.plrmc.desc = 'Ability to fight using polearms and lances'+dom.dseparator+'<s
 skl.plrmc.use=function(x,y){ you.str+=you.str/100*(this.lvl*5);}
 skl.plrmc.mlstn=[{lv:2,f:()=>{you.agla+=1;you.stat_r();},g:false,p:"AGL +1"},
                  {lv:3,f:()=>{you.exp_t+=0.01;you.agla+=1;you.stat_r();},g:false,p:"AGL +1, EXP Gain +1%"},
-                 {lv:4,f:()=>{you.agla+=1;you.mods.sbonus+=0.01;you.stat_r()},g:false,p:"AGL +1, Energy Effectiveness +1%"},
                  {lv:5,f:()=>{you.stra+=1;you.ccls[1]+=1; you.stat_r();giveTitle(ttl.lnc1)},g:false,p:"STR +1, Pierce DEF +1, New Title"},
-                 {lv:6,f:()=>{you.agla+=1;you.stra+=1;you.mods.sbonus+=0.01;you.stat_r()},g:false,p:"AGL +1, STR +1, Energy Effectiveness +1%"},
                  {lv:8,f:()=>{you.stra+=2;you.exp_t+=0.03;you.stat_r()},g:false,p:"STR +2, EXP Gain +3%"},
-                 {lv:9,f:()=>{you.agla+=1;you.stra+=1;you.mods.sbonus+=0.01;you.stat_r()},g:false,p:"AGL +1, STR +1, Energy Effectiveness +1%"},
                  {lv:10,f:()=>{you.res.ph+=.01;giveTitle(ttl.lnc2)},g:false,p:"Physical Resistance +1%, New Title"},
                  {lv:11,f:()=>{skl.fgt.p+=.03;you.stat_r();},g:false,p:"Fighting EXP Gain +3%"},
-                 {lv:12,f:()=>{you.stra+=1;you.agla+=1;you.mods.sbonus+=0.02;you.stat_r()},g:false,p:"STR +1, AGL +1, Energy Effectiveness +2%"},
                  ];
 
 
@@ -1810,15 +1787,11 @@ skl.hmrc.bname = 'Hammer Mastery';
 skl.hmrc.desc = 'Ability to fight using blunt weaponry'+dom.dseparator+'<small style="color:darkorange">Slightly increases attack power when holding a club/hammer</small>';
 skl.hmrc.use=function(x,y){you.str+=you.str/100*(this.lvl*5);}
 skl.hmrc.mlstn=[{lv:2,f:()=>{you.exp_t+=0.01;you.agla+=1;you.stat_r();},g:false,p:"AGL +1, EXP Gain +1%"},
-                {lv:3,f:()=>{you.agla+=1;you.stra+=1;you.mods.sbonus+=0.01;you.stat_r()},g:false,p:"AGL +1, STR +1, Energy Effectiveness +1%"},
                 {lv:4,f:()=>{you.stra+=1;you.stat_r();},g:false,p:"STR +1"},
                 {lv:5,f:()=>{you.stra+=1;you.stat_r();giveTitle(ttl.stk)},g:false,p:"STR +1, New Title"},
-                {lv:6,f:()=>{you.agla+=1;you.stra+=2;you.mods.sbonus+=0.01;you.stat_r()},g:false,p:"AGL +1, STR +2, Energy Effectiveness +1%"},
                 {lv:8,f:()=>{you.stra+=1;you.exp_t+=0.03;you.stat_r()},g:false,p:"STR +1, EXP Gain +3%"},
-                {lv:9,f:()=>{you.stra+=2;you.exp_t+=0.05;you.mods.sbonus+=0.01;you.stat_r()},g:false,p:"STR +2, Energy Effectiveness +1%"},
-                {lv:10,f:()=>{you.stra+=2;you.exp_t+=0.03;you.stat_r();giveTitle(ttl.hmr2)},g:false,p:"STR +2, EXP Gain +3%, New Title"},
+                {lv:10,f:()=>{you.stra+=3;you.exp_t+=0.03;you.stat_r();giveTitle(ttl.hmr2)},g:false,p:"STR +3, EXP Gain +3%, New Title"},
                 {lv:11,f:()=>{skl.fgt.p+=.03;you.stat_r();},g:false,p:"Fighting EXP Gain +3%"},
-                {lv:12,f:()=>{you.stra+=1;you.agla+=1;you.mods.sbonus+=0.02;you.stat_r()},g:false,p:"STR +1, AGL +1, Energy Effectiveness +2%"},
                 ];
 
 skl.stfc = new Skill(); skl.stfc.id = 108; skl.stfc.type=1;
@@ -1833,12 +1806,9 @@ skl.shdc.bname = 'Shield Mastery';
 skl.shdc.desc = 'Ability to use shields better';
 skl.shdc.use=function(x,y){giveSkExp(this,x||1); you.str+=you.str/100*(this.lvl*5);you.int+=you.int/100*(this.lvl*3);}
 skl.shdc.mlstn=[{lv:2,f:()=>{you.exp_t+=0.03;skl.painr.p+=.01;you.stat_r();},g:false,p:"EXP Gain +3%, Pain Resistance EXP Gain +1%"},
-                {lv:3,f:()=>{you.agla+=1;you.stra+=1;you.exp_t+=0.05;you.mods.sbonus+=0.01;you.stat_r()},g:false,p:"AGL +1, STR +1, EXP Gain +5%, Energy Effectiveness +1%"},
                 {lv:4,f:()=>{you.hpa+=12;skl.painr.p+=.02;you.stat_r();dom.d5_3_1.update()},g:false,p:"HP +12, Pain Resistance EXP Gain +2%"},
                 {lv:5,f:()=>{you.stra+=1;you.stat_r();giveTitle(ttl.sld1);skl.painr.p+=.07},g:false,p:"STR +1, Pain Resistance EXP Gain +7%, New Title"},
-                {lv:6,f:()=>{you.agla+=2;you.stra+=1;you.exp_t+=0.05;you.mods.sbonus+=0.01;you.stat_r()},g:false,p:"AGL +2, STR +1, EXP Gain +5%, Energy Effectiveness +1%"},
                 {lv:8,f:()=>{you.agla+=2;you.exp_t+=0.05;you.stat_r()},g:false,p:"AGL +2, EXP Gain +5%"},
-                {lv:9,f:()=>{you.agla+=2;you.stra+=2;you.exp_t+=0.05;you.mods.sbonus+=0.01;you.stat_r()},g:false,p:"AGL +2, STR +2, EXP Gain +5%, Energy Effectiveness +1%"},
                 {lv:10,f:()=>{you.hpa+=30;you.stra+=2;you.agla+=2;you.exp_t+=0.05;you.stat_r();giveTitle(ttl.sld2)},g:false,p:"HP +30, STR +2, AGL +2, New Title"},
                 {lv:11,f:()=>{skl.fgt.p+=.08;you.stat_r();},g:false,p:"Fighting EXP Gain +8%"},
                 ];
@@ -1847,17 +1817,16 @@ skl.sleep = new Skill(); skl.sleep.id = 110; skl.sleep.type=4;
 skl.sleep.name = 'Sleeping';
 skl.sleep.desc = 'The rest of Body'+dom.dseparator+'<small style="color:darkorange">Increases health gain during sleep</small>';
 skl.sleep.use=function(x,y){giveSkExp(this,x.sq||1); return 5*this.lvl*x.sq}
-skl.sleep.mlstn=[{lv:2,f:()=>{you.hpa+=12;you.stat_r();dom.d5_1_1.update()},g:false,p:"HP +12"},
-                 {lv:3,f:()=>{you.hpa+=18;you.stat_r();dom.d5_1_1.update()},g:false,p:"HP +18"},
-                 {lv:4,f:()=>{you.hpa+=24;you.stat_r();dom.d5_1_1.update()},g:false,p:"HP +24"},
-                 {lv:5,f:()=>{skl.ptnc.p+=.05;giveTitle(ttl.slp1);you.hpa+=30;you.stat_r();dom.d5_1_1.update()},g:false,p:"HP +30, Patience EXP Gain +5%, New Title"},
-                 {lv:6,f:()=>{you.hpa+=36;you.stat_r();dom.d5_1_1.update()},g:false,p:"HP +36"},
-                 {lv:7,f:()=>{you.hpa+=42;you.stat_r();dom.d5_1_1.update()},g:false,p:"HP +42"},
-                 {lv:8,f:()=>{you.hpa+=48;you.stat_r();dom.d5_1_1.update()},g:false,p:"HP +48"},
-                 {lv:9,f:()=>{skl.ptnc.p+=.1;you.hpa+=54;you.stat_r();dom.d5_1_1.update()},g:false,p:"Patience EXP Gain +10%, HP +54"},
-                 {lv:10,f:()=>{giveTitle(ttl.slp2);skl.dth.p+=.1;you.hpa+=60;you.stat_r();dom.d5_1_1.update()},g:false,p:"HP +60, Death EXP Gain +10%, New Title"},
-                 {lv:11,f:()=>{you.hpa+= 66;you.stat_r();dom.d5_1_1.update()},g:false,p:"HP +66"},
-                 {lv:12,f:()=>{you.hpa+= 72;you.stat_r();dom.d5_1_1.update()},g:false,p:"HP +72"},
+skl.sleep.mlstn=[{lv:2,f:()=>{you.hpa+=2;you.stat_r();dom.d5_1_1.update()},g:false,p:"HP +2"},
+                 {lv:4,f:()=>{you.hpa+=5;you.stat_r();dom.d5_1_1.update()},g:false,p:"HP +5"},
+                 {lv:5,f:()=>{skl.ptnc.p+=.05;giveTitle(ttl.slp1);you.hpa+=10;you.stat_r();dom.d5_1_1.update()},g:false,p:"HP +10, Patience EXP Gain +5%, New Title"},
+                 {lv:6,f:()=>{you.hpa+=12;you.stat_r();dom.d5_1_1.update()},g:false,p:"HP +12"},
+                 {lv:7,f:()=>{you.hpa+=15;you.stat_r();dom.d5_1_1.update()},g:false,p:"HP +15"},
+                 {lv:8,f:()=>{you.hpa+=20;you.stat_r();dom.d5_1_1.update()},g:false,p:"HP +20"},
+                 {lv:9,f:()=>{skl.ptnc.p+=.1;you.hpa+=25;you.stat_r();dom.d5_1_1.update()},g:false,p:"Patience EXP Gain +10%, HP +25"},
+                 {lv:10,f:()=>{giveTitle(ttl.slp2);skl.dth.p+=.1;you.hpa+=30;you.stat_r();dom.d5_1_1.update()},g:false,p:"HP +30, Death EXP Gain +10%, New Title"},
+                 {lv:11,f:()=>{you.hpa+= 35;you.stat_r();dom.d5_1_1.update()},g:false,p:"HP +35"},
+                 {lv:12,f:()=>{you.hpa+= 50;you.stat_r();dom.d5_1_1.update()},g:false,p:"HP +50"},
                  ];
 
 skl.seye = new Skill(); skl.seye.id = 111; skl.seye.type=3;
@@ -1865,14 +1834,12 @@ skl.seye.name = 'Sharp Eye';
 skl.seye.desc = 'Ability to notice weak points'+dom.dseparator+'<small style="color:darkorange">Slightly increases critical probability</small>';
 skl.seye.use=function(x,y){return this.lvl*0.003}
 skl.seye.mlstn=[{lv:1,f:()=>{you.agla+=1;you.stat_r();},g:false,p:"AGL +1"},
-                {lv:2,f:()=>{you.agla+=1;you.luck+=1;you.exp_t+=0.05;you.mods.sbonus+=0.01;you.stat_r()},g:false,p:"AGL +1, LUCK +1, EXP Gain +5%, Energy Effectiveness +1%"},
                 {lv:3,f:()=>{giveTitle(ttl.seye1);you.stra+=1;you.exp_t+=0.04;you.stat_r()},g:false,p:"STR +1, EXP Gain +4%, New Title"},
                 {lv:4,f:()=>{skl.scout.p+=.05;you.mods.cpwr+=.02;you.exp_t+=0.06;},g:false,p:"Perception EXP Gain +5%, Critical Damage +2%, EXP Gain +6%"},
                 {lv:5,f:()=>{skl.unc.p+=.05;skl.fgt.p+=.05;skl.srdc.p+=.05;skl.knfc.p+=.05;skl.axc.p+=.05;skl.plrmc.p+=.05;skl.stfc.p+=.05;skl.bwc.p+=.05;skl.hmrc.p+=.05;you.stat_r();giveTitle(ttl.seye2);},g:false,p:"All Masteries EXP Gain +5%, Fighting EXP Gain +5%, New Title"},
                 {lv:6,f:()=>{skl.evas.p+=.08;you.mods.cpwr+=.08;skl.war.p+=.07;},g:false,p:"Evasion EXP Gain +8%, Critical Damage +8%, War EXP Gain +7%"},
                 {lv:7,f:()=>{skl.scout.p+=.1;you.mods.sbonus+=0.01; you.stra+=2;you.stat_r()},g:false,p:"EXP Gain +7%, STR +2, Perception EXP Gain +10%, Energy Effectiveness +1%"},
                 {lv:8,f:()=>{you.aff[0]+=5;giveTitle(ttl.seye3)},g:false,p:"Physical ATK +5, New Title"},
-                {lv:9,f:()=>{you.agla+=1;you.luck+=1;you.exp_t+=0.05;you.mods.sbonus+=0.01;you.stat_r()},g:false,p:"AGL +1, LUCK +1, EXP Gain +5%, Energy Effectiveness +1%"},
                 ];
 
 skl.pet = new Skill(); skl.pet.id = 112; skl.pet.type=10;
@@ -1880,7 +1847,6 @@ skl.pet.name = 'Patting';
 skl.pet.desc = 'Mastery of petting animals'+dom.dseparator+'<small style="color:darkorange">Makes animals love you</small>';
 skl.pet.use=function(x,y){giveSkExp(this,x||1);}
 skl.pet.mlstn=[{lv:2,f:()=>{you.luck+=1;you.stat_r();},g:false,p:"LUCK +1"},
-               {lv:3,f:()=>{you.agla+=1;you.luck+=1;you.exp_t+=0.05;you.mods.sbonus+=0.01;you.stat_r()},g:false,p:"AGL +1, LUCK +1, EXP Gain +5%, Energy Effectiveness +1%"},
                {lv:4,f:()=>{you.agla+=1;you.stat_r();},g:false,p:"AGL +1"},
                {lv:5,f:()=>{you.agla+=1;you.mods.sbonus+=0.01;you.stat_r();giveTitle(ttl.pet1)},g:false,p:"Energy Effectiveness +1%, New Title"},
                {lv:6,f:()=>{you.hpa+=33;you.stat_r();dom.d5_1_1.update()},g:false,p:"HP +33"},
@@ -1895,7 +1861,6 @@ skl.walk.name = 'Walking';
 skl.walk.desc = 'Ability to walk';
 skl.walk.use=function(x,y){giveSkExp(this,.5);}
 skl.walk.mlstn=[{lv:1,f:()=>{you.agla+=1;you.stat_r();giveAction(act.demo)},g:false,p:"AGL +1"},
-                {lv:2,f:()=>{you.agla+=1;you.spda+=1;you.exp_t+=0.05;you.mods.sbonus+=0.01;you.stat_r()},g:false,p:"AGL +1, SPD +1, EXP Gain +5%, Energy Effectiveness +1%"},
                 {lv:3,f:()=>{giveTitle(ttl.wlk);you.hpa+=5;you.stat_r()},g:false,p:"HP +5, New Title"},
                 {lv:4,f:()=>{you.hpa+=8;you.sata+=6;you.stat_r();dom.d5_3_1.update()},g:false,p:"HP +8, SAT +6"},
                 {lv:5,f:()=>{giveTitle(ttl.jgg);you.hpa+=10;you.sata+=8;you.stat_r();dom.d5_3_1.update()},g:false,p:"HP +10, SAT +8, New Title"},
@@ -1911,47 +1876,36 @@ skl.dice.name = 'Gambling';
 skl.dice.desc = 'Skill of chances';
 skl.dice.use=function(x,y){giveSkExp(this,x||1);}
 skl.dice.mlstn=[{lv:1,f:()=>{you.luck+=1;you.stat_r();},g:false,p:"LUCK +1"},
-                {lv:2,f:()=>{you.agla+=1;you.luck+=1;you.exp_t+=0.05;you.mods.sbonus+=0.01;you.stat_r()},g:false,p:"AGL +1, LUCK +1, EXP Gain +5%, Energy Effectiveness +1%"},
                 {lv:3,f:()=>{you.agla+=2;you.stat_r();},g:false,p:"AGL +2"},
-                {lv:4,f:()=>{you.agla+=1;you.luck+=1;you.exp_t+=0.05;you.mods.sbonus+=0.01;you.stat_r()},g:false,p:"AGL +1, LUCK +1, EXP Gain +5%, Energy Effectiveness +1%"},
-                {lv:5,f:()=>{you.agla+=1;you.spda+=1;you.exp_t+=0.05;you.mods.sbonus+=0.01;you.stat_r()},g:false,p:"AGL +1, SPD +1, EXP Gain +5%, Energy Effectiveness +1%"},
-                {lv:6,f:()=>{you.agla+=1;you.luck+=1;you.exp_t+=0.05;you.mods.sbonus+=0.01;you.stat_r()},g:false,p:"AGL +1, LUCK +1, EXP Gain +5%, Energy Effectiveness +1%"},
-                {lv:7,f:()=>{you.agla+=1;you.luck+=1;you.exp_t+=0.05;you.mods.sbonus+=0.01;you.stat_r()},g:false,p:"AGL +1, LUCK +1, EXP Gain +5%, Energy Effectiveness +1%"},
-                {lv:8,f:()=>{you.agla+=1;you.spda+=1;you.exp_t+=0.05;you.mods.sbonus+=0.01;you.stat_r()},g:false,p:"AGL +1, SPD +1, EXP Gain +5%, Energy Effectiveness +1%"},
-                {lv:10,f:()=>{you.luck+=2;you.spda+=2;you.stat_r();},g:false,p:"LUCK +2, SPD +2"},
+                //{lv:10,f:()=>{you.spda+=1;you.stat_r();},g:false,p:"SPD +1"},
                 ];  
 
 skl.glt = new Skill(); skl.glt.id = 115;  skl.glt.type=4;
 skl.glt.name = 'Gluttony';
 skl.glt.desc = 'Mastery of eating';
 skl.glt.use=function(x,y){giveSkExp(this,x||1);return this.lvl||1}
-skl.glt.mlstn=[{lv:1,f:function(){you.sata+=15;you.stat_r();dom.d5_3_1.update()},g:false,p:"SAT +15"},
-               {lv:2,f:()=>{you.sata+=15;you.hpa+=5;you.stat_r();dom.d5_3_1.update()},g:false,p:"SAT +15, HP +5"},
-               {lv:3,f:()=>{giveTitle(ttl.eat1);you.sata+=20;you.hpa+=5;you.stat_r();dom.d5_3_1.update()},g:false,p:"SAT +20, HP +5, New Title"},
-               {lv:4,f:()=>{skl.fdpnr.p+=.05;you.sata+=20;you.hpa+=5;you.stat_r();dom.d5_3_1.update()},g:false,p:"SAT +20, HP +5, Survival EXP Gain +5%"},
-               {lv:5,f:()=>{you.sata+=20;you.hpa+=10;you.stat_r();dom.d5_3_1.update()},g:false,p:"SAT +20, HP +10"},
-               {lv:6,f:()=>{you.sata+=20;you.hpa+=15;you.stat_r();dom.d5_3_1.update()},g:false,p:"SAT +20, HP +15"},
-               {lv:7,f:()=>{giveTitle(ttl.eat2);you.sata+=20;you.hpa+=20;you.stat_r();dom.d5_3_1.update()},g:false,p:"SAT +20, HP +20, New Title"},
-               {lv:8,f:()=>{you.sata+=25;you.hpa+=25;you.stat_r();dom.d5_3_1.update()},g:false,p:"SAT +25, HP +25"},
-               {lv:9,f:()=>{skl.fdpnr.p+=.15;you.sata+=25;you.hpa+=35;you.stat_r();dom.d5_3_1.update()},g:false,p:"SAT +25, HP +35, Survival EXP Gain +15%"},
-               {lv:10,f:()=>{you.eqp_t+=.13;giveTitle(ttl.eat3);you.sata+=30;you.hpa+=40;you.stat_r();dom.d5_3_1.update()},g:false,p:"EXP Gain +13%, SAT +30, HP +40, New Title"},
-               {lv:11,f:()=>{you.sata+=35;you.hpa+=50;you.stat_r();dom.d5_3_1.update()},g:false,p:"SAT +35, HP +50"},
-               {lv:12,f:()=>{you.sata+=35;you.hpa+=60;you.stat_r();dom.d5_3_1.update()},g:false,p:"SAT +35, HP +60"},
-               {lv:13,f:()=>{you.sata+=35;you.hpa+=70;you.stat_r();dom.d5_3_1.update()},g:false,p:"SAT +35, HP +70"},];  
+skl.glt.mlstn=[{lv:1,f:function(){you.sata+=5;you.stat_r();dom.d5_3_1.update()},g:false,p:"SAT +5"},
+               {lv:2,f:()=>{you.sata+=5;you.hpa+=5;you.stat_r();dom.d5_3_1.update()},g:false,p:"SAT +5, HP +5"},
+               {lv:3,f:()=>{giveTitle(ttl.eat1);you.sata+=10;you.hpa+=5;you.stat_r();dom.d5_3_1.update()},g:false,p:"SAT +10, HP +5, New Title"},
+               {lv:4,f:()=>{skl.fdpnr.p+=.05;you.sata+=10;you.hpa+=5;you.stat_r();dom.d5_3_1.update()},g:false,p:"SAT +10, HP +5, Survival EXP Gain +5%"},
+               {lv:5,f:()=>{you.sata+=10;you.hpa+=10;you.stat_r();dom.d5_3_1.update()},g:false,p:"SAT +10, HP +10"},
+               {lv:6,f:()=>{you.sata+=10;you.hpa+=15;you.stat_r();dom.d5_3_1.update()},g:false,p:"SAT +10, HP +15"},
+               {lv:7,f:()=>{giveTitle(ttl.eat2);you.sata+=10;you.hpa+=20;you.stat_r();dom.d5_3_1.update()},g:false,p:"SAT +10, HP +20, New Title"},
+               {lv:8,f:()=>{you.sata+=15;you.hpa+=25;you.stat_r();dom.d5_3_1.update()},g:false,p:"SAT +15, HP +25"},
+               {lv:9,f:()=>{skl.fdpnr.p+=.15;you.sata+=15;you.hpa+=35;you.stat_r();dom.d5_3_1.update()},g:false,p:"SAT +15, HP +35, Survival EXP Gain +15%"},
+               {lv:10,f:()=>{you.eqp_t+=.13;giveTitle(ttl.eat3);you.sata+=20;you.hpa+=40;you.stat_r();dom.d5_3_1.update()},g:false,p:"EXP Gain +13%, SAT +20, HP +40, New Title"},
+               {lv:11,f:()=>{you.sata+=25;you.hpa+=50;you.stat_r();dom.d5_3_1.update()},g:false,p:"SAT +25, HP +50"},
+               {lv:12,f:()=>{you.sata+=25;you.hpa+=60;you.stat_r();dom.d5_3_1.update()},g:false,p:"SAT +25, HP +60"},
+               {lv:13,f:()=>{you.sata+=25;you.hpa+=70;you.stat_r();dom.d5_3_1.update()},g:false,p:"SAT +25, HP +70"},];  
 
 skl.rdg = new Skill(); skl.rdg.id = 116;  skl.rdg.type=4;
 skl.rdg.name = 'Literacy';
 skl.rdg.desc = 'Understanding of meaning behind texts'+dom.dseparator+'<small style="color:darkorange">Improves reading speed</small>';
 skl.rdg.use=function(x,y){return this.lvl}
-skl.rdg.mlstn=[{lv:1,f:()=>{you.inta+=1;you.stat_r();},g:false,p:"INT +1"},
-                {lv:2,f:()=>{you.exp_t+=0.04;you.inta+=1;you.stat_r();},g:false,p:"INT +1, EXP Gain +4%"},
+skl.rdg.mlstn=[{lv:2,f:()=>{you.inta+=1;you.stat_r();},g:false,p:"INT +1"},
                 {lv:3,f:()=>{giveTitle(ttl.ilt);you.exp_t+=0.02;you.stat_r();},g:false,p:"EXP Gain +2%, New Title"},
                 {lv:4,f:()=>{you.exp_t+=0.02;you.inta+=1;you.stat_r();},g:false,p:"INT +1, EXP Gain +2%"},
                 {lv:5,f:()=>{giveTitle(ttl.und);you.inta+=1;you.exp_t+=0.03;you.stat_r();},g:false,p:"EXP Gain +3%, INT +1, New Title"},
-                {lv:6,f:()=>{you.exp_t+=0.06;you.inta+=1;you.stat_r();},g:false,p:"INT +1, EXP Gain +6%"},
-                {lv:7,f:()=>{you.exp_t+=0.08;you.inta+=2;you.stat_r();},g:false,p:"INT +2, EXP Gain +8%"},
-                {lv:8,f:()=>{you.exp_t+=0.1;you.inta+=3;you.stat_r();},g:false,p:"INT +2, EXP Gain +10%"},
-                {lv:9,f:()=>{you.exp_t+=0.12;you.inta+=4;you.stat_r();},g:false,p:"INT +3, EXP Gain +12%"},
                 ];  
 
 skl.cook = new Skill(); skl.cook.id = 117; skl.cook.type=5;
@@ -1960,12 +1914,6 @@ skl.cook.desc = 'The art of Cooking'+dom.dseparator+'<small style="color:darkora
 skl.cook.use=function(x,y){giveSkExp(this,x||1);return this.lvl||1}
 skl.cook.mlstn=[{lv:1,f:()=>{you.inta+=1;you.agla+=1;giveRcp(rcp.rsmt);giveRcp(rcp.segg);you.stat_r();},g:false,p:"INT +1, AGL +1"},
                 {lv:2,f:()=>{giveTitle(ttl.coo1);giveRcp(rcp.bcrc);giveRcp(rcp.bcrrt);you.exp_t+=0.05;you.stra+=1;you.stat_r();},g:false,p:"STR +1, EXP Gain +5%, New Title"},
-                {lv:4,f:()=>{you.exp_t+=0.01;you.sata+=20;you.hpa+=15;you.stat_r();dom.d5_3_1.update()},g:false,p:"SAT +20, HP +15, EXP Gain +1%"},
-                {lv:5,f:()=>{you.exp_t+=0.02;you.sata+=25;you.hpa+=25;you.stat_r();dom.d5_3_1.update()},g:false,p:"SAT +25, HP +25, EXP Gain +2%"},
-                {lv:6,f:()=>{you.exp_t+=0.03;you.sata+=30;you.hpa+=35;you.stat_r();dom.d5_3_1.update()},g:false,p:"SAT +30, HP +35, EXP Gain +3%"},
-                {lv:7,f:()=>{you.exp_t+=0.04;you.sata+=35;you.hpa+=45;you.stat_r();dom.d5_3_1.update()},g:false,p:"SAT +35, HP +45, EXP Gain +4%"},
-                {lv:8,f:()=>{you.exp_t+=0.05;you.sata+=40;you.hpa+=60;you.stat_r();dom.d5_3_1.update()},g:false,p:"SAT +40, HP +60, EXP Gain +5%"},
-                {lv:9,f:()=>{you.exp_t+=0.06;you.sata+=50;you.hpa+=75;you.stat_r();dom.d5_3_1.update()},g:false,p:"SAT +50, HP +75, EXP Gain +6%"},
 //              {lv:3,f:()=>{you.exp_t+=0.02;you.inta+=1;you.stat_r();},g:false,p:"INT +1, EXP Gain +2%"},
 //              {lv:4,f:()=>{giveTitle(ttl.cck);you.inta+=1;you.exp_t+=0.03;you.stat_r();},g:false,p:"EXP Gain +3%, INT +1, New Title"},
                 ];
@@ -1974,62 +1922,22 @@ skl.mdt = new Skill(); skl.mdt.id = 118;  skl.mdt.type=4;
 skl.mdt.name = 'Meditation';
 skl.mdt.desc = 'The rest of Mind';
 skl.mdt.use=function(x,y){ return this.lvl}
-skl.mdt.mlstn=[{lv:1,f:()=>{you.inta+=1;you.stat_r();},g:false,p:"INT +1"},
-                {lv:2,f:()=>{you.exp_t+=0.04;you.inta+=1;you.stat_r();},g:false,p:"INT +1, EXP Gain +4%"},
-                {lv:3,f:()=>{you.exp_t+=0.06;you.stat_r();},g:false,p:"EXP Gain +6%"},
-                {lv:4,f:()=>{you.exp_t+=0.02;you.inta+=1;you.stat_r();},g:false,p:"INT +1, EXP Gain +2%"},
-                {lv:5,f:()=>{you.inta+=1;you.exp_t+=0.05;you.stat_r();},g:false,p:"EXP Gain +5%, INT +1"},
-                {lv:6,f:()=>{you.exp_t+=0.06;you.inta+=1;you.stat_r();},g:false,p:"INT +1, EXP Gain +6%"},
-                {lv:7,f:()=>{you.exp_t+=0.08;you.inta+=2;you.stat_r();},g:false,p:"INT +2, EXP Gain +8%"},
-                {lv:8,f:()=>{you.exp_t+=0.1;you.inta+=3;you.stat_r();},g:false,p:"INT +2, EXP Gain +10%"},
-                {lv:9,f:()=>{you.exp_t+=0.12;you.inta+=4;you.stat_r();},g:false,p:"INT +3, EXP Gain +12%"},
-                ];  
 
 skl.crft = new Skill(); skl.crft.id = 119; skl.crft.type=5;
 skl.crft.name = 'Crafting';
 skl.crft.desc = 'The art of Creation'+dom.dseparator+'<small style="color:darkorange">Makes autocrafting faster</small>';
 skl.crft.use=function(x,y){giveSkExp(this,x||1);return this.lvl||1}
-skl.crft.mlstn=[{lv:1,f:()=>{you.inta+=1;you.stat_r();},g:false,p:"INT +1"},
-                {lv:2,f:()=>{you.exp_t+=0.04;you.stra+=1;you.stat_r();},g:false,p:"STR +1, EXP Gain +4%"},
-                {lv:3,f:()=>{you.exp_t+=0.06;you.stat_r();},g:false,p:"EXP Gain +6%"},
-                {lv:4,f:()=>{you.exp_t+=0.02;you.inta+=1;you.stat_r();},g:false,p:"INT +1, EXP Gain +2%"},
-                {lv:5,f:()=>{you.stra+=1;you.exp_t+=0.05;you.stat_r();},g:false,p:"EXP Gain +5%, STR +1"},
-                {lv:6,f:()=>{you.exp_t+=0.06;you.agla+=1;you.stat_r();},g:false,p:"AGL +1, EXP Gain +6%"},
-                {lv:7,f:()=>{you.exp_t+=0.08;you.inta+=2;you.stat_r();},g:false,p:"INT +2, EXP Gain +8%"},
-                {lv:8,f:()=>{you.exp_t+=0.1;you.stra+=3;you.stat_r();},g:false,p:"STR +2, EXP Gain +10%"},
-                {lv:9,f:()=>{you.exp_t+=0.12;you.agla+=4;you.stat_r();},g:false,p:"AGL +2, EXP Gain +12%"},
-                ]; 
 
 skl.alch = new Skill(); skl.alch.id = 120; skl.alch.type=5;
 skl.alch.name = 'Alchemy';
 skl.alch.desc = 'Knowledge of medicine and alchemical transmutation';
 skl.alch.use=function(x,y){giveSkExp(this,x||1);return this.lvl||1}
-skl.alch.mlstn=[
-  {lv:1,f:()=>{you.inta+=1;giveRcp(rcp.hptn1)},g:false,p:"INT +1"},
-  {lv:2,f:()=>{you.exp_t+=0.04;you.inta+=1;you.stat_r();},g:false,p:"INT +1, EXP Gain +4%"},
-  {lv:3,f:()=>{you.exp_t+=0.06;you.stat_r();},g:false,p:"EXP Gain +6%"},                
-  {lv:4,f:()=>{you.inta+=1;you.sata+=20;you.hpa+=15;you.stat_r();dom.d5_3_1.update()},g:false,p:"INT +1, SAT +20, HP +15"},
-  {lv:5,f:()=>{you.inta+=1;you.sata+=25;you.hpa+=25;you.stat_r();dom.d5_3_1.update()},g:false,p:"INT +1, SAT +25, HP +25"},
-  {lv:6,f:()=>{you.inta+=1;you.sata+=30;you.hpa+=35;you.stat_r();dom.d5_3_1.update()},g:false,p:"INT +1, SAT +30, HP +35"},
-  {lv:7,f:()=>{you.inta+=1;you.sata+=35;you.hpa+=45;you.stat_r();dom.d5_3_1.update()},g:false,p:"INT +1, SAT +35, HP +45"},
-  {lv:8,f:()=>{you.exp_t+=0.05;you.sata+=40;you.hpa+=60;you.stat_r();dom.d5_3_1.update()},g:false,p:"SAT +40, HP +60, EXP Gain +5%"},
-  {lv:9,f:()=>{you.exp_t+=0.06;you.sata+=50;you.hpa+=75;you.stat_r();dom.d5_3_1.update()},g:false,p:"SAT +50, HP +75, EXP Gain +6%"},
-];
+skl.alch.mlstn=[{lv:1,f:()=>{you.inta+=1;giveRcp(rcp.hptn1)},g:false,p:"INT +1"}];
 
 skl.thr = new Skill(); skl.thr.id = 121; skl.thr.type=2;
 skl.thr.name = 'Throwing';
 skl.thr.desc = 'Mastery of throwing'+dom.dseparator+'<small style="color:darkorange">Decreases waiting time between throws<br>Slightly increases throwing damage</small>';
 skl.thr.use=function(x,y){return {a:this.lvl/10,b:this.lvl*5}}
-skl.thr.mlstn=[{lv:1,f:()=>{you.agla+=1;you.stat_r();},g:false,p:"AGL +1"},
-                {lv:2,f:()=>{you.agla+=1;you.stra+=1;you.exp_t+=0.05;you.mods.sbonus+=0.01;you.stat_r()},g:false,p:"AGL +1, STR +1, EXP Gain +5%, Energy Effectiveness +1%"},
-                {lv:3,f:()=>{you.agla+=2;you.stat_r();},g:false,p:"AGL +2"},
-                {lv:4,f:()=>{you.agla+=1;you.luck+=1;you.exp_t+=0.05;you.mods.sbonus+=0.01;you.stat_r()},g:false,p:"AGL +1, LUCK +1, EXP Gain +5%, Energy Effectiveness +1%"},
-                {lv:5,f:()=>{you.agla+=1;you.spda+=1;you.exp_t+=0.05;you.mods.sbonus+=0.01;you.stat_r()},g:false,p:"AGL +1, SPD +1, EXP Gain +5%, Energy Effectiveness +1%"},
-                {lv:6,f:()=>{you.agla+=1;you.stra+=1;you.exp_t+=0.05;you.mods.sbonus+=0.01;you.stat_r()},g:false,p:"AGL +1, STR +1, EXP Gain +5%, Energy Effectiveness +1%"},
-                {lv:7,f:()=>{you.agla+=1;you.stra+=1;you.exp_t+=0.05;you.mods.sbonus+=0.01;you.stat_r()},g:false,p:"AGL +1, STR +1, EXP Gain +5%, Energy Effectiveness +1%"},
-                {lv:8,f:()=>{you.agla+=1;you.stra+=1;you.exp_t+=0.05;you.mods.sbonus+=0.01;you.stat_r()},g:false,p:"AGL +1, STR +1, EXP Gain +5%, Energy Effectiveness +1%"},
-                {lv:10,f:()=>{you.agla+=2;you.stra+=2;you.stat_r();},g:false,p:"AGL +2, STR +2"},
-                ];  
 
 skl.bwc = new Skill(); skl.bwc.id = 122; skl.bwc.type=1;
 skl.bwc.name = 'Ranged M';
@@ -2041,16 +1949,6 @@ skl.ntst = new Skill(); skl.ntst.id = 123;  skl.ntst.type=3;
 skl.ntst.name = 'Nightsight';
 skl.ntst.desc = 'Ability to see better in the darkness'+dom.dseparator+'<small style="color:darkorange">Mitigates hit penalty while fighting in darkness</small>';
 skl.ntst.use=function(x,y){giveSkExp(this,x||1)}
-skl.ntst.mlstn=[{lv:1,f:()=>{you.agla+=1;you.stat_r();},g:false,p:"AGL +1"},
-                {lv:2,f:()=>{you.agla+=1;you.luck+=1;you.exp_t+=0.05;you.mods.sbonus+=0.01;you.stat_r()},g:false,p:"AGL +1, LUCK +1, EXP Gain +5%, Energy Effectiveness +1%"},
-                {lv:3,f:()=>{you.stra+=1;you.exp_t+=0.04;you.stat_r()},g:false,p:"STR +1, EXP Gain +4%"},
-                {lv:4,f:()=>{skl.scout.p+=.05;you.mods.cpwr+=.02;you.exp_t+=0.06;},g:false,p:"Perception EXP Gain +5%, Critical Damage +2%, EXP Gain +6%"},
-                {lv:5,f:()=>{skl.unc.p+=.05;skl.fgt.p+=.05;skl.srdc.p+=.05;skl.knfc.p+=.05;skl.axc.p+=.05;skl.plrmc.p+=.05;skl.stfc.p+=.05;skl.bwc.p+=.05;skl.hmrc.p+=.05;you.stat_r();},g:false,p:"All Masteries EXP Gain +5%, Fighting EXP Gain +5%"},
-                {lv:6,f:()=>{skl.evas.p+=.08;you.mods.cpwr+=.08;skl.war.p+=.07;},g:false,p:"Evasion EXP Gain +8%, Critical Damage +8%, War EXP Gain +7%"},
-                {lv:7,f:()=>{skl.scout.p+=.1;you.mods.sbonus+=0.01; you.stra+=2;you.stat_r()},g:false,p:"EXP Gain +7%, STR +2, Perception EXP Gain +10%, Energy Effectiveness +1%"},
-                {lv:8,f:()=>{you.aff[0]+=5},g:false,p:"Physical ATK +5"},
-                {lv:9,f:()=>{you.agla+=1;you.luck+=1;you.exp_t+=0.05;you.mods.sbonus+=0.01;you.stat_r()},g:false,p:"AGL +1, LUCK +1, EXP Gain +5%, Energy Effectiveness +1%"},
-                ];
 
 skl.evas = new Skill(); skl.evas.id = 124; skl.evas.type=3;
 skl.evas.name = 'Evasion';
@@ -2092,7 +1990,7 @@ skl.fdpnr = new Skill(); skl.fdpnr.id = 129; skl.fdpnr.type=4;
 skl.fdpnr.name = 'Survival';
 skl.fdpnr.desc = 'Ability to safely digest dangerous food'+dom.dseparator+'<small style="color:darkorange">Reduces energy loss from food poisoning</small>';
 skl.fdpnr.use=function(x,y){return this.lvl*.05}
-skl.fdpnr.mlstn=[{lv:1,f:()=>{you.exp_t+=0.3},g:false,p:"EXP Gain +3%"},
+skl.fdpnr.mlstn=[{lv:1,f:()=>{you.exp_t+=0.03},g:false,p:"EXP Gain +3%"},
                 {lv:2,f:()=>{you.sata+=15; you.hpa+=30; skl.glt.p+=.05;dom.d5_3_1.update(); you.stat_r();},g:false,p:"SAT +15, HP +30, Gluttony EXP Gain +5%"},
                 {lv:3,f:()=>{giveTitle(ttl.rfpn1);skl.drka.p+=.1;; you.exp_t+=0.05; you.stra+=1;you.stat_r();},g:false,p:"EXP Gain +5%, STR +1, Drinking EXP Gain +10%, New Title"},
                 {lv:5,f:()=>{giveTitle(ttl.rfpn2);you.exp_t+=0.07;skl.painr.p+=.1;skl.glt.p+=.1;},g:false,p:"EXP Gain +7%, Pain Resistance EXP Gain +10%, Gluttony EXP Gain +10%, New Title"}, 
@@ -2313,22 +2211,14 @@ item.rcs.use=function(){
   msg('placeholder');
 }
 
-function healingEfficacy() { 
-  let scaling = 1 + Math.log(you.int_r + 1) / (10 * Math.log2(you.int_r + 1));
-  let extra = Math.floor(Math.max(0, you.int_r - 1) ** 0.5);
-  let healing = Math.floor(this.val * scaling + extra);
-  return healing; }
-function healingFunction () { global.stat.medst++; you.hp = Math.min(you.hpmax, you.hp + this.heal());
-  this.amount--; dom.d5_1_1.update(); msg('Restored '+ this.heal() +' hp','lime');
-}
-
-
 item.hrb1 = new Item(); item.hrb1.id = 3001;
-item.hrb1.name='Cure Grass'; item.hrb1.val = 7;
-item.hrb1.heal= healingEfficacy.bind(item.hrb1);
-item.hrb1.use= healingFunction.bind(item.hrb1);
-item.hrb1.desc=function(){return 'Herb with minor healing properties. Has to be processed before use. Can somewhat speed up recovery of tiny cuts and bruises if applied directly'+dom.dseparator+'Restores<span style=\'color:lime\'> '+item.hrb1.heal()+' </span>health';}
+item.hrb1.name='Cure Grass'; item.hrb1.val = 7
+item.hrb1.desc='Herb with minor healing properties. Has to be processed before use. Can somewhat speed up recovery of tiny cuts and bruises if applied directly'+dom.dseparator+'Restores<span style=\'color:lime\'> '+item.hrb1.val+' </span>health';
 item.hrb1.stype=4; 
+item.hrb1.use=function(){ global.stat.medst++
+  you.hp+this.val>you.hpmax?you.hp=you.hpmax:you.hp+=this.val;
+  this.amount--; dom.d5_1_1.update(); msg('Restored '+this.val+' hp','lime');
+}
 item.hrb1.onGet=function(){
   if(this.amount>=50) {giveRcp(rcp.hlstw); this.onGet=function(){}}
 }
@@ -2354,10 +2244,12 @@ item.psnwrd.use=function(){ global.stat.medst++
 
 item.hlpd = new Item(); item.hlpd.id = 3004;
 item.hlpd.name='Low-grade Healing Powder'; item.hlpd.val = 16;
-item.hlpd.heal=healingEfficacy.bind(item.hlpd);
-item.hlpd.use=healingFunction.bind(item.hlpd);
-item.hlpd.desc=function() {return 'Finely crushed cure grass. Used as a base to make weak medicine'+dom.dseparator+'Restores<span style=\'color:lime\'> '+item.hlpd.heal()+' </span>health';}
+item.hlpd.desc='Finely crushed cure grass. Used as a base to make weak medicine'+dom.dseparator+'Restores<span style=\'color:lime\'> '+item.hlpd.val+' </span>health';
 item.hlpd.stype=4; 
+item.hlpd.use=function(){ global.stat.medst++
+  you.hp+this.val>you.hpmax?you.hp=you.hpmax:you.hp+=this.val;
+  this.amount--; dom.d5_1_1.update(); msg('Restored '+this.val+' hp','lime');
+}
 
 item.smm = new Item(); item.smm.id = 3005;
 item.smm.name='Stomach Medicine';
@@ -2406,10 +2298,12 @@ item.lsrd.use=function(){
 
 item.hptn1 = new Item(); item.hptn1.id = 3010;
 item.hptn1.name='Lesser Healing Potion'; item.hptn1.val = 50;
-item.hptn1.heal=healingEfficacy.bind(item.hptn1);
-item.hptn1.use=healingFunction.bind(item.hptn1);
-item.hptn1.desc=function() {return 'Weakest healing potion you can possibly find. Nearly useless for actual healing, but can act as a headache reliever'+dom.dseparator+'Restores<span style=\'color:lime\'> '+item.hptn1.heal()+' </span>health';}
+item.hptn1.desc='Weakest healing potion you can possibly find. Nearly useless for actual healing, but can act as a headache reliever'+dom.dseparator+'Restores<span style=\'color:lime\'> '+item.hptn1.val+' </span>health';
 item.hptn1.stype=4; 
+item.hptn1.use=function(){ 
+  you.hp+this.val>you.hpmax?you.hp=you.hpmax:you.hp+=this.val; global.stat.potnst++; global.stat.medst++
+  this.amount--; dom.d5_1_1.update(); msg('Restored '+this.val+' hp','lime');
+}
 
 item.lckl = new Item(); item.lckl.id = 3011;
 item.lckl.name='Lucky Clover';
@@ -2564,24 +2458,30 @@ item.mnblm.use=function(){
 
 item.hptn2 = new Item(); item.hptn2.id = 3025;
 item.hptn2.name='Minor Healing Potion'; item.hptn2.val = 450;
-item.hptn2.heal=healingEfficacy.bind(item.hptn2);
-item.hptn2.use=healingFunction.bind(item.hptn2);
-item.hptn2.desc=function() {return 'Healing potion with weak healing powers. It is usually used by commoners as first aid before deciding whether to go see a doctor or not'+dom.dseparator+'Restores<span style=\'color:lime\'> '+item.hptn2.heal()+' </span>health';}
+item.hptn2.desc='Healing potion with weak healing powers. It is usually used by commoners as first aid before deciding whether to go see a doctor or not'+dom.dseparator+'Restores<span style=\'color:lime\'> '+item.hptn2.val+' </span>health';
 item.hptn2.stype=4; 
+item.hptn2.use=function(){ 
+  you.hp+this.val>you.hpmax?you.hp=you.hpmax:you.hp+=this.val; global.stat.potnst++; global.stat.medst++
+  this.amount--; dom.d5_1_1.update(); msg('Restored '+this.val+' hp','lime');
+}
 
 item.hptn3 = new Item(); item.hptn3.id = 3026;
 item.hptn3.name='Healing Potion'; item.hptn3.val = 2100;
-item.hptn3.heal=healingEfficacy.bind(item.hptn3);
-item.hptn3.use=healingFunction.bind(item.hptn3);
-item.hptn3.desc=function() {return 'Startand healing potion of common quality. It can heal wounds, bruises, burns, sprains and other minor injuries. Novice adventurers and hunters should carry a few of these at all times'+dom.dseparator+'Restores<span style=\'color:lime\'> '+item.hptn3.heal()+' </span>health';}
+item.hptn3.desc='Startand healing potion of common quality. It can heal wounds, bruises, burns, sprains and other minor injuries. Novice adventurers and hunters should carry a few of these at all times'+dom.dseparator+'Restores<span style=\'color:lime\'> '+item.hptn3.val+' </span>health';
 item.hptn3.stype=4; 
+item.hptn3.use=function(){ 
+  you.hp+this.val>you.hpmax?you.hp=you.hpmax:you.hp+=this.val; global.stat.potnst++; global.stat.medst++
+  this.amount--; dom.d5_1_1.update(); msg('Restored '+this.val+' hp','lime');
+}
 
 item.hptn4 = new Item(); item.hptn4.id = 3027;
 item.hptn4.name='Major Healing Potion'; item.hptn4.val = 7900;
-item.hptn4.heal=healingEfficacy.bind(item.hptn4);
-item.hptn4.use=healingFunction.bind(item.hptn4);
-item.hptn4.desc=function() {return 'Potions given to the knights in times of war. Can heal moderate wounds and dull out the pain. These potions sneak their way into the market by all kinds of illegal means, yet actually selling them isn\'t prohibited'+dom.dseparator+'Restores<span style=\'color:lime\'> '+item.hptn4.heal()+' </span>health';}
+item.hptn4.desc='Potions given to the knights in times of war. Can heal moderate wounds and dull out the pain. These potions sneak their way into the market by all kinds of illegal means, yet actually selling them isn\'t prohibited'+dom.dseparator+'Restores<span style=\'color:lime\'> '+item.hptn4.val+' </span>health';
 item.hptn4.stype=4; item.hptn4.rar=2; 
+item.hptn4.use=function(){ 
+  you.hp+this.val>you.hpmax?you.hp=you.hpmax:you.hp+=this.val; global.stat.potnst++; global.stat.medst++
+  this.amount--; dom.d5_1_1.update(); msg('Restored '+this.val+' hp','lime');
+}
 
 item.lsstn = new Item(); item.lsstn.id = 3028;
 item.lsstn.name='Life Stone';
@@ -5650,7 +5550,7 @@ item.bfsnwt.name = '"Beggar Fashion"';
 item.bfsnwt.desc = 'Some nonsence illustration with a name, featuring a group of peasants in rags posing awkwardly. What even is this?';
 item.bfsnwt.stype = 4; item.bfsnwt.data.time=HOUR*4;
 item.bfsnwt.use = function(){if(canRead()){if(this.data.timep>=this.cmax){ 
-   let dt=0; dt+=giveRcp(rcp.ptchpts); dt+=giveRcp(rcp.ptchct);  dt+=giveRcp(rcp.ptchhd); dt+=giveRcp(rcp.ptchglv);
+   let dt=0; dt+=giveRcp(rcp.ptchpts); dt+=giveRcp(rcp.ptchct); 
    if(dt===0) msg('You haven\'t learned anything new...','lightgrey')
    this.data.read=false; this.amount-- ; 
 }else chss.trd.sl(this);}
@@ -5763,15 +5663,6 @@ wpn.knf2.str = 7;
 wpn.knf2.agl = -1; wpn.knf2.cls=[3,2,1];
 wpn.knf2.dp=wpn.knf2.dpmax = 11;
 wpn.knf2.wtype = 3;
-
-wpn.axe1 = new Eqp(); wpn.axe1.id = 10070; 
-wpn.axe1.name = 'Rusty Axe';
-wpn.axe1.desc = 'Chipped and dulled axe, crusted with sap and worn at the haft from use'+dom.dseparator;
-wpn.axe1.slot = 1;
-wpn.axe1.str = 18;
-wpn.axe1.agl = -3; wpn.axe1.cls=[5,1,3];
-wpn.axe1.dp=wpn.axe1.dpmax = 32;
-wpn.axe1.wtype = 2;
 
 wpn.ktn1 = new Eqp(); wpn.ktn1.id = 10005;
 wpn.ktn1.name = 'Rusty Katana';
@@ -6481,28 +6372,6 @@ eqp.ptchpts.stype = 3;
 eqp.ptchpts.aff=[3,2,8,4,5,5,2];
 eqp.ptchpts.cls=[3,5,5];
 eqp.ptchpts.dp=eqp.ptchpts.dpmax = 38;
-
-eqp.ptchglv = new Eqp(); eqp.ptchglv.id = 20032;
-eqp.ptchglv.name = 'Patchwork Gloves';
-eqp.ptchglv.desc = 'Gloves made from scraps and stitches. Holes in the fingers leave parts unprotected but it beats nothing'+dom.dseparator;
-eqp.ptchglv.slot = 5;
-eqp.ptchglv.str = 8; eqp.ptchglv.undc = 5;
-eqp.ptchglv.aff=[1,0,0,0,0,0,0];
-eqp.ptchglv.cls=[2,1,1];
-eqp.ptchglv.stype = 3;
-eqp.ptchglv.dp=eqp.ptchglv.dpmax = 37;
-eqp.ptchglv.oneq = function(){you.mods.undc+=this.undc};
-eqp.ptchglv.onuneq =function(){you.mods.undc-=this.undc};
-
-eqp.ptchhd = new Eqp(); eqp.ptchhd.id = 20033;
-eqp.ptchhd.name = 'Patchwork Hood';
-eqp.ptchhd.desc = 'Hood made from off-cuts of inexpensive fabric. Barely keeps the wind out'+dom.dseparator;
-eqp.ptchhd.slot = 3;
-eqp.ptchhd.str = 12;
-eqp.ptchhd.aff=[3,3,2,13,2,5,1];
-eqp.ptchhd.cls=[2,1,1];
-eqp.ptchhd.stype = 3;
-eqp.ptchhd.dp=eqp.ptchhd.dpmax = 38;
 
 sld.bkl = new Eqp(); sld.bkl.id = 30001;
 sld.bkl.name = 'Buckler';
@@ -7386,14 +7255,11 @@ item.dmice1.dss=[{item:item.sbone,amount:1,q:.6,max:3}]
 item.dbdc1.dss=[{item:item.sbone,amount:1,q:.5,max:2}]
 
 ////misc////
-global.wdrop=[{item:item.lckl,c:.000048}];
+global.wdrop=[{item:item.lckl,c:.0000048}];
 global.rdrop=[ // g f e 
-  [{item:item.lsrd,c:.00026},{item:item.lsstn,c:.000007},{item:item.mnblm,c:.00013},
-    {item:item.stthbm1,c:.00023}, {item:item.stthbm2,c:.000023}, {item:item.stthbm3,c:.00023}, {item:item.stthbm4,c:.00023}],  
-  [{item:item.lsrd,c:.0005},{item:item.lsstn,c:.000015},{item:item.mnblm,c:.00025},
-    {item:item.stthbm1,c:.00047}, {item:item.stthbm2,c:.000047}, {item:item.stthbm3,c:.00047}, {item:item.stthbm4,c:.00047}],   
-  [{item:item.lsrd,c:.00098},{item:item.lsstn,c:.000033},{item:item.mnblm,c:.00049},
-    {item:item.stthbm1,c:.00095}, {item:item.stthbm2,c:.000095}, {item:item.stthbm3,c:.00095}, {item:item.stthbm4,c:.00095}],
+  [{item:item.lsrd,c:.00026}],  
+  [{item:item.lsrd,c:.0005}],   
+  [{item:item.lsrd,c:.00098},{item:item.lsstn,c:.00023}],
   [],[],[],[]];
 global.achchk=[//1 - you die, 2 - enemy dies
   [ 
@@ -7647,10 +7513,10 @@ creature.spd1.battle_ai = function(x,y,z){
   return attack(x,y)
 }
 
-creature.tdummy = new Creature(); creature.tdummy.id = 102;
+creature.tdummy = new Creature(); creature.tdummy.id = 103;
 creature.tdummy.name = 'Training dummy';
 creature.tdummy.desc = 'He\'s made of fabric'; 
-creature.tdummy.drop =[{item:wpn.knf1,chance:.01,cond:()=>{return you.lvl<=50}},{item:eqp.brc,chance:.03,cond:()=>{return you.lvl<=50}},{item:item.hrb1,chance:.04}];
+creature.tdummy.drop =[{item:wpn.knf1,chance:.01,cond:()=>{return you.lvl<=20}},{item:eqp.brc,chance:.03,cond:()=>{return you.lvl<=20}},{item:item.hrb1,chance:.02}];
 creature.tdummy.aff = [0,0,15,-25,-5,-666,666];
 creature.tdummy.stat_p=[.1,.5,.4,.2]
 creature.tdummy.ctype = 2;
@@ -7686,11 +7552,7 @@ creature.wdummy.cls = [-1,2,4];
 creature.wdummy.str_r = 3;
 creature.wdummy.ctype = 2;
 creature.wdummy.rnk=1;
-creature.wdummy.drop =[{item:eqp.pnt,chance:.008,cond:()=>{return you.lvl<=50}},
-  {item:eqp.vst,chance:.007,cond:()=>{return you.lvl<=50}},
-  {item:eqp.bnd,chance:.01,cond:()=>{return you.lvl<=50}},
-  {item:item.wdc,chance:.03},
-  {item:wpn.wsrd2,chance:.002,cond:()=>{return you.lvl<=50}}];
+creature.wdummy.drop =[{item:eqp.pnt,chance:.008,cond:()=>{return you.lvl<=20}},{item:eqp.vst,chance:.007,cond:()=>{return you.lvl<=20}},{item:eqp.bnd,chance:.01,cond:()=>{return you.lvl<=20}},{item:item.wdc,chance:.03},{item:wpn.wsrd2,chance:.002,cond:()=>{return you.lvl<=20}}];
 creature.wdummy.battle_ai = function(x,y,z){
   if(random()<=.001) return attack(x,y,abl.rstab);
   return attack(x,y)
@@ -8254,18 +8116,18 @@ area.tst.onEnd = function(){};
 area.frstn1a2 = new Area(); area.frstn1a2.id = 109;
 area.frstn1a2.name = 'Western forest hunting area';
 area.frstn1a2.pop = [{crt:creature.rbt1,lvlmin:1,lvlmax:5,c:.20},{crt:creature.slm1,lvlmin:1,lvlmax:6,c:.40},{crt:creature.slm2,lvlmin:1,lvlmax:6,c:.40}];
-area.frstn1a2.size = 20; z_bake(area.frstn1a2);
+area.frstn1a2.size = 60; z_bake(area.frstn1a2);
 area.frstn1a2.onEnd = function(){
   roll(item.acrn,.2,1,3); roll(item.wbrs,.2,1,3); roll(item.cp,.5,1,5); roll(wpn.knf2,.06);roll(wpn.ktn1,.04); roll(item.hrb1,.6,1,4);
   roll(wpn.stk1,.3); roll(item.sbone,.1,1,3); giveItem(item.wbrs,rand(1,2)); roll(item.wdc,1,7,22); roll(item.spb,.7);
   roll(item.pcn,.1,1,2);
-  this.size=rand(20)+10;smove(chss.frstn1a2);
+  this.size=rand(40)+30;smove(chss.frstn1a2);
 }; area.frstn1a2.drop=[{item:item.hrb1,c:.02},{item:item.wdc,c:.05}]
 
 area.hmbsmnt = new Area(); area.hmbsmnt.id = 110;
 area.hmbsmnt.name = 'Your basement';
 area.hmbsmnt.pop = [{crt:creature.bat,lvlmin:10,lvlmax:17,c:.50},{crt:creature.spd1,lvlmin:10,lvlmax:17,c:.50}];
-area.hmbsmnt.size = 50; z_bake(area.hmbsmnt);
+area.hmbsmnt.size = 10; z_bake(area.hmbsmnt);
 area.hmbsmnt.onEnd = function(){ 
   smove(chss.bsmnthm1,false); 
 }
@@ -8280,12 +8142,12 @@ area.trne1.onEnd = function(){this.size=1;if(!global.flags.trne1e1)smove(chss.tr
 area.frstn2a2 = new Area(); area.frstn2a2.id = 112;
 area.frstn2a2.name = 'Western forest hunting area';
 area.frstn2a2.pop = [{crt:creature.rbt1,lvlmin:1,lvlmax:7,c:.25},{crt:creature.slm1,lvlmin:1,lvlmax:8,c:.20},{crt:creature.slm2,lvlmin:1,lvlmax:8,c:.20},{crt:creature.slm3,lvlmin:1,lvlmax:5,c:.25}];
-area.frstn2a2.size = 20; z_bake(area.frstn2a2);
+area.frstn2a2.size = 50; z_bake(area.frstn2a2);
 area.frstn2a2.onEnd = function(){
   roll(item.acrn,.2,1,3);  roll(item.cp,.2,1,8); roll(wpn.knf2,.03);roll(wpn.ktn1,.04); roll(item.hrb1,.4,2,5);
   roll(wpn.stk1,.4); roll(item.sbone,.2,1,3); giveItem(item.wbrs,rand(1,3)); roll(item.wdc,1,5,17); roll(item.spb,.6);
   roll(item.pcn,.3,1,3); if(!global.flags.wp2sgt) roll(item.wp2s,.2);
-  this.size=rand(20)+10;
+  this.size=rand(50)+40;
   if(!global.flags.frstn1a3u){msg('You have discovered a new hunting area','lime');global.flags.frstn1a3u=true;smove(chss.frstn1main)} else smove(chss.frstn1a2);
 }; area.frstn2a2.drop=[{item:item.hrb1,c:.03},{item:item.wdc,c:.06}]
 
@@ -8305,8 +8167,7 @@ area.frstn1a3 = new Area(); area.frstn1a3.id = 115;
 area.frstn1a3.name = 'Western forest hunting area';
 area.frstn1a3.pop = [{crt:creature.rbt1,lvlmin:3,lvlmax:8,c:.35},{crt:creature.slm1,lvlmin:3,lvlmax:9,c:.15},{crt:creature.slm2,lvlmin:3,lvlmax:9,c:.15},{crt:creature.slm3,lvlmin:2,lvlmax:5,c:.2}];
 area.frstn1a3.size = -1; z_bake(area.frstn1a3); area.frstn1a3.protected=true
-area.frstn1a3.drop=[{item:item.hrb1,c:.009},{item:item.wdc,c:.025},{item:item.acrn,c:.001},{item:item.mshr,c:.002},{item:item.cp,c:.002},
-{item:wpn.knf2,c:.00009},{item:wpn.ktn1,c:.00006},{item:wpn.stk1,c:.0007},{item:item.sbone,c:.0009},{item:item.wbrs,c:.003},{item:item.spb,c:.0004},{item:item.pcn,c:.001},{item:item.fwd1,c:.0009}]
+area.frstn1a3.drop=[{item:item.hrb1,c:.009},{item:item.wdc,c:.025},{item:item.acrn,c:.001},{item:item.mshr,c:.002},{item:item.cp,c:.002},{item:wpn.knf2,c:.00009},{item:wpn.ktn1,c:.00006},{item:wpn.stk1,c:.0007},{item:item.sbone,c:.0009},{item:item.wbrs,c:.003},{item:item.spb,c:.0004},{item:item.pcn,c:.001},{item:item.fwd1,c:.0009}]
 
 area.frstn1a4 = new Area(); area.frstn1a4.id = 116;
 area.frstn1a4.name = 'Western forest hidden area';
@@ -8326,11 +8187,11 @@ area.trne4.onEnd = function(){this.size=1;if(!global.flags.trne4e1)smove(chss.tr
 area.frstn9a1 = new Area(); area.frstn9a1.id = 118;
 area.frstn9a1.name = 'Southern forest hunting area';
 area.frstn9a1.pop = [{crt:creature.wolf1,lvlmin:7,lvlmax:8,c:.25},{crt:creature.slm5,lvlmin:10,lvlmax:11,c:.75}];
-area.frstn9a1.size = 28; z_bake(area.frstn9a1);
+area.frstn9a1.size = 48; z_bake(area.frstn9a1);
 area.frstn9a1.onEnd = function(){
   roll(item.acrn,.2,1,5);  roll(item.mshr,.35,1,3);
   roll(wpn.stk1,.15); roll(item.sbone,.3,1,3);  roll(item.wdc,1,5,17); roll(item.appl,.25,2,5); roll(item.pcn,.5,1,3); 
-  this.size=rand(20)+10; smove(chss.frstn3main)
+  this.size=rand(20)+40; smove(chss.frstn3main)
 }; area.frstn9a1.drop=[{item:item.hrb1,c:.03},{item:item.wdc,c:.06}]
 
 
@@ -8886,28 +8747,6 @@ rcp.ptchpts.srec=[function(){
   for(let hh in inv) if(inv[hh].tlrq>=1) return true;
 }];
 
-rcp.ptchhd = new Recipe(); rcp.ptchhd.id = 171;
-rcp.ptchhd.name='Patchwork Hood'; 
-rcp.ptchhd.type = 4;
-rcp.ptchhd.rec=[{item:item.cclth,amount:8},{item:item.thrdnl,amount:2}];
-rcp.ptchhd.res=[{item:eqp.ptchhd,amount:1}];
-rcp.ptchhd.onmake=function(){giveCrExp(skl.crft,2,2);giveCrExp(skl.tlrng,3,1)}
-rcp.ptchhd.srect=['Tailoring tool lvl: 1'];
-rcp.ptchhd.srec=[function(){
-  for(let hh in inv) if(inv[hh].tlrq>=1) return true;
-}];
-
-rcp.ptchglv = new Recipe(); rcp.ptchglv.id = 172;
-rcp.ptchglv.name='Patchwork Glove'; 
-rcp.ptchglv.type = 4;
-rcp.ptchglv.rec=[{item:item.cclth,amount:7},{item:item.thrdnl,amount:4}];
-rcp.ptchglv.res=[{item:eqp.ptchglv,amount:1}];
-rcp.ptchglv.onmake=function(){giveCrExp(skl.crft,2,2);giveCrExp(skl.tlrng,3,1)}
-rcp.ptchglv.srect=['Tailoring tool lvl: 1'];
-rcp.ptchglv.srec=[function(){
-  for(let hh in inv) if(inv[hh].tlrq>=1) return true;
-}];
-
 rcp.bblkt = new Recipe(); rcp.bblkt.id = 151;
 rcp.bblkt.name='Ragwork Blanket'; 
 rcp.bblkt.type = 5;
@@ -9102,41 +8941,7 @@ vendor.gens1 = new Vendor();
 vendor.gens1.name = 'General Store';
 vendor.gens1.time=vendor.gens1.timeorig=3; vendor.gens1.infl = 1.2; vendor.gens1.dfl = .2;
 vendor.gens1.data.rep=5; vendor.gens1.repsc=4
-vendor.gens1.items=[
-  {item:item.fwd1,p:25,c:1,min:8,max:20},
-  {item:item.skl1,p:180,c:.2,min:1,max:2},
-  {item:item.skl2,p:180,c:.2,min:1,max:2},
-  {item:item.skl3,p:180,c:.2,min:1,max:2},
-  {item:item.skl4,p:180,c:.2,min:1,max:2},
-  {item:item.skl5,p:180,c:.2,min:1,max:2},
-  {item:item.skl6,p:180,c:.2,min:1,max:2},
-  {item:item.skl1a,p:380,c:.2,min:1,max:2},
-  {item:item.skl2a,p:380,c:.2,min:1,max:2},
-  {item:item.skl3a,p:380,c:.2,min:1,max:2},
-  {item:item.skl4a,p:380,c:.2,min:1,max:2},
-  {item:item.skl5a,p:380,c:.2,min:1,max:2},
-  {item:item.skl6a,p:380,c:.2,min:1,max:2},
-  {item:item.coal2,p:80,c:.5,min:2,max:5},
-  {item:item.amrthsck,p:360,c:.2,min:1,max:1},
-  {item:item.dmkbk,p:390,c:.15,min:1,max:1},
-  {item:item.wsb,p:16,c:.7,min:5,max:11},
-  {item:wpn.wsrd1,p:35,c:.6,min:1,max:3},
-  {item:eqp.rncp,p:60,c:.3,min:1,max:3},
-  {item:eqp.rnss,p:70,c:.3,min:1,max:3},
-  {item:eqp.tnc,p:56,c:.3,min:1,max:3},
-  {item:eqp.sndl,p:32,c:.3,min:1,max:6},
-  {item:wpn.bsrd,p:100,c:.3,min:1,max:2},
-  {item:wpn.axe1,p:100,c:.3,min:1,max:2},
-  {item:wpn.sprw,p:130,c:.3,min:1,max:3},
-  {item:item.wine1,p:116,c:.2,min:1,max:7},
-  {item:item.rope,p:100,c:.65,min:1,max:6},
-  {item:item.msc1,p:110,c:.25,min:1,max:4},
-  {item:item.tbwr1,p:130,c:.65,min:1,max:4},
-  {item:item.bed2,p:500,c:.45,min:1,max:1},
-  {item:item.cndl,p:200,c:.55,min:1,max:2},
-  {item:item.cclth,p:7,c:.85,min:15,max:50},
-  {item:item.thrdnl,p:2,c:.85,min:3,max:70},
-  {item:acc.ndlb,p:50,c:.73,min:1,max:15}];
+vendor.gens1.items=[{item:item.fwd1,p:25,c:1,min:8,max:20},{item:item.coal2,p:80,c:.5,min:2,max:5},{item:item.amrthsck,p:360,c:.2,min:1,max:1},{item:item.dmkbk,p:390,c:.15,min:1,max:1},{item:item.wsb,p:16,c:.7,min:5,max:11},{item:wpn.wsrd1,p:35,c:.6,min:1,max:3},{item:eqp.rncp,p:60,c:.3,min:1,max:3},{item:eqp.rnss,p:70,c:.3,min:1,max:3},{item:eqp.tnc,p:56,c:.3,min:1,max:3},{item:eqp.sndl,p:32,c:.3,min:1,max:6},{item:wpn.bsrd,p:100,c:.3,min:1,max:2},{item:wpn.sprw,p:130,c:.3,min:1,max:3},{item:item.wine1,p:116,c:.2,min:1,max:7},{item:item.rope,p:100,c:.65,min:1,max:6},{item:item.msc1,p:110,c:.25,min:1,max:4},{item:item.tbwr1,p:130,c:.65,min:1,max:4},{item:item.bed2,p:500,c:.45,min:1,max:1},{item:item.cndl,p:200,c:.55,min:1,max:2},{item:item.cclth,p:7,c:.85,min:15,max:50},{item:item.thrdnl,p:2,c:.85,min:3,max:70},{item:acc.ndlb,p:50,c:.73,min:1,max:15}];
 vendor.gens1.extra = function(){
   if(random()<.2)chss.gens1.data.gets[0]=false;
 }
@@ -10659,7 +10464,7 @@ function attack(att,def,atk,power){ if(!global.flags.btl) return
     if(global.flags.eshake===true){dom.d1m.style.left=parseInt(global.special_x)+rand(-3,3)+'px'; dom.d1m.style.top=parseInt(global.special_y)+rand(-3,3)+'px';
     setTimeout(()=>{dom.d1m.style.left=parseInt(global.special_x)+'px'; dom.d1m.style.top=parseInt(global.special_y)+'px';},60);
     }}
-    else {if(global.target.id!==10000)global.target.dp>0?global.target.dp-=.008:global.target.dp=0;if(you.eqp[1].id!==10000)you.eqp[1].dp>0?you.eqp[1].dp-=.008:you.eqp[1].dp=0; if(dmg>0) giveSkExp(skl.painr,1); if(global.target.id===10000&&dmg>0)giveSkExp(skl.tghs,(dmg*.05) + .01); global.stat.dmgrt+=dmg}
+    else {if(global.target.id!==10000)global.target.dp>0?global.target.dp-=.008:global.target.dp=0;if(you.eqp[1].id!==10000)you.eqp[1].dp>0?you.eqp[1].dp-=.008:you.eqp[1].dp=0; if(dmg>0) giveSkExp(skl.painr,1); if(global.target.id===10000&&dmg>0)giveSkExp(skl.tghs,dmg*.05); global.stat.dmgrt+=dmg}
   } else {global.miss++;global.stat.misst++;;if(global.flags.m_blh===false&&(!global.flags.multih&&global.flags.m_blh===false))msg(att.name+' missed','grey');global.flags.msd=true;if(dk)giveSkExp(skl.ntst,.01);if(!isyou) global.stat.dodgt++;}update_d();
     if(!global.flags.multih) {if(isyou&&dmg>=def.hpmax) global.stat.onesht++; if (def.hp<=0&&def.alive===true) {global.atkdfty=[3,global.atkdftydt];def.onDeath(att);def.onDeathE(att);}}
   return dmg||0;
@@ -10716,11 +10521,11 @@ function dmg_calc(att,def,atk){ let isyou=att.id===you.id;
       dom.d1m.style.left=parseInt(global.special_x)+rand(-3,3)+'px'; dom.d1m.style.top=parseInt(global.special_y)+rand(-3,3)+'px';
       setTimeout(()=>{dom.d1m.style.left=parseInt(global.special_x)+'px'; dom.d1m.style.top=parseInt(global.special_y)+'px';},60);
       } else {giveSkExp(skl.dngs,1);sk=skl.dngs.use(); dmod=1-sk*(sk>25?.01:.02)}
-      if(dmg<=0)dmg=1;
+      if(dmg<=0)dmg=0;
       cdmg = dmg*randf(1.9*cpw,2.1*cpw)*.5*dmod*cbst;
       global.flags.crti=true; 
       return dmg+cdmg<=1?rand(1,5):Math.ceil((dmg+cdmg)*att.dmlt*randf(.9,1.1))+rand(1,5); 
-    } else return dmg>0?Math.ceil(dmg*att.dmlt*randf(.9,1.1)):1;
+    } else return dmg>0?Math.ceil(dmg*att.dmlt*randf(.9,1.1)):0;
 }
 
 function dumb(x){
@@ -11852,7 +11657,7 @@ chss.t3.sl=()=>{global.flags.inside=true; d_loc('Dojo, lobby'); global.lst_loc =
         if(dlr===0) chs('"Instructor: There\'s nothing I can take from you"',true); else{
           chs('"Instructor: For all your stuff I can fetch you '+dlr+' '+(dom.coincopper)+' copper. How does that sound?"',true);
           chs('"Accept"',false,'lime').addEventListener('click',()=>{ 
-            msg(stash.length+" Items returned back to dojo",'ghostwhite'); global.stat.ivtntdj+=stash.length;giveWealth(dlr); for(let a in stash) removeItem(stash[a]); if(global.stat.ivtntdj>=60)giveTitle(ttl.tqtm); smove(chss.t3,false);
+            msg(stash.length+" Items returned back to dojo",'ghostwhite'); global.stat.ivtntdj+=stash.length;giveWealth(dlr); for(let a in stash) removeItem(stash[a]); if(global.stat.ivtntdj>=300)giveTitle(ttl.tqtm); smove(chss.t3,false);
           });
         }
         chs('"<= Go back"',false).addEventListener('click',()=>{
@@ -12505,7 +12310,6 @@ chss.jbgd1.sl=()=>{global.flags.inside=false;  d_loc('Village Center, Marketplac
   dom.trddots = addElement(c,'span'); dom.trddots.frames=['','.','..','...']; dom.trddots.frame=0; dom.trddots.style.position='absolute'; clearInterval(timers.rdngdots);
   timers.rdngdots = setInterval(()=>{dom.trddots.innerHTML=dom.trddots.frames[(dom.trddots.frame=dom.trddots.frame>2?0:++dom.trddots.frame)]},333)
   chs('"Be bored"',false).addEventListener('click',()=>{
-    
     msg(select(['Right...','This is boring','*whistle*','Ah...','...','Yeah...','Mhm...','Yawn..']),'lightgrey')
   });
 }
@@ -12534,6 +12338,8 @@ chss.fdwrg1qt.sl=()=>{ d_loc('Marketplace, Stalls');
     smove(chss.mrktvg1,false);
   });
 }
+
+
 chss.grc1 = new Chs(); chss.grc1.id = 128; chss.grc1.effectors=[{e:effector.shop}];
 chss.grc1.sl=()=>{global.flags.inside=true;  d_loc('Marketplace, Grocery Shop'); global.lst_loc = 128; 
   chs('Old Lady: '+(select(['These are very fresh, buy some!','Freshest vegetables for the lowest price!','Try a few and you\'ll want even more!'])),true);
@@ -12612,16 +12418,6 @@ chss.pha1.sl=()=>{global.flags.inside=true;  d_loc('Marketplace, Herbalist'); gl
           giveItem(item.hptn1,15);giveItem(item.hptn2,3);vendor.pha1.data.rep=vendor.pha1.data.rep+10>100?100:vendor.pha1.data.rep+10;msg('The Herbalist likes you a bit more','lime');global.flags.hbhbgft=true; smove(chss.pha1,false); return;
         });
       };if(item.hrb1.amount<50)smove(chss.pha1,false)}else{smove(chss.pha1,false);msg('?')}
-    });
-    chs('"<= Rather not"',false).addEventListener('click',()=>{
-      smove(chss.pha1,false); 
-    });
-  });
-  if(item.hptn1.amount>=10) chs('"Sell healing potions '+ dom.coincopper+'"',false).addEventListener('click',()=>{
-    chs('Herbalist: Been brewing a potion or two, have you? I can\'t keep them on the shelves. I\'ll buy a bundle of 10 for 30 '+dom.coincopper,true);
-    chs('"Sell your goods"',false,'lime').addEventListener('click',()=>{if(item.hptn1.amount>=10){
-      giveWealth(30);item.hptn1.amount-=10;reduce(item.hptn1);
-      if(item.hptn1.amount<10)smove(chss.pha1,false)}else{smove(chss.pha1,false);msg('?')}
     });
     chs('"<= Rather not"',false).addEventListener('click',()=>{
       smove(chss.pha1,false); 
@@ -12970,7 +12766,7 @@ chss.home.sl=()=>{d_loc('Your Home'); global.lst_loc = 111;
             document.body.removeChild(a);
           }
         },20);
-        tcat.data.mood=tcat.data.mood-.001<=0?0:tcat.data.mood-.001; if(tcat.data.mood>=0.001)skl.pet.use();});    
+        tcat.data.mood=tcat.data.mood-.01<=0?0:tcat.data.mood-.01; if(tcat.data.mood>=0.01)skl.pet.use();});    
           chs('"<= Return"',false).addEventListener('click',()=>{
             smove(chss.home,false); clearInterval(timers.caupd); 
           });
@@ -13912,17 +13708,14 @@ function rfeff(what){
 }
 
 function lvlup(p,t){
-  let isMaxedRolls = p.id === you.id;
   if(t===0) {
     p.hp=p.hp_r;p.str=p.str_r;p.agl=p.agl_r;p.spd=p.spd_r;
   } else{ t=t||1
   p.lvl+=t;
-  let min = (isMaxedRolls ? 2 : 1) * t;
-  let max = 2 * t;
-  let sb =randf(min*p.stat_p[1],max*p.stat_p[1]); p.str_r+=sb;
-  let sa =randf(min*p.stat_p[2],max*p.stat_p[2]); p.agl_r+=sa;
-  let si =randf(min*p.stat_p[3],max*p.stat_p[3]); p.int_r+=si;    
-  let hpp; if(isMaxedRolls) hpp = Math.round(rand(1.8*Math.log(p.lvl)*t*p.stat_p[0],2.2*p.lvl*t*p.stat_p[0]));
+  let sb =randf(t*p.stat_p[1],2*t*p.stat_p[1]); p.str_r+=sb;
+  let sa =randf(t*p.stat_p[2],2*t*p.stat_p[2]); p.agl_r+=sa;
+  let si =randf(t*p.stat_p[3],2*t*p.stat_p[3]); p.int_r+=si;  
+  let hpp; if(p.id===you.id) hpp = Math.round(rand(1.4*Math.log(p.lvl)*t*p.stat_p[0],1.8*p.lvl*t*p.stat_p[0]));
   else hpp = Math.round(rand(1.8*Math.log(p.lvl)*t*p.stat_p[0],2.2*p.lvl*t*p.stat_p[0]));
    p.hp_r+=hpp; p.hpmax+=hpp; p.hp+=hpp; if(p.id!==you.id) p.hp=p.hpmax=p.hp_r;
   if(p.id!=you.id) p.exp=p.exp*(1+t/5)+1<<0;
@@ -13951,10 +13744,8 @@ function giveExp(exp,r,g,b){
   dom.d5_2_1.update(); 
 }
 
-function giveSkExp(skl,exp,res){ 
-  exp = (res === false ? exp : exp * skl.p * ((skl.lvl + 1) ** 0.5) * Math.log(1 + you.lvl) * (you.int_r ** 0.5)); //skl.lastupd = time.minute+2;
-  console.log('adding exp ' + exp);
-  if (skl.exp+exp < skl.expnext_t) skl.exp += exp; 
+function giveSkExp(skl,exp,res){ exp=res===false?exp:exp*skl.p; //skl.lastupd = time.minute+2;
+  if(skl.exp+exp<skl.expnext_t) skl.exp+=exp; 
   else {
     let extra = (skl.exp+exp)-skl.expnext_t;
     skl.exp=0; skl.lvl++;  global.stat.slvs++;
@@ -14034,7 +13825,7 @@ function disassembleGeneric(obj){
     if(obj.dss[a].max) if(am>obj.dss[a].max) am = obj.dss[a].max;
     let c = 1; if(obj.slot) c = obj.dp/obj.dpmax; am=Math.ceil(am/(2-c));
     giveItem(obj.dss[a].item,am)
-  } giveSkExp(skl.dssmb,(2**Math.max(obj.rar, 1)||1)*5-9.5); global.stat.dsst++;
+  } giveSkExp(skl.dssmb,(2**obj.rar||1)*5-9.5); global.stat.dsst++;
   if(obj.slot)removeItem(obj);else{obj.amount--;if(obj.amount<=0) removeItem(obj); else if(obj.stype===global.sm)updateInv(global.sinv.indexOf(obj));else if(global.sm===1) updateInv(inv.indexOf(obj))}
 }
 
@@ -14386,7 +14177,7 @@ planner.djfood.f = function(){
 planner.areafillw = new Plan();
 planner.areafillw.id = 2;
 planner.areafillw.f = function(){
-  area.hmbsmnt.size+=rand(75,105); 
+  area.hmbsmnt.size+=rand(5,15); 
 }; addPlan(planner.areafillw)
 
 planner.zrespawn = new Plan();
