@@ -9,29 +9,32 @@
 - **Phase 4.6: Enabled `strict: true` in tsconfig.json**
   - Added `// @ts-nocheck` to 33 unfixed files; `constants.ts` and `state.ts` were already clean
   - Fully typed and removed `@ts-nocheck` from 6 leaf modules: `dom-utils.ts`, `utils.ts`, `base64.ts`, `ui/messages.ts`, `ui/effects.ts`, `game/utils-game.ts`
-  - `random.ts` kept `@ts-nocheck` (vendored MersenneTwister IIFE, no value in typing)
+  - `random.ts` kept `@ts-nocheck` (vendored MersenneTwister IIFE)
   - Fixed `base64.ts` undeclared vars: `var c = c1 = c2 = 0` → `var c = 0, c2 = 0, c3 = 0`
-  - Marked optional params with `?` in `descriptions.ts:addDesc` and `game/inventory.ts:giveItem` to fix arity errors from callers
-- **Fixed save/load inventory crash** (`save-load.ts:604`): `inv[o].data` was undefined because `giveItem` pushes to end of array but code used loop counter `o` as index. Fixed by capturing `giveItem()` return value.
-- **Fixed 8 bare variable assignments** causing `ReferenceError` in strict mode:
-  - `main.ts`: `testz`, `tcat`, `t`, `bt`, `g`, `stash`/`verify`, `lr` — all needed `let`
-  - `game/inventory.ts`: `scann` — needed `let`
+  - Marked optional params with `?` in `descriptions.ts:addDesc` and `game/inventory.ts:giveItem`
+- **Fixed save/load inventory crash** (`save-load.ts:604`): captured `giveItem()` return value instead of using `inv[o]`
+- **Fixed 9 bare variable assignments** (`ReferenceError` in strict mode):
+  - `main.ts`: `testz`, `tcat`, `t`, `bt`, `g`, `stash`/`verify`, `lr`
+  - `game/inventory.ts`: `scann`
+- **Fixed `this`-as-scratch-pad pattern** (4 functions, `TypeError` in strict mode):
+  - `ui/descriptions.ts`: `dscr()` — replaced `this.` with `let self = {}` + `self.`
+  - `ui/panels.ts`: `renderRcp()`, `renderSkl()`, `renderAct()` — same fix
 
 ## Decisions Made
-- Keep `random.ts` under `@ts-nocheck`: vendored MersenneTwister IIFE is not worth typing
-- Use `any` liberally in leaf module type annotations: game objects have no interfaces yet, so `any` is the pragmatic choice for now
-- When removing `@ts-nocheck`, must also check callers: untyped params in `@ts-nocheck` files default to required, not optional
+- Replace `this.` scratch pad pattern with `let self: any = {}` + `self.`: preserves behavior, works in strict mode
+- Keep `random.ts` under `@ts-nocheck`: vendored MersenneTwister IIFE not worth typing
+- Use `any` liberally in leaf module type annotations: no interfaces yet
 
 ## Open Items
-- [ ] **`dscr` crash**: `TypeError: Cannot set properties of undefined (setting 'label')` at `bundle.js:877` — called from `bundle.js:1153`. Not yet investigated.
 - [ ] "Pause next battle" toggle doesn't persist across save/load
 - [ ] Area clearing progress not saved between sessions
-- [ ] 33 files still have `@ts-nocheck` — next targets: `systems/loop.ts` (61 lines), `systems/player.ts` (117 lines)
+- [ ] 33 files still have `@ts-nocheck`
+- [ ] `global.curwds = this` in `addDesc` (line 392 of descriptions.ts) now sets `undefined` — harmless but wrong
 
 ## Next Steps
-1. **Fix the `dscr` crash** — `TypeError: Cannot set properties of undefined (setting 'label')` in `ui/descriptions.ts`
-2. Continue Phase 4.6 — fix more `@ts-nocheck` modules (start with small system files)
-3. Browser testing — verify save/load works end-to-end after the `giveItem` fix
+1. Browser testing — verify save/load, tooltips, crafting/skill panels all work after the `this` → `self` fix
+2. Continue Phase 4.6 — fix more `@ts-nocheck` modules (`systems/loop.ts`, `systems/player.ts`)
+3. Investigate save/load bugs (pause-next-battle, area clearing progress)
 
 ## Context for Next Session
-Phase 4.6 (strict TS) is in progress. The main risk from enabling strict mode was bare variable assignments that created implicit globals — 8 were found and fixed. The save/load crash was a separate bug where `inv[o]` didn't match the item `giveItem` actually pushed. There's still an active `dscr` crash to fix before the game is fully playable.
+Phase 4.6 (strict TS) exposed three classes of strict-mode bugs: bare variable assignments (implicit globals), `this`-as-scratch-pad in non-constructor functions, and a save/load index mismatch. All found instances are now fixed. The game should be playable — needs browser testing to confirm.
