@@ -25,7 +25,7 @@
 **Goal:** Convert the cleaned-up monolith to TypeScript ES modules with esbuild.
 
 - [x] **Step 3.1:** Build pipeline — `package.json`, `tsconfig.json`, `build.mjs` (esbuild IIFE), extract script to `src/main.ts`
-- [ ] **Step 3.2:** Extract constants, types, and utility modules (`src/constants.ts`, `src/types.ts`, `src/utils.ts`, `src/base64.ts`, `src/dom-utils.ts`)
+- [x] **Step 3.2:** Extract constants, utilities, and helper modules (`src/constants.ts`, `src/base64.ts`, `src/random.ts`, `src/utils.ts`, `src/dom-utils.ts`)
 - [ ] **Step 3.3:** Extract state module (`src/state.ts` — `you`, `global`, `dom`, `timers`, `callback` singletons)
 - [ ] **Step 3.4:** Extract data modules (`src/data/` — items, creatures, areas, skills, effects, recipes, quests, vendors, titles, furniture, actions)
 - [ ] **Step 3.5:** Extract system modules (`src/systems/` — combat, inventory, crafting, save-load, effects, skills, weather, time, movement)
