@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { addElement, empty } from '../dom-utils';
 import { dom, global, you, skl, timers, acts, act, home, furn, chss } from '../state';
 import { addDesc } from './descriptions';

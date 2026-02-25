@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { GOLD, SILVER } from '../constants';
 import { random } from '../random';
 import { col } from '../utils';

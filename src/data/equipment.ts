@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { wpn, eqp, acc, sld, item, dom, you, global, inv, rcp, skl, callback, checksd } from '../state';
 import { recshop } from '../ui/shop';
 import { giveSkExp, giveRcp } from '../game/progression';

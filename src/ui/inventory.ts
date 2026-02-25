@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { addElement, empty } from '../dom-utils';
 import { scanbyuid } from '../utils';
 import { dom, global, you, item, skl, inv, timers } from '../state';

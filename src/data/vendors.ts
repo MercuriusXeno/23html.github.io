@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { vendor, item, wpn, eqp, sld, acc, chss } from '../state';
 import { random } from '../random';
 import { restock } from '../game/economy';

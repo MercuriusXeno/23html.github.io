@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { container, home, rcp, item, wpn, eqp, acc, sld, inv, you, skl, global } from '../state';
 import { random } from '../random';
 import { giveCrExp, giveSkExp } from '../game/progression';

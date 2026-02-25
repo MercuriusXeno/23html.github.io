@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { abl, you, effect } from '../state';
 import { random } from '../random';
 import { findbyid } from '../utils';

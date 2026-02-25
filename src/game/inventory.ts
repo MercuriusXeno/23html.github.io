@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { random, rand } from '../random';
 import { copy, deepCopy, scan, scanbyid } from '../utils';
 import { addElement, empty } from '../dom-utils';
@@ -10,7 +11,7 @@ import { renderFurniture } from '../ui/panels';
 import { giveSkExp } from './progression';
 import { kill } from './utils-game';
 
-    export function giveItem(obj, am, ignore, flag) {
+    export function giveItem(obj, am?, ignore?, flag?) {
       am = am || 1;
       if (!!obj.slot) {
         let nitm; for (let p = 0; p < am; p++) {

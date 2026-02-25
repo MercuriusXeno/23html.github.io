@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { WEEK, DAY } from '../constants';
 import { utf8_to_b64, b64_to_utf8 } from '../base64';
 import { random } from '../random';

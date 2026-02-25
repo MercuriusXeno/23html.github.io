@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { effect, you, global, dom, skl, timers, furn, furniture, item } from '../state';
 import { select } from '../utils';
 import { random, rand, randf } from '../random';

@@ -2,7 +2,7 @@ import { addElement } from '../dom-utils';
 import { dom, global } from '../state';
 import { addDesc } from './descriptions';
 
-    export function msg(txt, c, dsc, type, bc, chck) {
+    export function msg(txt: string, c?: string, dsc?: any, type?: any, bc?: string, chck?: any): void {
       if (global.flags.m_freeze === false && global.flags.loadstate === false) {
         while (dom.gmsgs.children[1].children.length > global.msgs_max - 1) dom.gmsgs.children[1].removeChild(dom.gmsgs.children[1].children[0]);
         let msg = addElement(dom.mscont, 'div', null, 'msg');
@@ -25,7 +25,7 @@ import { addDesc } from './descriptions';
       }
     }
 
-    export function _msg(txt, c, dsc, type, bc, chck) {
+    export function _msg(txt: string, c?: string, dsc?: any, type?: any, bc?: string, chck?: any): void {
       while (dom.gmsgs.children[1].children.length > global.msgs_max - 1) dom.gmsgs.children[1].removeChild(dom.gmsgs.children[1].children[0]);
       let msg = addElement(dom.mscont, 'div', null, 'msg');
       if (dsc) { if (type) addDesc(msg, dsc, type); else addDesc(msg, dsc); }
@@ -35,15 +35,15 @@ import { addDesc } from './descriptions';
     }
 
 
-    export function msg_add(txt, c, bc, shd) {
+    export function msg_add(txt: string, c?: string, bc?: string, shd?: any): void {
       if (global.flags.m_freeze === false && global.flags.loadstate === false) {
         let bac = '';
         let b = '';
         if (bc) bac = 'background-color:' + bc;
         if (shd) b = 'text-shadow:' + shd.toString();
         else b = '';
-        if (c) dom.gmsgs.children[1].children[dom.gmsgs.children[1].children.length - 1].innerHTML += '<span style=\"color:' + c + ';' + bac + ';' + b + '\">' + txt + '</span>';
-        else dom.gmsgs.children[1].children[dom.gmsgs.children[1].children.length - 1].innerHTML += txt;
+        if (c) (dom.gmsgs.children[1].children[dom.gmsgs.children[1].children.length - 1] as HTMLElement).innerHTML += '<span style=\"color:' + c + ';' + bac + ';' + b + '\">' + txt + '</span>';
+        else (dom.gmsgs.children[1].children[dom.gmsgs.children[1].children.length - 1] as HTMLElement).innerHTML += txt;
         dom.mscont.scrollTop = dom.mscont.scrollHeight;
       }
     }

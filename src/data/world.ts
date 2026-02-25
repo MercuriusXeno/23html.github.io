@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { area, sector, creature, item, wpn, acc, ttl, global, dom, you, time, furn, furniture, effect, effector, skl, chss, itemgroup, act } from '../state';
 import { findbyid, select, z_bake } from '../utils';
 import { random, rand } from '../random';

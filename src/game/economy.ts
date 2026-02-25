@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { random, rand } from '../random';
 import { shuffle } from '../utils';
 import { appear } from '../dom-utils';

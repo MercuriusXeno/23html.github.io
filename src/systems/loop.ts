@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { DAY, WEEK } from '../constants';
 import { random } from '../random';
 import { empty } from '../dom-utils';

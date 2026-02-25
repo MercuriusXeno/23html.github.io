@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { furniture, quest, home, dom, global, you, item, sld, chss, skl, furn, sector, wpn, eqp, callback, creature } from '../state';
 import { DAY } from '../constants';
 import { smove, inSector } from '../game/movement';

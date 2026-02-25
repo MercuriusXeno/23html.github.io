@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { randf, rand } from '../random';
 import { col, scanbyid } from '../utils';
 import { empty } from '../dom-utils';

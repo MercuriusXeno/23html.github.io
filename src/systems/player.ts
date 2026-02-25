@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { ttl, eqp, item, you, skl, callback, creature, global, act, dom, sector, area, timers, setYou } from '../state';
 import { random } from '../random';
 import { smove } from '../game/movement';

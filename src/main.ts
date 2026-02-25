@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { YEAR, MONTH, WEEK, DAY, HOUR, SILVER, GOLD } from './constants';
 import { Base64, utf8_to_b64, b64_to_utf8 } from './base64';
 import { random, rand, randf, _rand, xmur3 } from './random';

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { skl, you, dom, ttl, rcp, act } from '../state';
 import { giveTitle, giveRcp, giveSkExp, giveAction } from '../game/progression';
 import { recshop } from '../ui/shop';

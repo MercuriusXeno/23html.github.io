@@ -11,9 +11,9 @@ export var Base64 = {
   _keyStr: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
 
   // public method for encoding
-  encode: function (input) {
+  encode: function (input: string): string {
     var output = "";
-    var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
+    var chr1: number, chr2: number, chr3: number, enc1: number, enc2: number, enc3: number, enc4: number;
     var i = 0;
 
     input = Base64._utf8_encode(input);
@@ -45,10 +45,10 @@ export var Base64 = {
   },
 
   // public method for decoding
-  decode: function (input) {
+  decode: function (input: string): string {
     var output = "";
-    var chr1, chr2, chr3;
-    var enc1, enc2, enc3, enc4;
+    var chr1: number, chr2: number, chr3: number;
+    var enc1: number, enc2: number, enc3: number, enc4: number;
     var i = 0;
 
     input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
@@ -82,7 +82,7 @@ export var Base64 = {
   },
 
   // private method for UTF-8 encoding
-  _utf8_encode: function (string) {
+  _utf8_encode: function (string: string): string {
     string = string.replace(/\r\n/g, "\n");
     var utftext = "";
 
@@ -109,10 +109,10 @@ export var Base64 = {
   },
 
   // private method for UTF-8 decoding
-  _utf8_decode: function (utftext) {
+  _utf8_decode: function (utftext: string): string {
     var string = "";
     var i = 0;
-    var c = c1 = c2 = 0;
+    var c = 0, c2 = 0, c3 = 0;
 
     while (i < utftext.length) {
 
@@ -141,12 +141,12 @@ export var Base64 = {
 
 }
 
-export function utf8_to_b64(str) {
+export function utf8_to_b64(str: string): string {
   try { return Base64.encode(unescape(encodeURIComponent(str))); }
   catch (err) { return ''; }
 }
 
-export function b64_to_utf8(str) {
+export function b64_to_utf8(str: string): string {
   try { return decodeURIComponent(escape(Base64.decode(str))); }
   catch (err) { return ''; }
 }

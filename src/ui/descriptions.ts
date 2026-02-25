@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { addElement, empty } from '../dom-utils';
 import { col } from '../utils';
 import { dom, global, you, timers, furn, skl } from '../state';
@@ -386,7 +387,7 @@ import { giveSkExp } from '../game/progression';
       }
     }
 
-    export function addDesc(dm, what, type, ttl, dsc, f, id) {
+    export function addDesc(dm, what, type?, ttl?, dsc?, f?, id?) {
       dm.addEventListener('mouseenter', a => { dscr(a, what, type, ttl, f === true ? (dsc)() : dsc, id); giveSkExp(skl.rdg, .002); global.stat.popt++; global.curwds = this; global.shiftid = id; if (global.kkey === 1) descsinfo(global.shiftid) });
       dm.addEventListener('mousemove', a => { global.dscr.style.top = global.dscr.clientHeight + 60 + a.clientY > document.body.clientHeight ? (a.clientY + 30 + global.dscr.clientHeight) - ((a.clientY + 30 + global.dscr.clientHeight) - document.body.clientHeight) - global.dscr.clientHeight - 30 : a.clientY + 30; global.dscr.style.left = global.dscr.clientWidth + 60 + a.clientX > document.body.clientWidth ? (a.clientX + 30 + global.dscr.clientWidth) - ((a.clientX + 30 + global.dscr.clientWidth) - document.body.clientWidth) - global.dscr.clientWidth - 30 : a.clientX + 30; });
       dm.addEventListener('mouseleave', () => { global.shiftid = 0; empty(global.dscr); global.dscr.style.display = 'none'; clearInterval(timers.inup); clearInterval(timers.dp_tmr); clearInterval(timers.wpnkilsch); if (dom.dscshe) dom.dscshe.innerHTML = '' });

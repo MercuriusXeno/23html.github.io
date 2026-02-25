@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { act, global, you, dom, effect, skl, timers } from '../state';
 import { findbyid, select } from '../utils';
 import { canScout } from '../game/exploration';

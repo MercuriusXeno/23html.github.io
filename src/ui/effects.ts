@@ -3,9 +3,9 @@ import { findbyid } from '../utils';
 import { dom, global, you, timers } from '../state';
 import { addDesc } from './descriptions';
 
-    let node;
+    let node: any;
 
-    export function giveEff(target, e, d, y, z) {
+    export function giveEff(target: any, e: any, d?: any, y?: any, z?: any): any {
       if (target.id !== 0) {
         let ef = e;
         if (target.id !== you.id) { ef = new Object(); for (let g in e) ef[g] = e[g]; }
@@ -23,7 +23,7 @@ import { addDesc } from './descriptions';
     }
 
 
-    export function removeEff(e, t) {
+    export function removeEff(e: any, t?: any): void {
       if (e.active === true) {
         if (e.x) {
           if (e.target.id === you.id) {
@@ -39,19 +39,19 @@ import { addDesc } from './descriptions';
       e.target.stat_r();
     }
 
-    function effdfix() {
+    function effdfix(): void {
       if (you.eff.length >= 21) {
         dom.d7.style.height = 104;
-        for (let i = 0; i < document.getElementsByClassName('sprite-cell').length; i++) document.getElementsByClassName('sprite-cell')[i].style.display = 'inline-block';
-        document.getElementById('se_i').style.display = 'block';
+        for (let i = 0; i < document.getElementsByClassName('sprite-cell').length; i++) (document.getElementsByClassName('sprite-cell')[i] as HTMLElement).style.display = 'inline-block';
+        (document.getElementById('se_i') as HTMLElement).style.display = 'block';
       } else {
         dom.d7.style.height = 125;
-        for (let i = 0; i < document.getElementsByClassName('sprite-cell').length; i++) document.getElementsByClassName('sprite-cell')[i].style.display = '';
-        document.getElementById('se_i').style.display = 'flex';
+        for (let i = 0; i < document.getElementsByClassName('sprite-cell').length; i++) (document.getElementsByClassName('sprite-cell')[i] as HTMLElement).style.display = '';
+        (document.getElementById('se_i') as HTMLElement).style.display = 'flex';
       }
     }
 
-    function eff_d(e, s, c, b, tgt) {
+    function eff_d(e: any, s: string, c: string, b: string, tgt: any): void {
       if (tgt.id === you.id) {
         let ic = addElement(dom.d101, 'div', null, 'sprite-cell');
         ic.innerHTML = s;

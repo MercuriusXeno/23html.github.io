@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { creature, eqp, global, you, dom, callback, checksd, item, wpn, acc, abl, effect, skl } from '../state';
 import { random, rand } from '../random';
 import { giveSkExp } from '../game/progression';

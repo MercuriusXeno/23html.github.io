@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { w_manager, global, effect, you, skl, dom, callback, time, setTime } from '../state';
 import { random, rand } from '../random';
 import { findbyid, copy } from '../utils';

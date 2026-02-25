@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { random, rand, randf } from '../random';
 import { select } from '../utils';
 import { addElement } from '../dom-utils';

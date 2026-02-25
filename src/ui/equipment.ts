@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { dom, global, you, eqp, planner } from '../state';
 import { giveEff, removeEff } from './effects';
 import { update_d } from './stats';

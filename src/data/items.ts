@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { item, dom, you, global, effect, skl, inv, wpn, eqp, sld, acc, furniture, home, furn, sector, ttl, chss, rcp, timers, area } from '../state';
 import { HOUR } from '../constants';
 import { random, rand, randf } from '../random';

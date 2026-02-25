@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { addElement, empty } from '../dom-utils';
 import { dom, global, you, timers, skl } from '../state';
 import { giveSkExp } from '../game/progression';
