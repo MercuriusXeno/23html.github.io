@@ -41,7 +41,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `styles.css` — extracted CSS (previously inline `<style>` block)
 - `build.mjs` — esbuild build script (`src/main.ts` → `dist/bundle.js` as IIFE)
 - `package.json` — project config, scripts: `build`, `watch`, `typecheck`
-- `tsconfig.json` — TypeScript config (`strict: false`, `allowJs: true`, `noEmit: true`)
+- `tsconfig.json` — TypeScript config (`strict: true`, `allowJs: true`, `noEmit: true`)
 - `.vscode/launch.json` — Chrome debug launch (builds first via `preLaunchTask`)
 - `.vscode/tasks.json` — npm build task for VSCode
 - `dist/bundle.js` — built output (gitignored)
@@ -49,7 +49,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `ctst.png` — sprite sheet, `laugh6.wav` — sound effect, `favicon.ico`
 
 ### Refactoring artifacts
-- `ROADMAP.md` — 4-phase refactoring plan with checkboxes (Phases 1-3 complete, Phase 4.1-4.2 complete, 4.3+ future)
+- `ROADMAP.md` — 4-phase refactoring plan with checkboxes (Phases 1-3 complete, Phase 4.1-4.2 complete, 4.6 in progress, 4.3+ future)
 - `CLASS_MAP.md` — CSS class rename mapping (cryptic → semantic, pending application)
 - `frontend-refactoring.md` — CSS design token and component class analysis (future work)
 
@@ -108,7 +108,7 @@ Copper-based: `SILVER = 100`, `GOLD = 10000`. Use `giveWealth()` / `spend()`.
 ### Build commands
 - `npm run build` — bundle `src/main.ts` → `dist/bundle.js` (esbuild, IIFE format)
 - `npm run watch` — rebuild on file changes
-- `npm run typecheck` — run `tsc --noEmit` for type checking (many errors expected until modules get proper types)
+- `npm run typecheck` — run `tsc --noEmit` for type checking (0 errors; unfixed modules use `@ts-nocheck`)
 
 ### Workflow
 Edit files in `src/`, run `npm run build` (or use `npm run watch`), refresh `index.html` in browser. In VSCode, press F5 to build and launch in Chrome. The game uses `localStorage` for saves — clearing it resets progress. The game targets modern browsers and uses MS Gothic font.

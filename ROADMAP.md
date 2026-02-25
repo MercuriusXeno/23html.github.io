@@ -41,6 +41,9 @@
 - [ ] **Step 4.4:** Externalize game content — move item/creature/area definitions to JSON data files, hydrate at startup
 - [ ] **Step 4.5:** Constructor delegate cleanup — pass `.use`, `.onDeath`, and other function delegates via constructor config instead of deferred assignment
 - [ ] **Step 4.6:** Enable `strict: true` in tsconfig incrementally — fix type errors module by module
+  - [x] Enabled `strict: true`, added `@ts-nocheck` to 33 unfixed files (0 typecheck errors)
+  - [x] Fixed leaf modules: `dom-utils.ts`, `utils.ts`, `base64.ts`, `ui/messages.ts`, `ui/effects.ts`, `game/utils-game.ts`
+  - [ ] Fix remaining 33 `@ts-nocheck` modules (data/, systems/, ui/, game/, main.ts, random.ts)
 
 ## Known Bugs
 
