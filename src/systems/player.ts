@@ -1,6 +1,13 @@
 import { ttl, eqp, item, you, skl, callback, creature, global, act, dom, sector, area, timers, setYou } from '../state';
 import { random } from '../random';
-import { msg, giveSkExp, giveItem, removeEff, smove, deactivateAct, attack, update_db, giveTitle } from '../main';
+import { smove } from '../game/movement';
+import { attack } from '../game/combat';
+import { giveItem } from '../game/inventory';
+import { giveSkExp, giveTitle } from '../game/progression';
+import { msg } from '../ui/messages';
+import { removeEff } from '../ui/effects';
+import { deactivateAct } from '../ui/panels';
+import { update_db } from '../ui/stats';
 import { chss } from '../state';
 
 // ==========================================================================

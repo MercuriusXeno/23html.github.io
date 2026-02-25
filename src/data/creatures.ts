@@ -1,6 +1,13 @@
 import { creature, eqp, global, you, dom, callback, checksd, item, wpn, acc, abl, effect } from '../state';
 import { random } from '../random';
-import { giveExp, giveWealth, dropC, area_init, wpndiestt, kill, update_m, msg, attack } from '../main';
+import { area_init } from '../game/movement';
+import { wpndiestt, attack } from '../game/combat';
+import { dropC } from '../game/inventory';
+import { giveWealth } from '../game/economy';
+import { giveExp } from '../game/progression';
+import { kill } from '../game/utils-game';
+import { update_m } from '../ui/stats';
+import { msg } from '../ui/messages';
 
 // ==========================================================================
 // Creature constructor + instances

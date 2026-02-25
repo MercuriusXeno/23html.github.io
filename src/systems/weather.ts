@@ -1,7 +1,9 @@
 import { w_manager, global, effect, you, skl, dom, callback, time, setTime } from '../state';
 import { random, rand } from '../random';
 import { findbyid, copy } from '../utils';
-import { giveEff, giveSkExp, msg } from '../main';
+import { giveSkExp } from '../game/progression';
+import { giveEff } from '../ui/effects';
+import { msg } from '../ui/messages';
 
 // ==========================================================================
 // Weather System

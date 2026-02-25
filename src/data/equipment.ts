@@ -1,5 +1,8 @@
 import { wpn, eqp, acc, sld, item, dom, you, global, inv, rcp, skl, callback } from '../state';
-import { equip, msg, giveSkExp, giveRcp, attachCallback, detachCallback } from '../main';
+import { giveSkExp, giveRcp } from '../game/progression';
+import { equip } from '../ui/equipment';
+import { msg } from '../ui/messages';
+import { attachCallback, detachCallback } from '../systems/weather';
 
 // ==========================================================================
 // Equipment constructor + instances + disassembly data

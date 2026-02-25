@@ -1,6 +1,6 @@
 import { addElement } from '../dom-utils';
 import { dom, global } from '../state';
-import { addDesc } from '../main';
+import { addDesc } from './descriptions';
 
     export function msg(txt, c, dsc, type, bc, chck) {
       if (global.flags.m_freeze === false && global.flags.loadstate === false) {

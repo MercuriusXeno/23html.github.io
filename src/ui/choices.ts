@@ -1,6 +1,6 @@
 import { addElement, empty } from '../dom-utils';
 import { dom, global, you, timers, skl } from '../state';
-import { giveSkExp } from '../main';
+import { giveSkExp } from '../game/progression';
 
     export function chs(txt, f, c, bc, iconx, icony, size, ignore, slimsize) {
       if (f === true) { clr_chs(); dom.ch_1 = addElement(dom.ctr_2, 'div', 'chs'); dom.ch_1.innerHTML = txt; }

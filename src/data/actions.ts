@@ -1,6 +1,11 @@
 import { act, global, you, dom, effect, skl, timers } from '../state';
 import { findbyid, select } from '../utils';
-import { msg, giveExp, giveSkExp, giveEff, removeEff, canScout, deactivateAct, cansee } from '../main';
+import { canScout } from '../game/exploration';
+import { giveExp, giveSkExp } from '../game/progression';
+import { cansee } from '../game/utils-game';
+import { msg } from '../ui/messages';
+import { giveEff, removeEff } from '../ui/effects';
+import { deactivateAct } from '../ui/panels';
 
 // ==========================================================================
 // Action constructor + instances

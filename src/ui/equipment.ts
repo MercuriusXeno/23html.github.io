@@ -2,7 +2,7 @@ import { dom, global, you, eqp, planner } from '../state';
 import { giveEff, removeEff } from './effects';
 import { update_d } from './stats';
 import { msg } from './messages';
-import { isort } from '../main';
+import { isort } from './inventory';
 
     export function equip(w, flags) {
       if (!w.data || !w.data.uid) return;

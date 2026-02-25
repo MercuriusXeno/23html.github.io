@@ -1,7 +1,7 @@
 import { addElement, empty } from '../dom-utils';
 import { col } from '../utils';
 import { dom, global, you, timers, furn, skl } from '../state';
-import { giveSkExp } from '../main';
+import { giveSkExp } from '../game/progression';
 
     export function dscr(c, what, type, ttl, dsc, id) {
       id = id || 0;

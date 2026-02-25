@@ -1,6 +1,6 @@
 import { vendor, item, wpn, eqp, sld, acc, chss } from '../state';
 import { random } from '../random';
-import { restock } from '../main';
+import { restock } from '../game/economy';
 
 // ==========================================================================
 // Vendor constructor + instances

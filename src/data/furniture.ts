@@ -1,6 +1,12 @@
 import { furniture, quest, home, dom, global, you, item, sld, chss, skl, furn, sector, wpn, eqp, callback, creature } from '../state';
 import { DAY } from '../constants';
-import { giveItem, msg, giveWealth, giveExp, smove, reduce, inSector, attachCallback, detachCallback } from '../main';
+import { smove, inSector } from '../game/movement';
+import { giveItem } from '../game/inventory';
+import { giveWealth } from '../game/economy';
+import { giveExp } from '../game/progression';
+import { msg } from '../ui/messages';
+import { reduce } from '../ui/inventory';
+import { attachCallback, detachCallback } from '../systems/weather';
 
 // ==========================================================================
 // Furniture constructor + instances

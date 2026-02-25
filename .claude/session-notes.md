@@ -6,29 +6,35 @@
 - **Branch:** main
 
 ## What Was Done
-- Completed Phase 3 Step 3.7: main.ts cleanup pass
-- Removed 34 `// --- ... moved to src/...` extraction comment markers from `src/main.ts`
-- Removed 4 commented-out dead code blocks (DOM mousedown/mouseup listeners, unused tab buttons, placeholder achievement checks)
-- Collapsed blank line gaps left by removals
-- `src/main.ts` reduced from ~6,180 to ~6,105 lines (75 lines removed)
-- Updated `ROADMAP.md`: Step 3.7 checked off, Phase 3 fully complete
-- Updated `CLAUDE.md`: line counts, Phase 3 status, ROADMAP description
-- Updated `MEMORY.md`: line counts, Phase 3 status
+- Completed Phase 4.1: Resolve Circular Imports (all 10 steps)
+- Step 1: Redirected ~40 re-exports from `main.ts` to actual source modules (ui/*, systems/*)
+- Created 8 new modules under `src/game/`:
+  - `utils-game.ts` (formatw, cansee, kill, roll)
+  - `progression.ts` (giveExp, giveSkExp, giveCrExp, giveTitle, giveRcp, lvlup)
+  - `economy.ts` (giveWealth, spend, restock)
+  - `inventory.ts` (giveItem, removeItem, trunk/container fns, dropC, wearing)
+  - `combat.ts` (fght, attack, dmg_calc, hit_calc, wpndiestt + 11 internal helpers)
+  - `movement.ts` (smove, area_init, inSector, Effector, addtosector, effector helpers)
+  - `crafting.ts` (canMake, make + scan2, evaluateSpecialRequirementsForRecipe)
+  - `exploration.ts` (canScout, scoutGeneric, disassembleGeneric)
+- All data/ui modules now import from `src/game/` instead of `src/main.ts`
+- `main.ts` reduced from ~6,100 to ~4,934 lines; game modules total ~1,220 lines
 
 ## Decisions Made
-- Commented-out achievement check stubs (monchk, shptchk) removed — they were placeholders with duplicate GOLD thresholds, not real future content
-- Commented-out DOM mousedown/mouseup listeners removed — shake effect was abandoned
-- No exports removed — audit confirmed all exports are used by ui/ modules despite appearing internal
+- `mf` kept in main.ts: shop UI function, not combat-related
+- `recshop` exported from main.ts: runtime-only circular dep with economy.ts, safe with esbuild
+- `dumb` moved to combat.ts: only appeared as dialogue word "dumb" elsewhere, not a function call
+- Undeclared vars `sk`, `cdmg` in dmg_calc declared with `let`: were implicit globals
 
 ## Open Items
-- [ ] CSS semantic rename from `CLASS_MAP.md` (deferred — do after modularization)
+- [ ] Browser testing needed — build passes but no runtime verification this session
+- [ ] CSS semantic rename from `CLASS_MAP.md` (deferred)
 - [ ] `.exp` text-shadow typo `0pzx` in styles.css
-- [ ] Heavy rendering functions still in main.ts could be extracted in Phase 4
 
 ## Next Steps
-1. Phase 4 Step 4.1: Resolve circular imports — barrel exports for `src/data/`
-2. Phase 4 Step 4.5: Enable `strict: true` incrementally (low-risk, catches bugs)
-3. Phase 4 Steps 4.2-4.4: Deeper architecture improvements
+1. Browser-test the game (fresh start + save/load + combat + crafting + movement)
+2. Consider extracting remaining main.ts functions (giveFurniture, giveAction, giveQst, etc.)
+3. Phase 4.2+ from ROADMAP (dependency injection, JSON data, strict TS)
 
 ## Context for Next Session
-Phase 3 (TypeScript + ES Modules) is fully complete. The monolith has been split into utility modules (5), state module (1), data modules (13), system modules (3), and UI modules (8). main.ts is ~6,100 lines — mostly DOM setup, core game logic, and heavy rendering functions too entangled to extract cleanly. Bundle size is stable at ~789kb. Phase 4 (architecture improvements) is next.
+Phase 4.1 is fully complete. `src/game/` has 8 modules with ~1,220 lines extracted from main.ts. No data or UI module imports from main.ts anymore — only `economy.ts→recshop` and `save-load.ts→wdrseason` remain as runtime circular deps. Bundle size stable at 788.1kb. Needs browser testing.

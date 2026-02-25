@@ -2,7 +2,11 @@ import { effect, you, global, dom, skl, timers, furn, furniture } from '../state
 import { select } from '../utils';
 import { random, rand, randf } from '../random';
 import { findbyid } from '../utils';
-import { msg, giveEff, removeEff, giveSkExp, giveExp, update_d, rsort } from '../main';
+import { giveSkExp, giveExp } from '../game/progression';
+import { msg } from '../ui/messages';
+import { giveEff, removeEff } from '../ui/effects';
+import { update_d } from '../ui/stats';
+import { rsort } from '../ui/inventory';
 
 // ==========================================================================
 // Effect constructor + instances

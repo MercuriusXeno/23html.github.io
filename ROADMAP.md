@@ -35,7 +35,7 @@
 ## Phase 4: Architecture Improvements (Future)
 **Goal:** Address structural issues exposed during modularization.
 
-- [ ] **Step 4.1:** Resolve circular imports — barrel exports for `src/data/`, deferred cross-references
+- [x] **Step 4.1:** Resolve circular imports — extracted 33+ functions from `main.ts` into 8 `src/game/` modules, redirected all re-exports, eliminated data/ui/systems imports from `main.ts`
 - [ ] **Step 4.2:** Dependency injection for state — replace direct singleton access with scoped objects where possible
 - [ ] **Step 4.3:** Externalize game content — move item/creature/area definitions to JSON data files, hydrate at startup
 - [ ] **Step 4.4:** Constructor delegate cleanup — pass `.use`, `.onDeath`, and other function delegates via constructor config instead of deferred assignment

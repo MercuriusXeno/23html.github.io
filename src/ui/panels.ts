@@ -2,7 +2,10 @@ import { addElement, empty } from '../dom-utils';
 import { dom, global, you, skl, timers, acts, act } from '../state';
 import { addDesc } from './descriptions';
 import { msg } from './messages';
-import { make, giveSkExp, iftrunkopen, formatw } from '../main';
+import { make } from '../game/crafting';
+import { iftrunkopen } from '../game/inventory';
+import { giveSkExp } from '../game/progression';
+import { formatw } from '../game/utils-game';
 
     export function renderRcp(rcp) {
       dom.ct_bt1_1_mc = addElement(dom.ct_bt1_1, 'div', null, 'craft-log-entry');

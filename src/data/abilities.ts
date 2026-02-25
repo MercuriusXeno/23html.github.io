@@ -1,7 +1,8 @@
 import { abl, you, effect } from '../state';
 import { random } from '../random';
 import { findbyid } from '../utils';
-import { dmg_calc, giveEff } from '../main';
+import { dmg_calc } from '../game/combat';
+import { giveEff } from '../ui/effects';
 
 // ==========================================================================
 // Ability constructor + instances

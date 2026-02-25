@@ -1,7 +1,15 @@
 import { area, sector, creature, item, wpn, acc, ttl, global, dom, you, time, furn, furniture, effect, effector, skl, chss, itemgroup, act } from '../state';
 import { findbyid, select, z_bake } from '../utils';
 import { random, rand } from '../random';
-import { giveTitle, smove, msg, giveItem, inSector, activatef, deactivatef, giveEff, removeEff, getSeason, scoutGeneric, isWeather, weather, getHour, roll, giveSkExp, giveExp } from '../main';
+import { smove, inSector } from '../game/movement';
+import { scoutGeneric } from '../game/exploration';
+import { giveItem } from '../game/inventory';
+import { giveTitle, giveSkExp, giveExp } from '../game/progression';
+import { roll } from '../game/utils-game';
+import { msg } from '../ui/messages';
+import { activatef, deactivatef } from '../ui/choices';
+import { giveEff, removeEff } from '../ui/effects';
+import { getSeason, isWeather, weather, getHour } from '../systems/weather';
 // Explicit deps: world.ts references creature/item/wpn/acc/eqp instances at eval time
 import './items';
 import './equipment';

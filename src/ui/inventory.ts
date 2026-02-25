@@ -3,8 +3,11 @@ import { scanbyuid } from '../utils';
 import { dom, global, you, item, skl, inv, timers } from '../state';
 import { addDesc } from './descriptions';
 import { equip, unequip } from './equipment';
-import { giveSkExp, removeItem, giveItem, listen_k, disassembleGeneric,
-  iftrunkopenc, updateTrunkLeftItem, renderRcp } from '../main';
+import { disassembleGeneric } from '../game/exploration';
+import { removeItem, giveItem, listen_k,
+  iftrunkopenc, updateTrunkLeftItem } from '../game/inventory';
+import { giveSkExp } from '../game/progression';
+import { renderRcp } from './panels';
 
     export function renderItem(obj) {
       let inv_slot_c = addElement(dom.inv_con, 'div', null, 'no-outline');

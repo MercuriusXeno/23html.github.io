@@ -1,5 +1,5 @@
 import { container, home, rcp, item, wpn, eqp, acc, sld, inv, you, skl, global } from '../state';
-import { giveCrExp, giveSkExp } from '../main';
+import { giveCrExp, giveSkExp } from '../game/progression';
 
 // ==========================================================================
 // Container + Recipe constructors + instances

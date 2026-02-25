@@ -4,14 +4,23 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**Proto23** is a browser-based text RPG game, deployed as a GitHub Pages site (`23html.github.io`). The game is split across `src/main.ts` (~6,100 lines), `src/ui/` (8 modules, ~1,260 lines), `src/data/` (13 modules, ~5,100 lines), and `src/systems/` (3 modules, ~1,590 lines), bundled via esbuild to `dist/bundle.js`, which `index.html` loads. CSS is in `styles.css`.
+**Proto23** is a browser-based text RPG game, deployed as a GitHub Pages site (`23html.github.io`). The game is split across `src/main.ts` (~4,900 lines), `src/game/` (8 modules, ~1,220 lines), `src/ui/` (8 modules, ~1,270 lines), `src/data/` (13 modules, ~5,150 lines), and `src/systems/` (3 modules, ~1,610 lines), bundled via esbuild to `dist/bundle.js`, which `index.html` loads. CSS is in `styles.css`.
 
 ## Architecture
 
 ### File structure
 - `index.html` — shell HTML, loads `styles.css` and `dist/bundle.js`
-- `src/main.ts` — core game logic (~6,100 lines)
-- `src/ui/` — 8 UI modules (~1,260 lines):
+- `src/main.ts` — core game logic, DOM setup, location scripts (~4,900 lines)
+- `src/game/` — 8 game logic modules (~1,220 lines):
+  - `utils-game.ts` — Game utility functions (`formatw`, `cansee`, `kill`, `roll`)
+  - `progression.ts` — XP/leveling (`giveExp`, `giveSkExp`, `giveCrExp`, `giveTitle`, `giveRcp`, `lvlup`)
+  - `economy.ts` — Wealth/shopping (`giveWealth`, `spend`, `restock`)
+  - `inventory.ts` — Item management (`giveItem`, `removeItem`, trunk/container functions)
+  - `combat.ts` — Combat system (`fght`, `attack`, `dmg_calc`, `hit_calc`, `wpndiestt`)
+  - `movement.ts` — Area transitions (`smove`, `area_init`, `inSector`, `Effector`, `addtosector`)
+  - `crafting.ts` — Recipe crafting (`canMake`, `make`)
+  - `exploration.ts` — Scouting/disassembly (`canScout`, `scoutGeneric`, `disassembleGeneric`)
+- `src/ui/` — 8 UI modules (~1,270 lines):
   - `messages.ts` — Game log (`msg`, `_msg`, `msg_add`)
   - `descriptions.ts` — Tooltip/description popups (`dscr`, `addDesc`, `descsinfo`)
   - `stats.ts` — Stat display updates (`update_db`, `update_d`, `update_m`, `m_update`)
@@ -74,10 +83,10 @@ Game entities use constructor functions (e.g., `Item()`, `Eqp()`, `Creature()`, 
 - Helpers: `serializeIdData()` for save, `loadEquipCategory()` and `restoreDiscovery()` for load
 
 ### Key systems
-- **Combat**: `fght()`, `attack()`, `dmg_calc()`, `hit_calc()` — turn-based with stats, equipment, and effects
-- **Inventory**: `giveItem()`, `removeItem()`, `equip()`, `unequip()` — items tracked in `inv[]` array
-- **Crafting**: `canMake()`, `make()`, `renderRcp()` — recipe-based
-- **Movement**: `smove()` — transitions between areas
+- **Combat** (`game/combat.ts`): `fght()`, `attack()`, `dmg_calc()`, `hit_calc()` — turn-based with stats, equipment, and effects
+- **Inventory** (`game/inventory.ts` + `ui/inventory.ts`): `giveItem()`, `removeItem()`, `equip()`, `unequip()` — items tracked in `inv[]` array
+- **Crafting** (`game/crafting.ts`): `canMake()`, `make()`, `renderRcp()` — recipe-based
+- **Movement** (`game/movement.ts`): `smove()`, `area_init()` — transitions between areas, effector system
 - **Time**: `Time()` constructor, constants `YEAR`, `MONTH`, `WEEK`, `DAY`, `HOUR` (in minutes)
 - **UI**: `chs()` for choice buttons, `msg()` / `_msg()` for game log, `dscr()` for description popups, `addElement()` for DOM creation
 - **Weather**: `wManager()`, `setWeather()`, seasonal system

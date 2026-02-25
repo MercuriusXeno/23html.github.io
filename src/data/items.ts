@@ -1,7 +1,16 @@
 import { item, dom, you, global, effect, skl, inv, wpn, eqp, sld, acc, furniture, home, furn, sector, ttl } from '../state';
 import { random, rand, randf } from '../random';
 import { select, findbyid, z_bake } from '../utils';
-import { msg, _msg, giveEff, removeEff, giveSkExp, giveItem, removeItem, giveExp, giveWealth, spend, dscr, chs, smove, inSector, reduce, update_d, activatef, giveRcp, area_init } from '../main';
+import { smove, inSector, area_init } from '../game/movement';
+import { giveItem, removeItem } from '../game/inventory';
+import { giveWealth, spend } from '../game/economy';
+import { giveSkExp, giveExp, giveRcp } from '../game/progression';
+import { msg, _msg } from '../ui/messages';
+import { giveEff, removeEff } from '../ui/effects';
+import { dscr } from '../ui/descriptions';
+import { chs, activatef } from '../ui/choices';
+import { reduce } from '../ui/inventory';
+import { update_d } from '../ui/stats';
 
 // ==========================================================================
 // Item constructor + factory functions + instances

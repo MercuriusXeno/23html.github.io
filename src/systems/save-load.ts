@@ -10,12 +10,19 @@ import {
   itemgroup, mastery,
   setYou, setTime, setInv, setDar, setFurn, setQsts, setActs, setSectors
 } from '../state';
-import {
-  giveItem, equip, unequip, giveEff, giveTitle, giveRcp, msg, giveSkExp,
-  smove, inSector, activatef, deactivatef, area_init, restock,
-  update_db, update_d, update_m, m_update, rsort, kill,
-  eqpres, addDesc, wdrseason, invbtsrst, rstcrtthg, addToContainer, isort
-} from '../main';
+import { wdrseason } from '../main';
+import { smove, inSector, area_init } from '../game/movement';
+import { kill } from '../game/utils-game';
+import { giveItem, addToContainer } from '../game/inventory';
+import { giveTitle, giveRcp, giveSkExp } from '../game/progression';
+import { restock } from '../game/economy';
+import { msg } from '../ui/messages';
+import { addDesc } from '../ui/descriptions';
+import { update_db, update_d, update_m, m_update } from '../ui/stats';
+import { giveEff } from '../ui/effects';
+import { equip, unequip, eqpres } from '../ui/equipment';
+import { rsort, invbtsrst, rstcrtthg, isort } from '../ui/inventory';
+import { activatef, deactivatef } from '../ui/choices';
 import { weather, setWeather, wManager, timeConv, timeDisp, getDay, getLunarPhase, getHour } from './weather';
 import { You } from './player';
 
