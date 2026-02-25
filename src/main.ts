@@ -1879,8 +1879,6 @@ export {};
 
     global._preig = addElement(document.body, 'img');
     global._preig.src = 'ctst.png';
-    //global._preig.crossOrigin = "Anonymous";
-    global._preig.src = 'http://127.0.0.1:8887/ctst.png';
     global._preic = addElement(document.body, 'canvas');
     global._preic_tmain = global._preic.getContext('2d');
     global._preic2 = addElement(document.body, 'canvas');
