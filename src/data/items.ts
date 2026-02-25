@@ -15,7 +15,8 @@ import { dscr } from '../ui/descriptions';
 import { chs, activatef } from '../ui/choices';
 import { reduce } from '../ui/inventory';
 import { update_d } from '../ui/stats';
-import { ontick, giveFurniture } from '../main';
+import { ontick } from '../systems/loop';
+import { giveFurniture } from '../game/inventory';
 
 // ==========================================================================
 // Item constructor + factory functions + instances

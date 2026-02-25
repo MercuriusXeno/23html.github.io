@@ -602,3 +602,23 @@ export function wManager() {
 
 // NOTE: Eval-time init (setWeather, wManager, dom.d_time update) moved to main.ts
 // because DOM elements (d_weathert, d_anomaly, d_time) must exist first.
+
+    export function wdrseason(flag) {
+      let s;
+      s = !flag ? getSeason(true) : global.text.ssns[getSeason() - 1];
+      dom.d_weathers.innerHTML = '[' + s + ']';
+      switch (getSeason()) {
+        case 1: dom.d_weathers.style.color = 'springgreen';
+          dom.d_weathers.style.backgroundColor = '#253';
+          break
+        case 2: dom.d_weathers.style.color = 'lime';
+          dom.d_weathers.style.backgroundColor = '#141';
+          break
+        case 3: dom.d_weathers.style.color = 'yellow';
+          dom.d_weathers.style.backgroundColor = '#631';
+          break
+        case 4: dom.d_weathers.style.color = 'ghostwhite';
+          dom.d_weathers.style.backgroundColor = '#556';
+          break
+      }
+    }

@@ -1,11 +1,12 @@
 import { random, rand } from '../random';
-import { copy, deepCopy, scan } from '../utils';
+import { copy, deepCopy, scan, scanbyid } from '../utils';
 import { addElement, empty } from '../dom-utils';
-import { dom, global, you, inv, dar, planner, timers, skl, creature } from '../state';
+import { dom, global, you, inv, dar, planner, timers, skl, creature, furn } from '../state';
 import { msg, msg_add } from '../ui/messages';
 import { renderItem, updateInv, isort, rsort } from '../ui/inventory';
 import { unequip } from '../ui/equipment';
 import { addDesc } from '../ui/descriptions';
+import { renderFurniture } from '../ui/panels';
 import { giveSkExp } from './progression';
 import { kill } from './utils-game';
 
@@ -307,3 +308,15 @@ import { kill } from './utils-game';
 
     export function wearing(itm) { for (let obj in you.eqp) if (itm.data.uid === you.eqp[obj].data.uid && you.eqp[obj].id !== 10000) return true }
     export function wearingany(itm) { for (let obj in you.eqp) if (itm.id === you.eqp[obj].id && you.eqp[obj].id !== 10000) return true }
+
+    export function giveFurniture(frt, l, show) {
+      let frn = l === true ? copy(frt) : frt;
+      if (show !== false) msg('Furniture Acquired: <span style="color:orange">"' + frt.name + '"</span>', 'yellow', frt, 9);
+      if (scanbyid(furn, frn.id)) frn.data.amount++;
+      else { furn.push(frn); frn.data.amount++; }
+      frn.onGive();
+      if (global.wdwidx === 1) { empty(dom.ch_1h); for (let a in furn) renderFurniture(furn[a]) }
+      let v = 0;
+      for (let a in furn) if (furn[a].v) { if (furn[a].multv) v += furn[a].v * furn[a].amount; else v += furn[a].v } if (dom.flsthdrbb) dom.flsthdrbb.innerHTML = v;
+      return frn
+    }

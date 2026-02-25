@@ -6,7 +6,7 @@ import { SILVER, GOLD } from '../constants';
 import { msg, msg_add } from '../ui/messages';
 import { m_update } from '../ui/stats';
 import { giveSkExp } from './progression';
-import { recshop } from '../main';
+import { recshop } from '../ui/shop';
 
     export function giveWealth(val, mes, f) {
       if (you.mods.wthexrt !== 0 && f) val += 1;

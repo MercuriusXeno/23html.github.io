@@ -11,9 +11,10 @@ import { dom, global, listen, w_manager, creature, offline, effect, callback, ef
   setInv, setDar, setFurn, setQsts, setActs, setSectors } from './state';
 import { weather, Weather, Time, setWeather, isWeather, wManager, getSeason,
   getMinute, getHour, getDay, getMonth, getYear, getLunarPhase,
-  timeConv, timeDisp, attachCallback, detachCallback } from './systems/weather';
+  timeConv, timeDisp, attachCallback, detachCallback, wdrseason } from './systems/weather';
 import { You } from './systems/player';
 import { save, load } from './systems/save-load';
+import { ontick } from './systems/loop';
 import { msg, _msg, msg_add } from './ui/messages';
 import { dscr, addDesc, descsinfo } from './ui/descriptions';
 import { update_db, update_d, update_m, m_update } from './ui/stats';
@@ -21,11 +22,12 @@ import { giveEff, removeEff } from './ui/effects';
 import { equip, unequip, eqpres } from './ui/equipment';
 import { renderItem, updateInv, isort, rsort, invbtsrst, rstcrtthg, reduce } from './ui/inventory';
 import { chs, clr_chs, icon, Chs, activatef, deactivatef } from './ui/choices';
-import { renderRcp, refreshRcp, renderSkl, renderAct, refreshAct, activateAct, deactivateAct } from './ui/panels';
+import { renderRcp, refreshRcp, renderSkl, renderAct, refreshAct, activateAct, deactivateAct, renderFurniture, showFurniturePanel } from './ui/panels';
+import { recshop, rendershopitem } from './ui/shop';
 import { formatw, cansee, kill, roll } from './game/utils-game';
-import { giveExp, giveSkExp, giveCrExp, giveTitle, giveRcp, lvlup } from './game/progression';
+import { giveExp, giveSkExp, giveCrExp, giveTitle, giveRcp, lvlup, giveAction } from './game/progression';
 import { giveWealth, spend, restock } from './game/economy';
-import { giveItem, removeItem, listen_k, updateTrunkLeftItem, iftrunkopen, iftrunkopenc, addToContainer, dropC, wearing, wearingany } from './game/inventory';
+import { giveItem, removeItem, listen_k, updateTrunkLeftItem, iftrunkopen, iftrunkopenc, addToContainer, dropC, wearing, wearingany, giveFurniture } from './game/inventory';
 import { fght, attack, tattack, dmg_calc, dumb, hit_calc, wpndiestt } from './game/combat';
 import { Effector, smove, inSector, area_init, addtosector, activateEffectors, deactivateEffectors, runEffectors } from './game/movement';
 import { canMake, make } from './game/crafting';
@@ -44,6 +46,8 @@ import './data/vendors';
 import './data/actions';
 import './data/mastery';
 
+// Mark as ES module (prevents esbuild CommonJS shim overhead)
+export {};
 
     // ==========================================================================
     // Bootstrap
@@ -116,17 +120,6 @@ import './data/mastery';
     }
 
     // shuffle() imported from ./utils
-
-    ///////////////////////////////////////////
-    export function giveAction(a) {
-      if (a.have === false) {
-        if (!global.flags.actsu) { global.flags.actsu = true; dom.ct_bt3.innerHTML = 'actions' }
-        msg('You learned a new action: <span style="color:tomato">"' + a.name + '"</span>', 'lime', a, 9);
-        a.have = true;
-        acts.push(a);
-        if (acts.length >= 1 && dom.acccon) { empty(dom.acccon); for (let a in acts) renderAct(acts[a]) }
-      }
-    }
 
     ///////////////////////////////////////////
     //DOM
@@ -1759,26 +1752,7 @@ import './data/mastery';
     global.t_n = 0;
 
 
-    function mf(num, index) {
-      let d = addElement(document.body, 'small');
-      let c = ['rgb(255, 116, 63)', 'rgb(192, 192, 192)', 'rgb(255, 215, 0)'];
-      d.style.position = 'absolute';
-      d.style.opacity = 1;
-      d.style.width = 100;
-      d.style.top = 755;
-      d.style.left = 328 - 50 * index;
-      d.innerHTML = '<span style="color: ' + c[index - 1] + '">●</span><span style="color: rgb(255,70,70)">' + num + '</span>';
-      let t = 0;
-      let g = setInterval(() => {
-        t++;
-        d.style.top = parseInt(d.style.top) - 2 + 'px';
-        d.style.opacity = (30 - t) / 30;
-        if (t === 30) {
-          clearInterval(g);
-          document.body.removeChild(d);
-        }
-      }, 30);
-    }
+    // mf — moved to ui/shop.ts
 
     document.body.addEventListener('keydown', function (e) {
       if (global.flags.kfocus !== true) {
@@ -1830,35 +1804,7 @@ import './data/mastery';
           timers.caupd = setInterval(() => { dom.ch_1_2.innerHTML = 'Age: ' + (c.data.age >= YEAR ? '<span style="color:orange">' + (c.data.age / YEAR << 0) + '</span> Years ' : '') + (c.data.age >= MONTH ? '<span style="color:yellow">' + (c.data.age / MONTH << 0) % 12 + '</span> Months ' : '') + (c.data.age >= DAY ? '<span style="color:lime">' + (c.data.age / DAY << 0) % 30 + '</span> Days ' : ''); }, 1000);
         }; break
         case 2: {
-          clr_chs()
-          dom.ch_1 = addElement(dom.ctr_2, 'div');
-          dom.ch_1.style.height = '76%';
-          dom.ch_1.style.backgroundColor = 'rgb(0,20,44)';
-          dom.flsthdr = addElement(dom.ch_1, 'div');
-          dom.flsthdra = addElement(dom.flsthdr, 'div');
-          dom.flsthdr.style.display = 'flex'
-          dom.flsthdra.innerHTML = 'Furniture Owned';
-          dom.flsthdra.style.position = 'relative';
-          dom.flsthdra.style.left = 120;
-          dom.flsthdr.style.borderBottom = '1px #44c solid';
-          dom.flsthdr.style.padding = 2;
-          dom.flsthdrbc = addElement(dom.flsthdr, 'div');
-          dom.flsthdrb = addElement(dom.flsthdrbc, 'small');
-          dom.flsthdrb.innerHTML = 'Home rating: ';
-          dom.flsthdrbc.style.left = 237;
-          dom.flsthdrb.style.paddingLeft = 6;
-          dom.flsthdrbc.style.position = 'relative';
-          dom.flsthdrbc.style.borderLeft = '1px solid rgb(68, 68, 204)'
-          dom.flsthdrbb = addElement(dom.flsthdrbc, 'small');
-          dom.flsthdrbb.style.color = 'lime';
-          let v = 0;
-          for (let a in furn) if (furn[a].v) { if (furn[a].multv) v += furn[a].v * furn[a].amount; else v += furn[a].v } dom.flsthdrbb.innerHTML = v;
-          dom.ch_1h = addElement(dom.ch_1, 'div', null);
-          dom.ch_1h.style.textAlign = 'left';
-          dom.ch_1h.style.display = 'block'
-          for (let a in furn) {
-            renderFurniture(furn[a]);
-          }
+          showFurniturePanel();
         }; break
         case 3: {
           clr_chs(); global.menuo = 3; global.cchest = x;
@@ -1925,224 +1871,10 @@ import './data/mastery';
       return dom.ch_1;
     }
 
-    //linear-gradient(0deg,rgb(1,1,111),rgb(22,222,22))
-
-    function renderFurniture(frn) {
-      dom.ch_etn = addElement(dom.ch_1h, 'div', 'bst_entrh', 'list-row');
-      dom.ch_etn.style.backgroundColor = 'rgb(10,30,54)';
-      dom.ch_etn1 = addElement(dom.ch_etn, 'div', null, 'list-col-name');
-      dom.ch_etn1.innerHTML = frn.name;
-      switch (frn.id) {
-        case home.bed.id:
-          dom.ch_etn1.innerHTML += ' <small style="color:grey">[z]</small>';
-          break
-        case home.pilw && home.pilw.id:
-          dom.ch_etn1.innerHTML += ' <small style="color:grey">[zp]</small>';
-          break
-        case home.blkt && home.blkt.id:
-          dom.ch_etn1.innerHTML += ' <small style="color:grey">[zb]</small>';
-          break
-        case home.tbw && home.tbw.id:
-          dom.ch_etn1.innerHTML += ' <small style="color:pink">[t]</small>';
-          break
-      }
-      dom.ch_etn.addEventListener('mouseenter', function () {
-        if (frn.removable === true) {
-          dom.chsfdel = addElement(this.children[0], 'div', null, 'delete-btn');
-          dom.chsfdel.innerHTML = 'x';
-          dom.chsfdel.style.right = 5;
-          dom.chsfdel.style.top = 19;
-          dom.chsfdel.addEventListener('click', function () {
-            frn.data.amount--;
-            frn.onRemove();
-            if (frn.data.amount === 0) { deactivatef(frn); frn.onDestroy(); global.dscr.style.display = 'none'; furn.splice(furn.indexOf(frn), 1); chs_spec(2); chs('"<= Return"', false).addEventListener('click', () => { smove(chss.home, false) }) } else
-              this.parentElement.parentElement.children[1].innerHTML = 'x' + frn.data.amount;
-            let v = 0;
-            for (let a in furn) if (furn[a].v) { if (furn[a].multv) v += furn[a].v * furn[a].amount; else v += furn[a].v } dom.flsthdrbb.innerHTML = v;
-          });
-        }
-      });
-      dom.ch_etn.addEventListener('mouseleave', function () {
-        if (frn.removable === true) this.children[0].removeChild(dom.chsfdel);
-      });
-      dom.ch_etn.addEventListener('click', function () {
-        frn.onSelect();
-        //this.dispatchEvent(new window.Event('mouseenter'))
-      });
-      dom.ch_etn2 = addElement(dom.ch_etn, 'div', null, 'list-col-rank');
-      dom.ch_etn2.innerHTML = 'x' + frn.data.amount;
-      dom.ch_etn2.style.width = '6%';
-      addDesc(dom.ch_etn, frn, 9);
-    }
-
-    export function recshop() {
-      if (global.menuo === 4) {
-        empty(dom.ch_1h); for (let it in global.shprf.stock) { rendershopitem(dom.ch_1h, global.shprf.stock[it], global.shprf) }
-        dom.ch_1e.innerHTML = '&nbspBuying price: <span style="color:lime">' + Math.round(((you.mods.infsrate - skl.trad.use()) * global.shprf.infl * (1 - (Math.sqrt(global.shprf.data.rep) ** 1.3 + 0.05) * .01) * global.offline_evil_index) * 10000) / 100 + '%</span>'
-        dom.ch_2e.innerHTML = '&nbspReputation: ' + col(global.shprf.data.rep << 0, 'lime')
-      }
-    }
-
-    function rendershopitem(root, itm, vnd) {
-      dom.ch_etn = addElement(root, 'div', 'bst_entrh', 'list-row');
-      dom.ch_etn.style.backgroundColor = 'rgb(10,30,54)';
-      addDesc(dom.ch_etn, itm[0]);
-      dom.ch_etn1 = addElement(dom.ch_etn, 'div', null, 'list-col-name');
-      dom.ch_etn1.style.width = '79%'
-      dom.ch_etn1n = addElement(dom.ch_etn1, 'div');
-      dom.ch_etn1n.innerHTML = itm[0].name;
-      dom.ch_etn1n.style.width = 305;
-      dom.ch_etn1b = addElement(dom.ch_etn1, 'div');
-      dom.ch_etn1.style.display = 'flex';
-      dom.ch_etn1b.style.display = 'inline-flex';
-      dom.ch_etn1b.style.position = 'absolute';
-      dom.ch_etn1b.style.right = 6;
-      dom.ch_etn1b.style.textAlign = 'center';
-      dom.ch_etn1b.style.backgroundColor = 'rgb(20,50,84)'
-      let p = Math.ceil(itm[2] * (you.mods.infsrate - skl.trad.use()) * vnd.infl * (1 - (Math.sqrt(vnd.data.rep) ** 1.3 + 0.05) * .01) * global.offline_evil_index);
-      switch (itm[0].stype) {
-        case 2: dom.ch_etn1n.style.color = 'rgb(255,192,5)';
-          break;
-        case 3: dom.ch_etn1n.style.color = 'rgb(0,235,255)';
-          break;
-        case 4: dom.ch_etn1n.style.color = 'rgb(44,255,44)';
-          break;
-      }
-      dom.ch_etn2 = addElement(dom.ch_etn, 'div', null, 'list-col-rank');
-      dom.ch_etn2.style.display = 'flex';
-      dom.ch_etn2.style.width = '22%';
-      dom.ch_etn2.style.textAlign = 'left';
-      if (you.wealth < p) { dom.ch_etn2.style.color = 'red'; dom.ch_etn.style.backgroundColor = 'rgb(68,26,38)' }
-      dom.ch_etn2_1 = addElement(dom.ch_etn2, 'span');
-      dom.ch_etn2_1.style.width = '33.3%';
-      dom.ch_etn2_2 = addElement(dom.ch_etn2, 'span');
-      dom.ch_etn2_2.style.width = '33.3%';
-      dom.ch_etn2_3 = addElement(dom.ch_etn2, 'span');
-      dom.ch_etn2_3.style.width = '33.3%';
-      if (p >= GOLD) { dom.ch_etn2_1.innerHTML = (dom.coingold + ((p / GOLD) << 0)); dom.ch_etn2_1.style.backgroundColor = 'rgb(102, 66, 0)'; }
-      if (p >= SILVER && p % GOLD >= SILVER) { dom.ch_etn2_2.innerHTML = (dom.coinsilver + ((p / SILVER % SILVER) << 0)); dom.ch_etn2_2.style.backgroundColor = 'rgb(56, 56, 56)'; }
-      if (p < SILVER || (p > SILVER && p % SILVER > 0)) { dom.ch_etn2_3.innerHTML = (dom.coincopper + ((p % SILVER) << 0)); dom.ch_etn2_3.style.backgroundColor = 'rgb(102, 38, 23)'; }
-      dom.ch_etn3 = addElement(dom.ch_etn, 'div', null, 'list-col-stat');
-      dom.ch_etn3.style.width = '14%';
-      dom.ch_etn3.style.color = 'lime';
-      dom.ch_etn3.innerHTML = itm[1];
-      if (itm[1] === 0) { dom.ch_etn3.innerHTML = '<small>sold out</small>'; dom.ch_etn1n.style.color = 'grey'; dom.ch_etn2.style.color = 'grey'; dom.ch_etn3.style.color = 'grey'; }
-      dom.ch_etn.addEventListener('mouseenter', function () {
-        dom.ch_etn1b1 = addElement(this.children[0].children[1], 'small', null, 'quantity-btn');
-        dom.ch_etn1b1.innerHTML = '1';
-        dom.ch_etn1b2 = addElement(this.children[0].children[1], 'small', null, 'quantity-btn');
-        dom.ch_etn1b2.innerHTML = '5';
-        dom.ch_etn1b3 = addElement(this.children[0].children[1], 'small', null, 'quantity-btn');
-        dom.ch_etn1b3.innerHTML = '10';
-        dom.ch_etn1b4 = addElement(this.children[0].children[1], 'small', null, 'quantity-btn');
-        dom.ch_etn1b4.innerHTML = 'M';
-        buycbs(itm, vnd)
-        dom.ch_etn1b1.addEventListener('click', function () {
-          let el = this.parentElement.parentElement.parentElement; let p = Math.ceil(itm[2] * (you.mods.infsrate - skl.trad.use()) * vnd.infl * (1 - (Math.sqrt(vnd.data.rep) ** 1.3 + 0.05) * .01) * global.offline_evil_index);
-          if (you.wealth >= p && itm[1] > 0) {
-            itm[1]--; giveItem(itm[0]); spend(p); m_update(); giveSkExp(skl.gred, itm[2] * .05); giveSkExp(skl.trad, itm[2] ** (1 + itm[0].rar * .1) * .05)
-            if (p >= GOLD) mf(-Math.ceil((p - GOLD) / GOLD), 3);
-            if (p >= SILVER) mf(-Math.ceil((p - SILVER) / SILVER % 100), 2);
-            mf(-p % 100, 1);
-            global.stat.buyt++;
-            if (random() < .0008) { giveItem(acc.dticket); msg('Thank you for your patronage!', 'gold', null, null, 'magenta') };
-            global.stat.shppnt += p * .01;
-            vnd.data.rep += itm[2] * .0004 * vnd.repsc;
-            if (vnd.data.rep > 100) vnd.data.rep = 100
-            if (itm[1] === 0) { el.children[2].innerHTML = '<small>sold out</small>'; el.children[2].style.color = el.children[0].children[0].style.color = el.children[1].style.color = 'grey' } else el.children[2].innerHTML = itm[1];
-          } buycbs(itm, vnd)
-        });
-        dom.ch_etn1b2.addEventListener('click', function () {
-          let el = this.parentElement.parentElement.parentElement; let p = Math.ceil(itm[2] * (you.mods.infsrate - skl.trad.use()) * vnd.infl * (1 - (Math.sqrt(vnd.data.rep) ** 1.3 + 0.05) * .01) * global.offline_evil_index);
-          if (you.wealth >= p * 5 && itm[1] >= 5) {
-            itm[1] -= 5; giveItem(itm[0], 5); spend(p * 5); m_update(); giveSkExp(skl.gred, itm[2] * 5 * .05); giveSkExp(skl.trad, itm[2] ** (1 + itm[0].rar * .1) * .05 * 5)
-            if (p * 5 >= GOLD) mf(-Math.ceil((p * 5 - GOLD) / GOLD), 3);
-            if (p * 5 >= SILVER) mf(-Math.ceil((p * 5 - SILVER) / SILVER % 100), 2);
-            mf(-p * 5 % 100, 1);
-            global.stat.buyt += 5;
-            if (random() < .004) { giveItem(acc.dticket); msg('Thank you for your patronage!', 'gold', null, null, 'magenta') };
-            global.stat.shppnt += p * .01;
-            vnd.data.rep += itm[2] * (5 * (1 + .05)) * .0004 * vnd.repsc;
-            if (vnd.data.rep > 100) vnd.data.rep = 100
-            if (itm[1] === 0) { el.children[2].innerHTML = '<small>sold out</small>'; el.children[2].style.color = el.children[0].children[0].style.color = el.children[1].style.color = 'grey' } else el.children[2].innerHTML = itm[1];
-          } buycbs(itm, vnd)
-        });
-        dom.ch_etn1b3.addEventListener('click', function () {
-          let el = this.parentElement.parentElement.parentElement; let p = Math.ceil(itm[2] * (you.mods.infsrate - skl.trad.use()) * vnd.infl * (1 - (Math.sqrt(vnd.data.rep) ** 1.3 + 0.05) * .01) * global.offline_evil_index);
-          if (you.wealth >= p * 10 && itm[1] >= 10) {
-            itm[1] -= 10; giveItem(itm[0], 10); spend(p * 10); m_update(); giveSkExp(skl.gred, itm[2] * 10 * .05); giveSkExp(skl.trad, itm[2] ** (1 + itm[0].rar * .1) * .05 * 10)
-            if (p * 10 >= GOLD) mf(-Math.ceil((p * 10 - GOLD) / GOLD), 3);
-            if (p * 10 >= SILVER) mf(-Math.ceil((p * 10 - SILVER) / SILVER % 100), 2);
-            mf(-p * 10 % 100, 1);
-            global.stat.buyt += 10;
-            if (random() < .008) { giveItem(acc.dticket); msg('Thank you for your patronage!', 'gold', null, null, 'magenta') };
-            global.stat.shppnt += p * .01;
-            vnd.data.rep += itm[2] * (10 * (1 + .1)) * .0004 * vnd.repsc;
-            if (vnd.data.rep > 100) vnd.data.rep = 100
-            if (itm[1] === 0) { el.children[2].innerHTML = '<small>sold out</small>'; el.children[2].style.color = el.children[0].children[0].style.color = el.children[1].style.color = 'grey' } else el.children[2].innerHTML = itm[1];
-          } buycbs(itm, vnd)
-        });
-        dom.ch_etn1b4.addEventListener('click', function () {
-          let el = this.parentElement.parentElement.parentElement; let p = Math.ceil(itm[2] * (you.mods.infsrate - skl.trad.use()) * vnd.infl * (1 - (Math.sqrt(vnd.data.rep) ** 1.3 + 0.05) * .01) * global.offline_evil_index); let max = (you.wealth / p) << 0; if (max > itm[1]) max = itm[1];
-          if (you.wealth >= p && itm[1] > 0) {
-            itm[1] -= max; giveItem(itm[0], max); spend(p * max); m_update(); giveSkExp(skl.gred, itm[2] * max * .05); giveSkExp(skl.trad, itm[2] ** (1 + itm[0].rar * .1) * .05 * max)
-            if (p * max >= GOLD) mf(-Math.ceil((p * max - GOLD) / GOLD), 3);
-            if (p * max >= SILVER) mf(-Math.ceil((p * max - SILVER) / SILVER % 100), 2);
-            mf(-p * max % 100, 1);
-            global.stat.buyt += max;
-            if (random() < .0008 * max) { giveItem(acc.dticket); msg('Thank you for your patronage!', 'gold', null, null, 'magenta') };
-            global.stat.shppnt += p * .01;
-            vnd.data.rep += itm[2] * (max * (1 + max * .01)) * .0004 * vnd.repsc;
-            if (vnd.data.rep > 100) vnd.data.rep = 100
-            if (itm[1] === 0) { el.children[2].innerHTML = '<small>sold out</small>'; el.children[2].style.color = el.children[0].children[0].style.color = el.children[1].style.color = 'grey'; } else el.children[2].innerHTML = itm[1];
-          } buycbs(itm, vnd)
-        });
-      });
-      dom.ch_etn.addEventListener('mouseleave', function () {
-        empty(this.children[0].children[1]);
-      });
-      dom.ch_etn1n.addEventListener('click', function () {
-        let el = this.parentElement.parentElement; let p = Math.ceil(itm[2] * (you.mods.infsrate - skl.trad.use()) * vnd.infl * (1 - (Math.sqrt(vnd.data.rep) ** 1.3 + 0.05) * .01) * global.offline_evil_index);
-        if (you.wealth >= p && itm[1] > 0) {
-          itm[1]--; giveItem(itm[0]); spend(p); m_update(); giveSkExp(skl.gred, itm[2] * .05); giveSkExp(skl.trad, itm[2] ** (1 + itm[0].rar * .1) * .05)
-          if (p >= GOLD) mf(-Math.ceil((p - GOLD) / GOLD), 3);
-          if (p >= SILVER) mf(-Math.ceil((p - SILVER) / SILVER % 100), 2);
-          mf(-p % 100, 1);
-          global.stat.buyt++;
-          if (random() < .0008) { giveItem(acc.dticket); msg('Thank you for your patronage!', 'gold', null, null, 'magenta') };
-          global.stat.shppnt += p * .01;
-          vnd.data.rep += itm[2] * .0004 * vnd.repsc;
-          if (vnd.data.rep > 100) vnd.data.rep = 100
-          if (itm[1] === 0) { el.children[2].innerHTML = '<small>sold out</small>'; el.children[2].style.color = this.style.color = el.children[1].style.color = 'grey' } else el.children[2].innerHTML = itm[1];
-        } buycbs(itm, vnd)
-      });
-    }
-
-    function buycbs(itm, vnd) {
-      let p = Math.ceil(itm[2] * (you.mods.infsrate - skl.trad.use()) * vnd.infl * (1 - (Math.sqrt(vnd.data.rep) ** 1.3 + 0.05) * .01) * global.offline_evil_index);
-      if (you.wealth < p || itm[1] <= 0) dom.ch_etn1b1.style.color = 'grey';
-      if (you.wealth < p * 5 || itm[1] < 5) dom.ch_etn1b2.style.color = 'grey';
-      if (you.wealth < p * 10 || itm[1] < 10) dom.ch_etn1b3.style.color = 'grey';
-      if (you.wealth < p || itm[1] <= 0) dom.ch_etn1b4.style.color = 'grey';
-      dom.ch_1e.innerHTML = '&nbspBuying price: <span style="color:lime">' + Math.round(((you.mods.infsrate - skl.trad.use()) * vnd.infl * (1 - (Math.sqrt(vnd.data.rep) ** 1.3 + 0.05) * .01) * global.offline_evil_index) * 10000) / 100 + '%</span>'
-      dom.ch_2e.innerHTML = '&nbspReputation: ' + col(vnd.data.rep << 0, 'lime');
-      for (let i = 0; i < vnd.stock.length; i++) { if (you.wealth < Math.ceil(vnd.stock[i][2] * (you.mods.infsrate - skl.trad.use()) * vnd.infl * (1 - (Math.sqrt(vnd.data.rep) ** 1.3 + 0.05) * .01) * global.offline_evil_index)) { dom.ch_1h.children[i].children[1].style.color = 'red'; dom.ch_1h.children[i].style.backgroundColor = 'rgb(68,26,38)' } }
-      for (let x in global.shptchk) global.shptchk[x]();
-      //put it here for now
-    }
+    // renderFurniture — moved to ui/panels.ts
+    // recshop, rendershopitem, buycbs — moved to ui/shop.ts
     for (let x in global.cptchk) global.cptchk[x]();
-
-    export function giveFurniture(frt, l, show) {
-      let frn = l === true ? copy(frt) : frt;
-      if (show !== false) msg('Furniture Acquired: <span style="color:orange">"' + frt.name + '"</span>', 'yellow', frt, 9);
-      if (scanbyid(furn, frn.id)) frn.data.amount++;
-      else { furn.push(frn); frn.data.amount++; }
-      frn.onGive();
-      if (global.wdwidx === 1) { empty(dom.ch_1h); for (let a in furn) renderFurniture(furn[a]) }
-      let v = 0;
-      for (let a in furn) if (furn[a].v) { if (furn[a].multv) v += furn[a].v * furn[a].amount; else v += furn[a].v } if (dom.flsthdrbb) dom.flsthdrbb.innerHTML = v;
-      return frn
-    }
+    // giveFurniture — moved to game/inventory.ts
 
     global._preig = addElement(document.body, 'img');
     global._preig.src = 'ctst.png';
@@ -4342,76 +4074,10 @@ import './data/mastery';
 
     // canRead — moved to game/utils-game.ts
 
-    global.text.ssns = ['春', '夏', '秋', '冬']
+    global.text.ssns = ['春', '夏', '秋', '冬'];
 
-    export function wdrseason(flag) {
-      let s;
-      s = !flag ? getSeason(true) : global.text.ssns[getSeason() - 1];
-      dom.d_weathers.innerHTML = '[' + s + ']';
-      switch (getSeason()) {
-        case 1: dom.d_weathers.style.color = 'springgreen';
-          dom.d_weathers.style.backgroundColor = '#253';
-          break
-        case 2: dom.d_weathers.style.color = 'lime';
-          dom.d_weathers.style.backgroundColor = '#141';
-          break
-        case 3: dom.d_weathers.style.color = 'yellow';
-          dom.d_weathers.style.backgroundColor = '#631';
-          break
-        case 4: dom.d_weathers.style.color = 'ghostwhite';
-          dom.d_weathers.style.backgroundColor = '#556';
-          break
-      }
-    }
-
-    export function ontick() {
-      global.stat.tick++;
-      time.minute += global.timescale;
-      wManager();
-      for (let a in plans[0]) plans[0][a].f();
-      dom.d_time.innerHTML = '<small>' + getDay(global.flags.tmmode || 2) + '</small> ' + timeDisp(time);
-      //global.stat.seed1=(random()*7e+7<<7)%7&7
-      global.current_l.onStay();
-      runEffectors(global.current_l.effectors)
-      for (let a in sectors) { sectors[a].onStay(); runEffectors(sectors[a].effectors) }
-      giveSkExp(skl.aba, .004);
-      let timeh = (time.minute / DAY) << 0;
-      if (global.timehold !== timeh) {
-        global.timehold = timeh; //proc when day passes
-        for (let a in plans[1]) plans[1][a].f();
-        for (let vnd in vendor) vendor[vnd].onDayPass();
-        empty(dom.d_moon);
-        dom.d_moon.innerHTML = global.text.lunarp[getLunarPhase()][0];
-        addDesc(dom.d_moon, null, 2, 'Lunar Phase', global.text.lunarp[getLunarPhase()][1])
-        wdrseason(global.flags.ssngaijin);
-        if (getSeason() === 4) global.flags.iscold = true;
-        else global.flags.iscold = false;
-        global.offline_evil_index += .00008
-        ///////////////////////////////// 
-        let timew = (time.minute / WEEK) << 0;
-        if (global.timewold !== timew) {
-          global.timewold = timew; //proc when week passes
-          for (let a in plans[2]) plans[2][a].f();
-        }
-      }
-      let h = getHour();
-      if (h > 5 && h < 22) { global.flags.isday = true; dom.d_moon.style.display = 'none' } else { if (global.flags.inside === false && random() < .00002 * you.mods.stdstps) { msg('A star particle landed on you!', 'gold', null, null, 'darkblue'); giveItem(item.stdst) } global.flags.isday = false; dom.d_moon.style.display = '' }
-      for (let g = 0; g < you.eff.length; g++) if (you.eff[g].type === 3 || you.eff[g].type === 5 || you.eff[g].type === 6) you.eff[g].use(you.eff[g].y, you.eff[g].z);
-      for (let g = 0; g < global.current_m.eff.length; g++) if (global.current_m.eff[g].type === 3 || global.current_m.eff[g].type === 5 || global.current_m.eff[g].type === 6) global.current_m.eff[g].use(global.current_m.eff[g].y, global.current_m.eff[g].z);
-      if (global.flags.btl === true) timers.btl = setTimeout(fght(you, global.current_m), 1000 / global.fps);
-      else giveSkExp(skl.mdt, .0065 * (1 + skl.ptnc.lvl * .15) * (effect.incsk.active === true ? 2 : 1))
-      for (let obj in furn) furn[obj].use();
-      //for(let q in qsts) qsts[q].tracker();
-      if (you.sat > 0) {
-        let lose = you.mods.sdrate
-        if (global.flags.iswet === true) lose *= (3 / (1 + (skl.abw.lvl * .03)))
-        if (global.flags.iscold === true) lose += effect.cold.duration / 1000 / (1 + skl.coldr.lvl * .05);
-        you.sat -= lose
-      } else giveSkExp(skl.fmn, .1);
-      if (global.flags.sleepmode) global.stat.timeslp += global.timescale;
-      if (random() < .00000001) { let au = new Audio("laugh6.wav"); au.play() }
-      dom.d5_3_1.update();
-    }
+    // wdrseason — moved to systems/weather.ts
+    // ontick — moved to systems/loop.ts
 
     (function update() {
       setTimeout(function () { update(); ontick(); }, 1000 / global.fps);

@@ -10,7 +10,7 @@ import {
   itemgroup, mastery,
   setYou, setTime, setInv, setDar, setFurn, setQsts, setActs, setSectors
 } from '../state';
-import { wdrseason } from '../main';
+import { wdrseason } from './weather';
 import { smove, inSector, area_init } from '../game/movement';
 import { kill } from '../game/utils-game';
 import { giveItem, addToContainer } from '../game/inventory';

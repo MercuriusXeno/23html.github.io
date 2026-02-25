@@ -1,9 +1,11 @@
 import { randf, rand } from '../random';
 import { col, scanbyid } from '../utils';
-import { dom, global, you, skl as sklState, ttl } from '../state';
+import { empty } from '../dom-utils';
+import { dom, global, you, skl as sklState, ttl, acts } from '../state';
 import { msg, msg_add } from '../ui/messages';
 import { update_d } from '../ui/stats';
 import { rsort } from '../ui/inventory';
+import { renderAct } from '../ui/panels';
 import { formatw } from './utils-game';
 
     export function lvlup(p, t) {
@@ -100,4 +102,14 @@ import { formatw } from './utils-game';
 
     export function giveCrExp(skl, am, lvl) {
       if (!lvl || skl.lvl < lvl) giveSkExp(skl, am);
+    }
+
+    export function giveAction(a) {
+      if (a.have === false) {
+        if (!global.flags.actsu) { global.flags.actsu = true; dom.ct_bt3.innerHTML = 'actions' }
+        msg('You learned a new action: <span style="color:tomato">"' + a.name + '"</span>', 'lime', a, 9);
+        a.have = true;
+        acts.push(a);
+        if (acts.length >= 1 && dom.acccon) { empty(dom.acccon); for (let a in acts) renderAct(acts[a]) }
+      }
     }

@@ -1,10 +1,12 @@
 import { addElement, empty } from '../dom-utils';
-import { dom, global, you, skl, timers, acts, act } from '../state';
+import { dom, global, you, skl, timers, acts, act, home, furn, chss } from '../state';
 import { addDesc } from './descriptions';
+import { chs, clr_chs, deactivatef } from './choices';
 import { msg } from './messages';
 import { make } from '../game/crafting';
 import { iftrunkopen } from '../game/inventory';
 import { giveSkExp } from '../game/progression';
+import { smove } from '../game/movement';
 import { formatw } from '../game/utils-game';
 
     export function renderRcp(rcp) {
@@ -247,4 +249,83 @@ import { formatw } from '../game/utils-game';
       global.flags.busy = false;
       dom.ct_bt3.style.backgroundColor = 'inherit';
       for (let a in acts) refreshAct(acts[a].t, acts[a])
+    }
+
+    export function renderFurniture(frn) {
+      dom.ch_etn = addElement(dom.ch_1h, 'div', 'bst_entrh', 'list-row');
+      dom.ch_etn.style.backgroundColor = 'rgb(10,30,54)';
+      dom.ch_etn1 = addElement(dom.ch_etn, 'div', null, 'list-col-name');
+      dom.ch_etn1.innerHTML = frn.name;
+      switch (frn.id) {
+        case home.bed.id:
+          dom.ch_etn1.innerHTML += ' <small style="color:grey">[z]</small>';
+          break
+        case home.pilw && home.pilw.id:
+          dom.ch_etn1.innerHTML += ' <small style="color:grey">[zp]</small>';
+          break
+        case home.blkt && home.blkt.id:
+          dom.ch_etn1.innerHTML += ' <small style="color:grey">[zb]</small>';
+          break
+        case home.tbw && home.tbw.id:
+          dom.ch_etn1.innerHTML += ' <small style="color:pink">[t]</small>';
+          break
+      }
+      dom.ch_etn.addEventListener('mouseenter', function () {
+        if (frn.removable === true) {
+          dom.chsfdel = addElement(this.children[0], 'div', null, 'delete-btn');
+          dom.chsfdel.innerHTML = 'x';
+          dom.chsfdel.style.right = 5;
+          dom.chsfdel.style.top = 19;
+          dom.chsfdel.addEventListener('click', function () {
+            frn.data.amount--;
+            frn.onRemove();
+            if (frn.data.amount === 0) { deactivatef(frn); frn.onDestroy(); global.dscr.style.display = 'none'; furn.splice(furn.indexOf(frn), 1); showFurniturePanel(); chs('"<= Return"', false).addEventListener('click', () => { smove(chss.home, false) }) } else
+              this.parentElement.parentElement.children[1].innerHTML = 'x' + frn.data.amount;
+            let v = 0;
+            for (let a in furn) if (furn[a].v) { if (furn[a].multv) v += furn[a].v * furn[a].amount; else v += furn[a].v } dom.flsthdrbb.innerHTML = v;
+          });
+        }
+      });
+      dom.ch_etn.addEventListener('mouseleave', function () {
+        if (frn.removable === true) this.children[0].removeChild(dom.chsfdel);
+      });
+      dom.ch_etn.addEventListener('click', function () {
+        frn.onSelect();
+      });
+      dom.ch_etn2 = addElement(dom.ch_etn, 'div', null, 'list-col-rank');
+      dom.ch_etn2.innerHTML = 'x' + frn.data.amount;
+      dom.ch_etn2.style.width = '6%';
+      addDesc(dom.ch_etn, frn, 9);
+    }
+
+    export function showFurniturePanel() {
+      clr_chs()
+      dom.ch_1 = addElement(dom.ctr_2, 'div');
+      dom.ch_1.style.height = '76%';
+      dom.ch_1.style.backgroundColor = 'rgb(0,20,44)';
+      dom.flsthdr = addElement(dom.ch_1, 'div');
+      dom.flsthdra = addElement(dom.flsthdr, 'div');
+      dom.flsthdr.style.display = 'flex'
+      dom.flsthdra.innerHTML = 'Furniture Owned';
+      dom.flsthdra.style.position = 'relative';
+      dom.flsthdra.style.left = 120;
+      dom.flsthdr.style.borderBottom = '1px #44c solid';
+      dom.flsthdr.style.padding = 2;
+      dom.flsthdrbc = addElement(dom.flsthdr, 'div');
+      dom.flsthdrb = addElement(dom.flsthdrbc, 'small');
+      dom.flsthdrb.innerHTML = 'Home rating: ';
+      dom.flsthdrbc.style.left = 237;
+      dom.flsthdrb.style.paddingLeft = 6;
+      dom.flsthdrbc.style.position = 'relative';
+      dom.flsthdrbc.style.borderLeft = '1px solid rgb(68, 68, 204)'
+      dom.flsthdrbb = addElement(dom.flsthdrbc, 'small');
+      dom.flsthdrbb.style.color = 'lime';
+      let v = 0;
+      for (let a in furn) if (furn[a].v) { if (furn[a].multv) v += furn[a].v * furn[a].amount; else v += furn[a].v } dom.flsthdrbb.innerHTML = v;
+      dom.ch_1h = addElement(dom.ch_1, 'div', null);
+      dom.ch_1h.style.textAlign = 'left';
+      dom.ch_1h.style.display = 'block'
+      for (let a in furn) {
+        renderFurniture(furn[a]);
+      }
     }
