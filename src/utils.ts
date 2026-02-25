@@ -65,3 +65,19 @@ export function findworst(arr, itm) {
   for (let a in arr) if (arr[a].id === itm.id) temp.push(arr[a]);
   return temp.sort(function (a, b) { if (a.dp < b.dp) return -1; return 1 })
 }
+
+export function z_bake(area) {
+  let c = 0;
+  let d = 0;
+  let b = [];
+  let e = [];
+  let s = 0;
+  for (let i = 0; i < area.pop.length; i++) c += area.pop[i].c;
+  d = 1 - c;
+  for (let i = 0; i < area.pop.length; i++) b[i] = (d / c) * area.pop[i].c + area.pop[i].c;
+  for (let i = 0; i < b.length; i++) {
+    if (i === 0) { e[i] = [0, b[i]]; s = b[i]; }
+    else if (i === b.length - 1) e[i] = [s, 1];
+    else { e[i] = [s, b[i] + s]; s += b[i] }
+  } area.popc = e;
+}

@@ -1,8 +1,7 @@
 import { item, dom, you, global, effect, skl, inv, wpn, eqp, sld, acc, furniture, home, furn, sector, ttl } from '../state';
 import { random, rand, randf } from '../random';
-import { select, findbyid } from '../utils';
+import { select, findbyid, z_bake } from '../utils';
 import { msg, _msg, giveEff, removeEff, giveSkExp, giveItem, removeItem, giveExp, giveWealth, spend, dscr, chs, smove, inSector, reduce, update_d, activatef, giveRcp, area_init } from '../main';
-import { z_bake } from './world';
 
 // ==========================================================================
 // Item constructor + factory functions + instances

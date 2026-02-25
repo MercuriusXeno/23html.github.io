@@ -1,5 +1,5 @@
 import { skl, you, dom, ttl, rcp } from '../state';
-import { giveTitle, giveRcp } from '../main';
+import { giveTitle, giveRcp, giveSkExp } from '../main';
 
 // ==========================================================================
 // Skill constructor + instances

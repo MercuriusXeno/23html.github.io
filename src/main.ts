@@ -1320,7 +1320,7 @@ import './data/mastery';
 
 
 
-    function restock(vnd) {
+    export function restock(vnd) {
       vnd.stock = []; shuffle(vnd.items);
       for (let ims = 0; ims < vnd.items.length; ims++) {
         if ((!vnd.items[ims].cond || vnd.items[ims].cond() === true) && random() <= vnd.items[ims].c) vnd.stock.push([vnd.items[ims].item, rand(vnd.items[ims].min, vnd.items[ims].max), vnd.items[ims].p]);
@@ -3044,7 +3044,7 @@ import './data/mastery';
       dom.d9m.update();
     }
 
-    testz = new Area();
+    testz = new (area._ctor)();
     testz.apop = 4000;
     testz.bpop = 6000;
     testz.vsize = 10000;

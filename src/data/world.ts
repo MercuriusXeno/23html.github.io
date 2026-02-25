@@ -1,6 +1,11 @@
-import { area, sector, creature, item, acc, ttl, global, dom, you, time, furn, furniture, effect, skl, chss, itemgroup } from '../state';
-import { findbyid, select } from '../utils';
+import { area, sector, creature, item, wpn, acc, ttl, global, dom, you, time, furn, furniture, effect, effector, skl, chss, itemgroup } from '../state';
+import { findbyid, select, z_bake } from '../utils';
 import { giveTitle, smove, msg, giveItem, inSector, activatef, deactivatef, giveEff, removeEff, getSeason, scoutGeneric } from '../main';
+// Explicit deps: world.ts references creature/item/wpn/acc/eqp instances at eval time
+import './items';
+import './equipment';
+import './abilities';
+import './creatures';
 
 // ==========================================================================
 // Area + Sector constructors + instances
@@ -16,6 +21,7 @@ function Area(cfg) {
   this.onDeath = function () { };
   if (cfg) for (let k in cfg) this[k] = cfg[k];
 }
+area._ctor = Area;
 
 area.nwh = new Area({ id: 101, name: 'Somewhere', pop: [{ crt: creature.default, lvlmin: 1, lvlmax: 1, c: 1 }], size: 1 });
 z_bake(area.nwh);
@@ -154,21 +160,7 @@ area.frstn9a1.onEnd = function () {
 }; area.frstn9a1.drop = [{ item: item.hrb1, c: .03 }, { item: item.wdc, c: .06 }]
 
 
-export function z_bake(area) {
-  let c = 0;
-  let d = 0;
-  let b = [];
-  let e = [];
-  let s = 0;
-  for (let i = 0; i < area.pop.length; i++) c += area.pop[i].c;
-  d = 1 - c;
-  for (let i = 0; i < area.pop.length; i++) b[i] = (d / c) * area.pop[i].c + area.pop[i].c;
-  for (let i = 0; i < b.length; i++) {
-    if (i === 0) { e[i] = [0, b[i]]; s = b[i]; }
-    else if (i === b.length - 1) e[i] = [s, 1];
-    else { e[i] = [s, b[i] + s]; s += b[i] }
-  } area.popc = e;
-}
+
 
 ///////////////////////////////////////////
 //ZNE SECTOR

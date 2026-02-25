@@ -1,5 +1,6 @@
-import { vendor, item, wpn, eqp, chss } from '../state';
+import { vendor, item, wpn, eqp, sld, acc, chss } from '../state';
 import { random } from '../random';
+import { restock } from '../main';
 
 // ==========================================================================
 // Vendor constructor + instances
