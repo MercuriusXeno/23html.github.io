@@ -2,41 +2,33 @@
 <!-- Written by /wrapup. Read by /catchup at the start of the next session. -->
 <!-- Overwritten each session — history preserved in git log of this file. -->
 
-- **Date:** 2026-02-24
+- **Date:** 2026-02-25
 - **Branch:** main
 
 ## What Was Done
-- Completed Phase 3 Step 3.6: Extract UI Modules
-- Created 8 new modules under `src/ui/` (~1,260 lines total):
-  - `messages.ts` (~49 lines): msg, _msg, msg_add — game log functions
-  - `descriptions.ts` (~424 lines): dscr, addDesc, descsinfo — tooltip/popup system
-  - `stats.ts` (~36 lines): update_db, update_d, update_m, m_update — stat display
-  - `effects.ts` (~72 lines): giveEff, removeEff, effdfix, eff_d — effect display
-  - `equipment.ts` (~110 lines): equip, unequip, eqpres — equipment slot display
-  - `inventory.ts` (~260 lines): renderItem, updateInv, isort, rsort, invbtsrst, rstcrtthg, reduce
-  - `choices.ts` (~64 lines): chs, clr_chs, icon, Chs constructor, activatef, deactivatef
-  - `panels.ts` (~247 lines): renderRcp, refreshRcp, _refreshRcpCnt, _fcraft, renderSkl, renderAct, refreshAct, activateAct, deactivateAct
-- Reduced `src/main.ts` from ~7,350 to ~6,180 lines (~1,170 lines extracted)
-- Bundle size stable at 789.1kb
-- All functions re-exported from main.ts for backward compat with data/system modules
-- Newly exported from main.ts for UI module use: `make`, `formatw`, `iftrunkopen`, `listen_k`, `disassembleGeneric`
+- Completed Phase 3 Step 3.7: main.ts cleanup pass
+- Removed 34 `// --- ... moved to src/...` extraction comment markers from `src/main.ts`
+- Removed 4 commented-out dead code blocks (DOM mousedown/mouseup listeners, unused tab buttons, placeholder achievement checks)
+- Collapsed blank line gaps left by removals
+- `src/main.ts` reduced from ~6,180 to ~6,105 lines (75 lines removed)
+- Updated `ROADMAP.md`: Step 3.7 checked off, Phase 3 fully complete
+- Updated `CLAUDE.md`: line counts, Phase 3 status, ROADMAP description
+- Updated `MEMORY.md`: line counts, Phase 3 status
 
 ## Decisions Made
-- Heavy rendering functions (chs_spec, renderFurniture, rendershopitem, buycbs, rendertrunkitem, etc.) stayed in main.ts — too deeply entangled to cleanly extract in 3.6g
-- Step 3.6i (miscellaneous UI helpers) was skipped per plan — combat print functions, small helpers left in main.ts to avoid excessive module fragmentation
-- Circular deps between ui/ modules and main.ts handled via deferred imports (function body references only)
-- UI modules import from sibling ui/ modules directly where possible (e.g., effects.ts imports addDesc from descriptions.ts, not main.ts)
-- Dead `format` function in messages area was deleted rather than moved
+- Commented-out achievement check stubs (monchk, shptchk) removed — they were placeholders with duplicate GOLD thresholds, not real future content
+- Commented-out DOM mousedown/mouseup listeners removed — shake effect was abandoned
+- No exports removed — audit confirmed all exports are used by ui/ modules despite appearing internal
 
 ## Open Items
-- [ ] Phase 3 Step 3.7: Wire up final entry point — imports only, verify full game works
 - [ ] CSS semantic rename from `CLASS_MAP.md` (deferred — do after modularization)
 - [ ] `.exp` text-shadow typo `0pzx` in styles.css
 - [ ] Heavy rendering functions still in main.ts could be extracted in Phase 4
 
 ## Next Steps
-1. Step 3.7: Final wiring of `src/main.ts` as entry point
-2. Phase 4: Architecture improvements (circular imports, strict types, etc.)
+1. Phase 4 Step 4.1: Resolve circular imports — barrel exports for `src/data/`
+2. Phase 4 Step 4.5: Enable `strict: true` incrementally (low-risk, catches bugs)
+3. Phase 4 Steps 4.2-4.4: Deeper architecture improvements
 
 ## Context for Next Session
-Phases 1-2 and Phase 3 Steps 3.1-3.6 are complete. The monolith has been split into utility modules (5), state module (1), data modules (13), system modules (3), and UI modules (8). main.ts is down to ~6,180 lines, mostly DOM setup (~1,500 lines of eval-time side effects), core game logic (combat, movement, item management), and some heavy rendering functions that were too entangled to extract cleanly. Step 3.7 (final wiring) is the last step before Phase 4. Bundle size is stable at ~789kb.
+Phase 3 (TypeScript + ES Modules) is fully complete. The monolith has been split into utility modules (5), state module (1), data modules (13), system modules (3), and UI modules (8). main.ts is ~6,100 lines — mostly DOM setup, core game logic, and heavy rendering functions too entangled to extract cleanly. Bundle size is stable at ~789kb. Phase 4 (architecture improvements) is next.
