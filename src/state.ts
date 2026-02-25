@@ -50,7 +50,7 @@ export var qsts: any[] = [];
 export var dar: any = [[], [], [], [], []];
 export var you: any = new Object();
 export var home: any = new Object();
-eqp.dummy = {};
+// eqp.dummy is set in src/data/equipment.ts after Eqp constructor is defined
 export var acts: any[] = [];
 
 // Reassignable singletons
