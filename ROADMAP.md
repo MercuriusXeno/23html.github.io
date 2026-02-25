@@ -29,7 +29,7 @@
 - [x] **Step 3.3:** Extract state module (`src/state.ts` — `you`, `global`, `dom`, `timers`, `callback` singletons)
 - [x] **Step 3.4:** Extract data modules (`src/data/` — items, creatures, areas, skills, effects, recipes, quests, vendors, titles, furniture, actions)
 - [x] **Step 3.5:** Extract system modules (`src/systems/` — weather+time+callbacks, player constructor, save-load)
-- [ ] **Step 3.6:** Extract UI modules (`src/ui/` — dom-setup, messages, descriptions, choices, rendering, locations)
+- [x] **Step 3.6:** Extract UI modules (`src/ui/` — messages, descriptions, stats, effects, equipment, inventory, choices, panels)
 - [ ] **Step 3.7:** Wire up `src/main.ts` entry point — imports only, verify full game works as ES modules
 
 ## Phase 4: Architecture Improvements (Future)

@@ -4,13 +4,22 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**Proto23** is a browser-based text RPG game, deployed as a GitHub Pages site (`23html.github.io`). The game is split across `src/main.ts` (~7,350 lines), `src/data/` (13 modules, ~5,100 lines), and `src/systems/` (3 modules, ~1,590 lines), bundled via esbuild to `dist/bundle.js`, which `index.html` loads. CSS is in `styles.css`.
+**Proto23** is a browser-based text RPG game, deployed as a GitHub Pages site (`23html.github.io`). The game is split across `src/main.ts` (~6,180 lines), `src/ui/` (8 modules, ~1,260 lines), `src/data/` (13 modules, ~5,100 lines), and `src/systems/` (3 modules, ~1,590 lines), bundled via esbuild to `dist/bundle.js`, which `index.html` loads. CSS is in `styles.css`.
 
 ## Architecture
 
 ### File structure
 - `index.html` — shell HTML, loads `styles.css` and `dist/bundle.js`
-- `src/main.ts` — core game logic (~7,350 lines, being split into modules during Phase 3)
+- `src/main.ts` — core game logic (~6,180 lines, being split into modules during Phase 3)
+- `src/ui/` — 8 UI modules (~1,260 lines):
+  - `messages.ts` — Game log (`msg`, `_msg`, `msg_add`)
+  - `descriptions.ts` — Tooltip/description popups (`dscr`, `addDesc`, `descsinfo`)
+  - `stats.ts` — Stat display updates (`update_db`, `update_d`, `update_m`, `m_update`)
+  - `effects.ts` — Effect display (`giveEff`, `removeEff`)
+  - `equipment.ts` — Equipment slot display (`equip`, `unequip`, `eqpres`)
+  - `inventory.ts` — Inventory rendering/sorting (`renderItem`, `isort`, `rsort`, `reduce`)
+  - `choices.ts` — Choice buttons and icons (`chs`, `clr_chs`, `icon`, `Chs`)
+  - `panels.ts` — Crafting/skill/action panels (`renderRcp`, `renderSkl`, `renderAct`, `deactivateAct`)
 - `src/data/` — 13 data definition modules (~5,100 lines): titles, effects, furniture, skills, items, equipment, abilities, creatures, world, crafting, vendors, actions, mastery
 - `src/systems/` — 3 system modules (~1,590 lines):
   - `weather.ts` — Weather/time/calendar system, callbacks (~600 lines)
@@ -27,7 +36,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `ctst.png` — sprite sheet, `laugh6.wav` — sound effect, `favicon.ico`
 
 ### Refactoring artifacts
-- `ROADMAP.md` — 4-phase refactoring plan with checkboxes (Phases 1-2 complete, Phase 3 Steps 3.1-3.5 complete)
+- `ROADMAP.md` — 4-phase refactoring plan with checkboxes (Phases 1-2 complete, Phase 3 Steps 3.1-3.6 complete)
 - `CLASS_MAP.md` — CSS class rename mapping (cryptic → semantic, pending application)
 - `frontend-refactoring.md` — CSS design token and component class analysis (future work)
 

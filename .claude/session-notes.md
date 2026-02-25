@@ -6,30 +6,37 @@
 - **Branch:** main
 
 ## What Was Done
-- Completed Phase 3 Step 3.5: Extract System Modules
-- Created `src/systems/weather.ts` (~600 lines): Weather constructor, 14 weather instances, ontick handlers, callbackManager, attachCallback/detachCallback, Time constructor, time accessors, getSeason, timeConv, timeDisp, setWeather, isWeather, onSeasonTick, wManager
-- Created `src/systems/player.ts` (~110 lines): You() constructor with stat_r, battle_ai, onDeath methods
-- Created `src/systems/save-load.ts` (~880 lines): save(), load(), serializeIdData, loadEquipCategory, restoreDiscovery, loading screen overlay
-- Reduced `src/main.ts` from ~8,865 to ~7,350 lines (-1,516 lines)
-- Fixed missing imports in `src/data/world.ts` (random, rand, roll, giveSkExp, giveExp, act, isWeather, getHour, weather)
-- Fixed missing imports in `src/data/equipment.ts` (callback, attachCallback, detachCallback)
-- Added re-exports in main.ts for backward compat with data module imports
+- Completed Phase 3 Step 3.6: Extract UI Modules
+- Created 8 new modules under `src/ui/` (~1,260 lines total):
+  - `messages.ts` (~49 lines): msg, _msg, msg_add — game log functions
+  - `descriptions.ts` (~424 lines): dscr, addDesc, descsinfo — tooltip/popup system
+  - `stats.ts` (~36 lines): update_db, update_d, update_m, m_update — stat display
+  - `effects.ts` (~72 lines): giveEff, removeEff, effdfix, eff_d — effect display
+  - `equipment.ts` (~110 lines): equip, unequip, eqpres — equipment slot display
+  - `inventory.ts` (~260 lines): renderItem, updateInv, isort, rsort, invbtsrst, rstcrtthg, reduce
+  - `choices.ts` (~64 lines): chs, clr_chs, icon, Chs constructor, activatef, deactivatef
+  - `panels.ts` (~247 lines): renderRcp, refreshRcp, _refreshRcpCnt, _fcraft, renderSkl, renderAct, refreshAct, activateAct, deactivateAct
+- Reduced `src/main.ts` from ~7,350 to ~6,180 lines (~1,170 lines extracted)
+- Bundle size stable at 789.1kb
+- All functions re-exported from main.ts for backward compat with data/system modules
+- Newly exported from main.ts for UI module use: `make`, `formatw`, `iftrunkopen`, `listen_k`, `disassembleGeneric`
 
 ## Decisions Made
-- Eval-time init calls (setWeather, wManager) stay in main.ts after DOM setup, not in weather.ts — DOM elements don't exist yet when weather.ts loads
-- main.ts re-exports functions from system modules so data modules can import from '../main' without needing to know about systems/
-- Circular deps between systems/ and main.ts are safe because references are in closures (deferred execution)
+- Heavy rendering functions (chs_spec, renderFurniture, rendershopitem, buycbs, rendertrunkitem, etc.) stayed in main.ts — too deeply entangled to cleanly extract in 3.6g
+- Step 3.6i (miscellaneous UI helpers) was skipped per plan — combat print functions, small helpers left in main.ts to avoid excessive module fragmentation
+- Circular deps between ui/ modules and main.ts handled via deferred imports (function body references only)
+- UI modules import from sibling ui/ modules directly where possible (e.g., effects.ts imports addDesc from descriptions.ts, not main.ts)
+- Dead `format` function in messages area was deleted rather than moved
 
 ## Open Items
-- [ ] Phase 3 Step 3.6: Extract UI modules (`src/ui/` — dom-setup, messages, descriptions, choices, rendering, locations)
 - [ ] Phase 3 Step 3.7: Wire up final entry point — imports only, verify full game works
 - [ ] CSS semantic rename from `CLASS_MAP.md` (deferred — do after modularization)
 - [ ] `.exp` text-shadow typo `0pzx` in styles.css
+- [ ] Heavy rendering functions still in main.ts could be extracted in Phase 4
 
 ## Next Steps
-1. Step 3.6: Extract UI modules into `src/ui/`
-2. Step 3.7: Final wiring of `src/main.ts` as entry point
-3. Phase 4: Architecture improvements (circular imports, strict types, etc.)
+1. Step 3.7: Final wiring of `src/main.ts` as entry point
+2. Phase 4: Architecture improvements (circular imports, strict types, etc.)
 
 ## Context for Next Session
-Phases 1-2 and Phase 3 Steps 3.1-3.5 are complete. The monolith has been split into utility modules (5), data modules (13), and system modules (3). main.ts is down to ~7,350 lines, mostly UI/rendering and core game logic. The next step is extracting UI modules (Step 3.6), which is the most complex extraction remaining due to heavy cross-dependencies between UI functions. Bundle size is stable at ~789kb.
+Phases 1-2 and Phase 3 Steps 3.1-3.6 are complete. The monolith has been split into utility modules (5), state module (1), data modules (13), system modules (3), and UI modules (8). main.ts is down to ~6,180 lines, mostly DOM setup (~1,500 lines of eval-time side effects), core game logic (combat, movement, item management), and some heavy rendering functions that were too entangled to extract cleanly. Step 3.7 (final wiring) is the last step before Phase 4. Bundle size is stable at ~789kb.
