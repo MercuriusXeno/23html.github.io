@@ -41,6 +41,11 @@
 - [ ] **Step 4.4:** Constructor delegate cleanup — pass `.use`, `.onDeath`, and other function delegates via constructor config instead of deferred assignment
 - [ ] **Step 4.5:** Enable `strict: true` in tsconfig incrementally — fix type errors module by module
 
+## Known Bugs
+
+- [ ] **"Pause next battle" not persisted:** The toggle effect doesn't survive save/load — possibly a vanilla bug predating refactoring
+- [ ] **Area clearing progress not saved:** Monster kill progress for area clearing resets on save/load
+
 ## Verification (after every step)
 1. `npm run build` succeeds without errors
 2. Open `index.html` in browser

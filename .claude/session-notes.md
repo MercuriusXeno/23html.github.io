@@ -29,7 +29,6 @@
 ## Open Items
 - [ ] Browser testing needed — build passes but no runtime verification this session
 - [ ] CSS semantic rename from `CLASS_MAP.md` (deferred)
-- [ ] `.exp` text-shadow typo `0pzx` in styles.css
 
 ## Next Steps
 1. Browser-test the game (fresh start + save/load + combat + crafting + movement)

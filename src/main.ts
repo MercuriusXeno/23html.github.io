@@ -2132,7 +2132,7 @@ import './data/mastery';
     }
     for (let x in global.cptchk) global.cptchk[x]();
 
-    function giveFurniture(frt, l, show) {
+    export function giveFurniture(frt, l, show) {
       let frn = l === true ? copy(frt) : frt;
       if (show !== false) msg('Furniture Acquired: <span style="color:orange">"' + frt.name + '"</span>', 'yellow', frt, 9);
       if (scanbyid(furn, frn.id)) frn.data.amount++;
@@ -4340,15 +4340,7 @@ import './data/mastery';
       for (let index in you.eff) you.eff[index].use(creature.bat);
     }
 
-    function canRead() {
-      if (!global.flags.civil || global.flags.civil.btl) { msg('It is too dangerous to read right now', 'red'); return false }
-      if (global.flags.rdng) { msg("You\'re already reading", 'orange'); return false }
-      if (global.flags.work) { msg("You have a job to do", 'orange'); return false }
-      if (global.flags.busy) { msg("You'll have to stop what you're doing first", 'orange'); return false }
-      if (global.flags.isshop) { msg("This isn\'t the library", 'orange'); return false }
-      if (global.flags.sleepmode) { msg("You can't read while sleeping", 'orange'); return false }
-      return true;
-    }
+    // canRead — moved to game/utils-game.ts
 
     global.text.ssns = ['春', '夏', '秋', '冬']
 
@@ -4372,7 +4364,7 @@ import './data/mastery';
       }
     }
 
-    function ontick() {
+    export function ontick() {
       global.stat.tick++;
       time.minute += global.timescale;
       wManager();

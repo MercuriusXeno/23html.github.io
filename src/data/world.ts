@@ -20,7 +20,7 @@ import './creatures';
 // Area + Sector constructors + instances
 // ==========================================================================
 
-function Area(cfg) {
+export function Area(cfg) {
   this.name = 'Nowhere';
   this.id = 0;
   this.pop = [];

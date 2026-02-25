@@ -1,16 +1,21 @@
-import { item, dom, you, global, effect, skl, inv, wpn, eqp, sld, acc, furniture, home, furn, sector, ttl } from '../state';
+import { item, dom, you, global, effect, skl, inv, wpn, eqp, sld, acc, furniture, home, furn, sector, ttl, chss, rcp, timers, area } from '../state';
+import { HOUR } from '../constants';
 import { random, rand, randf } from '../random';
 import { select, findbyid, z_bake } from '../utils';
+import { appear } from '../dom-utils';
+import { dumb, tattack } from '../game/combat';
 import { smove, inSector, area_init } from '../game/movement';
+import { canRead } from '../game/utils-game';
 import { giveItem, removeItem } from '../game/inventory';
 import { giveWealth, spend } from '../game/economy';
 import { giveSkExp, giveExp, giveRcp } from '../game/progression';
-import { msg, _msg } from '../ui/messages';
+import { msg, _msg, msg_add } from '../ui/messages';
 import { giveEff, removeEff } from '../ui/effects';
 import { dscr } from '../ui/descriptions';
 import { chs, activatef } from '../ui/choices';
 import { reduce } from '../ui/inventory';
 import { update_d } from '../ui/stats';
+import { ontick, giveFurniture } from '../main';
 
 // ==========================================================================
 // Item constructor + factory functions + instances
@@ -258,7 +263,7 @@ item.svial1 = new Item({ id: 3020, name: 'Skeleton Vial', desc: 'Summons a lvl 1
 item.svial1.use = function () {
   if (global.flags.civil === true && global.flags.btl === false) {
     if (global.flags.sleepmode || global.flags.rdng || global.flags.isshop || global.flags.busy || global.flags.work) { msg('Unable to summon!', 'red'); return }
-    let ta = new Area();
+    let ta = new area._ctor();
     ta.id = -1
     ta.name = 'Somewhere';
     ta.pop = [{ crt: creature.skl, lvlmin: 10, lvlmax: 10, c: 1 }];
@@ -1272,6 +1277,7 @@ item.dbdc1.use = function () {
 
 
 item.ip1 = new Item({ id: 9000, name: '"Idea paper"', desc: 'Tiny scrap of paper with information. You wrote it yourself to remember things.', stype: 4 });
+item.ip1.data.time = HOUR;
 item.ip1.use = function () {
   if (canRead()) {
     if (this.data.timep >= this.cmax) {
@@ -1287,6 +1293,7 @@ item.ip1.use = function () {
 }
 
 item.skl1 = new Item({ id: 9001, name: 'P Skillbook (Swords)', desc: 'Entry level practitioner skillbook about sword combat' + dom.dseparator + '<span style="color:deeppink">Sword Mastery EXP gain +5%</span>', stype: 4 });
+item.skl1.data.time = HOUR * 4;
 item.skl1.use = function () {
   if (canRead()) {
     if (this.data.timep >= this.cmax) {
@@ -1301,6 +1308,7 @@ item.skl1.use = function () {
 }
 
 item.skl2 = new Item({ id: 9002, name: 'P Skillbook (Knives)', desc: 'Entry level practitioner skillbook about knife combat' + dom.dseparator + '<span style="color:deeppink">Knife Mastery EXP gain +5%</span>', stype: 4 });
+item.skl2.data.time = HOUR * 4;
 item.skl2.use = function () {
   if (canRead()) {
     if (this.data.timep >= this.cmax) {
@@ -1315,6 +1323,7 @@ item.skl2.use = function () {
 }
 
 item.skl3 = new Item({ id: 9003, name: 'P Skillbook (Axes)', desc: 'Entry level practitioner skillbook about axe combat' + dom.dseparator + '<span style="color:deeppink">Axe Mastery EXP gain +5%</span>', stype: 4 });
+item.skl3.data.time = HOUR * 4;
 item.skl3.use = function () {
   if (canRead()) {
     if (this.data.timep >= this.cmax) {
@@ -1329,6 +1338,7 @@ item.skl3.use = function () {
 }
 
 item.skl4 = new Item({ id: 9004, name: 'P Skillbook (Spears)', desc: 'Entry level practitioner skillbook about spear combat' + dom.dseparator + '<span style="color:deeppink">Polearm Mastery EXP gain +5%</span>', stype: 4 });
+item.skl4.data.time = HOUR * 4;
 item.skl4.use = function () {
   if (canRead()) {
     if (this.data.timep >= this.cmax) {
@@ -1343,6 +1353,7 @@ item.skl4.use = function () {
 }
 
 item.skl5 = new Item({ id: 9005, name: 'P Skillbook (Hammers)', desc: 'Entry level practitioner skillbook about hammer combat' + dom.dseparator + '<span style="color:deeppink">Hammer Mastery EXP gain +5%</span>', stype: 4 });
+item.skl5.data.time = HOUR * 4;
 item.skl5.use = function () {
   if (canRead()) {
     if (this.data.timep >= this.cmax) {
@@ -1357,6 +1368,7 @@ item.skl5.use = function () {
 }
 
 item.skl6 = new Item({ id: 9006, name: 'P Skillbook (Martial)', desc: 'Entry level practitioner skillbook about unarmed combat' + dom.dseparator + '<span style="color:deeppink">Martial Mastery EXP gain +5%</span>', stype: 4 });
+item.skl6.data.time = HOUR * 4;
 item.skl6.use = function () {
   if (canRead()) {
     if (this.data.timep >= this.cmax) {
@@ -1372,6 +1384,7 @@ item.skl6.use = function () {
 }
 
 item.bstr = new Item({ id: 9007, name: '"Animalis Vicipaedia"', rar: 2, desc: 'Heavy Hunter\'s Encyclopedia. There are a few entries about wild life, beasts, and mythical creatures you can encounter, the other pages are blank. You feel the urge to fill them in' + dom.dseparator + '<span style="color:lime">Unlocks Bestiary</span>', stype: 4 });
+item.bstr.data.time = HOUR * 17;
 item.bstr.use = function () {
   if (canRead()) {
     if (this.data.timep >= this.cmax) {
@@ -1386,6 +1399,7 @@ item.bstr.use = function () {
 }
 
 item.tbrwdb = new Item({ id: 9008, name: '"The Art of Teabrewing"', rar: 2, desc: 'Informative little book in detail describing the ways of teamaking, starting from precise amounts and proportions, specific water temperatures, correct tableware, to the defferent styles and etiquette', stype: 4 });
+item.tbrwdb.data.time = HOUR * 26;
 item.tbrwdb.use = function () {
   if (canRead()) {
     if (this.data.timep >= this.cmax) {
@@ -1418,6 +1432,7 @@ global.text.mscbkatxt = ["This fairy tale is about a wolf who eats so much salte
   "Titled \"The Fleeing Pancake\", this collection of silly folk tales is suitable for small children."];
 
 item.msc1 = new Item({ id: 9009, name: '"Book of Fairy Tales"', save: true, stype: 4 });
+item.msc1.data.time = HOUR * 6;
 item.msc1.desc = function () { return 'An amusing collection of folklore featuring the usual cast of fairies and demons' + dom.dseparator + '<span style="color:limegreen">' + global.text.mscbkatxt[this.data.bid] + '</span>' }
 item.msc1.use = function () {
   if (canRead()) {
@@ -1433,6 +1448,7 @@ item.msc1.use = function () {
 }
 
 item.bcpn = new Item({ id: 9010, name: '"Cooking with Poison"', rar: 2, desc: 'A leatherbound book with an embossed cauldron on the cover. Inside it describes ways to purify food through alchemy', stype: 4 });
+item.bcpn.data.time = HOUR * 30;
 item.bcpn.use = function () {
   if (canRead()) {
     if (this.data.timep >= this.cmax) {
@@ -1445,6 +1461,7 @@ item.bcpn.use = function () {
 }
 
 item.mdc1 = new Item({ id: 9011, name: '"First Aid Manual"', desc: 'Tiny red pocket-sized guide to emergency care, covers basic bandaging and wound treating', stype: 4 });
+item.mdc1.data.time = HOUR * 12;
 item.mdc1.use = function () {
   if (canRead()) {
     if (this.data.timep >= this.cmax) {
@@ -1462,6 +1479,7 @@ item.mdc1.use = function () {
 }
 
 item.dmkbk = new Item({ id: 9012, name: '"Dollmaker\'s Handbook"', desc: 'A very short manual filled with illustrations about primitive dollmaking. The instructions are easy to understand so children could make the dolls too. Looks like there was a chapter dedicated to sewing, now it\'s almost entirely missing', stype: 4 });
+item.dmkbk.data.time = HOUR * 12;
 item.dmkbk.use = function () {
   if (canRead()) {
     if (this.data.timep >= this.cmax) {
@@ -1481,6 +1499,7 @@ item.dmkbk.use = function () {
 }
 
 item.scrlw = new Item({ id: 9013, name: '"Ragged Parchment"', desc: 'Scummy sheet of paper tainted with something teal. Some kinds of materials are listed here', stype: 4 });
+item.scrlw.data.time = HOUR * 3;
 item.scrlw.use = function () {
   if (canRead()) {
     if (this.data.timep >= this.cmax) {
@@ -1495,6 +1514,7 @@ item.scrlw.use = function () {
 }
 
 item.wp2s = new Item({ id: 9014, name: '"Rotten Illustration"', desc: 'Found this within old bushery, it looks like a drawing of something in charcoal', stype: 4 });
+item.wp2s.data.time = HOUR * 2;
 item.wp2s.onGet = function () { global.flags.wp2sgt = true }
 item.wp2s.use = function () {
   if (canRead()) {
@@ -1510,6 +1530,7 @@ item.wp2s.use = function () {
 }
 
 item.shppmf = new Item({ id: 9015, name: '"Pamphlet"', desc: 'This was shoved onto you by someone on the streets. Store names, discount prices, hot items... An entire wall of advertisements in tiny letters, to fit as much of it as possible on this piece of paper. It is a good idea to memorize the addresses', stype: 4 });
+item.shppmf.data.time = HOUR * 3;
 item.shppmf.onGet = function () { global.flags.pmfspmkm1 = true }
 item.shppmf.use = function () {
   if (canRead()) {
@@ -1525,6 +1546,7 @@ item.shppmf.use = function () {
 }
 
 item.amrthsck = new Item({ id: 9016, name: '"Guide To Living By Yourself"', desc: 'Looks like a page from someone\'s notebook, marked "H", poorly written in bad handwriting. It lists several simple things you can cook and make from widely available cheap materials', stype: 4 });
+item.amrthsck.data.time = HOUR * 12;
 item.amrthsck.use = function () {
   if (canRead()) {
     if (this.data.timep >= this.cmax) {
@@ -1548,6 +1570,7 @@ item.amrthsck.use = function () {
 }
 
 item.skl1a = new Item({ id: 9017, name: '"Bladesman Manual"', rar: 2, desc: 'Technique book full of fundamental knowledge about swordfighting' + dom.dseparator + '<span style="color:deeppink">Sword Mastery EXP gain +15%</span>', stype: 4 });
+item.skl1a.data.time = HOUR * 14;
 item.skl1a.use = function () {
   if (canRead()) {
     if (this.data.timep >= this.cmax) {
@@ -1563,6 +1586,7 @@ item.skl1a.use = function () {
 }
 
 item.skl2a = new Item({ id: 9018, name: '"Assassin Manual"', rar: 2, desc: 'Technique book full of fundamental knowledge about kinfefighting' + dom.dseparator + '<span style="color:deeppink">Knife Mastery EXP gain +15%</span>', stype: 4 });
+item.skl2a.data.time = HOUR * 14;
 item.skl2a.use = function () {
   if (canRead()) {
     if (this.data.timep >= this.cmax) {
@@ -1578,6 +1602,7 @@ item.skl2a.use = function () {
 }
 
 item.skl3a = new Item({ id: 9019, name: '"Axeman Manual"', rar: 2, desc: 'Technique book full of fundamental knowledge about axefighting' + dom.dseparator + '<span style="color:deeppink">Axe Mastery EXP gain +15%</span>', stype: 4 });
+item.skl3a.data.time = HOUR * 14;
 item.skl3a.use = function () {
   if (canRead()) {
     if (this.data.timep >= this.cmax) {
@@ -1593,6 +1618,7 @@ item.skl3a.use = function () {
 }
 
 item.skl4a = new Item({ id: 9020, name: '"Lancer Manual"', rar: 2, desc: 'Technique book full of fundamental knowledge about spearfighting' + dom.dseparator + '<span style="color:deeppink">Polearm Mastery EXP gain +15%</span>', stype: 4 });
+item.skl4a.data.time = HOUR * 14;
 item.skl4a.use = function () {
   if (canRead()) {
     if (this.data.timep >= this.cmax) {
@@ -1608,6 +1634,7 @@ item.skl4a.use = function () {
 }
 
 item.skl5a = new Item({ id: 9021, name: '"Clubber Manual"', rar: 2, desc: 'Technique book full of fundamental knowledge about bluntfighting' + dom.dseparator + '<span style="color:deeppink">Hammer Mastery EXP gain +15%</span>', stype: 4 });
+item.skl5a.data.time = HOUR * 14;
 item.skl5a.use = function () {
   if (canRead()) {
     if (this.data.timep >= this.cmax) {
@@ -1623,6 +1650,7 @@ item.skl5a.use = function () {
 }
 
 item.skl6a = new Item({ id: 9022, name: '"Brawler Manual"', rar: 2, desc: 'Technique book full of fundamental knowledge about fistfighting' + dom.dseparator + '<span style="color:deeppink">Martial Mastery EXP gain +15%</span>', stype: 4 });
+item.skl6a.data.time = HOUR * 14;
 item.skl6a.use = function () {
   if (canRead()) {
     if (this.data.timep >= this.cmax) {
@@ -1638,6 +1666,7 @@ item.skl6a.use = function () {
 }
 
 item.brdbn = new Item({ id: 9023, name: '"Your First Bread"', desc: 'Very primitive instruction booklet about making simple breads. The way it\'s written, it looks very similar to manuals given to slaves and servants at the beginning of their service, if they are able to read', stype: 4 });
+item.brdbn.data.time = HOUR * 7;
 item.brdbn.use = function () {
   if (canRead()) {
     if (this.data.timep >= this.cmax) {
@@ -1655,6 +1684,7 @@ item.brdbn.use = function () {
 }
 
 item.bfsnwt = new Item({ id: 9024, name: '"Beggar Fashion"', desc: 'Some nonsence illustration with a name, featuring a group of peasants in rags posing awkwardly. What even is this?', stype: 4 });
+item.bfsnwt.data.time = HOUR * 4;
 item.bfsnwt.use = function () {
   if (canRead()) {
     if (this.data.timep >= this.cmax) {
@@ -1669,6 +1699,7 @@ item.bfsnwt.use = function () {
 }
 
 item.pdeedhs = new Item({ id: 9025, name: '"Property Deed"', rar: 2, desc: 'This old looking legal document indentifies you as a sole owner of this broken down hut you live in. It was passed down to you by your ancestors, you speculate' + dom.dseparator + '<span style="color:lime">Allows you to list and examine your possessions</span>', stype: 4 });
+item.pdeedhs.data.time = 30;
 item.pdeedhs.use = function () {
   if (canRead()) {
     if (this.data.timep >= this.cmax) {
@@ -1681,6 +1712,7 @@ item.pdeedhs.use = function () {
 }
 
 item.fgtsb1 = new Item({ id: 9026, name: '"Street Fighting"', desc: 'Someone\'s observational notes of street gangs and their violent encounters. There\'s an amusing essay about dirty tricks in the front section' + dom.dseparator + '<span style="color:deeppink">Fighting EXP gain +15%</span>', stype: 4 });
+item.fgtsb1.data.time = HOUR * 6;
 item.fgtsb1.use = function () {
   if (canRead()) {
     if (this.data.timep >= this.cmax) {
@@ -1695,6 +1727,7 @@ item.fgtsb1.use = function () {
 }
 
 item.jnlbk = new Item({ id: 9027, name: '"Empty Journal"', desc: 'Dusty old tome, pure as snow and untainted by ink. Feels like it was purified by magic. When you gaze upon it, you are compelled to record your encounters and anything else that you find important and crucial for your adventures' + dom.dseparator + '<span style="color:lime">Unlocks Journal</span>', stype: 4 });
+item.jnlbk.data.time = HOUR * 4;
 item.jnlbk.use = function () {
   if (canRead()) {
     if (this.data.timep >= this.cmax) {

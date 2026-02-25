@@ -158,7 +158,7 @@ export function attack(att, def, atk, power) {
   return dmg || 0;
 }
 
-function tattack(pow, type, e) {
+export function tattack(pow, type, e) {
   let dmg;
   let ddat = skl.thr.use();
   let m = global.current_m;

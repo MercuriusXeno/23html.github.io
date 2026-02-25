@@ -1,5 +1,6 @@
 import { random, rand } from '../random';
 import { global, you, skl } from '../state';
+import { msg } from '../ui/messages';
 import { giveItem } from './inventory';
 
     export function roll(itm, c, mi, ma) {
@@ -16,3 +17,13 @@ import { giveItem } from './inventory';
     export function kill(obj) { obj = null; }
 
     export function cansee() { if ((global.flags.isdark && you.mods.light > 0) || skl.ntst.lvl >= 12) return true }
+
+    export function canRead() {
+      if (!global.flags.civil || global.flags.civil.btl) { msg('It is too dangerous to read right now', 'red'); return false }
+      if (global.flags.rdng) { msg("You're already reading", 'orange'); return false }
+      if (global.flags.work) { msg("You have a job to do", 'orange'); return false }
+      if (global.flags.busy) { msg("You'll have to stop what you're doing first", 'orange'); return false }
+      if (global.flags.isshop) { msg("This isn't the library", 'orange'); return false }
+      if (global.flags.sleepmode) { msg("You can't read while sleeping", 'orange'); return false }
+      return true;
+    }
