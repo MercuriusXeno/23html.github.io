@@ -56,16 +56,6 @@ export { renderRcp, refreshRcp, renderSkl, renderAct, refreshAct, activateAct, d
     // ==========================================================================
     window.addEventListener('load', () => { load() });
 
-    // --- Save/Load moved to src/systems/save-load.ts ---
-
-    // --- Save/Load functions moved to src/systems/save-load.ts ---
-
-    // --- Titles moved to src/data/titles.ts ---
-
-    // Title instances removed (108 titles)
-    // --- Weather, Time, Callbacks moved to src/systems/weather.ts ---
-    // --- Effects moved to src/data/effects.ts ---
-    // --- Furniture + Quests moved to src/data/furniture.ts ---
     function giveQst(q) {
       if (!q.data.started) { q.init(); q.data.started = true; msg((q.repeatable ? '<span style="color:cyan">Repeatable</span> q' : 'Q') + 'uest accepted: ' + '<span style="color:orange">"' + q.name + '"</span>', 'lightblue', q, 8); let have = false; for (let a in qsts) if (qsts[a].id === q.id) { have = true; break } if (!have) qsts.push(q); }
     }
@@ -75,10 +65,6 @@ export { renderRcp, refreshRcp, renderSkl, renderAct, refreshAct, activateAct, d
     }
 
     global.text.alcohol_d = ["You drank some alcohol. You feel warm inside.", "You drank alcohol. Party on!", "You drank lots of alcohol. Are those white mice?", "You drank unholy amounts of alcohol. But what do you care?", "You embalmed yourself alive with so much alcohol, that even undead will leave your dead body alone."];
-
-    // --- Skills moved to src/data/skills.ts ---
-    // --- Items moved to src/data/items.ts ---
-    // --- Equipment moved to src/data/equipment.ts ---
 
     ////misc////
     global.wdrop = [{ item: item.lckl, c: .0000048 }];
@@ -101,8 +87,6 @@ export { renderRcp, refreshRcp, renderSkl, renderAct, refreshAct, activateAct, d
     ];
     global.monchk = [
       function (x) { if (ttl.mone1.have === false) { if (global.stat.moneyg >= GOLD) { giveTitle(ttl.mone1) } } },
-      //  function(x){if(ttl.mone2.have===false){if(global.stat.moneyg>=GOLD){giveTitle(ttl.mone2)}}},
-      //  function(x){if(ttl.mone3.have===false){if(global.stat.moneyg>=GOLD){giveTitle(ttl.mone3)}}},
     ];
     global.ttlschk = [
       function (x) { if (ttl.ttsttl1.have === false) { if (global.titles.length >= 10) { giveTitle(ttl.ttsttl1) } } },
@@ -112,8 +96,6 @@ export { renderRcp, refreshRcp, renderSkl, renderAct, refreshAct, activateAct, d
 
     global.shptchk = [
       function (x) { if (ttl.shpt1.have === false) { if (global.stat.buyt >= 500) { giveTitle(ttl.shpt1) } } },
-      //  function(x){if(ttl.shpt2.have===false){if(global.stat.buyt>=5000){giveTitle(ttl.shpt2)}}},
-      //  function(x){if(ttl.shpt3.have===false){if(global.stat.buyt>=10000){giveTitle(ttl.shpt3)}}},
     ];
     global.cptchk = [
       function (x) { if (ttl.cpet1.have === false) { if (global.stat.cat_c >= 9999) { giveTitle(ttl.cpet1) } } },
@@ -133,14 +115,12 @@ export { renderRcp, refreshRcp, renderSkl, renderAct, refreshAct, activateAct, d
     //U
     ///////////////////////////////////////////
 
-    // --- Player constructor moved to src/systems/player.ts ---
     setYou(new You()); you.eqp[0].ctype = 2; giveTitle(ttl.new, true);
     you.ai = function () {
       //if(you.hp*100/you.hpmax<50) item.hrb1.use();
       //if(you.sat*100/you.satmax<90) item.appl.use();
     }
 
-    // --- Creatures moved to src/data/creatures.ts ---
     ///////////////////////////////////////////
     //EFFECTORS
     ///////////////////////////////////////////
@@ -182,7 +162,6 @@ export { renderRcp, refreshRcp, renderSkl, renderAct, refreshAct, activateAct, d
     }
 
     ///////////////////////////////////////////
-    // --- Areas + Sectors moved to src/data/world.ts ---
     export function inSector(sector) {
       for (let a in global.current_l.sector) if (global.current_l.sector[a].id === sector.id) return true
     }
@@ -197,7 +176,6 @@ export { renderRcp, refreshRcp, renderSkl, renderAct, refreshAct, activateAct, d
     }
 
     ///////////////////////////////////////////
-    // --- Container + Recipes moved to src/data/crafting.ts ---
     function evaluateSpecialRequirementsForRecipe(recipe) {
       if (recipe.srect == null) {
         return [0];
@@ -292,8 +270,6 @@ export { renderRcp, refreshRcp, renderSkl, renderAct, refreshAct, activateAct, d
     // shuffle() imported from ./utils
 
     ///////////////////////////////////////////
-    // --- Actions moved to src/data/actions.ts ---
-
     function giveAction(a) {
       if (a.have === false) {
         if (!global.flags.actsu) { global.flags.actsu = true; dom.ct_bt3.innerHTML = 'actions' }
@@ -440,14 +416,6 @@ export { renderRcp, refreshRcp, renderSkl, renderAct, refreshAct, activateAct, d
     global.special_x = dom.d1m.style.left;
     global.special_y = dom.d1m.style.top;
 
-    /*dom.d1m.addEventListener('mousedown',function(){
-      this.style.left=parseInt(global.special_x)+rand(-5,5)+'px';
-      this.style.top=parseInt(global.special_y)+rand(-5,5)+'px';
-    });
-    dom.d1m.addEventListener('mouseup',function(){
-      this.style.left=parseInt(global.special_x)+'px';
-      this.style.top=parseInt(global.special_y)+'px';
-    });*/
     dom._d23m = addElement(dom.d1m, 'div');
     addDesc(dom._d23m, null, 3, global.current_m.name, global.current_m.desc);
     dom.d2m = addElement(dom._d23m, 'div', null, 'd2');
@@ -588,8 +556,6 @@ export { renderRcp, refreshRcp, renderSkl, renderAct, refreshAct, activateAct, d
     dom.ct_bt2.innerHTML = global.flags.sklu ? 'skills' : '???????';
     dom.ct_bt3 = addElement(dom.ct_ctrl, 'div', null, 'control-tab');
     dom.ct_bt3.innerHTML = global.flags.actsu ? 'actions' : '???????';
-    //dom.ct_bt4 = addElement(dom.ct_ctrl ,'div',null,'control-tab'); dom.ct_bt4.innerHTML = '';
-    //dom.ct_bt5 = addElement(dom.ct_ctrl ,'div',null,'control-tab'); dom.ct_bt5.innerHTML = '';
     dom.ct_bt6 = addElement(dom.ct_ctrl, 'div', null, 'control-tab');
     dom.ct_bt6.innerHTML = global.flags.jnlu ? 'journal' : '???????';
     dom.ct_bt7 = addElement(dom.ct_ctrl, 'div', null, 'control-tab');
@@ -639,8 +605,6 @@ export { renderRcp, refreshRcp, renderSkl, renderAct, refreshAct, activateAct, d
         } else dom.nthngdsp.style.display = ''
       }
     });
-
-    // --- renderAct, refreshAct, activateAct, deactivateAct moved to src/ui/panels.ts ---
 
     dom.ct_bt2.addEventListener('click', function () {
       dom.nthngdsp.style.display = 'none';
@@ -1453,8 +1417,6 @@ export { renderRcp, refreshRcp, renderSkl, renderAct, refreshAct, activateAct, d
     dom.ct_bt4_1b.min = 1;
     dom.ct_bt4_1b.max = 100;
     dom.ct_bt4_1b.addEventListener('change', function () { if (this.value < 1) this.value = 1; else if (this.value > 100) this.value = 100; global.msgs_max = this.value });
-    // --- rstcrtthg moved to src/ui/inventory.ts ---
-
     dom.ct_bt4_2 = addElement(dom.ctrwin4, 'div', null, 'option-row');
     dom.ct_bt4_2a = addElement(dom.ct_bt4_2, 'div', null, 'option-label');
     dom.ct_bt4_2a.innerHTML = 'BG Color';
@@ -1780,8 +1742,6 @@ export { renderRcp, refreshRcp, renderSkl, renderAct, refreshAct, activateAct, d
     global.dscr = addElement(document.body, 'div', 'dscr');
     global.dscr.style.display = 'none';
 
-    // --- invbtsrst moved to src/ui/inventory.ts ---
-
     dom.inv_btn_1.innerHTML = 'ALL';
     dom.inv_btn_2.innerHTML = 'WPN';
     dom.inv_btn_3.innerHTML = 'EQP';
@@ -1917,7 +1877,6 @@ export { renderRcp, refreshRcp, renderSkl, renderAct, refreshAct, activateAct, d
     dom.sl_kill.style.bottom = '1px';
     dom.sl_kill.addEventListener('click', () => { localStorage.clear(); msg('Save deleted', '') });
 
-    // --- update_db, update_d, update_m moved to src/ui/stats.ts ---
     update_db()
     update_d()
 
@@ -1947,13 +1906,7 @@ export { renderRcp, refreshRcp, renderSkl, renderAct, refreshAct, activateAct, d
       global.offline_evil_index = Math.sqrt(global.offline_evil_index + 2100) / 45;
     }
 
-    // --- dscr moved to src/ui/descriptions.ts ---
-
-    // --- msg, _msg, msg_add moved to src/ui/messages.ts ---
-
     // appear, fade imported from ./dom-utils
-
-    // --- addDesc moved to src/ui/descriptions.ts ---
 
     global.t_n = 0;
 
@@ -2333,8 +2286,6 @@ export { renderRcp, refreshRcp, renderSkl, renderAct, refreshAct, activateAct, d
       }
     }
 
-    // --- renderRcp, refreshRcp, _refreshRcpCnt, _fcraft, renderSkl moved to src/ui/panels.ts ---
-
     export function area_init(area) {
       if (area.size !== 0) {
         if (area.id !== 101) {
@@ -2374,10 +2325,6 @@ export { renderRcp, refreshRcp, renderSkl, renderAct, refreshAct, activateAct, d
       newobj.sex = random() < .5;
       return newobj;
     }
-
-    // --- giveEff, removeEff, effdfix, eff_d moved to src/ui/effects.ts ---
-
-    // --- equip, unequip, eqpres moved to src/ui/equipment.ts ---
 
     export function giveRcp(rcp) {
       if (!global.flags.asbu) { global.flags.asbu = true; dom.ct_bt1.innerHTML = 'assemble' }
@@ -2519,10 +2466,6 @@ export { renderRcp, refreshRcp, renderSkl, renderAct, refreshAct, activateAct, d
       }
     });
 
-    // --- descsinfo moved to src/ui/descriptions.ts ---
-
-    // --- renderItem, updateInv moved to src/ui/inventory.ts ---
-
     export function removeItem(obj, flag) {
       if (obj.slot) if (wearing(obj)) unequip(obj)
       if (obj.data.skey) {
@@ -2546,10 +2489,6 @@ export { renderRcp, refreshRcp, renderSkl, renderAct, refreshAct, activateAct, d
       else iftrunkopenc(1);
       if (obj.slot) kill(obj)
     }
-
-    // --- m_update moved to src/ui/stats.ts ---
-
-    // --- chs moved to src/ui/choices.ts ---
 
     global.text.cfc = ['White', 'Black', 'Orange', 'Grey', 'Black&White', 'Brown', 'Ginger', 'Cinnamon', 'Fawn', 'Amber', 'Cream', 'Chocolate'];
     global.text.cfp = ['Spotted', 'Plain', 'Solid', 'Bicolored', 'Tabby', 'Tricolored', 'Calico', 'Tortoiseshell', 'Wavy', 'Fluffy', 'Siamese', 'Striped'];
@@ -3058,8 +2997,6 @@ export { renderRcp, refreshRcp, renderSkl, renderAct, refreshAct, activateAct, d
       else cont.c.splice(cont.c.indexOf(item), 1);
     }
 
-    // --- clr_chs moved to src/ui/choices.ts ---
-
     export function smove(where, lv) {
       global.flags.busy = false; global.flags.work = false; global.wdwidx = 0;
       if (global.flags.loadstate) return;
@@ -3118,8 +3055,6 @@ export { renderRcp, refreshRcp, renderSkl, renderAct, refreshAct, activateAct, d
       return frn
     }
 
-    // --- activatef, deactivatef moved to src/ui/choices.ts ---
-
     global._preig = addElement(document.body, 'img');
     global._preig.src = 'ctst.png';
     //global._preig.crossOrigin = "Anonymous";
@@ -3134,9 +3069,6 @@ export { renderRcp, refreshRcp, renderSkl, renderAct, refreshAct, activateAct, d
     document.body.removeChild(global._preig);
     document.body.removeChild(global._preic);
     document.body.removeChild(global._preic2);
-
-
-    // --- icon, Chs moved to src/ui/choices.ts ---
 
 
     chss.t1 = new Chs();
@@ -5299,8 +5231,6 @@ export { renderRcp, refreshRcp, renderSkl, renderAct, refreshAct, activateAct, d
     }
 
 
-    // --- Weather manager, time functions moved to src/systems/weather.ts ---
-
     export function dropC(crt, t) {
       t = t || 1;
       for (let j in crt.drop) if (!crt.drop[j].cond || (!!crt.drop[j].cond && crt.drop[j].cond() === true)) if (random() < crt.drop[j].chance + (crt.drop[j].chance / 100 * you.luck)) {
@@ -5439,8 +5369,6 @@ export { renderRcp, refreshRcp, renderSkl, renderAct, refreshAct, activateAct, d
         if (!lv) { msg('New Title Earned! ' + col('"' + title.name + '"', 'orange'), 'cyan', title, 5); dom.d3.update(); }
       } else return;
     }
-
-    // --- isort, rsort moved to src/ui/inventory.ts ---
 
     // objempty() imported from ./utils
 
@@ -5597,7 +5525,6 @@ export { renderRcp, refreshRcp, renderSkl, renderAct, refreshAct, activateAct, d
       }
     }
 
-    // --- reduce moved to src/ui/inventory.ts ---
     export function cansee() { if ((global.flags.isdark && you.mods.light > 0) || skl.ntst.lvl >= 12) return true }
 
     // col() imported from ./utils
@@ -6047,8 +5974,6 @@ export { renderRcp, refreshRcp, renderSkl, renderAct, refreshAct, activateAct, d
       }
       if(random()<.1){pts.push({x:rand(window.innerWidth*1.5+10),y:0,wind:.1,windtimedest:1,switch:true,windold:.1,windded:0,windtime:0,c:select(['*',"'",'.','。'])})}
     },10)*/
-
-    // --- Mastery moved to src/data/mastery.ts ---
 
     function _drawmwindow() {
       if (test.mguic) {
