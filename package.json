@@ -1,0 +1,15 @@
+{
+  "name": "proto23",
+  "version": "0.4.70",
+  "description": "Browser-based text RPG game",
+  "private": true,
+  "scripts": {
+    "build": "node build.mjs",
+    "watch": "node build.mjs --watch",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "esbuild": "^0.24.0",
+    "typescript": "^5.7.0"
+  }
+}

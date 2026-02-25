@@ -1,6 +1,6 @@
 # Proto23 Refactoring Roadmap
 
-## Phase 1: Format & Readability
+## Phase 1: Format & Readability ✓
 **Goal:** One statement per line, consistent indentation, semantic CSS. No behavior changes.
 
 - [x] **Step 1.1:** Extract `<style>` block → `styles.css` with semantic class renaming
@@ -11,7 +11,7 @@
 - [x] **Step 1.6:** Format location scripts / Chs definitions
 - [x] **Step 1.7:** Format game loop, weather, utilities
 
-## Phase 2: DRY & Constructor Cleanup
+## Phase 2: DRY & Constructor Cleanup ✓
 **Goal:** Eliminate repetitive patterns, improve constructors with config objects and factory helpers.
 
 - [x] **Step 2.1:** Refactor `Item()` constructor — accept config object, set defaults
@@ -22,18 +22,28 @@
 - [x] **Step 2.6:** DRY the inventory load loops (5 nearly identical nested for-loops)
 
 ## Phase 3: TypeScript + ES Module Conversion
-**Goal:** Convert the cleaned-up monolith to TypeScript ES modules.
+**Goal:** Convert the cleaned-up monolith to TypeScript ES modules with esbuild.
 
-- [ ] **Step 3.1:** Set up `tsconfig.json`, `src/` directory, dev pipeline
-- [ ] **Step 3.2:** Extract constants, types, and utility modules
-- [ ] **Step 3.3:** Extract state module (`global`, `you`, `dom` globals)
-- [ ] **Step 3.4:** Extract data modules (`src/data/` — items, equipment, skills, etc.)
-- [ ] **Step 3.5:** Extract system modules (`src/systems/` — combat, inventory, crafting, save-load, weather, effects)
-- [ ] **Step 3.6:** Extract UI modules (`src/ui/` — rendering, DOM setup, window management)
-- [ ] **Step 3.7:** Wire up `src/main.ts` entry point, verify full game works as ES modules
+- [x] **Step 3.1:** Build pipeline — `package.json`, `tsconfig.json`, `build.mjs` (esbuild IIFE), extract script to `src/main.ts`
+- [ ] **Step 3.2:** Extract constants, types, and utility modules (`src/constants.ts`, `src/types.ts`, `src/utils.ts`, `src/base64.ts`, `src/dom-utils.ts`)
+- [ ] **Step 3.3:** Extract state module (`src/state.ts` — `you`, `global`, `dom`, `timers`, `callback` singletons)
+- [ ] **Step 3.4:** Extract data modules (`src/data/` — items, creatures, areas, skills, effects, recipes, quests, vendors, titles, furniture, actions)
+- [ ] **Step 3.5:** Extract system modules (`src/systems/` — combat, inventory, crafting, save-load, effects, skills, weather, time, movement)
+- [ ] **Step 3.6:** Extract UI modules (`src/ui/` — dom-setup, messages, descriptions, choices, rendering, locations)
+- [ ] **Step 3.7:** Wire up `src/main.ts` entry point — imports only, verify full game works as ES modules
+
+## Phase 4: Architecture Improvements (Future)
+**Goal:** Address structural issues exposed during modularization.
+
+- [ ] **Step 4.1:** Resolve circular imports — barrel exports for `src/data/`, deferred cross-references
+- [ ] **Step 4.2:** Dependency injection for state — replace direct singleton access with scoped objects where possible
+- [ ] **Step 4.3:** Externalize game content — move item/creature/area definitions to JSON data files, hydrate at startup
+- [ ] **Step 4.4:** Constructor delegate cleanup — pass `.use`, `.onDeath`, and other function delegates via constructor config instead of deferred assignment
+- [ ] **Step 4.5:** Enable `strict: true` in tsconfig incrementally — fix type errors module by module
 
 ## Verification (after every step)
-1. Open `index.html` in browser (local server for Phase 3+)
-2. Verify game loads (fresh start and from existing save)
-3. Test core loops: move between locations, fight, craft, save/reload
-4. No console errors
+1. `npm run build` succeeds without errors
+2. Open `index.html` in browser
+3. Game loads (fresh start and from existing save)
+4. Test: move between locations, fight, craft, save/reload
+5. No console errors

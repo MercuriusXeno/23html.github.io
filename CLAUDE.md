@@ -4,18 +4,23 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**Proto23** is a browser-based text RPG game, deployed as a GitHub Pages site (`23html.github.io`). The game code lives in `index.html` (~14,000 lines of JavaScript) with CSS extracted to `styles.css`. There is no build system, bundler, or framework — open `index.html` in a browser to run the game.
+**Proto23** is a browser-based text RPG game, deployed as a GitHub Pages site (`23html.github.io`). The game code lives in `src/main.ts` (~14,500 lines), bundled via esbuild to `dist/bundle.js`, which `index.html` loads. CSS is in `styles.css`.
 
 ## Architecture
 
 ### File structure
-- `index.html` — all game JS in a single `<script>` block, links `styles.css`
+- `index.html` — shell HTML, loads `styles.css` and `dist/bundle.js`
+- `src/main.ts` — all game code (being split into modules during Phase 3)
 - `styles.css` — extracted CSS (previously inline `<style>` block)
+- `build.mjs` — esbuild build script (`src/main.ts` → `dist/bundle.js` as IIFE)
+- `package.json` — project config, scripts: `build`, `watch`, `typecheck`
+- `tsconfig.json` — TypeScript config (`strict: false`, `allowJs: true`, `noEmit: true`)
+- `dist/bundle.js` — built output (gitignored)
 - `changelog/changelog.html` — historical changelog
 - `ctst.png` — sprite sheet, `laugh6.wav` — sound effect, `favicon.ico`
 
 ### Refactoring artifacts
-- `ROADMAP.md` — 3-phase refactoring plan with checkboxes (Phases 1-2 complete)
+- `ROADMAP.md` — 4-phase refactoring plan with checkboxes (Phases 1-2 complete, Phase 3 in progress)
 - `CLASS_MAP.md` — CSS class rename mapping (cryptic → semantic, pending application)
 - `frontend-refactoring.md` — CSS design token and component class analysis (future work)
 
@@ -71,7 +76,13 @@ Copper-based: `SILVER = 100`, `GOLD = 10000`. Use `giveWealth()` / `spend()`.
 
 ## Development
 
-No build step. Edit `index.html` and `styles.css` directly and refresh the browser. The game uses `localStorage` for saves — clearing it resets progress. The game targets modern browsers and uses MS Gothic font.
+### Build commands
+- `npm run build` — bundle `src/main.ts` → `dist/bundle.js` (esbuild, IIFE format)
+- `npm run watch` — rebuild on file changes
+- `npm run typecheck` — run `tsc --noEmit` for type checking (many errors expected until modules get proper types)
+
+### Workflow
+Edit files in `src/`, run `npm run build` (or use `npm run watch`), refresh `index.html` in browser. The game uses `localStorage` for saves — clearing it resets progress. The game targets modern browsers and uses MS Gothic font.
 
 ## CSS conventions
 All styles are in `styles.css`. Classes use short abbreviated names (`.d`, `.dd`, `.bts`, `.chs`, `.inv_slot`, etc.). Hover effects use `background` or `background-color` changes. Firefox-specific fixes are in `@supports (-moz-appearance:none)`. See `CLASS_MAP.md` for the planned semantic rename mapping.
