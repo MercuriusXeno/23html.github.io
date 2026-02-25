@@ -1,3 +1,8 @@
+import { YEAR, MONTH, WEEK, DAY, HOUR, SILVER, GOLD } from './constants';
+import { Base64, utf8_to_b64, b64_to_utf8 } from './base64';
+import { random, rand, randf, _rand, xmur3 } from './random';
+import { select, shuffle, deepCopy, copy, objempty, format3, col, scan, scanbyid, scanbyuid, find, findbyid, findbest, findworst } from './utils';
+import { addElement, empty, appear, fade } from './dom-utils';
 
     // ==========================================================================
     // Namespace objects
@@ -54,16 +59,7 @@
     eqp.dummy = {};
     var acts = [];
 
-    // ==========================================================================
-    // Constants
-    // ==========================================================================
-    const YEAR = 518400;
-    const MONTH = 43200;
-    const WEEK = 10080;
-    const DAY = 1440;
-    const HOUR = 60;
-    const SILVER = 100;
-    const GOLD = 10000;
+    // Constants imported from ./constants
 
     let tempt = new Date();
 
@@ -6430,12 +6426,7 @@
       }
     }
 
-    function shuffle(arr) {
-      let copy = [];
-      let index = 0;
-      for (let a in arr) copy[a] = arr[a];
-      while (copy.length != 0) { let val = rand(copy.length - 1); arr[index++] = copy[val]; copy.splice(val, 1) }
-    }
+    // shuffle() imported from ./utils
 
     ///////////////////////////////////////////
     //ACT
@@ -8701,29 +8692,7 @@
       msg('wHw')
     }
 
-    function appear(dom) {
-      if (!!dom) {
-        let tmr = 0;
-        dom.style.opacity = 0;
-        dom.style.display = '';
-        let a = setInterval(() => {
-          tmr++;
-          dom.style.opacity = tmr / 100;
-          if (tmr === 100) clearInterval(a);
-        }, 10);
-      }
-    }
-
-    function fade(dom, timer, del) {
-      let tmr = (timer || 50);
-      dom.style.opacity = 1;
-      dom.style.display = '';
-      let a = setInterval(() => {
-        tmr--;
-        dom.style.opacity = tmr / (timer || 50);
-        if (tmr === 0) { clearInterval(a); if (del === true) { document.body.removeChild(dom); } }
-      }, 10);
-    }
+    // appear, fade imported from ./dom-utils
 
     function addDesc(dm, what, type, ttl, dsc, f, id) {
       dm.addEventListener('mouseenter', a => { dscr(a, what, type, ttl, f === true ? (dsc)() : dsc, id); giveSkExp(skl.rdg, .002); global.stat.popt++; global.curwds = this; global.shiftid = id; if (global.kkey === 1) descsinfo(global.shiftid) });
@@ -13224,13 +13193,7 @@
       return (5000 + (you.str * 800)) * (1 + you.lvl * .03) * (1 + skl.unc.lvl * .1 + skl.fgt.lvl * .08 + skl.tghs.lvl * .11) / 1000 << 0
     }
 
-    function format3(a) {
-      if (a.length > 3) {
-        let b = new String();
-        for (let i = 0; i < a.length; i++) { if ((a.length - i) % 3 == 0 && i > (a > 0 ? 0 : 1)) b += ','; b += a[i] }
-        return b;
-      } return a;
-    }
+    // format3() imported from ./utils
 
     function formatw(a) {
       let b = (Math.log(Math.abs(a + 1)) * 0.43429448190325178 | 0) + 1;
@@ -13355,9 +13318,9 @@
       global.rm = type;
     }
 
-    function objempty(obj) { for (let a in obj) return false }
+    // objempty() imported from ./utils
 
-    function kill(obj) { obj = null; delete obj }
+    function kill(obj) { obj = null; }
 
     function effAct_test() {
       for (let index in you.eff) you.eff[index].use(creature.bat);
@@ -13483,9 +13446,7 @@
       setTimeout(function () { update(); ontick(); }, 1000 / global.fps);
     })();
 
-    function select(arr) {
-      return arr[rand(arr.length - 1)];
-    }
+    // select() imported from ./utils
 
     function nograd(s) {
       if (s === true) {
@@ -13515,13 +13476,7 @@
     function reduce(itm, am) { if (am) { itm.amount = itm.amount - am <= 0 ? 0 : itm.amount - am } if (itm.amount <= 0) { removeItem(itm); updateTrunkLeftItem(itm, true) } else if (global.sm === 1) updateInv(inv.indexOf(itm)); else if (global.sm === itm.stype) updateInv(global.sinv.indexOf(itm)); updateTrunkLeftItem(itm) }
     function cansee() { if ((global.flags.isdark && you.mods.light > 0) || skl.ntst.lvl >= 12) return true }
 
-    function col(txt, c, bc) {
-      let cc;
-      let bcc;
-      if (c) cc = 'color:' + c + ';';
-      if (bc) bcc = 'background-color:' + bc + ';';
-      return '<span' + (c ? (' style="' + cc + (bc ? bcc : '') + '"') : '') + '>' + txt + '</span>'
-    }
+    // col() imported from ./utils
 
     function usePlayerWeaponSkill() {
       switch (you.eqp[0].wtype) {
@@ -13725,28 +13680,10 @@
       }*/
     }
 
-    function scan(arr, val, am) {
-      if (am) { for (let obj in arr) if (arr[obj].id === val.id && arr[obj].amount >= am) return true }
-      else for (let obj in arr) if (arr[obj] === val) return true;
-    }
-
-    //finder functions
-    function scanbyid(arr, val) { for (let obj in arr) if (arr[obj].id === val) return true }
-    function scanbyuid(arr, val) { for (let obj in arr) if (arr[obj].data.uid === val) return true }
-    function find(arr, val) { for (let obj in arr) if (arr[obj] === val) return arr[obj] }
-    function findbyid(arr, val) { for (let obj in arr) if (arr[obj].id === val) return arr[obj] }
+    // scan, scanbyid, scanbyuid, find, findbyid imported from ./utils
     function wearing(itm) { for (let obj in you.eqp) if (itm.data.uid === you.eqp[obj].data.uid && you.eqp[obj].id !== 10000) return true }
     function wearingany(itm) { for (let obj in you.eqp) if (itm.id === you.eqp[obj].id && you.eqp[obj].id !== 10000) return true }
-    function findbest(arr, itm) {
-      let temp = [];
-      for (let a in arr) if (arr[a].id === itm.id) temp.push(arr[a]);
-      return temp.sort(function (a, b) { if (a.dp > b.dp) return -1; return 1 })
-    }
-    function findworst(arr, itm) {
-      let temp = [];
-      for (let a in arr) if (arr[a].id === itm.id) temp.push(arr[a]);
-      return temp.sort(function (a, b) { if (a.dp < b.dp) return -1; return 1 })
-    }
+    // findbest, findworst imported from ./utils
 
     function addPlan(plan, data) {
       let p = deepCopy(plan);
@@ -13882,36 +13819,8 @@
       }
     }; addPlan(planner.zrespawn)
 
-    function addElement(parent_element, elem, id, cls) {
-      let newelem = document.createElement(elem);
-      if (id) newelem.id = id;
-      if (cls) newelem.className = cls;
-      parent_element.appendChild(newelem);
-      return newelem;
-    }
-
-    function deepCopy(o) {
-      let copy = o, k;
-      if (o && typeof o === 'object') {
-        copy = Object.prototype.toString.call(o) === '[object Array]' ? [] : {};
-        for (let k in o) {
-          copy[k] = deepCopy(o[k]);
-        }
-      }
-      return copy;
-    }
-
-    function copy(o) {
-      let res = new Object();
-      for (let a in o) res[a] = o[a];
-      return res;
-    }
-
-    function empty(dom) {
-      while (dom.lastChild) {
-        dom.removeChild(dom.lastChild);
-      }
-    }
+    // addElement, deepCopy, copy imported from ./utils and ./dom-utils
+    // empty() imported from ./dom-utils
 
     test.maps = {};
     test.maps.cellsize = 20;
@@ -14193,336 +14102,10 @@
     }
 
 
-    function rand(max, min) {
-      if (min) return Math.round(random() * (max - min) + min);
-      else return Math.round(random() * max);
-    }
+    // rand, randf, _rand imported from ./random
 
-    function randf(max, min) {
-      if (min) return random() * (max - min) + min;
-      else return random() * max;
-    }
 
-    function _rand(max, min) {
-      if (min) return Math.round(Math.random() * (max - min) + min);
-      else return Math.round(Math.random() * max);
-    }
+    // MersenneTwister, random, xmur3 imported from ./random
 
-
-    function class__MersenneTwister__(window) {
-      var className = "MersenneTwister";
-
-      var $next = "$__next__";
-
-      var N = 624;
-      var M = 397;
-      var MAG01 = [0x0, 0x9908b0df];
-
-      var F = window[className] = function () {
-        this.mt = new Array(N);
-        this.mti = N + 1;
-
-        var a = arguments;
-        switch (a.length) {
-          case 0:
-            this.setSeed(new Date().getTime());
-            break;
-          case 1:
-            this.setSeed(a[0]);
-            break;
-          default:
-            var seeds = new Array();
-            for (var i = 0; i < a.length; ++i) {
-              seeds.push(a[i]);
-            }
-            this.setSeed(seeds);
-            break;
-        }
-      };
-
-      var FP = F.prototype;
-
-      FP.setSeed = function () {
-        var a = arguments;
-        switch (a.length) {
-          case 1:
-            if (a[0].constructor === Number) {
-              this.mt[0] = a[0];
-              for (var i = 1; i < N; ++i) {
-                var s = this.mt[i - 1] ^ (this.mt[i - 1] >>> 30);
-                this.mt[i] = ((1812433253 * ((s & 0xffff0000) >>> 16))
-                  << 16)
-                  + 1812433253 * (s & 0x0000ffff)
-                  + i;
-              }
-              this.mti = N;
-              return;
-            }
-
-            this.setSeed(19650218);
-
-            var l = a[0].length;
-            var i = 1;
-            var j = 0;
-
-            for (var k = N > l ? N : l; k != 0; --k) {
-              var s = this.mt[i - 1] ^ (this.mt[i - 1] >>> 30)
-              this.mt[i] = (this.mt[i]
-                ^ (((1664525 * ((s & 0xffff0000) >>> 16)) << 16)
-                  + 1664525 * (s & 0x0000ffff)))
-                + a[0][j]
-                + j;
-              if (++i >= N) {
-                this.mt[0] = this.mt[N - 1];
-                i = 1;
-              }
-              if (++j >= l) {
-                j = 0;
-              }
-            }
-
-            for (var k = N - 1; k != 0; --k) {
-              var s = this.mt[i - 1] ^ (this.mt[i - 1] >>> 30);
-              this.mt[i] = (this.mt[i]
-                ^ (((1566083941 * ((s & 0xffff0000) >>> 16)) << 16)
-                  + 1566083941 * (s & 0x0000ffff)))
-                - i;
-              if (++i >= N) {
-                this.mt[0] = this.mt[N - 1];
-                i = 1;
-              }
-            }
-
-            this.mt[0] = 0x80000000;
-            return;
-          default:
-            var seeds = new Array();
-            for (var i = 0; i < a.length; ++i) {
-              seeds.push(a[i]);
-            }
-            this.setSeed(seeds);
-            return;
-        }
-      };
-
-      FP[$next] = function (bits) {
-        if (this.mti >= N) {
-          var x = 0;
-
-          for (var k = 0; k < N - M; ++k) {
-            x = (this.mt[k] & 0x80000000) | (this.mt[k + 1] & 0x7fffffff);
-            this.mt[k] = this.mt[k + M] ^ (x >>> 1) ^ MAG01[x & 0x1];
-          }
-          for (var k = N - M; k < N - 1; ++k) {
-            x = (this.mt[k] & 0x80000000) | (this.mt[k + 1] & 0x7fffffff);
-            this.mt[k] = this.mt[k + (M - N)] ^ (x >>> 1) ^ MAG01[x & 0x1];
-          }
-          x = (this.mt[N - 1] & 0x80000000) | (this.mt[0] & 0x7fffffff);
-          this.mt[N - 1] = this.mt[M - 1] ^ (x >>> 1) ^ MAG01[x & 0x1];
-
-          this.mti = 0;
-        }
-
-        var y = this.mt[this.mti++];
-        y ^= y >>> 11;
-        y ^= (y << 7) & 0x9d2c5680;
-        y ^= (y << 15) & 0xefc60000;
-        y ^= y >>> 18;
-        return y >>> (32 - bits);
-      };
-
-      FP.nextBoolean = function () {
-        return this[$next](1) == 1;
-      };
-
-      FP.nextInteger = function () {
-        return this[$next](32);
-      };
-
-      FP.nextLong = function () {
-        return this[$next](25) * 2097152 + this[$next](25);
-      };
-
-      FP.nextFloat = function () {
-        return this[$next](32) / 4294967296.0;
-        // 2^32
-      };
-
-      FP.nextDouble = function () {
-        return (this[$next](25) * 2097152 + this[$next](25))
-          / 70368744177664.0;
-        // 2^46
-      };
-
-    } class__MersenneTwister__(window);
-
-    Math.__MERSENNE_TWISTER__ = new MersenneTwister();
-    var random = function (s) {
-      if (s) Math.__MERSENNE_TWISTER__.setSeed(s)
-      return Math.__MERSENNE_TWISTER__.nextFloat();
-    }
-
-    function xmur3(str) {
-      for (var i = 0, h = 1779033703 ^ str.length; i < str.length; i++)
-        h = Math.imul(h ^ str.charCodeAt(i), 3432918353),
-          h = h << 13 | h >>> 19;
-      return function () {
-        h = Math.imul(h ^ h >>> 16, 2246822507);
-        h = Math.imul(h ^ h >>> 13, 3266489909);
-        return (h ^= h >>> 16) >>> 0;
-      }
-    }
-
-    /**
-    *
-    *  Base64 encode / decode
-    *  http://www.webtoolkit.info/
-    *
-    **/
-
-    var Base64 = {
-
-      // private property
-      _keyStr: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
-
-      // public method for encoding
-      encode: function (input) {
-        var output = "";
-        var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
-        var i = 0;
-
-        input = Base64._utf8_encode(input);
-
-        while (i < input.length) {
-
-          chr1 = input.charCodeAt(i++);
-          chr2 = input.charCodeAt(i++);
-          chr3 = input.charCodeAt(i++);
-
-          enc1 = chr1 >> 2;
-          enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
-          enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
-          enc4 = chr3 & 63;
-
-          if (isNaN(chr2)) {
-            enc3 = enc4 = 64;
-          } else if (isNaN(chr3)) {
-            enc4 = 64;
-          }
-
-          output = output +
-            this._keyStr.charAt(enc1) + this._keyStr.charAt(enc2) +
-            this._keyStr.charAt(enc3) + this._keyStr.charAt(enc4);
-
-        }
-
-        return output;
-      },
-
-      // public method for decoding
-      decode: function (input) {
-        var output = "";
-        var chr1, chr2, chr3;
-        var enc1, enc2, enc3, enc4;
-        var i = 0;
-
-        input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
-
-        while (i < input.length) {
-
-          enc1 = this._keyStr.indexOf(input.charAt(i++));
-          enc2 = this._keyStr.indexOf(input.charAt(i++));
-          enc3 = this._keyStr.indexOf(input.charAt(i++));
-          enc4 = this._keyStr.indexOf(input.charAt(i++));
-
-          chr1 = (enc1 << 2) | (enc2 >> 4);
-          chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
-          chr3 = ((enc3 & 3) << 6) | enc4;
-
-          output = output + String.fromCharCode(chr1);
-
-          if (enc3 != 64) {
-            output = output + String.fromCharCode(chr2);
-          }
-          if (enc4 != 64) {
-            output = output + String.fromCharCode(chr3);
-          }
-
-        }
-
-        output = Base64._utf8_decode(output);
-
-        return output;
-
-      },
-
-      // private method for UTF-8 encoding
-      _utf8_encode: function (string) {
-        string = string.replace(/\r\n/g, "\n");
-        var utftext = "";
-
-        for (var n = 0; n < string.length; n++) {
-
-          var c = string.charCodeAt(n);
-
-          if (c < 128) {
-            utftext += String.fromCharCode(c);
-          }
-          else if ((c > 127) && (c < 2048)) {
-            utftext += String.fromCharCode((c >> 6) | 192);
-            utftext += String.fromCharCode((c & 63) | 128);
-          }
-          else {
-            utftext += String.fromCharCode((c >> 12) | 224);
-            utftext += String.fromCharCode(((c >> 6) & 63) | 128);
-            utftext += String.fromCharCode((c & 63) | 128);
-          }
-
-        }
-
-        return utftext;
-      },
-
-      // private method for UTF-8 decoding
-      _utf8_decode: function (utftext) {
-        var string = "";
-        var i = 0;
-        var c = c1 = c2 = 0;
-
-        while (i < utftext.length) {
-
-          c = utftext.charCodeAt(i);
-
-          if (c < 128) {
-            string += String.fromCharCode(c);
-            i++;
-          }
-          else if ((c > 191) && (c < 224)) {
-            c2 = utftext.charCodeAt(i + 1);
-            string += String.fromCharCode(((c & 31) << 6) | (c2 & 63));
-            i += 2;
-          }
-          else {
-            c2 = utftext.charCodeAt(i + 1);
-            c3 = utftext.charCodeAt(i + 2);
-            string += String.fromCharCode(((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63));
-            i += 3;
-          }
-
-        }
-
-        return string;
-      }
-
-    }
-
-    function utf8_to_b64(str) {
-      try { return Base64.encode(unescape(encodeURIComponent(str))); }
-      catch (err) { return ''; }
-    }
-
-    function b64_to_utf8(str) {
-      try { return decodeURIComponent(escape(Base64.decode(str))); }
-      catch (err) { return ''; }
-    }
+    // Base64, utf8_to_b64, b64_to_utf8 imported from ./base64
 
