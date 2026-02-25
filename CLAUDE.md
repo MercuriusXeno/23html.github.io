@@ -12,11 +12,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `index.html` — shell HTML, loads `styles.css` and `dist/bundle.js`
 - `src/main.ts` — core game logic, DOM setup, location scripts (~4,900 lines)
 - `src/game/` — 8 game logic modules (~1,220 lines):
-  - `utils-game.ts` — Game utility functions (`formatw`, `cansee`, `kill`, `roll`)
+  - `utils-game.ts` — Game utility functions (`formatw`, `cansee`, `kill`, `roll`, `canRead`)
   - `progression.ts` — XP/leveling (`giveExp`, `giveSkExp`, `giveCrExp`, `giveTitle`, `giveRcp`, `lvlup`)
   - `economy.ts` — Wealth/shopping (`giveWealth`, `spend`, `restock`)
   - `inventory.ts` — Item management (`giveItem`, `removeItem`, trunk/container functions)
-  - `combat.ts` — Combat system (`fght`, `attack`, `dmg_calc`, `hit_calc`, `wpndiestt`)
+  - `combat.ts` — Combat system (`fght`, `attack`, `tattack`, `dmg_calc`, `dumb`, `hit_calc`, `wpndiestt`)
   - `movement.ts` — Area transitions (`smove`, `area_init`, `inSector`, `Effector`, `addtosector`)
   - `crafting.ts` — Recipe crafting (`canMake`, `make`)
   - `exploration.ts` — Scouting/disassembly (`canScout`, `scoutGeneric`, `disassembleGeneric`)
@@ -40,6 +40,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `build.mjs` — esbuild build script (`src/main.ts` → `dist/bundle.js` as IIFE)
 - `package.json` — project config, scripts: `build`, `watch`, `typecheck`
 - `tsconfig.json` — TypeScript config (`strict: false`, `allowJs: true`, `noEmit: true`)
+- `.vscode/launch.json` — Chrome debug launch (builds first via `preLaunchTask`)
+- `.vscode/tasks.json` — npm build task for VSCode
 - `dist/bundle.js` — built output (gitignored)
 - `changelog/changelog.html` — historical changelog
 - `ctst.png` — sprite sheet, `laugh6.wav` — sound effect, `favicon.ico`
@@ -83,7 +85,7 @@ Game entities use constructor functions (e.g., `Item()`, `Eqp()`, `Creature()`, 
 - Helpers: `serializeIdData()` for save, `loadEquipCategory()` and `restoreDiscovery()` for load
 
 ### Key systems
-- **Combat** (`game/combat.ts`): `fght()`, `attack()`, `dmg_calc()`, `hit_calc()` — turn-based with stats, equipment, and effects
+- **Combat** (`game/combat.ts`): `fght()`, `attack()`, `tattack()`, `dmg_calc()`, `hit_calc()` — turn-based with stats, equipment, and effects
 - **Inventory** (`game/inventory.ts` + `ui/inventory.ts`): `giveItem()`, `removeItem()`, `equip()`, `unequip()` — items tracked in `inv[]` array
 - **Crafting** (`game/crafting.ts`): `canMake()`, `make()`, `renderRcp()` — recipe-based
 - **Movement** (`game/movement.ts`): `smove()`, `area_init()` — transitions between areas, effector system
@@ -107,7 +109,7 @@ Copper-based: `SILVER = 100`, `GOLD = 10000`. Use `giveWealth()` / `spend()`.
 - `npm run typecheck` — run `tsc --noEmit` for type checking (many errors expected until modules get proper types)
 
 ### Workflow
-Edit files in `src/`, run `npm run build` (or use `npm run watch`), refresh `index.html` in browser. The game uses `localStorage` for saves — clearing it resets progress. The game targets modern browsers and uses MS Gothic font.
+Edit files in `src/`, run `npm run build` (or use `npm run watch`), refresh `index.html` in browser. In VSCode, press F5 to build and launch in Chrome. The game uses `localStorage` for saves — clearing it resets progress. The game targets modern browsers and uses MS Gothic font.
 
 ## CSS conventions
 All styles are in `styles.css`. Classes use short abbreviated names (`.d`, `.dd`, `.bts`, `.chs`, `.inv_slot`, etc.). Hover effects use `background` or `background-color` changes. Firefox-specific fixes are in `@supports (-moz-appearance:none)`. See `CLASS_MAP.md` for the planned semantic rename mapping.
