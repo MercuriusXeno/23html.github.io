@@ -14,12 +14,12 @@
 ## Phase 2: DRY & Constructor Cleanup
 **Goal:** Eliminate repetitive patterns, improve constructors with config objects and factory helpers.
 
-- [ ] **Step 2.1:** Refactor `Item()` constructor — accept config object, set defaults
-- [ ] **Step 2.2:** Create food/consumable factory — ~100+ `item.use` functions follow identical pattern
-- [ ] **Step 2.3:** Refactor `Eqp()` constructor — config object, stat modifier factory for oneq/onuneq pairs
-- [ ] **Step 2.4:** Refactor `Creature()`, `Effect()`, `Skill()`, `Recipe()` constructors similarly
-- [ ] **Step 2.5:** DRY the save/load — extract repeated "serialize array of objects" pattern
-- [ ] **Step 2.6:** DRY the inventory load loops (5 nearly identical nested for-loops)
+- [x] **Step 2.1:** Refactor `Item()` constructor — accept config object, set defaults
+- [x] **Step 2.2:** Create food/consumable factory — ~100+ `item.use` functions follow identical pattern
+- [x] **Step 2.3:** Refactor `Eqp()` constructor — config object, stat modifier factory for oneq/onuneq pairs
+- [x] **Step 2.4:** Refactor `Creature()`, `Effect()`, `Skill()`, `Recipe()` constructors similarly
+- [x] **Step 2.5:** DRY the save/load — extract repeated "serialize array of objects" pattern
+- [x] **Step 2.6:** DRY the inventory load loops (5 nearly identical nested for-loops)
 
 ## Phase 3: TypeScript + ES Module Conversion
 **Goal:** Convert the cleaned-up monolith to TypeScript ES modules.
