@@ -6,32 +6,30 @@
 - **Branch:** main
 
 ## What Was Done
-- Completed Phase 2 of refactoring roadmap (Steps 2.1–2.6)
-- Refactored all 13 constructors to accept `cfg` config objects via `if(cfg) for(let k in cfg) this[k]=cfg[k]`
-- Created `foodItem()`, `healItem()`, `expItem()` factory functions replacing 230 identical `.use` patterns
-- Fixed 61 self-referencing `dpmax` patterns (`dp: wpn.x.dpmax = N` → `dp: N, dpmax: N`)
-- Fixed 2 self-referencing vendor `timeorig` patterns
-- Extracted save/load helpers: `serializeIdData()`, `loadEquipCategory()`, `restoreDiscovery()`
-- Fixed pre-existing vanilla bug: toggle-unequip skipped `stat_r()` (removed `{save:true}` flag at `equip()` line ~9113)
-- Updated CLAUDE.md to reflect current architecture (CSS extraction, config constructors, helpers)
-- Reduced codebase from ~14,800 → ~14,003 lines
+- Completed Phase 3 Step 3.5: Extract System Modules
+- Created `src/systems/weather.ts` (~600 lines): Weather constructor, 14 weather instances, ontick handlers, callbackManager, attachCallback/detachCallback, Time constructor, time accessors, getSeason, timeConv, timeDisp, setWeather, isWeather, onSeasonTick, wManager
+- Created `src/systems/player.ts` (~110 lines): You() constructor with stat_r, battle_ai, onDeath methods
+- Created `src/systems/save-load.ts` (~880 lines): save(), load(), serializeIdData, loadEquipCategory, restoreDiscovery, loading screen overlay
+- Reduced `src/main.ts` from ~8,865 to ~7,350 lines (-1,516 lines)
+- Fixed missing imports in `src/data/world.ts` (random, rand, roll, giveSkExp, giveExp, act, isWeather, getHour, weather)
+- Fixed missing imports in `src/data/equipment.ts` (callback, attachCallback, detachCallback)
+- Added re-exports in main.ts for backward compat with data module imports
 
 ## Decisions Made
-- Config objects use `for(let k in cfg) this[k]=cfg[k]` at end of constructor: simplest approach, no library needed
-- `foodItem()` factory handles satiation, poison, drunk, skill XP in one function: covers 221 of 341 items
-- Toggle-unequip fix: removed `{save:true}` rather than adding `stat_r()` call after: cleaner, lets `unequip()` handle its own cleanup
-- Consumable item load (a3[0]) left as-is in `load()`: different enough from equipment loads to not warrant a shared helper
+- Eval-time init calls (setWeather, wManager) stay in main.ts after DOM setup, not in weather.ts — DOM elements don't exist yet when weather.ts loads
+- main.ts re-exports functions from system modules so data modules can import from '../main' without needing to know about systems/
+- Circular deps between systems/ and main.ts are safe because references are in closures (deferred execution)
 
 ## Open Items
-- [ ] Phase 3: TypeScript + ES Module Conversion (Steps 3.1–3.7 in ROADMAP.md)
+- [ ] Phase 3 Step 3.6: Extract UI modules (`src/ui/` — dom-setup, messages, descriptions, choices, rendering, locations)
+- [ ] Phase 3 Step 3.7: Wire up final entry point — imports only, verify full game works
 - [ ] CSS semantic rename from `CLASS_MAP.md` (deferred — do after modularization)
-- [ ] CSS design tokens and component classes from `frontend-refactoring.md` (deferred)
-- [ ] `.exp` text-shadow typo `0pzx` in styles.css (noted in frontend-refactoring.md section 4)
+- [ ] `.exp` text-shadow typo `0pzx` in styles.css
 
 ## Next Steps
-1. Phase 3 setup: `tsconfig.json`, `src/` directory, dev pipeline (Step 3.1)
-2. Extract constants, types, and utility modules (Step 3.2)
-3. Extract state module for globals (Step 3.3)
+1. Step 3.6: Extract UI modules into `src/ui/`
+2. Step 3.7: Final wiring of `src/main.ts` as entry point
+3. Phase 4: Architecture improvements (circular imports, strict types, etc.)
 
 ## Context for Next Session
-Phases 1 and 2 are fully complete and committed. The codebase is formatted, constructors use config objects, and save/load is DRY. Phase 3 (TypeScript + ES Modules) is the next major effort — it requires setting up a build pipeline and splitting the monolith into `src/` modules. The game must remain playable after every step. No build tooling exists yet.
+Phases 1-2 and Phase 3 Steps 3.1-3.5 are complete. The monolith has been split into utility modules (5), data modules (13), and system modules (3). main.ts is down to ~7,350 lines, mostly UI/rendering and core game logic. The next step is extracting UI modules (Step 3.6), which is the most complex extraction remaining due to heavy cross-dependencies between UI functions. Bundle size is stable at ~789kb.

@@ -4,13 +4,20 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**Proto23** is a browser-based text RPG game, deployed as a GitHub Pages site (`23html.github.io`). The game code lives in `src/main.ts` (~14,500 lines), bundled via esbuild to `dist/bundle.js`, which `index.html` loads. CSS is in `styles.css`.
+**Proto23** is a browser-based text RPG game, deployed as a GitHub Pages site (`23html.github.io`). The game is split across `src/main.ts` (~7,350 lines), `src/data/` (13 modules, ~5,100 lines), and `src/systems/` (3 modules, ~1,590 lines), bundled via esbuild to `dist/bundle.js`, which `index.html` loads. CSS is in `styles.css`.
 
 ## Architecture
 
 ### File structure
 - `index.html` — shell HTML, loads `styles.css` and `dist/bundle.js`
-- `src/main.ts` — all game code (being split into modules during Phase 3)
+- `src/main.ts` — core game logic (~7,350 lines, being split into modules during Phase 3)
+- `src/data/` — 13 data definition modules (~5,100 lines): titles, effects, furniture, skills, items, equipment, abilities, creatures, world, crafting, vendors, actions, mastery
+- `src/systems/` — 3 system modules (~1,590 lines):
+  - `weather.ts` — Weather/time/calendar system, callbacks (~600 lines)
+  - `save-load.ts` — Save/load serialization (~880 lines)
+  - `player.ts` — Player (`You`) constructor (~110 lines)
+- `src/state.ts` — shared game state singletons and setter functions
+- `src/constants.ts`, `src/base64.ts`, `src/random.ts`, `src/utils.ts`, `src/dom-utils.ts` — utility modules
 - `styles.css` — extracted CSS (previously inline `<style>` block)
 - `build.mjs` — esbuild build script (`src/main.ts` → `dist/bundle.js` as IIFE)
 - `package.json` — project config, scripts: `build`, `watch`, `typecheck`
@@ -20,7 +27,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `ctst.png` — sprite sheet, `laugh6.wav` — sound effect, `favicon.ico`
 
 ### Refactoring artifacts
-- `ROADMAP.md` — 4-phase refactoring plan with checkboxes (Phases 1-2 complete, Phase 3 in progress)
+- `ROADMAP.md` — 4-phase refactoring plan with checkboxes (Phases 1-2 complete, Phase 3 Steps 3.1-3.5 complete)
 - `CLASS_MAP.md` — CSS class rename mapping (cryptic → semantic, pending application)
 - `frontend-refactoring.md` — CSS design token and component class analysis (future work)
 
