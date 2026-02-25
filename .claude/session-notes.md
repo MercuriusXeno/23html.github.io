@@ -6,29 +6,32 @@
 - **Branch:** main
 
 ## What Was Done
-- Audited all 13 data modules for missing imports (same class of bug as items.ts)
-- Fixed 11 missing imports across 5 data modules:
-  - `effects.ts`: added `item` (bdgh effect callback)
-  - `skills.ts`: added `act`, `giveAction`, `recshop` (walking milestone, trade level)
-  - `equipment.ts`: added `checksd`, `recshop` (kill hooks, discount accessories)
-  - `creatures.ts`: added `skl`, `rand`, `giveSkExp` (war XP on kill, money drops)
-  - `crafting.ts`: added `random`, `giveItem`, `msg` (recipe success rolls)
-- Exported `giveAction` from `main.ts` (was local function, needed by skills.ts)
-- 7 modules confirmed clean: titles, furniture, abilities, world, vendors, actions, mastery
+- **Phase 4.6: Enabled `strict: true` in tsconfig.json**
+  - Added `// @ts-nocheck` to 33 unfixed files; `constants.ts` and `state.ts` were already clean
+  - Fully typed and removed `@ts-nocheck` from 6 leaf modules: `dom-utils.ts`, `utils.ts`, `base64.ts`, `ui/messages.ts`, `ui/effects.ts`, `game/utils-game.ts`
+  - `random.ts` kept `@ts-nocheck` (vendored MersenneTwister IIFE, no value in typing)
+  - Fixed `base64.ts` undeclared vars: `var c = c1 = c2 = 0` → `var c = 0, c2 = 0, c3 = 0`
+  - Marked optional params with `?` in `descriptions.ts:addDesc` and `game/inventory.ts:giveItem` to fix arity errors from callers
+- **Fixed save/load inventory crash** (`save-load.ts:604`): `inv[o].data` was undefined because `giveItem` pushes to end of array but code used loop counter `o` as index. Fixed by capturing `giveItem()` return value.
+- **Fixed 8 bare variable assignments** causing `ReferenceError` in strict mode:
+  - `main.ts`: `testz`, `tcat`, `t`, `bt`, `g`, `stash`/`verify`, `lr` — all needed `let`
+  - `game/inventory.ts`: `scann` — needed `let`
 
 ## Decisions Made
-- `giveAction` exported from main.ts as 5th runtime circular dep (same pattern as `recshop`, `wdrseason`, `ontick`, `giveFurniture`)
+- Keep `random.ts` under `@ts-nocheck`: vendored MersenneTwister IIFE is not worth typing
+- Use `any` liberally in leaf module type annotations: game objects have no interfaces yet, so `any` is the pragmatic choice for now
+- When removing `@ts-nocheck`, must also check callers: untyped params in `@ts-nocheck` files default to required, not optional
 
 ## Open Items
-- [ ] "Pause next battle" toggle doesn't persist its effect across save/load (possibly vanilla bug)
-- [ ] Area clearing (monster kill) progress not saved between sessions
-- [ ] CSS semantic rename from `CLASS_MAP.md` (deferred)
-- [ ] Movement system not yet browser-tested (user still working through tutorial)
+- [ ] **`dscr` crash**: `TypeError: Cannot set properties of undefined (setting 'label')` at `bundle.js:877` — called from `bundle.js:1153`. Not yet investigated.
+- [ ] "Pause next battle" toggle doesn't persist across save/load
+- [ ] Area clearing progress not saved between sessions
+- [ ] 33 files still have `@ts-nocheck` — next targets: `systems/loop.ts` (61 lines), `systems/player.ts` (117 lines)
 
 ## Next Steps
-1. Continue browser testing — movement system, area transitions, later-game content
-2. Consider extracting `giveAction`, `giveFurniture`, `ontick` from main.ts to game modules
-3. Phase 4.2+ from ROADMAP (dependency injection, JSON data, strict TS)
+1. **Fix the `dscr` crash** — `TypeError: Cannot set properties of undefined (setting 'label')` in `ui/descriptions.ts`
+2. Continue Phase 4.6 — fix more `@ts-nocheck` modules (start with small system files)
+3. Browser testing — verify save/load works end-to-end after the `giveItem` fix
 
 ## Context for Next Session
-All 13 data modules have been audited for missing imports. The full audit is now complete — items.ts (prior session, 9 fixes + 28 data.time restorations) plus 5 more modules this session (11 fixes). All bugs were runtime-only: closures referencing functions from main.ts scope that silently became undefined globals after extraction. Bundle size stable at ~789kb. main.ts now exports 5 functions as runtime circular deps: `recshop`, `wdrseason`, `ontick`, `giveFurniture`, `giveAction`.
+Phase 4.6 (strict TS) is in progress. The main risk from enabling strict mode was bare variable assignments that created implicit globals — 8 were found and fixed. The save/load crash was a separate bug where `inv[o]` didn't match the item `giveItem` actually pushed. There's still an active `dscr` crash to fix before the game is fully playable.

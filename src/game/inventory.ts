@@ -201,7 +201,7 @@ import { kill } from './utils-game';
       });
       dom.invp1_con.addEventListener('click', function () {
         if (global.flags.rtcrutch === true) { this.children[0].click(); return } else {
-          scann = false; let titem;
+          let scann = false; let titem;
           if (ni.right === false) {
             for (let a in trunk.c) { if (trunk.c[a].item.id === item.id && !item.slot) { scann = true; titem = trunk.c[a]; break } }
             if (scann === false) {

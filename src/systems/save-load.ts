@@ -601,9 +601,9 @@ export function load(dt?) {
       for (let o = 0; o < a3[0].length; o++) {
         for (let obj in item) {
           if (item[obj].id === a3[0][o].id) {
-            giveItem(item[obj], a3[0][o].am, true, { fi: true });
-            inv[o].new = false;
-            for (let a in a3[0][o].data) inv[o].data[a] = a3[0][o].data[a];
+            let loaded = giveItem(item[obj], a3[0][o].am, true, { fi: true });
+            loaded.new = false;
+            for (let a in a3[0][o].data) loaded.data[a] = a3[0][o].data[a];
           }
           continue;
         }

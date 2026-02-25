@@ -1397,7 +1397,7 @@ export {};
     dom.ct_bt4_5a.style.border = '1px lightgrey solid';
     dom.ct_bt4_5a.addEventListener('click', function () {
       if (!global.flags.expatv) {
-        t = save(true);
+        let t = save(true);
         global.flags.expatv = true;
         dom.ct_bt4_5a_nc = addElement(document.body, 'div');
         dom.ct_bt4_5a_nc.style.position = 'absolute';
@@ -1472,7 +1472,7 @@ export {};
           if (dom.ct_bt4_5b_nbc.value == "" || dom.ct_bt4_5b_nbc.value == "?") { dom.ct_bt4_5b_nbc.value = '?'; return }
           let storage = window.localStorage;
           let t = dom.ct_bt4_5b_nbc.value;
-          bt = b64_to_utf8(dom.ct_bt4_5b_nbc.value);
+          let bt = b64_to_utf8(dom.ct_bt4_5b_nbc.value);
           if (/savevalid/g.test(bt)) {
             storage.setItem("v0.2a", t);
             load(t);
@@ -1724,7 +1724,7 @@ export {};
 
     global.text.mtp = ['Human', 'Beast', 'Undead', 'Evil', 'Phantom', 'Dragon'];
 
-    testz = new (area._ctor)();
+    let testz = new (area._ctor)();
     testz.apop = 4000;
     testz.bpop = 6000;
     testz.vsize = 10000;
@@ -1758,7 +1758,7 @@ export {};
     document.body.addEventListener('keydown', function (e) {
       if (global.flags.kfocus !== true) {
         for (let obj in global.shortcuts) if (e.which === global.shortcuts[obj][0]) {
-          g = global.shortcuts[obj][2];
+          let g = global.shortcuts[obj][2];
           if (g.amount > 0 || !!g.slot) {
             g.use(); reduce(g); iftrunkopenc(1); if (g.id < 3000 && !g.data.tried) { g.data.tried = true; global.stat.ftried += 1; }
             break
@@ -2034,8 +2034,8 @@ export {};
             chs('"Instructor: You can return whatever you punched off of dummies and get coin for it, it\'s dojo\'s equipment after all. Or you can keep and use for it yourself, the choice is yours"', true);
             chs('"Return the rags"', false).addEventListener('click', () => {
               let dlr = 0;
-              stash = [];
-              verify = true;
+              let stash: any[] = [];
+              let verify = true;
               for (let a in inv) { if (inv[a].id === wpn.knf1.id && you.eqp[0].data.uid !== inv[a].data.uid) { stash.push(inv[a]); dlr += 1 } }
               for (let a in inv) { if (inv[a].id === wpn.wsrd2.id && you.eqp[0].data.uid !== inv[a].data.uid) { stash.push(inv[a]); dlr += 3 } }
               for (let a in inv) { if (inv[a].id === eqp.brc.id) { verify = true; for (let b in you.eqp) if (you.eqp[b].data.uid === inv[a].data.uid) verify = false; if (verify === true) { stash.push(inv[a]); dlr += 1 } } }
@@ -3447,7 +3447,7 @@ export {};
         });
       }
       if (global.flags.catget) {
-        tcat = findbyid(furn, furniture.cat.id);
+        let tcat = findbyid(furn, furniture.cat.id);
         tcat.data.mood = tcat.data.mood || 1;
         chs('"Check on Cat"', false).addEventListener('click', () => {
           if (sector.home.data.smkp > 0) { msg('Your cat went outside', 'yellow'); return }
@@ -4197,7 +4197,7 @@ export {};
     function _dbggibberish(w, l) {
       let a = new String();
       for (let b = 0; b < w; b++) {
-        lr = rand(1, l);
+        let lr = rand(1, l);
         for (let c = 0; c < lr; c++) {
           a += String.fromCharCode(rand(40960, 42124));
         } a += ' ';
