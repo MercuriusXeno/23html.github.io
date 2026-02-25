@@ -14,6 +14,14 @@ import { weather, Weather, Time, setWeather, isWeather, wManager, getSeason,
   timeConv, timeDisp, attachCallback, detachCallback } from './systems/weather';
 import { You } from './systems/player';
 import { save, load } from './systems/save-load';
+import { msg, _msg, msg_add } from './ui/messages';
+import { dscr, addDesc, descsinfo } from './ui/descriptions';
+import { update_db, update_d, update_m, m_update } from './ui/stats';
+import { giveEff, removeEff } from './ui/effects';
+import { equip, unequip, eqpres } from './ui/equipment';
+import { renderItem, updateInv, isort, rsort, invbtsrst, rstcrtthg, reduce } from './ui/inventory';
+import { chs, clr_chs, icon, Chs, activatef, deactivatef } from './ui/choices';
+import { renderRcp, refreshRcp, renderSkl, renderAct, refreshAct, activateAct, deactivateAct } from './ui/panels';
 import './data/titles';
 import './data/effects';
 import './data/furniture';
@@ -32,6 +40,16 @@ import './data/mastery';
 export { weather, Weather, Time, setWeather, isWeather, wManager, getSeason,
   getMinute, getHour, getDay, getMonth, getYear, getLunarPhase,
   timeConv, timeDisp, attachCallback, detachCallback, You, save, load };
+
+// Re-export UI module functions for data/system modules that import from main
+export { msg, _msg, msg_add };
+export { dscr, addDesc, descsinfo };
+export { update_db, update_d, update_m, m_update };
+export { giveEff, removeEff };
+export { equip, unequip, eqpres };
+export { renderItem, updateInv, isort, rsort, invbtsrst, rstcrtthg, reduce };
+export { chs, clr_chs, icon, Chs, activatef, deactivatef };
+export { renderRcp, refreshRcp, renderSkl, renderAct, refreshAct, activateAct, deactivateAct };
 
     // ==========================================================================
     // Bootstrap
@@ -230,7 +248,7 @@ export { weather, Weather, Time, setWeather, isWeather, wManager, getSeason,
     }
 
 
-    function make(rc, rp, times) {
+    export function make(rc, rp, times) {
       times = times || 1
       let check = canMake(rc, times);
       if (rp || !check.success) {
@@ -622,46 +640,7 @@ export { weather, Weather, Time, setWeather, isWeather, wManager, getSeason,
       }
     });
 
-    function renderAct(a) {
-      this.accm = addElement(dom.acccon, 'div', null, 'skill-entry');
-      a.t = this.accm;
-      addDesc(this.accm, null, 2, a.name, a.desc());
-      this.accm.innerHTML = a.name;
-      this.accm.style.textAlign = 'center';
-      this.accm.style.display = 'block'
-      if (acts.length - 1 === acts.indexOf(a)) this.accm.style.borderBottom = '1px solid #46a';
-      if (a.cond(false) !== true) this.accm.style.color = 'grey';
-      if (a.active === true) this.accm.style.color = 'lime';
-      this.accm.addEventListener('click', function () {
-        switch (a.type) {
-          case 1:
-            if (a.cond() === true && a.id !== global.current_a.id) { activateAct(a); this.style.color = 'lime' } else
-              if (a.id === global.current_a.id) { deactivateAct(global.current_a); this.style.color = 'inherit' }
-            break;
-          case 2: if (a.cond() === true) a.use();
-            break;
-          case 3: break;
-        }
-        for (let a in acts) refreshAct(acts[a].t, acts[a])
-      })
-    }
-    function refreshAct(e, a) { e.style.color = 'inherit'; if (a.cond(false) !== true) e.style.color = 'grey'; if (a.active === true) e.style.color = 'lime'; }
-
-    function activateAct(actn) {
-      global.current_a.deactivate();
-      actn.activate();
-      global.current_a = actn;
-      global.flags.busy = true;
-      dom.ct_bt3.style.backgroundColor = 'darkslategray'
-    }
-
-    export function deactivateAct(actn) {
-      actn.deactivate();
-      global.current_a = act.default;
-      global.flags.busy = false;
-      dom.ct_bt3.style.backgroundColor = 'inherit';
-      for (let a in acts) refreshAct(acts[a].t, acts[a])
-    }
+    // --- renderAct, refreshAct, activateAct, deactivateAct moved to src/ui/panels.ts ---
 
     dom.ct_bt2.addEventListener('click', function () {
       dom.nthngdsp.style.display = 'none';
@@ -1474,7 +1453,7 @@ export { weather, Weather, Time, setWeather, isWeather, wManager, getSeason,
     dom.ct_bt4_1b.min = 1;
     dom.ct_bt4_1b.max = 100;
     dom.ct_bt4_1b.addEventListener('change', function () { if (this.value < 1) this.value = 1; else if (this.value > 100) this.value = 100; global.msgs_max = this.value });
-    export function rstcrtthg() { for (let a in global.spbtsr) global.spbtsr[a].style.color = 'inherit'; }
+    // --- rstcrtthg moved to src/ui/inventory.ts ---
 
     dom.ct_bt4_2 = addElement(dom.ctrwin4, 'div', null, 'option-row');
     dom.ct_bt4_2a = addElement(dom.ct_bt4_2, 'div', null, 'option-label');
@@ -1801,30 +1780,7 @@ export { weather, Weather, Time, setWeather, isWeather, wManager, getSeason,
     global.dscr = addElement(document.body, 'div', 'dscr');
     global.dscr.style.display = 'none';
 
-    export function invbtsrst() {
-      dom.inv_btn_1.removeAttribute('style');
-      dom.inv_btn_2.removeAttribute('style');
-      dom.inv_btn_3.removeAttribute('style');
-      dom.inv_btn_4.removeAttribute('style');
-      dom.inv_btn_5.removeAttribute('style');
-      switch (global.sm) {
-        case 1: dom.inv_btn_1.style.color = 'black';
-          dom.inv_btn_1.style.backgroundColor = 'yellow';
-          break;
-        case 2: dom.inv_btn_2.style.color = 'black';
-          dom.inv_btn_2.style.backgroundColor = 'yellow';
-          break;
-        case 3: dom.inv_btn_3.style.color = 'black';
-          dom.inv_btn_3.style.backgroundColor = 'yellow';
-          break;
-        case 4: dom.inv_btn_4.style.color = 'black';
-          dom.inv_btn_4.style.backgroundColor = 'yellow';
-          break;
-        case 5: dom.inv_btn_5.style.color = 'black';
-          dom.inv_btn_5.style.backgroundColor = 'yellow';
-          break;
-      }
-    }
+    // --- invbtsrst moved to src/ui/inventory.ts ---
 
     dom.inv_btn_1.innerHTML = 'ALL';
     dom.inv_btn_2.innerHTML = 'WPN';
@@ -1961,34 +1917,11 @@ export { weather, Weather, Time, setWeather, isWeather, wManager, getSeason,
     dom.sl_kill.style.bottom = '1px';
     dom.sl_kill.addEventListener('click', () => { localStorage.clear(); msg('Save deleted', '') });
 
-    export function update_db() {
-      dom.d4_1.innerHTML = 'STR: ' + Math.round(you.str_d);
-      dom.d4_2.innerHTML = 'AGL: ' + Math.round(you.agl_d);
-      dom.d4_3.innerHTML = 'INT: ' + Math.round(you.int_d);
-      dom.d4_4.innerHTML = 'SPD: ' + you.spd;
-    } update_db()
-
-    export function update_d() {
-      dom.d5_1_1m.innerHTML = 'hp: ' + format3(global.current_m.hp.toString()) + '/' + format3(global.current_m.hpmax.toString());
-      dom.d5_1m.style.width = 100 * global.current_m.hp / global.current_m.hpmax + '%';
-      dom.hit_c();
-      dom.d5_3_1.update();
-      dom.d5_1_1.update();
-    } update_d()
+    // --- update_db, update_d, update_m moved to src/ui/stats.ts ---
+    update_db()
+    update_d()
 
     global.text.mtp = ['Human', 'Beast', 'Undead', 'Evil', 'Phantom', 'Dragon'];
-
-    export function update_m() {
-      dom.d2m.innerHTML = global.current_m.name;
-      let mtp = global.text.mtp[global.current_m.type];
-      if (global.current_m.id >= 1) mtp += global.current_m.sex === true ? ' ♂' : ' ♀';
-      dom.d3m.innerHTML = ' lvl:' + global.current_m.lvl + ' \'' + mtp + '\'';
-      dom.d4_1m.innerHTML = 'STR: ' + Math.round(global.current_m.str);
-      dom.d4_2m.innerHTML = 'AGL: ' + Math.round(global.current_m.agl);
-      dom.d4_3m.innerHTML = 'INT: ' + Math.round(global.current_m.int);
-      dom.d4_4m.innerHTML = 'SPD: ' + global.current_m.spd;
-      dom.d9m.update();
-    }
 
     testz = new (area._ctor)();
     testz.apop = 4000;
@@ -2014,446 +1947,13 @@ export { weather, Weather, Time, setWeather, isWeather, wManager, getSeason,
       global.offline_evil_index = Math.sqrt(global.offline_evil_index + 2100) / 45;
     }
 
-    export function dscr(c, what, type, ttl, dsc, id) {
-      id = id || 0;
-      global.dscr.style.display = '';
-      empty(global.dscr);
-      global.dscr.style.top = c.clientY + 30;
-      global.dscr.style.left = c.clientX + 30;
-      if (!type || type === 1) {
-        this.label = addElement(global.dscr, 'div', 'd_l');
-        this.label.innerHTML = what.name;
-        switch (what.rar) {
-          case 0: { this.label.style.color = 'grey'; break }
-          case 2: { this.label.style.textShadow = '0px 0px 1px blue'; this.label.style.color = 'cyan'; break }
-          case 3: { this.label.style.textShadow = '0px 0px 2px lime'; this.label.style.color = 'lime'; break }
-          case 4: { this.label.style.textShadow = '0px 0px 3px orange'; this.label.style.color = 'yellow'; break }
-          case 5: { this.label.style.textShadow = '0px 0px 2px crimson,0px 0px 5px red'; this.label.style.color = 'orange'; break }
-          case 6: { this.label.style.textShadow = '1px 1px 1px black,0px 0px 2px purple'; this.label.style.color = 'purple'; break }
-        }
-        this.text = addElement(global.dscr, 'div', 'd_t');
-        this.text.innerHTML = typeof what.desc === 'function' ? (what.desc)(what) : what.desc;
-        if (what.slot > 0) {
-          if (what.slot === 1) {
-            if (what.str > 0) this.text.innerHTML += 'STR: <span style=\'color:lime\'> +' + what.str + '</span><br>';
-            else if (what.str < 0) this.text.innerHTML += 'STR: <span style=\'color:red\'>' + what.str + '</span><br>';
-          }
-          else {
-            if (what.str > 0) this.text.innerHTML += 'DEF: <span style=\'color:lime\'> +' + what.str + '</span><br>';
-            else if (what.str < 0) this.text.innerHTML += 'DEF: <span style=\'color:red\'>' + what.str + '</span><br>';
-          }
-          if (what.agl > 0) this.text.innerHTML += 'AGL: <span style=\'color:lime\'> +' + what.agl + '</span><br>';
-          else if (what.agl < 0) this.text.innerHTML += 'AGL: <span style=\'color:red\'>' + what.agl + '</span><br>';
-          if (what.int > 0) this.text.innerHTML += 'INT: <span style=\'color:lime\'> +' + what.int + '</span><br>';
-          else if (what.int < 0) this.text.innerHTML += 'INT: <span style=\'color:red\'>' + what.int + '</span><br>';
-          if (what.spd > 0) this.text.innerHTML += 'SPD: <span style=\'color:lime\'> +' + what.spd + '</span><br>';
-          else if (what.spd < 0) this.text.innerHTML += 'SPD: <span style=\'color:red\'>' + what.spd + '</span><br>';
+    // --- dscr moved to src/ui/descriptions.ts ---
 
-          if (what.slot < 8) {
-            this.dp_c = addElement(global.dscr, 'div', 'dr_l');
-            this.dp_t = addElement(this.dp_c, 'small');
-            this.dp_t.innerHTML = 'DP:'
-            this.dp_m = addElement(this.dp_c, 'small', 'dp_m');
-            this.dp_mn = addElement(this.dp_m, 'small');
-            this.dp_mn.innerHTML = ((what.dp * 10 << 0) / 10) + '\/' + what.dpmax;
-            this.dp_mn.style.textShadow = '1px 1px black';
-            //this.dp_mn.style.backgroundColor='rgba(102, 51, 153,.8)';
-            this.dp_mn.style.position = 'inherit';
-            this.dp_mn.style.top = -4;
-            //this.dp_mn.style.border='1px black solid';
-            this.dp_mn.style.padding = 1;
-            this.dp_mn.style.left = '35%';
-            let dp = what.dp * 100 / what.dpmax;
-            this.dp_m.style.width = dp + '%';
-            if (dp >= 90) this.dp_m.style.backgroundColor = 'royalblue';
-            else if (dp < 90 && dp >= 70) this.dp_m.style.backgroundColor = 'green';
-            else if (dp < 70 && dp >= 35) this.dp_m.style.backgroundColor = 'yellow';
-            else if (dp < 35 && dp >= 10) this.dp_m.style.backgroundColor = 'orange';
-            else if (dp < 10) this.dp_m.style.backgroundColor = 'red';
-            clearInterval(timers.dp_tmr);
-            timers.dp_tmr = setInterval(function () {
-              let dp = what.dp * 100 / what.dpmax;
-              this.dp_mn.innerHTML = ((what.dp * 10 << 0) / 10) + '\/' + what.dpmax;
-              this.dp_m.style.width = dp + '%';
-              if (dp >= 90) this.dp_m.style.backgroundColor = 'royalblue';
-              else if (dp < 90 && dp >= 70) this.dp_m.style.backgroundColor = 'green';
-              else if (dp < 70 && dp >= 35) this.dp_m.style.backgroundColor = 'yellow';
-              else if (dp < 35 && dp >= 10) this.dp_m.style.backgroundColor = 'orange';
-              else if (dp < 10) this.dp_m.style.backgroundColor = 'red';
-            }, 1000);
-          }
-          this.sltic = addElement(global.dscr, 'div', 'intfffx');
-          this.sltic.style.textAlign = 'left';
-          let slti = addElement(this.sltic, 'small');
-          slti.innerHTML = '<br>Class: ';
-          if (!!what.wtype) {
-            switch (what.wtype) {
-              case 0: slti.innerHTML += 'Unarmed';
-                break;
-              case 1: slti.innerHTML += 'Sword';
-                break;
-              case 2: slti.innerHTML += 'Axe';
-                break;
-              case 3: slti.innerHTML += 'Knife';
-                break;
-              case 4: slti.innerHTML += 'Spear/Polearm';
-                break;
-              case 5: slti.innerHTML += 'Club/Hammer';
-                break;
-              case 6: slti.innerHTML += 'Staff/Wand';
-                break;
-              case 7: slti.innerHTML += 'Bow/Crossbow';
-                break;
-            }
-          }
-          else {
-            switch (what.slot) {
-              case 2: slti.innerHTML += 'Shield';
-                break;
-              case 3: slti.innerHTML += 'Head';
-                break;
-              case 4: slti.innerHTML += 'Body';
-                break;
-              case 5: slti.innerHTML += 'Hands';
-                break;
-              case 6: slti.innerHTML += 'Hands';
-                break;
-              case 7: slti.innerHTML += 'Legs';
-                break;
-              case 8: slti.innerHTML += 'Accessory';
-                break;
-              case 9: slti.innerHTML += 'Accessory';
-                break;
-              case 10: slti.innerHTML += 'Accessory';
-                break;
-            }
-          }
-          if (what.twoh === true) slti.innerHTML += ' (2H)';
-          if (what.slot === 1) switch (what.ctype) {
-            case 0: slti.innerHTML += ', Edged';
-              break;
-            case 1: slti.innerHTML += ', Piercing';
-              break;
-            case 2: slti.innerHTML += ', Blunt';
-              break;
-          }
-          if (what.data.kills) {
-            let sp = addElement(this.sltic, 'small');
-            sp.style.position = 'absolute';
-            sp.style.right = 6;
-            sp.innerHTML = 'kills: ' + col(what.data.kills, 'yellow');
-            clearInterval(timers.wpnkilsch);
-            timers.wpnkilsch = setInterval(function () {
-              sp.innerHTML = 'kills: ' + col(what.data.kills, 'yellow');
-            }, 1000);
-          }
-        } else {
-          this.sltic = addElement(global.dscr, 'div');
-          this.sltic.style.textAlign = 'left';
-          let slti = addElement(this.sltic, 'small');
-          slti.innerHTML = '<br>Class: ';
-          if (what.isf === true) {
-            slti.innerHTML += 'Furniture';
-            this.text.innerHTML += dom.dseparator + '<span style="color:chartreuse">Use to add to the furniture list</span>';
-            if (what.parent) {
-              let owned = false;
-              let sp = addElement(this.sltic, 'small');
-              sp.style.position = 'absolute';
-              sp.style.right = 6;
-              for (let a in furn) if (furn[a].id === what.parent.id) { owned = true; break };
-              sp.innerHTML = 'owned: <span style="color:' + (owned ? 'lime' : 'red') + '">' + (owned ? 'yes' : 'no') + '</span>'
-            }
-          }
-          else if (what.id < 3000) { slti.innerHTML += 'Food'; if (what.rot) slti.innerHTML += '(' + '<span style="color:orange">perishable</span>' + ')' }
-          else if (what.id >= 3000 && what.id < 5000) slti.innerHTML += 'Medicine/Tool';
-          else if (what.id >= 5000 && what.id < 9000) slti.innerHTML += 'Material/Misc';
-          else slti.innerHTML += 'Book';
-        }
-        if (what.id < 3000) {
-          dom.dtrd = addElement(this.sltic, 'small');
-          dom.dtrd.innerHTML = 'Tried: ';
-          dom.dtrd.style.position = 'relative';
-          dom.dtrd.style.right = 1;
-          dom.dtrd.style.float = 'right';
-          if (what.data.tried === true) dom.dtrd.innerHTML += '<span style="color: lime">Yes</span>';
-          else dom.dtrd.innerHTML += '<span style="color: crimson">Never</span>'
-        }
-        if (what.id >= 9000 && what.id < 10000) {
-          dom.dtrd = addElement(this.sltic, 'small');
-          dom.dtrd.innerHTML = 'Read: ';
-          dom.dtrd.style.position = 'relative';
-          dom.dtrd.style.right = 1;
-          dom.dtrd.style.float = 'right';
-          if (what.data.finished === true) dom.dtrd.innerHTML += '<span style="color: lime">Yes</span>';
-          else dom.dtrd.innerHTML += '<span style="color: crimson">Never</span>'
-        }
-        this.rar_c = addElement(global.dscr, 'div', 'd_l');
-        this.rar = addElement(this.rar_c, 'small');
-        this.rar.innerHTML = '<br>Rarity: ';
-        this.rar.style.position = 'relative';
-        this.rar.style.float = 'left';
-        for (let i = 0; i < what.rar; i++) this.rar.innerHTML += ' ★ ';
-        dom.dscshe = addElement(global.dscr, 'div');
-        //dom.dscshe.innerHTML = dom.dseparator+'2323';
-        dom.dscshe.style.paddingTop = 20;
-        global.shiftitem = { item: what };
-      }
-      else if (type === 2) {
-        this.label = addElement(global.dscr, 'div', 'd_l');
-        this.label.innerHTML = ttl;
-        this.text = addElement(global.dscr, 'div', 'd_t');
-        this.text.innerHTML = dsc;
-      }
-      else if (type === 3) {
-        this.label = addElement(global.dscr, 'div', 'd_l');
-        this.label.innerHTML = global.current_m.name;
-        this.text = addElement(global.dscr, 'div', 'd_t');
-        this.text.innerHTML = global.current_m.desc;
-      }
-      else if (type === 4) {
-        this.label = addElement(global.dscr, 'div', 'd_l');
-        this.label.innerHTML = ttl;
-        this.text = addElement(global.dscr, 'div', 'd_t');
-        this.text.innerHTML = dsc;
-        dom.gde = addElement(global.dscr, 'small');
-        dom.gde.style.position = 'relavite';
-        dom.gde.style.float = 'left';
-        dom.gde.innerHTML = '<br>Duration: ';
-        if (what.duration !== -1) dom.gde.innerHTML += what.duration;
-        else dom.gde.innerHTML += '∞';
-        if (what.power) {
-          dom.gde1 = addElement(global.dscr, 'small');
-          dom.gde1.style.position = 'relavite';
-          dom.gde1.style.float = 'right';
-          dom.gde1.innerHTML = '<br>Power: ';
-          dom.gde1.innerHTML += what.power;
-        }
-        clearInterval(timers.inup);
-        timers.inup = setInterval(function () { dom.gde.innerHTML = '<br>Duration: '; if (what.duration !== -1) dom.gde.innerHTML += what.duration; else dom.gde.innerHTML += '∞'; }, 200);
-      }
-      else if (type === 5) {
-        let t = ttl === true ? you.title : what;
-        this.label = addElement(global.dscr, 'div', 'd_l');
-        this.label.innerHTML = t.name
-        switch (t.rar) {
-          case 0: { this.label.style.color = 'grey'; break }
-          case 2: { this.label.style.textShadow = '0px 0px 1px blue'; this.label.style.color = 'cyan'; break }
-          case 3: { this.label.style.textShadow = '0px 0px 2px lime'; this.label.style.color = 'lime'; break }
-          case 4: { this.label.style.textShadow = '0px 0px 3px orange'; this.label.style.color = 'yellow'; break }
-          case 5: { this.label.style.textShadow = '0px 0px 2px crimson,0px 0px 5px red'; this.label.style.color = 'orange'; break }
-          case 6: { this.label.style.textShadow = '1px 1px 1px black,0px 0px 2px purple'; this.label.style.color = 'purple'; break }
-          case 7: { this.dl.style.textShadow = 'hotpink 1px 1px .1em,cyan -1px -1px .1em'; this.dl.style.color = 'black'; break }
-        }
-        this.text = addElement(global.dscr, 'div', 'd_t');
-        this.text.innerHTML = t.desc
-        if (t.talent) this.text.innerHTML += (dom.dseparator + '<small style="color:cyan">talent effect<br></small><br><small style="color:darkorange">' + t.tdesc + '</small>')
-        this.dl = addElement(global.dscr, 'small');
-        this.dl.style.position = 'relative';
-        this.dl.style.display = 'flex';
-        this.dl.innerHTML = '<br>Rank: ' + (ttl === true ? (you.title.id === 0 ? '0' : you.title.rar) : (what.id === 0 ? '0' : what.rar));
-        if (ttl === true && you.title.rars === true || !ttl && what.rars === true) this.dl.innerHTML += '★';
-      }
-      else if (type === 6) {
-        this.label = addElement(global.dscr, 'div', 'd_l');
-        this.label.innerHTML = !!what.bname ? what.bname : what.name;
-        this.sp = addElement(this.label, 'small');
-        this.sp.style.position = 'absolute';
-        this.sp.style.right = 6;
-        this.sp.innerHTML = 'Ｐ: ' + (col((Math.round(what.p * 100) + '%'), 'magenta'));
-        this.text = addElement(global.dscr, 'div', 'd_t');
-        this.text.innerHTML = what.desc;
-        if (!!what.mlstn) {
-          this.prks = addElement(global.dscr, 'div', 'd_l'); this.prks.innerHTML = '<br>Perks unlocked'; this.prks.style.color = 'cyan';
-          for (let k = 0; k < what.mlstn.length; k++) if (what.mlstn[k].g === true) {
-            this.prk = addElement(global.dscr, 'div', 'd_t');
-            this.prk.innerHTML = 'lvl ' + what.mlstn[k].lv + ':<span style="color:yellow"> ' + what.mlstn[k].p + ' </span>';
-          } else {
-            this.prk = addElement(global.dscr, 'div', 'd_t');
-            this.prk.innerHTML = 'lvl ' + what.mlstn[k].lv + ':<span style="color:yellow"> ' + '??????????' + ' </span>';
-            return
-          }
-        }
-      }
-      else if (type === 7) {
-        this.label = addElement(global.dscr, 'div', 'd_l');
-        this.label.innerHTML = what.x;
-        this.label.style.color = 'tomato';
-        this.text = addElement(global.dscr, 'div', 'd_t');
-        this.text.innerHTML = what.y;
-      }
-      else if (type === 8) {
-        this.label = addElement(global.dscr, 'div', 'd_l');
-        this.label.innerHTML = what.name;
-        this.text = addElement(global.dscr, 'div', 'd_t');
-        this.text.innerHTML = what.desc;
-        this.dl = addElement(global.dscr, 'small');
-        this.dl.style.position = 'relative';
-        this.dl.style.display = 'flex';
-        this.dl.innerHTML = '<br>Rank: ';
-        this.db = addElement(this.dl, 'div');
-        for (let i = 0; i < what.rar; i++) this.db.innerHTML += '★';
-        this.db.style.paddingTop = 12;
-        this.db.style.paddingLeft = 6;
-        switch (what.rar) {
-          case 0: { this.label.style.color = this.db.style.color = 'grey'; break }
-          case 2: { this.label.style.textShadow = this.db.style.textShadow = '0px 0px 1px blue'; this.label.style.color = this.db.style.color = 'cyan'; break }
-          case 3: { this.label.style.textShadow = this.db.style.textShadow = '0px 0px 2px lime'; this.label.style.color = this.db.style.color = 'lime'; break }
-          case 4: { this.label.style.textShadow = this.db.style.textShadow = '0px 0px 3px orange'; this.label.style.color = this.db.style.color = 'yellow'; break }
-          case 5: { this.label.style.textShadow = this.db.style.textShadow = '0px 0px 2px crimson,0px 0px 5px red'; this.label.style.color = this.db.style.color = 'orange'; break }
-          case 6: { this.label.style.textShadow = this.db.style.textShadow = '1px 1px 1px black,0px 0px 2px purple'; this.label.style.color = this.db.style.color = 'purple'; break }
-          case 7: { this.label.style.textShadow = this.db.style.textShadow = 'hotpink 1px 1px .1em,cyan -1px -1px .1em'; this.label.style.color = this.db.style.color = 'black'; break }
-        }
-      }
-      else if (type === 9) {
-        this.label = addElement(global.dscr, 'div', 'd_l');
-        this.label.innerHTML = what.name;
-        this.text = addElement(global.dscr, 'div', 'd_t');
-        this.text.innerHTML = typeof what.desc === 'function' ? (what.desc)(what) : what.desc;
-      }
-      else if (type === 10) {
-        this.label = addElement(global.dscr, 'div', 'd_l');
-        this.label.innerHTML = what.name;
-        this.text = addElement(global.dscr, 'div', 'd_t');
-        this.text.innerHTML = what.desc + dom.dseparator;
-        let t = Object.keys(global.drdata);
-        let ids = [];
-        for (let a in t) ids[a] = Number(t[a].substring(1));
-        this.o = addElement(this.text, 'small');
-        this.o.innerHTML = 'drop table';
-        this.o.style.color = 'cyan';
-        let thing = false;
-        for (let a in ids) {
-          if (ids[a] === what.id || what.un) {
-            let dt = global.drdata[Object.keys(global.drdata)[a]]; thing = true;
-            for (let b in what.drop) {
-              this.dbig = addElement(this.text, 'div');
-              this.dbig.style.display = 'flex';
-              this.dbig.style.border = '#1f72a2 1px solid';
-              this.dbig.style.backgroundColor = '#202031';
-              this.dcell1 = addElement(this.dbig, 'div');
-              this.dcell2 = addElement(this.dbig, 'div');
-              this.dbig.style.textAlign = 'center';
-              this.dcell1.style.width = '80%';
-              this.dcell1.style.borderRight = '#1f72a2 1px solid';
-              this.dcell2.style.width = '20%';
-              if (b != what.drop.length - 1) this.dbig.style.borderBottom = 'none'
-              this.dcell2.innerHTML = ((what.drop[b].chance * 100000000 << 0) / 1000000 + '%');
-              if (what.drop[b].chance >= .05) this.dcell2.style.color = 'lime';
-              else if (what.drop[b].chance < .05 && what.drop[b].chance > .01) this.dcell2.style.color = 'yellow';
-              else if (what.drop[b].chance <= .01 && what.drop[b].chance > .001) this.dcell2.style.color = 'orange';
-              else if (what.drop[b].chance <= .001) this.dcell2.style.color = 'crimson';
-              if (dt[b] || what.un) {
-                this.dcell1.innerHTML += what.drop[b].item.name
-                if (what.drop[b].cond && !what.drop[b].cond()) { this.dcell1.style.textDecoration = 'line-through'; this.dcell1.style.color = 'red' }
-                switch (what.rar) {
-                  case 0: { this.dcell1.style.color = 'grey'; break }
-                  case 2: { this.dcell1.style.textShadow = '0px 0px 1px blue'; this.dcell1.style.color = 'cyan'; break }
-                  case 3: { this.dcell1.style.textShadow = '0px 0px 2px lime'; this.dcell1.style.color = 'lime'; break }
-                  case 4: { this.dcell1.style.textShadow = '0px 0px 3px orange'; this.dcell1.style.color = 'yellow'; break }
-                  case 5: { this.dcell1.style.textShadow = '0px 0px 2px crimson,0px 0px 5px red'; this.dcell1.style.color = 'orange'; break }
-                  case 6: { this.dcell1.style.textShadow = '1px 1px 1px black,0px 0px 2px purple'; this.dcell1.style.color = 'purple'; break }
-                }
-                if (what.drop[b].max) {
-                  this.dcell1b = addElement(this.dcell1, 'small'); this.dcell1b.style.color = 'inherit'; this.dcell1b.style.position = 'absolute'
-                  this.dcell1b.style.right = 70;
-                  this.dcell1b.style.paddingTop = 2;
-                  this.dcell1b.innerHTML = what.drop[b].max;
-                  if (what.drop[b].min && what.drop[b].min !== what.drop[b].max) this.dcell1b.innerHTML += ('-' + what.drop[b].min)
-                }
-              }
-              else { this.dcell1.innerHTML = '???????????'; this.dcell1.style.color = 'yellow' }
-            }
-            break
-          }
-        }
-        if (!thing) {
-          for (let b in what.drop) {
-            this.dbig = addElement(this.text, 'div');
-            this.dbig.style.display = 'flex';
-            this.dbig.style.border = '#1f72a2 1px solid';
-            this.dbig.style.backgroundColor = '#202031';
-            this.dcell1 = addElement(this.dbig, 'div');
-            this.dcell2 = addElement(this.dbig, 'div');
-            this.dbig.style.textAlign = 'center';
-            this.dcell1.style.width = '80%';
-            this.dcell1.style.borderRight = '#1f72a2 1px solid';
-            this.dcell2.style.width = '20%'
-            if (b != what.drop.length - 1) this.dbig.style.borderBottom = 'none'
-            this.dcell1.innerHTML = '???????????';
-            this.dcell1.style.color = 'yellow';
-            this.dcell2.innerHTML = ((what.drop[b].chance * 100000000 << 0) / 1000000 + '%');
-            if (what.drop[b].chance >= .05) this.dcell2.style.color = 'lime';
-            else if (what.drop[b].chance < .05 && what.drop[b].chance > .01) this.dcell2.style.color = 'yellow';
-            else if (what.drop[b].chance <= .01 && what.drop[b].chance > .001) this.dcell2.style.color = 'orange';
-            else if (what.drop[b].chance <= .001) this.dcell2.style.color = 'crimson';
-          }
-        }
-      }
-      else if (type === 12) {
-        this.label = addElement(global.dscr, 'div', 'd_l');
-        this.label.innerHTML = ttl;
-        this.text = addElement(global.dscr, 'div', 'd_t');
-        this.text.innerHTML = typeof dsc === 'function' ? (dsc)(what) : dsc;
-      }
-    }
-
-    export function msg(txt, c, dsc, type, bc, chck) {
-      if (global.flags.m_freeze === false && global.flags.loadstate === false) {
-        while (dom.gmsgs.children[1].children.length > global.msgs_max - 1) dom.gmsgs.children[1].removeChild(dom.gmsgs.children[1].children[0]);
-        let msg = addElement(dom.mscont, 'div', null, 'msg');
-        if (global.flags.msgtm) {
-          let now = new Date();
-          let g = addElement(msg, 'small');
-          g.innerHTML = '[' + (now.getHours() < 10 ? ('0' + now.getHours()) : now.getHours()) + ':' + (now.getMinutes() < 10 ? ('0' + now.getMinutes()) : now.getMinutes()) + ':' + (now.getSeconds() < 10 ? ('0' + now.getSeconds()) : now.getSeconds()) + ']'
-          g.style.backgroundColor = '#242848';
-          g.style.display = 'flex';
-        }
-        let mtxt = addElement(msg, 'span');
-        if (dsc) { if (type) addDesc(msg, dsc, type); else addDesc(msg, dsc); }
-        //let nt = new String(); for(let a in txt){nt+=txt[a].charCodeAt()!==32?String.fromCharCode(41216-txt[a].charCodeAt()):' '}; txt=nt;
-        if (c) mtxt.innerHTML = '<span style=color:' + c + (bc ? (';background-color:' + bc) : '') + '>' + txt + '</span>';
-        else mtxt.innerHTML = txt;
-        dom.mscont.scrollTop = dom.mscont.scrollHeight;
-        global.lastmsg = msg.innerHTML;
-        //if(true) {if(msg.innerHTML==global.lstmsg) msg.innerHTML=global.lastmsg+'('+(++global.lastmsgc)+')';
-        //  else {global.lastmsg=msg.innerHTML;global.lastmsgc=0;}} else global.lastmsg=msg.innerHTML;
-      }
-    }
-
-    export function _msg(txt, c, dsc, type, bc, chck) {
-      while (dom.gmsgs.children[1].children.length > global.msgs_max - 1) dom.gmsgs.children[1].removeChild(dom.gmsgs.children[1].children[0]);
-      let msg = addElement(dom.mscont, 'div', null, 'msg');
-      if (dsc) { if (type) addDesc(msg, dsc, type); else addDesc(msg, dsc); }
-      if (c) msg.innerHTML = '<span style=color:' + c + (bc ? (';background-color:' + bc) : '') + '>' + txt + '</span>';
-      else msg.innerHTML = txt;
-      dom.mscont.scrollTop = dom.mscont.scrollHeight;
-    }
-
-
-    function msg_add(txt, c, bc, shd) {
-      if (global.flags.m_freeze === false && global.flags.loadstate === false) {
-        let bac = '';
-        let b = '';
-        if (bc) bac = 'background-color:' + bc;
-        if (shd) b = 'text-shadow:' + shd.toString();
-        else b = '';
-        if (c) dom.gmsgs.children[1].children[dom.gmsgs.children[1].children.length - 1].innerHTML += '<span style=\"color:' + c + ';' + bac + ';' + b + '\">' + txt + '</span>';
-        else dom.gmsgs.children[1].children[dom.gmsgs.children[1].children.length - 1].innerHTML += txt;
-        dom.mscont.scrollTop = dom.mscont.scrollHeight;
-      }
-    }
-
-    function format(thing, what) {
-      msg('wHw')
-    }
+    // --- msg, _msg, msg_add moved to src/ui/messages.ts ---
 
     // appear, fade imported from ./dom-utils
 
-    export function addDesc(dm, what, type, ttl, dsc, f, id) {
-      dm.addEventListener('mouseenter', a => { dscr(a, what, type, ttl, f === true ? (dsc)() : dsc, id); giveSkExp(skl.rdg, .002); global.stat.popt++; global.curwds = this; global.shiftid = id; if (global.kkey === 1) descsinfo(global.shiftid) });
-      dm.addEventListener('mousemove', a => { global.dscr.style.top = global.dscr.clientHeight + 60 + a.clientY > document.body.clientHeight ? (a.clientY + 30 + global.dscr.clientHeight) - ((a.clientY + 30 + global.dscr.clientHeight) - document.body.clientHeight) - global.dscr.clientHeight - 30 : a.clientY + 30; global.dscr.style.left = global.dscr.clientWidth + 60 + a.clientX > document.body.clientWidth ? (a.clientX + 30 + global.dscr.clientWidth) - ((a.clientX + 30 + global.dscr.clientWidth) - document.body.clientWidth) - global.dscr.clientWidth - 30 : a.clientX + 30; });
-      dm.addEventListener('mouseleave', () => { global.shiftid = 0; empty(global.dscr); global.dscr.style.display = 'none'; clearInterval(timers.inup); clearInterval(timers.dp_tmr); clearInterval(timers.wpnkilsch); if (dom.dscshe) dom.dscshe.innerHTML = '' });
-    }
+    // --- addDesc moved to src/ui/descriptions.ts ---
 
     global.t_n = 0;
 
@@ -2833,205 +2333,7 @@ export { weather, Weather, Time, setWeather, isWeather, wManager, getSeason,
       }
     }
 
-    function renderRcp(rcp) {
-      dom.ct_bt1_1_mc = addElement(dom.ct_bt1_1, 'div', null, 'craft-log-entry');
-      dom.ct_bt1_1_mc.style.position = 'relative';
-      this.ct_bt1_1_m = addElement(dom.ct_bt1_1_mc, 'span');
-      rcp._t = this.ct_bt1_1_m;
-      if (typeof InstallTrigger !== 'undefined') { this.ct_bt1_1_m.style.paddingTop = 0; this.ct_bt1_1_m.style.paddingBottom = 0 }
-      this.ct_bt1_1_m.innerHTML = rcp.name;
-      let test = make(rcp, true);
-      let safe = false;
-      if (test.y.length != rcp.rec.length || test.o[0] === 2) this.ct_bt1_1_m.style.color = 'grey';
-      if (dom.spcldom && rcp.id === dom.spcldom.rcp.id) {
-        dom.rcpcurar = addElement(dom.ct_bt1_1_mc, 'span');
-        dom.rcpcurar.innerHTML = '⋗⋗';
-        dom.spcldom = dom.ct_bt1_1_mc;
-        dom.spcldom.rcp = rcp;
-        dom.rcpcurar.style.position = 'absolute';
-        dom.rcpcurar.style.right = 2;
-        dom.rcpcurar.style.color = 'rgb(188,254,254)';
-      }
-      dom.ct_bt1_1_mc.addEventListener('mouseenter', function () {
-        test = make(rcp, true); global.curr_r = rcp
-        empty(dom.ct_bt1_2);
-        this.ct_bt1_2a = addElement(dom.ct_bt1_2, 'div');
-        this.ct_bt1_2a.innerHTML = 'reagents required';
-        this.ct_bt1_2a.style.textAlign = 'center';
-        this.ct_bt1_2a.style.borderBottom = '1px solid #3e4092';
-        if (skl.crft.lvl > 0) {
-          this.ct_bt1_2at = addElement(dom.ct_bt1_2, 'div', 'rptbn'); if (!global.flags.rptbncgt) {
-            this.ct_bt1_2at.style.backgroundColor = '#a11'; this.ct_bt1_2at.innerHTML = '';
-          } else {
-            this.ct_bt1_2at.style.backgroundColor = 'green';
-            this.ct_bt1_2at.innerHTML = '‣';
-          }
-          let tm = (5000 - (skl.crft.lvl * 350 + skl.ptnc.lvl * 150) < 300 ? 300 : (5000 - (skl.crft.lvl * 350 + skl.ptnc.lvl * 150)))
-          addDesc(this.ct_bt1_2at, { name: "Enable Repeatable Crafting", desc: function () { let txt = "<span style='color:magenta'>Current speed: </span><span style='color:orange'>" + ((tm / 1000).toFixed(2)) + " sec</span>"; return txt } }, 9);
-          this.ct_bt1_2at.addEventListener('click', function () {
-            if (global.flags.rptbncgt) {
-              clearInterval(timers.rptbncgt); global.flags.rptbncgtf = false;
-              this.style.backgroundColor = '#a11';
-              this.innerHTML = '';
-            } else {
-              this.style.backgroundColor = 'green';
-              this.innerHTML = '‣';
-            }
-            global.flags.rptbncgt = !global.flags.rptbncgt
-          });
-        } rcp._t2 = [];
-        for (let g = 0; g < rcp.rec.length; g++) {
-          this.ct_bt1_2bc = addElement(dom.ct_bt1_2, 'small');
-          this.ct_bt1_2bc.style.display = 'flex';
-          this.ct_bt1_2bc1 = addElement(this.ct_bt1_2bc, 'div', null, 'recipe-cell');
-          this.ct_bt1_2bc2 = addElement(this.ct_bt1_2bc, 'div', null, 'recipe-cell');
-          rcp._t2[g] = this.ct_bt1_2bc2
-          if (rcp.rec[g].item.data.dscv === true) { this.ct_bt1_2bc1.innerHTML = rcp.rec[g].item.name; addDesc(this.ct_bt1_2bc, rcp.rec[g].item) } else this.ct_bt1_2bc1.innerHTML = '?????????';
-          this.ct_bt1_2bc1.style.paddingLeft = '8px';
-          let num = 0;
-          if (test.z.length > 0) num = test.z[g];
-          if ((test.z[g] >= rcp.rec[g].amount) || test.b[g] === true) { this.ct_bt1_2bc2.style.color = 'lime'; num = rcp.rec[g].item.slot ? test.z[g] : rcp.rec[g].item.amount }
-          else { this.ct_bt1_2bc2.style.color = 'grey'; num = rcp.rec[g].item.slot ? test.z[g] : rcp.rec[g].item.amount }
-          let n = '';
-          if (test.z[g] > 0 && rcp.rec[g].item.slot) {
-            for (let r in test.r) for (let b in you.eqp) if (you.eqp[b].data.uid === test.r[r].data.uid && you.eqp[b].id !== 10000) { n = '<small style="color:orange">[E]</small>'; continue }
-          }
-          if ((test.z[g] >= rcp.rec[g].amount) || test.b[g] === true) this.ct_bt1_2bc2.style.color = 'lime';
-          else this.ct_bt1_2bc2.style.color = 'grey';
-          if (rcp.rec[g].return === true) this.ct_bt1_2bc2.innerHTML = '∞';
-          else this.ct_bt1_2bc2.innerHTML = rcp.rec[g].amount + ' / ' + num + ' ' + n;
-          this.ct_bt1_2bc2.style.borderRight = 'none';
-          this.ct_bt1_2bc2.style.textAlign = 'center';
-        }
-        this.ct_bt1_2c = addElement(dom.ct_bt1_2, 'div');
-        this.ct_bt1_2c.innerHTML = 'output';
-        this.ct_bt1_2c.style.width = '55%';
-        this.ct_bt1_2c.style.position = 'absolute';
-        this.ct_bt1_2c.style.borderTop = '1px solid #3e4092';
-        this.ct_bt1_2c.style.borderBottom = '1px solid #3e4092';
-        this.ct_bt1_2c.style.bottom = 71;
-        this.ct_bt1_2c.style.textAlign = 'center';
-        for (let g in rcp.res) {
-          this.ct_bt1_2cc = addElement(dom.ct_bt1_2, 'small');
-          this.ct_bt1_2cc.style.display = 'flex';
-          this.ct_bt1_2cc.style.position = 'absolute';
-          this.ct_bt1_2cc.style.bottom = (typeof InstallTrigger !== 'undefined') ? (48 - g * 21) : (50 - g * 21);
-          this.ct_bt1_2cc.style.width = '55%';
-          this.ct_bt1_2cc1 = addElement(this.ct_bt1_2cc, 'div', 'toh', 'recipe-cell');
-          this.ct_bt1_2cc2 = addElement(this.ct_bt1_2cc, 'div', null, 'recipe-cell');
-          if (rcp.allow === true) {
-            this.ct_bt1_2cc1.innerHTML = rcp.res[g].item.name; if (!!rcp.res[g].amount_max) { this.ct_bt1_2cc2.innerHTML = rcp.res[g].amount + '~' + rcp.res[g].amount_max; } else this.ct_bt1_2cc2.innerHTML = rcp.res[g].amount;
-            addDesc(this.ct_bt1_2cc1, rcp.res[g].item);
-            this.ct_bt1_2cc2.style.color = 'lime';
-          } else {
-            this.ct_bt1_2cc1.innerHTML = '?????????';
-            this.ct_bt1_2cc2.innerHTML = '???';
-            this.ct_bt1_2cc2.style.color = 'grey';
-          }
-          this.ct_bt1_2cc2.style.textAlign = 'center';
-          this.ct_bt1_2cc2.style.borderRight = 'none';
-          this.ct_bt1_2cc1.style.paddingLeft = '8px';
-          this.ct_bt1_2cc2.style.width = '27.5%';
-          this.ct_bt1_2cc1.style.width = '75%';
-        }
-        if (rcp.srect != null) {
-          let l = test.o.length;
-          this.ct_bt1_3c = addElement(dom.ct_bt1_2, 'div');
-          this.ct_bt1_3c.innerHTML = 'tools needed';
-          this.ct_bt1_3c.style.width = '55%';
-          this.ct_bt1_3c.style.position = 'absolute';
-          this.ct_bt1_3c.style.borderTop = '1px solid #3e4092';
-          this.ct_bt1_3c.style.borderBottom = '1px solid #3e4092';
-          this.ct_bt1_3c.style.bottom = 115 + (((l - 1) / 2) << 0) * 15;
-          this.ct_bt1_3c.style.textAlign = 'center';
-          // bluh!!!
-          this.ct_bt1_3cc = addElement(dom.ct_bt1_2, 'small');
-          //this.ct_bt1_3cc.style.fontSize='.8em';
-          this.ct_bt1_3cc.style.width = '55%';
-          this.ct_bt1_3cc.style.position = 'absolute';
-          this.ct_bt1_3cc.style.top = 250 - (((l - 1) / 2) << 0) * 15;
-          this.ct_bt1_3cc.style.textAlign = 'left';
-          this.ct_bt1_3cc.style.left = '255px';
-          if (l > 1) {
-            for (let nu in test.o) {
-              if (test.o[nu] === 1) this.ct_bt1_3cc.innerHTML += '<span style="color:lime">' + rcp.srect[nu] + '</span>' + (l - 1 == nu ? '' : ', ');
-              else if (test.o[nu] === 2) this.ct_bt1_3cc.innerHTML += '<span style="color:red">' + rcp.srect[nu] + '</span>' + (l - 1 == nu ? '' : ', ');
-            }
-          } else { if (test.o[0] === 1) this.ct_bt1_3cc.style.color = 'lime'; else if (test.o[0] === 2) this.ct_bt1_3cc.style.color = 'red'; this.ct_bt1_3cc.innerHTML += rcp.srect[0] }
-        }
-      });
-      dom.ct_bt1_1_mc.addEventListener('mouseenter', function () {
-        if (dom.rcpcurar) dom.spcldom.removeChild(dom.rcpcurar);
-        dom.rcpcurar = addElement(this, 'span');
-        dom.rcpcurar.innerHTML = '⋗⋗';
-        dom.spcldom = this;
-        dom.spcldom.rcp = rcp;
-        dom.rcpcurar.style.position = 'absolute';
-        dom.rcpcurar.style.right = 2;
-        dom.rcpcurar.style.color = 'rgb(188,254,254)';
-      })
-      dom.ct_bt1_1_mc.addEventListener('click', function () {
-        test = make(rcp, true); if (rcp.rec.length === test.y.length && test.o[0] !== 2) safe = true
-        if (global.flags.rptbncgt) { _fcraft(rcp, safe); global.crrpsat = rcp; clearInterval(timers.rptbncgt); global.flags.rptbncgtf = true; if (safe) timers.rptbncgt = setInterval(() => { _fcraft(global.crrpsat, safe); giveSkExp(skl.ptnc, .05); refreshRcp(global.curr_r) }, (5000 - (skl.crft.lvl * 350 + skl.ptnc.lvl * 150) < 300 ? 300 : (5000 - (skl.crft.lvl * 350 + skl.ptnc.lvl * 150)))) }
-        else _fcraft(rcp, safe);
-        refreshRcp(rcp);
-      });
-    }
-
-    function refreshRcp(fl) {
-      if (global.rm === 0 || !global.rm) {
-        for (let a in global.rec_d) _refreshRcpCnt(global.rec_d[a], global.rec_d[a]._t)
-      } else {
-        for (let a in global.srcp) _refreshRcpCnt(global.srcp[a], global.srcp[a]._t)
-      }
-      let t2 = fl._t2;
-      let test = make(fl, true);
-      for (let g in fl.rec) {
-        if (!t2) break;
-        let n = '';
-        if (test.z[g] > 0 && fl.rec[g].item.slot) {
-          for (let r in test.r) for (let b in you.eqp) if (you.eqp[b].data.uid === test.r[r].data.uid && you.eqp[b].id !== 10000) { n = '<small style="color:orange">[E]</small>'; continue }
-        }
-        let num = 0;
-        if (test.z.length > 0) num = test.z[g];
-        if ((test.z[g] >= fl.rec[g].amount) || test.b[g] === true) { t2[g].style.color = 'lime'; num = fl.rec[g].item.slot ? test.z[g] : fl.rec[g].item.amount }
-        else { t2[g].style.color = 'grey'; num = fl.rec[g].item.slot ? test.z[g] : fl.rec[g].item.amount }
-        t2[g].innerHTML = fl.rec[g].amount + ' / ' + num + ' ' + n;
-      }
-    }
-
-    function _refreshRcpCnt(r, t, t2) {
-      let test = make(r, true);
-      if (test.y.length != r.rec.length || test.o[0] === 2) t.style.color = 'grey';
-      else t.style.color = 'rgb(188,254,254)';
-    }
-
-    function _fcraft(what, safe) {
-      if (safe) { safe = false; if (global.flags.sleepmode === true) { msg('You may want to wake up first', 'red'); return }; if (global.flags.btl === true) { msg('You\'re too busy fighting', 'red'); return }; if (global.flags.rdng === true) { msg('You\'re too occupied with reading', 'red'); return }; if (global.flags.busy === true) { msg('You\'re too busy with something else', 'red'); return }; let ntest = make(what, true); for (let g = 0; g < what.rec.length; g++) { if (what.rec.length === ntest.y.length && ntest.o[0] !== 2) safe = true } if (safe) { make(what); global.stat.crftt++; iftrunkopen(1) } else { if (global.flags.rptbncgtf) { clearInterval(timers.rptbncgt); global.flags.rptbncgtf = false; } } }
-    }
-
-    function renderSkl(skl) {
-      this.skwmmc = addElement(dom.skcon, 'div', null, 'skill-entry');
-      addDesc(this.skwmmc, skl, 6);
-      this.skwmm1 = addElement(this.skwmmc, 'small');
-      if (skl.sp) this.skwmm1.style.fontSize = skl.sp;
-      this.skwmm1.style.width = '32%';
-      this.skwmm1.innerHTML = skl.name + ' lvl: ' + skl.lvl;
-      this.skwmm1.style.borderRight = '1px solid #46a';
-      this.skwmm2 = addElement(this.skwmmc, 'small');
-      this.skwmm2.innerHTML = '　exp: ' + formatw(Math.round(skl.exp)) + '/' + formatw(skl.expnext_t) + '　';
-      this.skwmm2.style.borderRight = '1px solid #46a';
-      this.skwmm2.style.fontSize = '.8em';
-      this.skwmm2.style.width = '170px';
-      this.skwmm3c = addElement(this.skwmmc, 'div');
-      this.skwmm3 = addElement(this.skwmm3c, 'div');
-      this.skwmm3c.style.width = '197px';
-      this.skwmm3.innerHTML = '　';
-      this.skwmm3.style.marginLeft = '2px';
-      this.skwmm3.style.width = skl.exp / skl.expnext_t * 100 + '%';
-      //if(skl.lastupd&&skl.lastupd-time.minute>=1) this.skwmm3.style.backgroundColor='limegreen'; else this.skwmm3.style.backgroundColor='yellow';
-      this.skwmm3.style.backgroundColor = 'yellow';
-    }
+    // --- renderRcp, refreshRcp, _refreshRcpCnt, _fcraft, renderSkl moved to src/ui/panels.ts ---
 
     export function area_init(area) {
       if (area.size !== 0) {
@@ -3073,176 +2375,9 @@ export { weather, Weather, Time, setWeather, isWeather, wManager, getSeason,
       return newobj;
     }
 
-    export function giveEff(target, e, d, y, z) {
-      if (target.id !== 0) {
-        let ef = e;
-        if (target.id !== you.id) { ef = new Object(); for (let g in e) ef[g] = e[g]; }
-        if (target.id === you.id || global.flags.btl) {
-          let p = findbyid(target.eff, e.id);
-          if (!p || !p.active) {
-            if (d) ef.duration = d; ef.y = y; ef.z = z; if (ef.x) eff_d(ef, ef.x, ef.c, ef.b, target);
-            ef.target = target;
-            target.eff.push(ef);
-          } ef.onGive(d, y, z); ef.active = true;
-        } effdfix();
-        target.stat_r();
-        return e
-      }
-    }
+    // --- giveEff, removeEff, effdfix, eff_d moved to src/ui/effects.ts ---
 
-
-    export function removeEff(e, t) {
-      if (e.active === true) {
-        if (e.x) {
-          if (e.target.id === you.id) {
-            node = global.e_e.indexOf(e); dom.d101.removeChild(dom.d101.children[node]); global.e_e.splice(node, 1);
-            if (dom.d101.children.length > you.eff.length) empty(dom.d101);
-          }
-          else {
-            node = global.e_em.indexOf(e); dom.d101m.removeChild(dom.d101m.children[node]); global.e_em.splice(node, 1);
-            if (dom.d101m.children.length > e.target.eff.length) empty(dom.d101m);
-          } e.onRemove(); global.dscr.style.display = 'none';
-        } e.target.eff.splice(e.target.eff.indexOf(e), 1); e.active = false; clearInterval(timers.inup); effdfix()
-      }
-      e.target.stat_r();
-    }
-
-    function effdfix() {
-      if (you.eff.length >= 21) {
-        dom.d7.style.height = 104;
-        for (let i = 0; i < document.getElementsByClassName('sprite-cell').length; i++) document.getElementsByClassName('sprite-cell')[i].style.display = 'inline-block';
-        document.getElementById('se_i').style.display = 'block';
-      } else {
-        dom.d7.style.height = 125;
-        for (let i = 0; i < document.getElementsByClassName('sprite-cell').length; i++) document.getElementsByClassName('sprite-cell')[i].style.display = '';
-        document.getElementById('se_i').style.display = 'flex';
-      }
-    }
-
-    function eff_d(e, s, c, b, tgt) {
-      if (tgt.id === you.id) {
-        let ic = addElement(dom.d101, 'div', null, 'sprite-cell');
-        ic.innerHTML = s;
-        ic.style.color = c;
-        ic.style.backgroundColor = b;
-        ic.addEventListener('click', () => { e.onClick() })
-        addDesc(ic, e, 4, e.name, e.desc);
-        if (e.duration !== 0) global.e_e.push(e);
-      }
-      else {
-        let ic = addElement(dom.d101m, 'div', null, 'sprite-cell');
-        ic.innerHTML = s;
-        ic.style.color = c;
-        ic.style.backgroundColor = b;
-        addDesc(ic, e, 4, e.name, e.desc);
-        if (e.duration !== 0) global.e_em.push(e);
-      }
-    }
-
-    export function equip(w, flags) {
-      if (!w.data || !w.data.uid) return;
-      if (w.data.uid === you.eqp[w.slot - 1].data.uid) { unequip(w); if (w.twoh === true) { dom.d7_slot_2.innerHTML = 'Shield'; dom.d7_slot_2.style.color = 'grey' }; isort(global.sm) } else {
-        if (w.req && !w.req() && !global.flags.loadstate) { msg("Requirenments not met!", 'red'); return }
-    /*switch(w.slot){
-      case 5 :{
-        if(you.eqp[4].id===10000) you.eqp[4]=w;
-        else if(you.eqp[5].id===10000) {you.eqp[5]=w;w.slot=6} else {unequip(you.eqp[4]);you.eqp[4]=w}
-      } break;
-      case 6 :{
-        if(you.eqp[5].id===10000) you.eqp[5]=w;
-        else if(you.eqp[4].id===10000) {you.eqp[4]=w;w.slot=5} else {unequip(you.eqp[5]);you.eqp[5]=w}
-      } break;
-    default: {unequip(you.eqp[w.slot-1]); you.eqp[w.slot-1] = w;};
-    break
-    }*/  unequip(you.eqp[w.slot - 1]); you.eqp[w.slot - 1] = w;
-        if (w.twoh === true) { if (you.eqp[1].id !== 10000) unequip(you.eqp[1]) } else if (you.eqp[1].id !== 10000 && you.eqp[0].twoh === true) unequip(you.eqp[0]);
-        if (w.eff.length > 0) for (let k = 0; k < w.eff.length; k++) { w.eff[k].use(w.eff[k].y, w.eff[k].z); giveEff(you, w.eff[k]) }
-        w.oneq();
-        if (w.degrade) planner.itmwear.data.items.push(w)
-        if (w.slot === 1) you.atkmode = w.atkmode;
-        w.wc = global.text.wecs[w.rar][0];
-        //w.wbc=global.text.wecs[w.rar][1];
-        let spst;
-        switch (w.rar) {
-          case 2: spst = '0px 0px 2px blue';
-            break;
-          case 3: spst = '0px 0px 2px lime';
-            break;
-          case 4: spst = '0px 0px 3px orange';
-            break;
-          case 5: spst = '0px 0px 2px crimson,0px 0px 5px red';
-            break;
-          case 6: spst = '1px 1px 1px black,0px 0px 2px purple';
-            break;
-        }
-        switch (w.slot - 1) {
-          case 0: { dom.d7_slot_1.removeAttribute('style'); dom.d7_slot_1.innerHTML = you.eqp[w.slot - 1].name; if (!!w.wc) { dom.d7_slot_1.style.color = w.wc; dom.d7_slot_1.style.textShadow = spst }; if (!!w.wbc) dom.d7_slot_1.style.backgroundColor = w.wbc; } break;
-          case 1: { dom.d7_slot_2.removeAttribute('style'); dom.d7_slot_2.innerHTML = you.eqp[w.slot - 1].name; if (!!w.wc) { dom.d7_slot_2.style.color = w.wc; dom.d7_slot_2.style.textShadow = spst } if (!!w.wbc) dom.d7_slot_2.style.backgroundColor = w.wbc; } break;
-          case 2: { dom.d7_slot_3.removeAttribute('style'); dom.d7_slot_3.innerHTML = you.eqp[w.slot - 1].name; if (!!w.wc) { dom.d7_slot_3.style.color = w.wc; dom.d7_slot_3.style.textShadow = spst } if (!!w.wbc) dom.d7_slot_3.style.backgroundColor = w.wbc; } break;
-          case 3: { dom.d7_slot_4.removeAttribute('style'); dom.d7_slot_4.innerHTML = you.eqp[w.slot - 1].name; if (!!w.wc) { dom.d7_slot_4.style.color = w.wc; dom.d7_slot_4.style.textShadow = spst } if (!!w.wbc) dom.d7_slot_4.style.backgroundColor = w.wbc; } break;
-          case 4: { dom.d7_slot_5.removeAttribute('style'); dom.d7_slot_5.innerHTML = you.eqp[w.slot - 1].name; if (!!w.wc) { dom.d7_slot_5.style.color = w.wc; dom.d7_slot_5.style.textShadow = spst } if (!!w.wbc) dom.d7_slot_5.style.backgroundColor = w.wbc; } break;
-          case 5: { dom.d7_slot_6.removeAttribute('style'); dom.d7_slot_6.innerHTML = you.eqp[w.slot - 1].name; if (!!w.wc) { dom.d7_slot_6.style.color = w.wc; dom.d7_slot_6.style.textShadow = spst } if (!!w.wbc) dom.d7_slot_6.style.backgroundColor = w.wbc; } break;
-          case 6: { dom.d7_slot_7.removeAttribute('style'); dom.d7_slot_7.innerHTML = you.eqp[w.slot - 1].name; if (!!w.wc) { dom.d7_slot_7.style.color = w.wc; dom.d7_slot_7.style.textShadow = spst } if (!!w.wbc) dom.d7_slot_7.style.backgroundColor = w.wbc; } break;
-          case 7: { dom.d7_slot_8.removeAttribute('style'); dom.d7_slot_8.innerHTML = you.eqp[w.slot - 1].name; if (!!w.wc) { dom.d7_slot_8.style.color = w.wc; dom.d7_slot_8.style.textShadow = spst } if (!!w.wbc) dom.d7_slot_8.style.backgroundColor = w.wbc; } break;
-          case 8: { dom.d7_slot_9.removeAttribute('style'); dom.d7_slot_9.innerHTML = you.eqp[w.slot - 1].name; if (!!w.wc) { dom.d7_slot_9.style.color = w.wc; dom.d7_slot_9.style.textShadow = spst } if (!!w.wbc) dom.d7_slot_9.style.backgroundColor = w.wbc; } break;
-          case 9: { dom.d7_slot_10.removeAttribute('style'); dom.d7_slot_10.innerHTML = you.eqp[w.slot - 1].name; if (!!w.wc) { dom.d7_slot_10.style.color = w.wc; dom.d7_slot_10.style.textShadow = spst } if (!!w.wbc) dom.d7_slot_10.style.backgroundColor = w.wbc; } break;
-        }
-        if (w.twoh === true) { dom.d7_slot_2.innerHTML = you.eqp[0].name; dom.d7_slot_2.removeAttribute('style'); dom.d7_slot_2.style.color = 'lightgrey' } else {
-          if (you.eqp[1].id === 10000) { dom.d7_slot_2.innerHTML = 'Shield'; dom.d7_slot_2.removeAttribute('style'); dom.d7_slot_2.style.color = 'grey' }
-        }
-        if (!flags || !flags.save) { you.stat_r(); update_d(); isort(global.sm) }
-      }
-    }
-
-    export function unequip(w, flags) {
-      if (!w.data || !w.data.uid) return;
-      if (w.eff.length > 0) for (let k = 0; k < w.eff.length; k++) { w.eff[k].un(); removeEff(w.eff[k]) }
-      w.onuneq();
-      you.eqp[w.slot - 1] = eqp.dummy;
-      if (w.degrade) planner.itmwear.data.items.splice(planner.itmwear.data.items.indexOf(w), 1)
-      switch (w.slot - 1) {
-        case 0: { dom.d7_slot_1.innerHTML = 'Weapon'; dom.d7_slot_1.removeAttribute('style'); dom.d7_slot_1.style.color = 'grey'; you.eqp[0].cls[2] = you.lvl / 5 << 0; you.eqp[0].aff[0] = you.lvl / 8 << 0; you.eqp[0].ctype = 2 } break;
-        case 1: { dom.d7_slot_2.innerHTML = 'Shield'; dom.d7_slot_2.removeAttribute('style'); dom.d7_slot_2.style.color = 'grey' } break;
-        case 2: { dom.d7_slot_3.innerHTML = 'Head'; dom.d7_slot_3.removeAttribute('style'); dom.d7_slot_3.style.color = 'grey' } break;
-        case 3: { dom.d7_slot_4.innerHTML = 'Body'; dom.d7_slot_4.removeAttribute('style'); dom.d7_slot_4.style.color = 'grey' } break;
-        case 4: { dom.d7_slot_5.innerHTML = 'L arm'; dom.d7_slot_5.removeAttribute('style'); dom.d7_slot_5.style.color = 'grey' } break;
-        case 5: { dom.d7_slot_6.innerHTML = 'R arm'; dom.d7_slot_6.removeAttribute('style'); dom.d7_slot_6.style.color = 'grey' } break;
-        case 6: { dom.d7_slot_7.innerHTML = 'Legs'; dom.d7_slot_7.removeAttribute('style'); dom.d7_slot_7.style.color = 'grey' } break;
-        case 7: { dom.d7_slot_8.innerHTML = 'Accessory'; dom.d7_slot_8.removeAttribute('style'); dom.d7_slot_8.style.color = 'grey' } break;
-        case 8: { dom.d7_slot_9.innerHTML = 'Accessory'; dom.d7_slot_9.removeAttribute('style'); dom.d7_slot_9.style.color = 'grey' } break;
-        case 9: { dom.d7_slot_10.innerHTML = 'Accessory'; dom.d7_slot_10.removeAttribute('style'); dom.d7_slot_10.style.color = 'grey' } break;
-      }
-      if (!flags || !flags.save) { you.stat_r(); update_d() }
-    }
-
-    export function eqpres() {
-      dom.d7_slot_1.innerHTML = 'Weapon';
-      dom.d7_slot_1.removeAttribute('style');
-      dom.d7_slot_1.style.color = 'grey';
-      dom.d7_slot_2.innerHTML = 'Shield';
-      dom.d7_slot_2.removeAttribute('style');
-      dom.d7_slot_2.style.color = 'grey';
-      dom.d7_slot_3.innerHTML = 'Head';
-      dom.d7_slot_3.removeAttribute('style');
-      dom.d7_slot_3.style.color = 'grey';
-      dom.d7_slot_4.innerHTML = 'Body';
-      dom.d7_slot_4.removeAttribute('style');
-      dom.d7_slot_4.style.color = 'grey';
-      dom.d7_slot_5.innerHTML = 'L arm';
-      dom.d7_slot_5.removeAttribute('style');
-      dom.d7_slot_5.style.color = 'grey';
-      dom.d7_slot_6.innerHTML = 'R arm';
-      dom.d7_slot_6.removeAttribute('style');
-      dom.d7_slot_6.style.color = 'grey';
-      dom.d7_slot_7.innerHTML = 'Legs';
-      dom.d7_slot_7.removeAttribute('style');
-      dom.d7_slot_7.style.color = 'grey'
-      dom.d7_slot_8.innerHTML = 'Accessory';
-      dom.d7_slot_8.removeAttribute('style');
-      dom.d7_slot_8.style.color = 'grey'
-      //    dom.d7_slot_9.innerHTML = 'Accessory';dom.d7_slot_9.removeAttribute('style');dom.d7_slot_9.style.color='grey'
-      //    dom.d7_slot_10.innerHTML = 'Accessory';dom.d7_slot_10.removeAttribute('style');dom.d7_slot_10.style.color='grey'
-    }
+    // --- equip, unequip, eqpres moved to src/ui/equipment.ts ---
 
     export function giveRcp(rcp) {
       if (!global.flags.asbu) { global.flags.asbu = true; dom.ct_bt1.innerHTML = 'assemble' }
@@ -3342,7 +2477,7 @@ export { weather, Weather, Time, setWeather, isWeather, wManager, getSeason,
       return obj;
     }
 
-    function listen_k(e) {
+    export function listen_k(e) {
       global.keytarget = e.target;
       if (e.which === 46) {
         for (let obj in global.shortcuts) if (global.shortcuts[obj][0] === global.keyobj.data.skey) global.shortcuts.splice(global.shortcuts.indexOf(global.shortcuts[obj]), 1)
@@ -3384,238 +2519,9 @@ export { weather, Weather, Time, setWeather, isWeather, wManager, getSeason,
       }
     });
 
-    function descsinfo(id) {
-      if (id === 100) if (global.shiftitem.item.rot && you.mods.survinf > 0) {
-        let itm = global.shiftitem.item;
-        let ds, rs, dt, rt, c
-        switch (you.mods.survinf) {
-          case 1:
-            ds = Math.ceil(itm.amount * ((itm.rot[2] + itm.rot[3]) / 2));
-            rs = itm.data.rottil;
-            dt = '';
-            rt = '';
-            c = '';
-            if (ds < 5) dt = 'a couple';
-            else if (ds < 10) dt = 'a few';
-            else if (ds < 30) dt = 'some';
-            else if (ds < 50) dt = 'multiple';
-            else if (ds < 100) dt = 'dozens';
-            else dt = 'many';
-            if (rs < .1) { rt = 'very fresh'; c = 'lime' } else if (rs < .2) { rt = 'fresh'; c = 'limegreen' } else if (rs < .5) { rt = 'like it\'s reaching midlife'; c = 'yellow' } else if (rs < .75) { rt = 'will go bad soon'; c = 'grey' } else if (rs < 1) { rt = 'are almost decayed'; c = 'red' }
-            if (rs < .5) dom.dscshe.innerHTML = dom.dseparator + '<span style="color:orange">This food looks <span style="color:' + c + '">' + rt + '</span>';
-            else dom.dscshe.innerHTML = dom.dseparator + '<span style="color:orange"><span style="color:cyan">' + dt + '</span> units of this item <span style="color:' + c + '">' + rt + '</span></span>';
-            break;
-          case 2:
-            ds = Math.ceil(itm.amount * ((itm.rot[2] + itm.rot[3]) / 2));
-            rs = (Math.ceil((1 - itm.data.rottil) / ((itm.rot[0] + itm.rot[1]) / 2)));
-            dom.dscshe.innerHTML = dom.dseparator + '<span style="color:orange">Upon examination, about <span style="color:cyan">' + ds + '</span> units of this item will decay in approximately <span style="color:yellow">' + rs + '</span> days</span>';
-            break;
-        }
-        dom.dscshe.style.paddingTop = 20;
-      }
-    }
+    // --- descsinfo moved to src/ui/descriptions.ts ---
 
-    function renderItem(obj) {
-      let inv_slot_c = addElement(dom.inv_con, 'div', null, 'no-outline');
-      let inv_slot = addElement(inv_slot_c, 'div', null, 'inventory-slot no-outline');
-      /*switch(obj.wtype){
-        case 1:var z= icon(inv_slot,2,1,18,18);
-        z.style.paddingRight=2;
-        break;
-        case 2:var z= icon(inv_slot,4,1,18,18);
-        z.style.paddingRight=2;
-        break;
-        case 3:var z= icon(inv_slot,3,1,18,18);
-        z.style.paddingRight=2;
-        break;
-      }*/
-      let inv_name = addElement(inv_slot, 'span');
-      inv_name.innerHTML = obj.name;
-      if (!!obj.data.skey) inv_name.innerHTML += '<small> {' + String.fromCharCode(obj.data.skey) + '}</small>';
-      if (obj.new === true) inv_name.innerHTML += '<small style="font-size:.65em;color: yellow;position:absolute" class="blinks">　new</small>';
-      inv_slot_c.addEventListener('mouseenter', function () {
-        global.keyobj = obj;
-        inv_slot.tabIndex = 0;
-        inv_slot.focus();
-        inv_slot.addEventListener('keydown', listen_k);
-        global.flags.kfocus = true;
-        if (obj.important === false && obj.slot) {
-          dom.inv_del = addElement(inv_slot_c, 'span', null, 'delete-btn');
-          dom.inv_del.innerHTML = 'x';
-          addDesc(dom.inv_del, null, 2, 'Throw away', 'Deletes <span style="color:cyan">\"' + obj.name + '\"</span> permanently');
-          dom.inv_del.addEventListener('click', () => {
-            if (obj.data.uid === you.eqp[obj.slot - 1].data.uid) {
-              let prm = addElement(document.body, 'div');
-              prm.style.backgroundColor = 'grey';
-              prm.style.width = document.body.clientWidth;
-              prm.style.height = document.body.clientHeight;
-              prm.style.position = 'absolute';
-              prm.style.left = 0;
-              prm.style.top = 0;
-              prm.style.opacity = .4;
-              let prm2 = addElement(document.body, 'div');
-              prm2.style.position = 'absolute';
-              prm2.style.top = document.body.clientHeight / 2 - 40;
-              prm2.style.left = 1300 / 2 - 195;
-              prm2.style.width = 390;
-              prm2.style.height = 80;
-              prm2.style.border = '4px black solid';
-              prm2.style.padding = 5;
-              prm2.style.backgroundColor = 'lightgrey';
-              let pin = addElement(prm2, 'div');
-              pin.style.height = 32;
-              pin.innerHTML = 'Really destroy \"' + obj.name + '\"\?';
-              pin.style.textAlign = 'center';
-              pin.style.width = '100%';
-              pin.style.borderBottom = '2px solid black';
-              pin.style.paddingTop = 10;
-              let pcon = addElement(prm2, 'div');
-              pcon.style.display = 'flex';
-              pcon.style.textAlign = 'center';
-              pcon.style.backgroundColor = 'darkgrey';
-              let phai = addElement(pcon, 'div');
-              phai.style.width = '50%';
-              phai.innerHTML = 'YES';
-              phai.style.paddingTop = 9;
-              phai.style.paddingBottom = 9;
-              let piie = addElement(pcon, 'div');
-              piie.style.width = '50%';
-              piie.innerHTML = 'NO';
-              piie.style.paddingTop = 9;
-              piie.style.paddingBottom = 9;
-              phai.addEventListener('mouseenter', function () { this.style.backgroundColor = '#666' });
-              piie.addEventListener('mouseenter', function () { this.style.backgroundColor = '#666' });
-              phai.addEventListener('mouseleave', function () { this.style.backgroundColor = 'darkgrey' });
-              piie.addEventListener('mouseleave', function () { this.style.backgroundColor = 'darkgrey' });
-              phai.addEventListener('click', () => { giveSkExp(skl.rccln, (2 ** obj.rar) * 5 - 9.5); giveSkExp(skl.thr, .5); global.stat.thrt++; removeItem(obj); document.body.removeChild(prm); document.body.removeChild(prm2) });
-              piie.addEventListener('click', () => { document.body.removeChild(prm); document.body.removeChild(prm2) });
-            }
-            else { giveSkExp(skl.rccln, (2 ** obj.rar) * 5 - 9.5); removeItem(obj); giveSkExp(skl.thr, .5); global.stat.thrt++; empty(global.dscr); }
-          }
-          );
-        }
-        if (obj.slot === 5 || obj.slot === 6) {
-          dom.eq_l = addElement(inv_slot_c, 'small', null, 'eq_l');
-          dom.eq_l.innerHTML = 'L';
-          addDesc(dom.eq_l, obj);
-          dom.eq_l.addEventListener('click', () => { if (obj.data.uid !== you.eqp[4].data.uid && obj.data.uid !== you.eqp[5].data.uid) { obj.slot = 5; equip(obj); } else if (obj.data.uid !== you.eqp[4].data.uid && obj.data.uid === you.eqp[5].data.uid) { unequip(obj); obj.slot = 5; equip(obj); } else { unequip(obj); dom.eq_l.style.backgroundColor = 'royalblue'; this.children[0].removeChild(this.children[0].lastChild) } });
-          if (obj.data.uid === you.eqp[4].data.uid) dom.eq_l.style.backgroundColor = 'crimson';
-          dom.eq_r = addElement(inv_slot_c, 'small', null, 'eq_r');
-          dom.eq_r.innerHTML = 'R';
-          addDesc(dom.eq_r, obj);
-          dom.eq_r.addEventListener('click', () => { if (obj.data.uid !== you.eqp[4].data.uid && obj.data.uid !== you.eqp[5].data.uid) { obj.slot = 6; equip(obj); } else if (obj.data.uid === you.eqp[4].data.uid && obj.data.uid !== you.eqp[5].data.uid) { unequip(obj); obj.slot = 6; equip(obj); } else { unequip(obj); dom.eq_r.style.backgroundColor = 'royalblue'; this.children[0].removeChild(this.children[0].lastChild) } });
-          if (obj.data.uid === you.eqp[5].data.uid) dom.eq_r.style.backgroundColor = 'crimson';
-        }
-        if (obj.dss && item.toolbx.have) {
-          dom.inv_dss = addElement(inv_slot_c, 'span', null, 'disassemble-btn');
-          dom.inv_dss.innerHTML = '∥';
-          if (!obj.slot) dom.inv_dss.style.left = 242;
-          else if (obj.slot === 5 || obj.slot === 6) dom.inv_dss.style.left = 208
-          let t = '';
-          for (let a in obj.dss) {
-            let am = obj.dss[a].amount;
-            if (obj.dss[a].q) am = (am + am * (obj.dss[a].q * skl.dssmb.lvl)) << 0
-            if (obj.dss[a].max) if (am > obj.dss[a].max) am = obj.dss[a].max;
-            let c = 1;
-            if (obj.slot) c = obj.dp / obj.dpmax;
-            am = Math.ceil(am / (2 - c));
-            t += '<br><span style="color:orange">' + obj.dss[a].item.name + ': <span style="color:' + (obj.dss[a].max && obj.dss[a].max === am ? 'lime' : 'lightblue') + '">' + am + '</span></span>'
-          }
-          addDesc(dom.inv_dss, null, 2, 'Disassemble', 'Deconstruct <span style="color:cyan">\"' + obj.name + '\"</span> into:<br>' + t);
-          dom.inv_dss.addEventListener('click', () => {
-            if (obj.slot && obj.data.uid === you.eqp[obj.slot - 1].data.uid) {
-              let prm = addElement(document.body, 'div');
-              prm.style.backgroundColor = 'grey';
-              prm.style.width = document.body.clientWidth;
-              prm.style.height = document.body.clientHeight;
-              prm.style.position = 'absolute';
-              prm.style.left = 0;
-              prm.style.top = 0;
-              prm.style.opacity = .4;
-              let prm2 = addElement(document.body, 'div');
-              prm2.style.position = 'absolute';
-              prm2.style.top = document.body.clientHeight / 2 - 40;
-              prm2.style.left = 1300 / 2 - 195;
-              prm2.style.width = 390;
-              prm2.style.height = 90;
-              prm2.style.border = '4px black solid';
-              prm2.style.padding = 5;
-              prm2.style.backgroundColor = 'lightgrey';
-              let pin = addElement(prm2, 'div');
-              pin.style.height = 42;
-              pin.innerHTML = 'You are currently wearing \"<span style="color:crimson">' + obj.name + '</span>\"<br>Really deconstruct?';
-              pin.style.textAlign = 'center';
-              pin.style.width = '100%';
-              pin.style.borderBottom = '2px solid black';
-              pin.style.paddingTop = 10;
-              let pcon = addElement(prm2, 'div');
-              pcon.style.display = 'flex';
-              pcon.style.textAlign = 'center';
-              pcon.style.backgroundColor = 'darkgrey';
-              let phai = addElement(pcon, 'div');
-              phai.style.width = '50%';
-              phai.innerHTML = 'YES';
-              phai.style.paddingTop = 9;
-              phai.style.paddingBottom = 9;
-              let piie = addElement(pcon, 'div');
-              piie.style.width = '50%';
-              piie.innerHTML = 'NO';
-              piie.style.paddingTop = 9;
-              piie.style.paddingBottom = 9;
-              phai.addEventListener('mouseenter', function () { this.style.backgroundColor = '#666' });
-              piie.addEventListener('mouseenter', function () { this.style.backgroundColor = '#666' });
-              phai.addEventListener('mouseleave', function () { this.style.backgroundColor = 'darkgrey' });
-              piie.addEventListener('mouseleave', function () { this.style.backgroundColor = 'darkgrey' });
-              phai.addEventListener('click', () => { disassembleGeneric(obj); document.body.removeChild(prm); document.body.removeChild(prm2) });
-              piie.addEventListener('click', () => { document.body.removeChild(prm); document.body.removeChild(prm2) });
-            }
-            else disassembleGeneric(obj)
-          }
-          );
-        }
-      });
-      inv_slot_c.addEventListener('mouseleave', function () {
-        inv_slot.tabIndex = -1;
-        inv_slot.removeEventListener('keydown', listen_k);
-        global.keyobj = 0;
-        global.flags.kfocus = false;
-        if (obj.important === false && obj.slot) inv_slot_c.removeChild(dom.inv_del);
-        if (obj.dss && item.toolbx.have) inv_slot_c.removeChild(dom.inv_dss);
-        if (obj.slot === 5 || obj.slot === 6) { inv_slot_c.removeChild(dom.eq_r); inv_slot_c.removeChild(dom.eq_l); }
-      });
-      if (obj.slot && scanbyuid(you.eqp, obj.data.uid) === true) {
-        dom.spc_a = addElement(inv_slot, 'small', null, 'special-action');
-        dom.spc_a.innerHTML = 'E';
-      }
-      if (!obj.slot) {
-        let s_am = addElement(inv_slot, 'small', null, 'stack-amount');
-        s_am.innerHTML = ' x' + (obj.amount);
-        inv_slot.addEventListener('mouseenter', function () { global.flags.kfocus = true; this.tabIndex = 0; this.focus(); global.keyobj = obj; this.addEventListener('keydown', listen_k) })
-        inv_slot.addEventListener('mouseleave', function () { global.flags.kfocus = false; this.tabIndex = -1; global.keyobj = 0; this.removeEventListener('keydown', listen_k); })
-      }
-      if (!!obj.c || !!obj.bc) {
-        if (!!obj.c) inv_name.style.color = obj.c;
-        if (!!obj.bc) inv_name.style.backgroundColor = obj.bc;
-      }
-      else {
-        switch (obj.stype) {
-          case 2: inv_name.style.color = 'rgb(255,192,5)';
-            break;
-          case 3: inv_name.style.color = 'rgb(0,235,255)';
-            break;
-          case 4: inv_name.style.color = 'rgb(44,255,44)';
-            break;
-        }
-      }
-      addDesc(inv_slot, obj, null, null, null, null, 100);
-      inv_slot.addEventListener('click', function (x) { if (obj.amount > 0 || !!obj.slot) { obj.use(x); if (!obj.slot) reduce(obj); if (obj.id < 3000 && !obj.data.tried) { obj.data.tried = true; global.stat.ftried += 1; if (global.dscr.style.display != 'none') dom.dtrd.innerHTML = 'Tried: <span style="color: lime">Yes</span>'; } } });
-      inv_slot.addEventListener('mouseleave', function () { if (obj.new === true) { obj.new = false; clearTimeout(timers.nsblk); inv_name.innerHTML = obj.name } });
-    }
-
-    function updateInv(slot) {
-      if (global.sm === 1) dom.inv_con.children[slot].children[0].children[1].innerHTML = ' x' + inv[slot].amount;
-      else dom.inv_con.children[slot].children[0].children[1].innerHTML = ' x' + global.sinv[slot].amount;
-    }
+    // --- renderItem, updateInv moved to src/ui/inventory.ts ---
 
     export function removeItem(obj, flag) {
       if (obj.slot) if (wearing(obj)) unequip(obj)
@@ -3641,25 +2547,9 @@ export { weather, Weather, Time, setWeather, isWeather, wManager, getSeason,
       if (obj.slot) kill(obj)
     }
 
-    export function m_update() {
-      dom.mn_1.innerHTML = '㊧' + (you.wealth / 100000000 << 0);
-      dom.mn_2.innerHTML = '●' + (you.wealth / 10000 % 10000 << 0);
-      dom.mn_3.innerHTML = '●' + (you.wealth / 100 % 100 << 0);
-      dom.mn_4.innerHTML = '●' + (you.wealth % 100 << 0);
-    }
+    // --- m_update moved to src/ui/stats.ts ---
 
-    export function chs(txt, f, c, bc, iconx, icony, size, ignore, slimsize) {
-      if (f === true) { clr_chs(); dom.ch_1 = addElement(dom.ctr_2, 'div', 'chs'); dom.ch_1.innerHTML = txt; }
-      else { dom.ch_1 = addElement(dom.ctr_2, 'div', null, 'chs'); dom.ch_1.innerHTML = txt; }
-      if (!!iconx) { dom.ch_1.insertBefore(icon(dom.ch_1, iconx, icony), dom.ch_1.firstChild); }
-      if (c) dom.ch_1.style.color = c;
-      if (bc) dom.ch_1.style.backgroundColor = bc;
-      if (size) dom.ch_1.style.fontSize = size;
-      if (slimsize) dom.ch_1.style.height = slimsize;
-      if (!ignore) global.menuo = 0;
-      dom.ch_1.addEventListener('click', () => { clearInterval(timers.rptbncgt); global.flags.rptbncgtf = false; if (!global.flags.jdgdis) { global.flags.jdgdis = true; giveSkExp(skl.jdg, .1); setTimeout(() => { global.flags.jdgdis = false }, 500) } })
-      return dom.ch_1;
-    }
+    // --- chs moved to src/ui/choices.ts ---
 
     global.text.cfc = ['White', 'Black', 'Orange', 'Grey', 'Black&White', 'Brown', 'Ginger', 'Cinnamon', 'Fawn', 'Amber', 'Cream', 'Chocolate'];
     global.text.cfp = ['Spotted', 'Plain', 'Solid', 'Bicolored', 'Tabby', 'Tricolored', 'Calico', 'Tortoiseshell', 'Wavy', 'Fluffy', 'Siamese', 'Striped'];
@@ -4117,7 +3007,7 @@ export { weather, Weather, Time, setWeather, isWeather, wManager, getSeason,
       if (root.children[idx]) root.children[idx].children[1].innerHTML = item.slot ? '' : 'x' + am;
     }
 
-    function updateTrunkLeftItem(item, kill) {
+    export function updateTrunkLeftItem(item, kill) {
       if (global.menuo === 3) {
         for (let a in inv) if ((inv[a].data.uid && inv[a].data.uid === item.data.uid) || (inv[a].id === item.id)) {
           if (kill) dom.invp1.removeChild(dom.invp1.children[inv.indexOf(inv[a])]);
@@ -4128,7 +3018,7 @@ export { weather, Weather, Time, setWeather, isWeather, wManager, getSeason,
       }
     }
 
-    function iftrunkopen(side) {
+    export function iftrunkopen(side) {
       if (global.menuo === 3) {
         let trunk = global.cchest;
         if (!side || side === 1) for (let obj in inv) updateTrunkItem(dom.invp1, obj, inv[obj], inv[obj].amount);
@@ -4138,7 +3028,7 @@ export { weather, Weather, Time, setWeather, isWeather, wManager, getSeason,
       }
     }
 
-    function iftrunkopenc(side) {
+    export function iftrunkopenc(side) {
       if (global.menuo === 3) {
         let trunk = global.cchest;
         if (!side || side === 1) { empty(dom.invp1); for (let obj in inv) rendertrunkitem(dom.invp1, inv[obj]); }
@@ -4168,10 +3058,7 @@ export { weather, Weather, Time, setWeather, isWeather, wManager, getSeason,
       else cont.c.splice(cont.c.indexOf(item), 1);
     }
 
-    function clr_chs(index) {
-      if (!index) empty(dom.ctr_2);
-      else dom.ctr_2.removeChild(dom.ctr_2.children[index]);
-    }
+    // --- clr_chs moved to src/ui/choices.ts ---
 
     export function smove(where, lv) {
       global.flags.busy = false; global.flags.work = false; global.wdwidx = 0;
@@ -4231,19 +3118,7 @@ export { weather, Weather, Time, setWeather, isWeather, wManager, getSeason,
       return frn
     }
 
-    export function activatef(f) {
-      if (!f.active) {
-        f.activate();
-        f.active = true;
-      }
-    }
-
-    export function deactivatef(f) {
-      if (f.active) {
-        f.deactivate();
-        f.active = false;
-      }
-    }
+    // --- activatef, deactivatef moved to src/ui/choices.ts ---
 
     global._preig = addElement(document.body, 'img');
     global._preig.src = 'ctst.png';
@@ -4261,34 +3136,7 @@ export { weather, Weather, Time, setWeather, isWeather, wManager, getSeason,
     document.body.removeChild(global._preic2);
 
 
-    function icon(root, x, y, sx, sy, sz) { //sz=2
-      if (window.location.pathname.length === 1) {
-        sx = sx || 16; sy = sy || 16
-        var div = addElement(root, 'canvas');
-        div.width = sx;
-        div.height = sy;
-        let data = global._preic_tmain.getImageData(x * sx - sx, y * sy - sy, sx, sy);
-        div.getContext('2d').putImageData(data, 0, 0);
-        //    let temp = addElement(root,'canvas'); temp.width=sx;temp.height=sy;
-        //    let data = global._preic_tmain.getImageData(x*sx-sx,y*sy-sy,sx,sy); 
-        //    temp.getContext('2d').putImageData(data,0,0);
-        //    var div = addElement(root,'canvas'); div.width=sx*sz;div.height=sy*sz;
-        //    div.getContext('2d').imageSmoothingEnabled=false;
-        //    div.getContext('2d').drawImage(temp,0,0,sx,sy,0,0,sx*sz,sy*sz);
-      } else div = addElement(root, 'span');
-      return div;
-    }
-
-    function Chs() {
-      this.ttl;
-      this.sl = function () { };
-      this.data = {};
-      this.onStay = function () { };
-      this.onEnter = function () { };
-      this.onLeave = function () { };
-      this.onScout = function () { };
-      this.sector = []
-    }
+    // --- icon, Chs moved to src/ui/choices.ts ---
 
 
     chss.t1 = new Chs();
@@ -6491,7 +5339,7 @@ export { weather, Weather, Time, setWeather, isWeather, wManager, getSeason,
 
     // format3() imported from ./utils
 
-    function formatw(a) {
+    export function formatw(a) {
       let b = (Math.log(Math.abs(a + 1)) * 0.43429448190325178 | 0) + 1;
       if (b > 3) { let n = a / 1000 ** ((b - 1) / 3 << 0) * 10; return ((n - ~~n >= 0.5 ? 1 : 0) + ~~n) / 10 + global.text.nt[((b - 4) / 3 << 0)] } return a;
     }
@@ -6592,27 +5440,7 @@ export { weather, Weather, Time, setWeather, isWeather, wManager, getSeason,
       } else return;
     }
 
-    export function isort(type, flags) {
-      empty(dom.inv_con);
-      if (type === 1) for (let k = 0; k < inv.length; k++) renderItem(inv[k]);
-      else {
-        global.sinv = [];
-        for (let k = 0; k < inv.length; k++) if (type === inv[k].stype) { global.sinv.push(inv[k]); renderItem(inv[k]); }
-      }
-      global.sm = type;
-      if (flags && flags.tr) iftrunkopenc(1);
-    }
-
-    export function rsort(type) {
-      empty(dom.ct_bt1_1);
-      if (type === 0 || !type) for (let ind in global.rec_d) renderRcp(global.rec_d[ind]);
-      else {
-        global.srcp = [];
-        for (let k = 0; k < global.rec_d.length; k++) if (type === global.rec_d[k].type) global.srcp.push(global.rec_d[k]);
-        for (let k = 0; k < global.srcp.length; k++) renderRcp(global.srcp[k])
-      }
-      global.rm = type;
-    }
+    // --- isort, rsort moved to src/ui/inventory.ts ---
 
     // objempty() imported from ./utils
 
@@ -6653,7 +5481,7 @@ export { weather, Weather, Time, setWeather, isWeather, wManager, getSeason,
       if (canScout(global.current_l) >= 2 && t >= 2) { deactivateAct(act.scout); msg('There doesn\'t seem to be anything of interest left in this area') }
     }
 
-    function disassembleGeneric(obj) {
+    export function disassembleGeneric(obj) {
       for (let a in obj.dss) {
         let am = obj.dss[a].amount;
         if (obj.dss[a].q) am = (am + am * (obj.dss[a].q * skl.dssmb.lvl)) << 0;
@@ -6769,7 +5597,7 @@ export { weather, Weather, Time, setWeather, isWeather, wManager, getSeason,
       }
     }
 
-    export function reduce(itm, am) { if (am) { itm.amount = itm.amount - am <= 0 ? 0 : itm.amount - am } if (itm.amount <= 0) { removeItem(itm); updateTrunkLeftItem(itm, true) } else if (global.sm === 1) updateInv(inv.indexOf(itm)); else if (global.sm === itm.stype) updateInv(global.sinv.indexOf(itm)); updateTrunkLeftItem(itm) }
+    // --- reduce moved to src/ui/inventory.ts ---
     export function cansee() { if ((global.flags.isdark && you.mods.light > 0) || skl.ntst.lvl >= 12) return true }
 
     // col() imported from ./utils
