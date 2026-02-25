@@ -1,5 +1,6 @@
-import { creature, eqp, global, you, dom, callback, checksd, item, wpn, acc, abl, effect } from '../state';
-import { random } from '../random';
+import { creature, eqp, global, you, dom, callback, checksd, item, wpn, acc, abl, effect, skl } from '../state';
+import { random, rand } from '../random';
+import { giveSkExp } from '../game/progression';
 import { area_init } from '../game/movement';
 import { wpndiestt, attack } from '../game/combat';
 import { dropC } from '../game/inventory';

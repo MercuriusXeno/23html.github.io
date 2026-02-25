@@ -1,4 +1,4 @@
-import { effect, you, global, dom, skl, timers, furn, furniture } from '../state';
+import { effect, you, global, dom, skl, timers, furn, furniture, item } from '../state';
 import { select } from '../utils';
 import { random, rand, randf } from '../random';
 import { findbyid } from '../utils';

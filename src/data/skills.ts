@@ -1,5 +1,6 @@
-import { skl, you, dom, ttl, rcp } from '../state';
+import { skl, you, dom, ttl, rcp, act } from '../state';
 import { giveTitle, giveRcp, giveSkExp } from '../game/progression';
+import { giveAction, recshop } from '../main';
 
 // ==========================================================================
 // Skill constructor + instances

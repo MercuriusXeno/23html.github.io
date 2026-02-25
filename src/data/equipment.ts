@@ -1,4 +1,5 @@
-import { wpn, eqp, acc, sld, item, dom, you, global, inv, rcp, skl, callback } from '../state';
+import { wpn, eqp, acc, sld, item, dom, you, global, inv, rcp, skl, callback, checksd } from '../state';
+import { recshop } from '../main';
 import { giveSkExp, giveRcp } from '../game/progression';
 import { equip } from '../ui/equipment';
 import { msg } from '../ui/messages';

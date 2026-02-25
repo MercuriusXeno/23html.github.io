@@ -118,7 +118,7 @@ import './data/mastery';
     // shuffle() imported from ./utils
 
     ///////////////////////////////////////////
-    function giveAction(a) {
+    export function giveAction(a) {
       if (a.have === false) {
         if (!global.flags.actsu) { global.flags.actsu = true; dom.ct_bt3.innerHTML = 'actions' }
         msg('You learned a new action: <span style="color:tomato">"' + a.name + '"</span>', 'lime', a, 9);
