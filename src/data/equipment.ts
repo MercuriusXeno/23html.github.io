@@ -1,5 +1,5 @@
-import { wpn, eqp, acc, sld, item, dom, you, global, inv, rcp, skl } from '../state';
-import { equip, msg, giveSkExp, giveRcp } from '../main';
+import { wpn, eqp, acc, sld, item, dom, you, global, inv, rcp, skl, callback } from '../state';
+import { equip, msg, giveSkExp, giveRcp, attachCallback, detachCallback } from '../main';
 
 // ==========================================================================
 // Equipment constructor + instances + disassembly data
