@@ -4,23 +4,23 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**Proto23** is a browser-based text RPG game, deployed as a GitHub Pages site (`23html.github.io`). The game is split across `src/main.ts` (~4,900 lines), `src/game/` (8 modules, ~1,220 lines), `src/ui/` (8 modules, ~1,270 lines), `src/data/` (13 modules, ~5,150 lines), and `src/systems/` (3 modules, ~1,610 lines), bundled via esbuild to `dist/bundle.js`, which `index.html` loads. CSS is in `styles.css`.
+**Proto23** is a browser-based text RPG game, deployed as a GitHub Pages site (`23html.github.io`). The game is split across `src/main.ts` (~4,600 lines), `src/game/` (8 modules, ~1,260 lines), `src/ui/` (9 modules, ~1,540 lines), `src/data/` (13 modules, ~5,180 lines), and `src/systems/` (4 modules, ~1,690 lines), bundled via esbuild to `dist/bundle.js`, which `index.html` loads. CSS is in `styles.css`.
 
 ## Architecture
 
 ### File structure
 - `index.html` — shell HTML, loads `styles.css` and `dist/bundle.js`
-- `src/main.ts` — core game logic, DOM setup, location scripts (~4,900 lines)
-- `src/game/` — 8 game logic modules (~1,220 lines):
+- `src/main.ts` — core game logic, DOM setup, location scripts (~4,600 lines)
+- `src/game/` — 8 game logic modules (~1,260 lines):
   - `utils-game.ts` — Game utility functions (`formatw`, `cansee`, `kill`, `roll`, `canRead`)
-  - `progression.ts` — XP/leveling (`giveExp`, `giveSkExp`, `giveCrExp`, `giveTitle`, `giveRcp`, `lvlup`)
+  - `progression.ts` — XP/leveling (`giveExp`, `giveSkExp`, `giveCrExp`, `giveTitle`, `giveRcp`, `lvlup`, `giveAction`)
   - `economy.ts` — Wealth/shopping (`giveWealth`, `spend`, `restock`)
-  - `inventory.ts` — Item management (`giveItem`, `removeItem`, trunk/container functions)
+  - `inventory.ts` — Item management (`giveItem`, `removeItem`, `giveFurniture`, trunk/container functions)
   - `combat.ts` — Combat system (`fght`, `attack`, `tattack`, `dmg_calc`, `dumb`, `hit_calc`, `wpndiestt`)
   - `movement.ts` — Area transitions (`smove`, `area_init`, `inSector`, `Effector`, `addtosector`)
   - `crafting.ts` — Recipe crafting (`canMake`, `make`)
   - `exploration.ts` — Scouting/disassembly (`canScout`, `scoutGeneric`, `disassembleGeneric`)
-- `src/ui/` — 8 UI modules (~1,270 lines):
+- `src/ui/` — 9 UI modules (~1,540 lines):
   - `messages.ts` — Game log (`msg`, `_msg`, `msg_add`)
   - `descriptions.ts` — Tooltip/description popups (`dscr`, `addDesc`, `descsinfo`)
   - `stats.ts` — Stat display updates (`update_db`, `update_d`, `update_m`, `m_update`)
@@ -28,12 +28,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - `equipment.ts` — Equipment slot display (`equip`, `unequip`, `eqpres`)
   - `inventory.ts` — Inventory rendering/sorting (`renderItem`, `isort`, `rsort`, `reduce`)
   - `choices.ts` — Choice buttons and icons (`chs`, `clr_chs`, `icon`, `Chs`)
-  - `panels.ts` — Crafting/skill/action panels (`renderRcp`, `renderSkl`, `renderAct`, `deactivateAct`)
-- `src/data/` — 13 data definition modules (~5,100 lines): titles, effects, furniture, skills, items, equipment, abilities, creatures, world, crafting, vendors, actions, mastery
-- `src/systems/` — 3 system modules (~1,590 lines):
-  - `weather.ts` — Weather/time/calendar system, callbacks (~600 lines)
+  - `panels.ts` — Crafting/skill/action/furniture panels (`renderRcp`, `renderSkl`, `renderAct`, `deactivateAct`, `renderFurniture`, `showFurniturePanel`)
+  - `shop.ts` — Shop UI rendering (`recshop`, `rendershopitem`, `buycbs`, `mf`)
+- `src/data/` — 13 data definition modules (~5,180 lines): titles, effects, furniture, skills, items, equipment, abilities, creatures, world, crafting, vendors, actions, mastery
+- `src/systems/` — 4 system modules (~1,690 lines):
+  - `weather.ts` — Weather/time/calendar system, callbacks, season display (`wdrseason`) (~620 lines)
   - `save-load.ts` — Save/load serialization (~880 lines)
   - `player.ts` — Player (`You`) constructor (~110 lines)
+  - `loop.ts` — Game tick loop (`ontick`) (~50 lines)
 - `src/state.ts` — shared game state singletons and setter functions
 - `src/constants.ts`, `src/base64.ts`, `src/random.ts`, `src/utils.ts`, `src/dom-utils.ts` — utility modules
 - `styles.css` — extracted CSS (previously inline `<style>` block)
@@ -47,7 +49,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `ctst.png` — sprite sheet, `laugh6.wav` — sound effect, `favicon.ico`
 
 ### Refactoring artifacts
-- `ROADMAP.md` — 4-phase refactoring plan with checkboxes (Phases 1-3 complete, Phase 4 future)
+- `ROADMAP.md` — 4-phase refactoring plan with checkboxes (Phases 1-3 complete, Phase 4.1-4.2 complete, 4.3+ future)
 - `CLASS_MAP.md` — CSS class rename mapping (cryptic → semantic, pending application)
 - `frontend-refactoring.md` — CSS design token and component class analysis (future work)
 

@@ -36,10 +36,11 @@
 **Goal:** Address structural issues exposed during modularization.
 
 - [x] **Step 4.1:** Resolve circular imports — extracted 33+ functions from `main.ts` into 8 `src/game/` modules, redirected all re-exports, eliminated data/ui/systems imports from `main.ts`
-- [ ] **Step 4.2:** Dependency injection for state — replace direct singleton access with scoped objects where possible
-- [ ] **Step 4.3:** Externalize game content — move item/creature/area definitions to JSON data files, hydrate at startup
-- [ ] **Step 4.4:** Constructor delegate cleanup — pass `.use`, `.onDeath`, and other function delegates via constructor config instead of deferred assignment
-- [ ] **Step 4.5:** Enable `strict: true` in tsconfig incrementally — fix type errors module by module
+- [x] **Step 4.2:** Extract remaining main.ts exports — moved `giveAction`, `wdrseason`, `ontick`, `recshop`+shop helpers, `giveFurniture`+`renderFurniture` to proper modules. Zero imports from `main.ts` remain. Created `src/systems/loop.ts` and `src/ui/shop.ts`.
+- [ ] **Step 4.3:** Dependency injection for state — replace direct singleton access with scoped objects where possible
+- [ ] **Step 4.4:** Externalize game content — move item/creature/area definitions to JSON data files, hydrate at startup
+- [ ] **Step 4.5:** Constructor delegate cleanup — pass `.use`, `.onDeath`, and other function delegates via constructor config instead of deferred assignment
+- [ ] **Step 4.6:** Enable `strict: true` in tsconfig incrementally — fix type errors module by module
 
 ## Known Bugs
 
