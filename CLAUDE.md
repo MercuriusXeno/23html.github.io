@@ -49,7 +49,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `ctst.png` — sprite sheet, `laugh6.wav` — sound effect, `favicon.ico`
 
 ### Refactoring artifacts
-- `ROADMAP.md` — 4-phase refactoring plan with checkboxes (Phases 1-3 complete, Phase 4.1-4.2 complete, 4.5-4.6 complete, 4.3-4.4 future)
+- `ROADMAP.md` — refactoring plan with checkboxes (Phases 1-3 complete, Phase 4.1-4.2+4.5-4.6 complete, Phase 5 IoC complete, 4.3-4.4 future)
 - `CLASS_MAP.md` — CSS class rename mapping (cryptic → semantic, pending application)
 - `frontend-refactoring.md` — CSS design token and component class analysis (future work)
 
@@ -79,6 +79,17 @@ The game uses plain JS objects as namespaces (not modules). Key globals defined 
 
 ### Constructor pattern
 Game entities use constructor functions (e.g., `Item()`, `Eqp()`, `Creature()`, `Area()`, `Skill()`, `Recipe()`, `Quest()`, `Action()`, `Vendor()`, `Effect()`, `Furniture()`, `Title()`, `Container()`, `Sector()`). All constructors accept an optional `cfg` config object: `if(cfg) for(let k in cfg) this[k]=cfg[k]`. Delegate functions (`.use`, `.oneq`, `.onuneq`, `.onDeath`, `.onGet`, etc.) are included directly in the constructor config. Factory functions (`foodItem()`, `healItem()`, `expItem()`) create common item patterns with standardized `.use` functions. Remaining post-construction assignments are limited to sub-property access (`.data.time`, `.eqp[0].aff`), cross-module references (`.dss`), and conditional assignments.
+
+### Delegate IoC pattern (Phase 5)
+Most data module delegates that previously imported and mutated the `you` singleton now receive the player as a parameter instead:
+- **Equipment** (`oneq`, `onuneq`, `onDegrade`): `function(player: any) { player.mods.X += val }`
+- **Skills** (milestone `f`, `onLevel`, `onGive`): `(player: any) => { player.stra += 1 }`
+- **Effects** (`use`, `un`, `mods`, `onGive`, `onRemove`, `onClick`): player is first param
+- **Items** (`use`, `onGet`): `function(player: any) { ... }`
+- **Creatures** (`onDeath`): uses existing `killer` param (which IS the player) instead of importing `you`
+- **Actions/Furniture/Titles/Mastery/Abilities**: delegates receive `player` as first param
+
+Call sites pass `you` as the argument (e.g., `w.oneq(you)`, `skl.mlstn[ss].f(you)`). Constructor defaults use `_player: any` for unused params. This removes `you` from imports in 8 of 13 data modules (equipment, effects, items, world, actions, furniture, mastery, titles, abilities).
 
 ### Save/Load system
 - `save()` serializes game state into a pipe-delimited (`|`) string of JSON segments, base64-encodes it, and stores in `localStorage` under key `"v0.3"`

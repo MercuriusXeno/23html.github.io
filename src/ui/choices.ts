@@ -42,7 +42,7 @@ import { giveSkExp } from '../game/progression';
       this.ttl;
       this.sl = function () { };
       this.data = {};
-      this.onStay = function () { };
+      this.onStay = function (_player: any) { };
       this.onEnter = function () { };
       this.onLeave = function () { };
       this.onScout = function () { };
@@ -51,14 +51,14 @@ import { giveSkExp } from '../game/progression';
 
     export function activatef(f: any) {
       if (!f.active) {
-        f.activate();
+        f.activate(you);
         f.active = true;
       }
     }
 
     export function deactivatef(f: any) {
       if (f.active) {
-        f.deactivate();
+        f.deactivate(you);
         f.active = false;
       }
     }

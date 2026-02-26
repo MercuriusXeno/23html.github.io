@@ -1,4 +1,4 @@
-import { abl, you, effect } from '../state';
+import { abl, effect } from '../state';
 import { random } from '../random';
 import { findbyid } from '../utils';
 import { dmg_calc } from '../game/combat';
@@ -40,7 +40,7 @@ abl.rstab.name = 'Selfharm';
 abl.rstab.atrg = ' <span style="color:magenta">stabs you with something rusty</span> -> ';
 abl.rstab.cls = 1;
 abl.rstab.f = function (this: any, x: any, y: any) {
-  if (you.res.poison >= random()) { if (effect.psn.active === false) giveEff(you, effect.psn, 5, 1); else effect.psn.duration += 5; }
+  if (y.res.poison >= random()) { if (effect.psn.active === false) giveEff(y, effect.psn, 5, 1); else effect.psn.duration += 5; }
   return dmg_calc(x, y, this) * 1.1;
 }
 

@@ -50,6 +50,18 @@
   - [x] Fixed `main.ts` (~4,670 lines, ~458 errors): `this: any` on 135+ callbacks, `@ts-ignore` on 78 `new` calls, param types, HTMLElement casts, bug fixes (comma expression, operator precedence, missing `let`)
   - [ ] `random.ts` remains `@ts-nocheck` (vendored MersenneTwister IIFE — low priority)
 
+## Phase 5: Inversion of Control for Data Module Delegates ✓
+**Goal:** Replace direct `you` singleton imports in data module delegate functions with explicit `player` parameter, decoupling data definitions from global player state.
+
+- [x] **Step 5.1:** Equipment `oneq`/`onuneq`/`onDegrade` (~90 delegates) — replaced `you.` with `player.`, updated call sites in `ui/equipment.ts`, `main.ts`
+- [x] **Step 5.2:** Skill milestones + `onLevel`/`onGive` (~140 delegates) — updated call sites in `game/progression.ts`, `systems/save-load.ts`
+- [x] **Step 5.3:** Effect delegates `use`/`un`/`mods`/`onGive`/`onRemove`/`onClick` (~40 delegates) — updated call sites in `ui/effects.ts`, `systems/loop.ts`, `systems/player.ts`, `game/combat.ts`, `data/creatures.ts`, `systems/save-load.ts`, `main.ts`
+- [x] **Step 5.4:** Item `use`/`onGet` (~50+ delegates, including factory functions) — updated call sites in `main.ts`, `ui/inventory.ts`, `game/inventory.ts`
+- [x] **Step 5.5:** Creature `onDeath` — replaced `you.` with existing `killer.` param (killer IS always the player for creature deaths)
+- [x] **Step 5.6:** Remaining data modules — world.ts `onStay`, actions.ts `use`/`activate`/`deactivate`, furniture.ts `activate`/`deactivate`/quest `rwd`, mastery.ts `onlevel`, titles.ts `talent`/`onGet`, abilities.ts `f`
+
+**Result:** `you` removed from imports in 9 data modules (equipment, effects, items, world, actions, furniture, mastery, titles, abilities). Remaining 3 (creatures, crafting, skills) still import `you` for non-delegate reasons.
+
 ## Known Bugs
 
 - [ ] **"Pause next battle" not persisted:** The toggle effect doesn't survive save/load — possibly a vanilla bug predating refactoring

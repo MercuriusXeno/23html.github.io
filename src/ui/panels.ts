@@ -240,15 +240,15 @@ import { formatw } from '../game/utils-game';
     export function refreshAct(e: any, a: any) { e.style.color = 'inherit'; if (a.cond(false) !== true) e.style.color = 'grey'; if (a.active === true) e.style.color = 'lime'; }
 
     export function activateAct(actn: any) {
-      global.current_a.deactivate();
-      actn.activate();
+      global.current_a.deactivate(you);
+      actn.activate(you);
       global.current_a = actn;
       global.flags.busy = true;
       dom.ct_bt3.style.backgroundColor = 'darkslategray'
     }
 
     export function deactivateAct(actn: any) {
-      actn.deactivate();
+      actn.deactivate(you);
       global.current_a = act.default;
       global.flags.busy = false;
       dom.ct_bt3.style.backgroundColor = 'inherit';

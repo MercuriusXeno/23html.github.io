@@ -15,7 +15,7 @@ import { addDesc } from './descriptions';
             if (d) ef.duration = d; ef.y = y; ef.z = z; if (ef.x) eff_d(ef, ef.x, ef.c, ef.b, target);
             ef.target = target;
             target.eff.push(ef);
-          } ef.onGive(d, y, z); ef.active = true;
+          } ef.onGive(you, d, y, z); ef.active = true;
         } effdfix();
         target.stat_r();
         return e
@@ -33,7 +33,7 @@ import { addDesc } from './descriptions';
           else {
             node = global.e_em.indexOf(e); dom.d101m.removeChild(dom.d101m.children[node]); global.e_em.splice(node, 1);
             if (dom.d101m.children.length > e.target.eff.length) empty(dom.d101m);
-          } e.onRemove(); global.dscr.style.display = 'none';
+          } e.onRemove(you); global.dscr.style.display = 'none';
         } e.target.eff.splice(e.target.eff.indexOf(e), 1); e.active = false; clearInterval(timers.inup); effdfix()
       }
       e.target.stat_r();
@@ -57,7 +57,7 @@ import { addDesc } from './descriptions';
         ic.innerHTML = s;
         ic.style.color = c;
         ic.style.backgroundColor = b;
-        ic.addEventListener('click', () => { e.onClick() })
+        ic.addEventListener('click', () => { e.onClick(you) })
         addDesc(ic, e, 4, e.name, e.desc);
         if (e.duration !== 0) global.e_e.push(e);
       }

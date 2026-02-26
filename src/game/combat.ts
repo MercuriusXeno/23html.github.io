@@ -10,7 +10,7 @@ import { cansee, formatw } from './utils-game';
 
 function allbuff(who: any) {
   who.stat_r();
-  for (let g in who.eff) if (who.eff[g].type === 1) who.eff[g].use(who.eff[g].y, who.eff[g].z);
+  for (let g in who.eff) if (who.eff[g].type === 1) who.eff[g].use(you, who.eff[g].y, who.eff[g].z);
   if (who.id === you.id) {
     let dm = skl.fgt.use();
     if (you.eqp[0].twoh === true) dm += skl.twoh.use();
@@ -35,8 +35,8 @@ export function fght(att: any, def: any) {
   if (global.flags.smkactv) { global.flags.smkactv = false; return; }
   att.stat_r();
   def.stat_r();
-  for (let g in att.eff) if (att.eff[g].type === 1) att.eff[g].use(att.eff[g].y, att.eff[g].z);
-  for (let g in def.eff) if (def.eff[g].type === 1) def.eff[g].use(def.eff[g].y, def.eff[g].z);
+  for (let g in att.eff) if (att.eff[g].type === 1) att.eff[g].use(you, att.eff[g].y, att.eff[g].z);
+  for (let g in def.eff) if (def.eff[g].type === 1) def.eff[g].use(you, def.eff[g].y, def.eff[g].z);
   if (att.spd > 0 && def.spd > 0) {
     global.s_l += Math.abs(att.spd - def.spd);
   } else {

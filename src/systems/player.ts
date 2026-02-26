@@ -91,7 +91,7 @@ export function You(this: any) {
   this.battle_ai = function (x: any, y: any, z: any) { return attack(x, y) }
   this.stat_r = function (this: any) {
     this.stre = this.inte = this.agle = this.spde = this.sate = this.hpe = 1;
-    for (let idx in this.eff) this.eff[idx].mods();
+    for (let idx in this.eff) this.eff[idx].mods(you);
     this.str = (this.str_r + this.stra) * this.strm * this.stre;
     this.str_d = this.str
     this.int = (this.int_r + this.inta) * this.intm * this.inte;
@@ -110,7 +110,7 @@ export function You(this: any) {
       this.spd += this.eqp[obj].spd;
     }
     for (let idx in this.eff) {
-      if (this.eff[idx].type === 2) { this.eff[idx].un(); this.eff[idx].use(this.eff[idx].y, this.eff[idx].z) };
+      if (this.eff[idx].type === 2) { this.eff[idx].un(you); this.eff[idx].use(you, this.eff[idx].y, this.eff[idx].z) };
     } dom.d6.update(); update_db(); if (you.hp > you.hpmax) you.hp = you.hpmax; dom.d5_1_1.update();
   }
 }

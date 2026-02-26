@@ -68,11 +68,11 @@ import { formatw } from './utils-game';
         skl.lvl++;
         global.stat.slvs++;
         if (!scanbyid(you.skls, skl.id)) { you.skls.push(skl); msg('<span style="text-shadow:cyan 0px 0px 2px">New Skill Unlocked! <span style="text-shadow:red 0px 0px 2px;color:orange">"' + (!!skl.bname ? skl.bname : skl.name) + '"</span></span>', 'aqua', skl, 6); if (!global.flags.sklu) { dom.ct_bt2.innerHTML = 'skills'; global.flags.sklu = true } }
-        else { msg('Skill <span style="color:tomato">\'' + (!!skl.bname ? skl.bname : skl.name) + '\'</span> Leveled Up: ' + skl.lvl, 'deepskyblue', skl, 6); } skl.onLevel();
+        else { msg('Skill <span style="color:tomato">\'' + (!!skl.bname ? skl.bname : skl.name) + '\'</span> Leveled Up: ' + skl.lvl, 'deepskyblue', skl, 6); } skl.onLevel(you);
         skl.expnext_t = skl.expnext();
-        if (!!skl.mlstn) for (let ss = 0; ss < skl.mlstn.length; ss++) if (skl.mlstn[ss].lv === skl.lvl && skl.mlstn[ss].g === false) { msg("NEW PERK UNLOCKED " + '<span style="color:tomato">("' + skl.name + '")<span style="color:orange">lvl: ' + skl.mlstn[ss].lv + '</span></span>', 'lime', { x: skl.name, y: 'Perk lvl ' + skl.mlstn[ss].lv + ': <span style="color:yellow">' + skl.mlstn[ss].p + '</span>' }, 7); skl.mlstn[ss].f(); skl.mlstn[ss].g = true };
+        if (!!skl.mlstn) for (let ss = 0; ss < skl.mlstn.length; ss++) if (skl.mlstn[ss].lv === skl.lvl && skl.mlstn[ss].g === false) { msg("NEW PERK UNLOCKED " + '<span style="color:tomato">("' + skl.name + '")<span style="color:orange">lvl: ' + skl.mlstn[ss].lv + '</span></span>', 'lime', { x: skl.name, y: 'Perk lvl ' + skl.mlstn[ss].lv + ': <span style="color:yellow">' + skl.mlstn[ss].p + '</span>' }, 7); skl.mlstn[ss].f(you); skl.mlstn[ss].g = true };
         giveSkExp(skl, extra, false);
-      } skl.onGive(exp);
+      } skl.onGive(you, exp);
     }
 
     export function giveTitle(title: any, lv?: any) {
@@ -81,8 +81,8 @@ import { formatw } from './utils-game';
         if (title.id !== 0) global.titlese.push(title);
         you.title = title;
         title.have = true;
-        if (!title.tget && title.talent) { title.talent(); title.tget = true }
-        title.onGet();
+        if (!title.tget && title.talent) { title.talent(you); title.tget = true }
+        title.onGet(you);
         for (let x in global.ttlschk) global.ttlschk[x]();
         if (!lv) { msg('New Title Earned! ' + col('"' + title.name + '"', 'orange'), 'cyan', title, 5); dom.d3.update(); }
       } else return;

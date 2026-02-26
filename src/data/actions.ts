@@ -1,4 +1,4 @@
-import { act, global, you, dom, effect, skl, timers } from '../state';
+import { act, global, dom, effect, skl, timers } from '../state';
 import { findbyid, select } from '../utils';
 import { canScout } from '../game/exploration';
 import { giveExp, giveSkExp } from '../game/progression';
@@ -20,9 +20,9 @@ function Action(this: any, cfg?: any) {
   this.have = false;
   this.active = false;
   this.cond = function () { return true }
-  this.use = function () { }
-  this.activate = function () { }
-  this.deactivate = function () { }
+  this.use = function (_player: any) { }
+  this.activate = function (_player: any) { }
+  this.deactivate = function (_player: any) { }
   if (cfg) for (let k in cfg) this[k] = cfg[k];
 // @ts-ignore: constructor function
 }; act.default = new Action(); global.current_a = act.default;
@@ -41,24 +41,24 @@ act.demo = new Action({
     if (!global.flags.btl && global.flags.civil && !global.flags.inside && !global.flags.sleepmode && !global.flags.rdng && !global.flags.isshop && !global.flags.work) return true;
     else { if (l !== false) msg('This isn\'t the best place to run around', 'red'); return false }
   },
-  use: function () {
+  use: function (player: any) {
     giveExp(.5, true, true);
-    if (you.sat > 0) giveSkExp(skl.walk, 1.5);
+    if (player.sat > 0) giveSkExp(skl.walk, 1.5);
     else giveSkExp(skl.walk, .5);
-    you.eqp[6].dp = you.eqp[6].dp - .005 < 0 ? 0 : you.eqp[6].dp - .005;
+    player.eqp[6].dp = player.eqp[6].dp - .005 < 0 ? 0 : player.eqp[6].dp - .005;
   },
-  activate: function (this: any) {
+  activate: function (this: any, player: any) {
     msg('You start running', 'orange');
     this.active = true;
-    you.mods.sdrate += .1 * you.mods.runerg;
-    you.mods.stdstps += .5;
+    player.mods.sdrate += .1 * player.mods.runerg;
+    player.mods.stdstps += .5;
     clearInterval(timers.actm);
-    giveEff(you, effect.run);
+    giveEff(player, effect.run);
     timers.actm = setInterval(() => {
-      this.use();
+      this.use(player);
     }, 1000);
   },
-  deactivate: function (this: any) { msg('You stop', 'skyblue'); clearInterval(timers.actm); this.active = false; removeEff(effect.run); you.mods.sdrate -= .1 * you.mods.runerg; you.mods.stdstps -= .5; }
+  deactivate: function (this: any, player: any) { msg('You stop', 'skyblue'); clearInterval(timers.actm); this.active = false; removeEff(effect.run); player.mods.sdrate -= .1 * player.mods.runerg; player.mods.stdstps -= .5; }
 });
 
 // @ts-ignore: constructor function
@@ -70,16 +70,16 @@ act.scout = new Action({
     if (!global.flags.btl && global.flags.civil && !global.flags.sleepmode && !global.flags.rdng) return true;
     else { if (l !== false) msg('You\'re too occupied with something else', 'red'); return false }
   },
-  activate: function (this: any) {
+  activate: function (this: any, player: any) {
     msg('You begin to look around', 'springgreen');
     this.active = true;
     clearInterval(timers.actm);
-    giveEff(you, effect.scout);
+    giveEff(player, effect.scout);
     let t = 2;
     for (let a in global.current_l.sector) { let m = canScout(global.current_l.sector[a]); if (m === 1) t = m; }
     if (canScout(global.current_l) === 1 || t === 1) msg('You sense something', 'white')
     timers.actm = setInterval(() => {
-      this.use();
+      this.use(player);
     }, 1000);
   },
   use: function (this: any) {
@@ -106,9 +106,9 @@ act.scout = new Action({
 act.demo2 = new Action({
   id: -3, name: 'Selfharm', type: 2,
   desc: function () { return 'Injure yourself' },
-  use: function () {
-    let f = findbyid(you.eff, effect.bled.id);
+  use: function (player: any) {
+    let f = findbyid(player.eff, effect.bled.id);
     if (!f) { msg('You ' + select(['stab', 'slash']) + ' your ' + select(['hand', 'chest', 'leg', 'palm', 'arm', 'foot']), 'red'); } else msg('You\'re already injured', 'orange');
-    giveEff(you, effect.bled, 10, 1);
+    giveEff(player, effect.bled, 10, 1);
   }
 });

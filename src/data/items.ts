@@ -1,4 +1,4 @@
-import { item, dom, you, global, effect, skl, inv, wpn, eqp, sld, acc, furniture, home, furn, sector, ttl, chss, rcp, timers, area, creature, time } from '../state';
+import { item, dom, global, effect, skl, inv, wpn, eqp, sld, acc, furniture, home, furn, sector, ttl, chss, rcp, timers, area, creature, time } from '../state';
 import { HOUR } from '../constants';
 import { random, rand, randf } from '../random';
 import { select, findbyid, z_bake } from '../utils';
@@ -34,8 +34,8 @@ function Item(this: any, cfg: any) {
   this.new = false;
   this.have = false;
   this.important = false;
-  this.onGet = function () { };
-  this.use = function () { };
+  this.onGet = function (_player: any) { };
+  this.use = function (_player: any) { };
   if (cfg) for (let k in cfg) this[k] = cfg[k];
 }
 
@@ -55,18 +55,18 @@ function foodItem(opts: any) {
     desc: opts.desc + dom.dseparator + 'Restores<span style=\'color:lime\'> ' + opts.val + ' </span>energy',
     stype: 4,
     rar: opts.rar || 1,
-    use: function () {
+    use: function (player: any) {
       if (poisonChance > 0 && random() < poisonChance) {
-        if (effect.fpn.active === false) giveEff(you, effect.fpn, rand(15, 35));
+        if (effect.fpn.active === false) giveEff(player, effect.fpn, rand(15, 35));
         else effect.fpn.duration += rand(5, 25);
       }
-      you.sat + this.val > you.satmax ? you.sat = you.satmax : you.sat += this.val;
+      player.sat + this.val > player.satmax ? player.sat = player.satmax : player.sat += this.val;
       skl.glt.use(glt);
       global.stat[stat]++;
       if (drka) giveSkExp(skl.drka, drka);
       if (drunk) {
         global.stat.foodal++;
-        if (effect.drunk.active === false) giveEff(you, effect.drunk, drunk.dur);
+        if (effect.drunk.active === false) giveEff(player, effect.drunk, drunk.dur);
         else effect.drunk.duration += drunk.add;
       }
       this.amount--;
@@ -91,8 +91,8 @@ function healItem(opts: any) {
     desc: opts.desc + dom.dseparator + 'Restores<span style=\'color:lime\'> ' + opts.val + ' </span>health',
     stype: 4,
     rar: opts.rar || 1,
-    use: function () {
-      you.hp + this.val > you.hpmax ? you.hp = you.hpmax : you.hp += this.val;
+    use: function (player: any) {
+      player.hp + this.val > player.hpmax ? player.hp = player.hpmax : player.hp += this.val;
       if (potion) global.stat.potnst++;
       global.stat.medst++;
       this.amount--;
@@ -149,9 +149,9 @@ item.atd1 = new Item({ id: 3002, name: 'Herbal Antidote', desc: 'Bundle of certa
 
 // @ts-ignore: constructor function
 item.psnwrd = new Item({ id: 3003, name: 'Poison Ward', desc: 'Solution developed to protect residents from diseases during times of plague' + dom.dseparator + '<span style=\'color:lime\'> Grants invulnerability to poisons for a few hours </span>', stype: 4, rar: 2,
-  use: function () {
+  use: function (player: any) {
     global.stat.medst++
-    if (effect.psnwrd.active === false) giveEff(you, effect.psnwrd, 600);
+    if (effect.psnwrd.active === false) giveEff(player, effect.psnwrd, 600);
     else effect.psnwrd.duration = 600;
     this.amount--;
   }
@@ -176,10 +176,10 @@ expItem({ key: 'sp3', id: 3008, name: 'High-grade Spirit Pill', desc: 'Small spi
 
 // @ts-ignore: constructor function
 item.lsrd = new Item({ id: 3009, name: 'Life Shard', desc: 'A fragment of living energy, trapped within a crystallic shell. Absorbing these slightly increases lifespan' + dom.dseparator + '<span style=\'color:hotpink\'> Increases HP by +2 permanently </span>', stype: 4,
-  use: function () {
-    you.hpmax += 2;
-    you.hp += 2;
-    you.hpa += 2;
+  use: function (player: any) {
+    player.hpmax += 2;
+    player.hp += 2;
+    player.hpa += 2;
     dom.d5_1_1.update();
     msg('HP increased by +2 permanently', 'hotpink')
     this.amount--;
@@ -193,8 +193,8 @@ item.lckl = new Item({ id: 3011, name: 'Lucky Clover', desc: 'Clover of the rare
   onGet: function () {
     if (this.amount >= 7) { giveRcp(rcp.clrpin); this.onGet = function () { } }
   },
-  use: function (x: any) {
-    you.luck += 1;
+  use: function (player: any, x: any) {
+    player.luck += 1;
     msg('Your Luck Increases!', 'gold');
     this.amount--;
   }
@@ -202,11 +202,11 @@ item.lckl = new Item({ id: 3011, name: 'Lucky Clover', desc: 'Clover of the rare
 
 // @ts-ignore: constructor function
 item.wstn1 = new Item({ id: 3012, name: 'Grey Whetsone', desc: 'Cheap and crude piece of whetstone. Not nearly good enough to maintain the life of a weapon, you can at least scrap off dirt and blood with it' + dom.dseparator + '<span style="color: lightgreen">Repairs equipped Weapon for <span style="color: lime">+2 DP</span></span>', stype: 4,
-  use: function (x: any) {
-    if (you.eqp[0].id === 10000) msg('Repair what?...', 'lightgrey');
+  use: function (player: any, x: any) {
+    if (player.eqp[0].id === 10000) msg('Repair what?...', 'lightgrey');
     else {
-      you.eqp[0].dp + 2 >= you.eqp[0].dpmax ? you.eqp[0].dp = you.eqp[0].dpmax : you.eqp[0].dp += 2;
-      msg('You\'ve repaired ' + you.eqp[0].name + ' slightly', 'yellow');
+      player.eqp[0].dp + 2 >= player.eqp[0].dpmax ? player.eqp[0].dp = player.eqp[0].dpmax : player.eqp[0].dp += 2;
+      msg('You\'ve repaired ' + player.eqp[0].name + ' slightly', 'yellow');
       this.amount--;
     }
   }
@@ -214,9 +214,9 @@ item.wstn1 = new Item({ id: 3012, name: 'Grey Whetsone', desc: 'Cheap and crude 
 
 // @ts-ignore: constructor function
 item.bdgh = new Item({ id: 3013, name: 'Bandage', desc: 'Clean piece of thin sturdy cloth, perfect for wrapping and securing open wounds' + dom.dseparator + '<span style="color:lime">Somewhat stops bleeding</span>', stype: 4,
-  use: function () {
+  use: function (player: any) {
     if (!effect.bled.active) { msg('You\'re not bleeding', 'orange'); return }
-    let f = findbyid(you.eff, effect.bled.id);
+    let f = findbyid(player.eff, effect.bled.id);
     if (f.duration - 20 <= 0) removeEff(f, f.target);
     else f.duration -= 20;
     msg("You bandage your wounds", 'lime');
@@ -229,11 +229,11 @@ item.bdgh = new Item({ id: 3013, name: 'Bandage', desc: 'Clean piece of thin stu
 
 // @ts-ignore: constructor function
 item.amshrm = new Item({ id: 3014, name: 'Asura Mushroom', desc: 'The ultimate mushroom of the mushroom world. Eating it makes you feel a mysterious kind of vitality' + dom.dseparator + '<span style="color: springgreen">Permanently increases STR by +5</span>', stype: 4, rar: 4,
-  use: function (x: any) {
-    you.stra += 5;
+  use: function (player: any, x: any) {
+    player.stra += 5;
     msg('You feel the surge of strength!', 'crimson');
     msg('STR +5!', 'lime');
-    you.stat_r();
+    player.stat_r();
     update_d();
     this.amount--;
   }
@@ -241,18 +241,18 @@ item.amshrm = new Item({ id: 3014, name: 'Asura Mushroom', desc: 'The ultimate m
 
 // @ts-ignore: constructor function
 item.akhrb = new Item({ id: 3015, name: 'Aspha Herb', desc: 'Diet-oriented vegetable with misleading effect. It was such a terrible taste and bitter texture that no one would willingly eat them' + dom.dseparator + '<span style="color: orange">Makes you feel bad</span>', stype: 4, rar: 2,
-  use: function (x: any) {
+  use: function (player: any, x: any) {
     if (this.disabled !== true) {
       this.disabled = true;
-      if (random() < .005) { msg('You managed to consume it', 'lime'); giveSkExp(skl.glt, rand(100, (355 * (skl.glt.lvl * .2 + 1)))); you.sat *= .2; this.amount--; } else { msg(select(['You retch..', 'You feel like vomiting..', 'You feel sick..', 'Your insides turn just by looking at this thing..', 'You immidiately spit it out..', 'Your body rejects this..', 'Your body screams..']), 'grey') } setTimeout(() => { this.disabled = false }, 200);
+      if (random() < .005) { msg('You managed to consume it', 'lime'); giveSkExp(skl.glt, rand(100, (355 * (skl.glt.lvl * .2 + 1)))); player.sat *= .2; this.amount--; } else { msg(select(['You retch..', 'You feel like vomiting..', 'You feel sick..', 'Your insides turn just by looking at this thing..', 'You immidiately spit it out..', 'Your body rejects this..', 'Your body screams..']), 'grey') } setTimeout(() => { this.disabled = false }, 200);
     }
   }
 });
 
 // @ts-ignore: constructor function
 item.cndl = new Item({ id: 3016, name: 'Candle', desc: 'A tall wax candle, made to burn for a very long time', stype: 4,
-  use: function (x: any) {
-    if (!effect.cdlt.active) giveEff(you, effect.cdlt);
+  use: function (player: any, x: any) {
+    if (!effect.cdlt.active) giveEff(player, effect.cdlt);
     else effect.cdlt.duration = 360;
     this.amount--;
   }
@@ -260,19 +260,19 @@ item.cndl = new Item({ id: 3016, name: 'Candle', desc: 'A tall wax candle, made 
 
 // @ts-ignore: constructor function
 item.incsk = new Item({ id: 3017, name: 'Incense Stick', desc: 'A stick of aromatic incense. It calms your soul and mind' + dom.dseparator + '<span style="color: skyblue">Doubles meditation gain<br>Doubles cultivation gain</span>', stype: 4,
-  use: function (x: any) {
+  use: function (player: any, x: any) {
     if (effect.incsk.active === true) effect.insck.duration = 600;
-    else giveEff(you, effect.incsk);
+    else giveEff(player, effect.incsk);
     this.amount--;
   }
 });
 
 // @ts-ignore: constructor function
 item.sp0a = new Item({ id: 3018, name: 'Spirit Opening Powder', desc: 'Powder refined from blood of the wyrm. Has potential to improve internal energy' + dom.dseparator + '<span style=\'color:orange\'> Grants +95000 EXP </span><br><span style=\'color:deeppink\'>EXP Gain +1%</span>', stype: 4, rar: 2,
-  use: function () {
+  use: function (player: any) {
     global.stat.medst++
     giveExp(95000, true, true, true);
-    you.exp_t += .01;
+    player.exp_t += .01;
     this.amount--;
   }
 });
@@ -328,9 +328,9 @@ item.mpwdr = new Item({ id: 3021, name: 'Monster Powder', desc: 'Dried and groun
 
 // @ts-ignore: constructor function
 item.smbpll = new Item({ id: 3022, name: 'Slumber Pill', desc: 'Pill with a strong sedative effect. Normally used by sick and old people to treat insomnia, if they can afford it. Has other uses if you are creative enough' + dom.dseparator + '<span style=\'color:lightgrey\'>Makes you sleep through 18 hours in an instant</span>', stype: 4,
-  use: function (x: any) {
+  use: function (player: any, x: any) {
     if (global.flags.btl || global.flags.rdng || global.flags.isshop || global.flags.busy || global.flags.work) { msg('You can\'t sleep now!', 'red'); return } else {
-      let b = .1; let s = HOUR * 18; if (!global.flags.sleepmode) giveEff(you, effect.slep); else if (global.current_l.id === 112) b += home.bed.sq; global.stat.plst++
+      let b = .1; let s = HOUR * 18; if (!global.flags.sleepmode) giveEff(player, effect.slep); else if (global.current_l.id === 112) b += home.bed.sq; global.stat.plst++
       for (let a = 0; a < s; a++) { giveSkExp(skl.sleep, .1); ontick() } if (!global.flags.sleepmode) removeEff(effect.slep);
     }
     this.amount--;
@@ -339,11 +339,11 @@ item.smbpll = new Item({ id: 3022, name: 'Slumber Pill', desc: 'Pill with a stro
 
 // @ts-ignore: constructor function
 item.lifedr = new Item({ id: 3023, name: 'Life Drop', desc: 'A single drop of revitalizing liquid. Consuming even such a meager amount has a miraclous effect on the lifeforce of a mortal' + dom.dseparator + '<span style=\'color:hotpink\'> Increases HP by +40 permanently </span><br><span style=\'color:lime\'>HP growth rate +2%</span>', stype: 4, rar: 2,
-  use: function () {
-    you.stat_p[0] += .03;
-    you.hpmax += 40;
-    you.hp += 40;
-    you.hpa += 40;
+  use: function (player: any) {
+    player.stat_p[0] += .03;
+    player.hpmax += 40;
+    player.hp += 40;
+    player.hpa += 40;
     dom.d5_1_1.update();
     msg('HP increased by +40 permanently', 'hotpink');
     msg('HP potential grows!', 'pink')
@@ -353,10 +353,10 @@ item.lifedr = new Item({ id: 3023, name: 'Life Drop', desc: 'A single drop of re
 
 // @ts-ignore: constructor function
 item.mnblm = new Item({ id: 3024, name: 'Moonbloom', desc: 'A yellow flower which is said to bud on new moons. The flower\' nectar is the favourite of spirits and is effective for recovering from exhaustion, but only by refining it into a pill or elixir is it possible to draw out its full potential, which makes it prized by alchemists' + dom.dseparator + '<span style=\'color:hotpink\'> Increases SAT by +2 permanently </span>', stype: 4, rar: 2,
-  use: function () {
-    you.satmax += 2;
-    you.sat += 2;
-    you.sata += 2;
+  use: function (player: any) {
+    player.satmax += 2;
+    player.sat += 2;
+    player.sata += 2;
     dom.d5_3_1.update();
     msg('SAT increased by +2 permanently', 'hotpink');
     this.amount--;
@@ -371,10 +371,10 @@ healItem({ key: 'hptn4', id: 3027, name: 'Major Healing Potion', val: 7900, desc
 
 // @ts-ignore: constructor function
 item.lsstn = new Item({ id: 3028, name: 'Life Stone', desc: 'Life vessel that lost its energy and became impure, now looks like an ordinary small pebble and serves very little purpose. Can be absorbed for minor health benefits' + dom.dseparator + '<span style=\'color:hotpink\'> Increases HP by +25 permanently </span>', stype: 4,
-  use: function () {
-    you.hpmax += 25;
-    you.hp += 25;
-    you.hpa += 25;
+  use: function (player: any) {
+    player.hpmax += 25;
+    player.hp += 25;
+    player.hpa += 25;
     dom.d5_1_1.update();
     msg('HP increased by +25 permanently', 'hotpink')
     this.amount--;
@@ -383,8 +383,8 @@ item.lsstn = new Item({ id: 3028, name: 'Life Stone', desc: 'Life vessel that lo
 
 // @ts-ignore: constructor function
 item.bltrt = new Item({ id: 3029, name: 'Bloat Root', desc: 'Unremarkable looking grey root that is bland and tasteless, but eating it makes you feel full. It doesn\'t seem to have any other qualities, hovewer' + dom.dseparator + 'Restores<span style=\'color:lime\'> 100 </span>energy', stype: 4, rar: 2,
-  use: function () {
-    you.sat + 100 > you.satmax ? you.sat = you.satmax : you.sat += 100;
+  use: function (player: any) {
+    player.sat + 100 > player.satmax ? player.sat = player.satmax : player.sat += 100;
     dom.d5_3_1.update();
     this.amount--;
     msg('Restored 100 energy', 'lime');
@@ -393,8 +393,8 @@ item.bltrt = new Item({ id: 3029, name: 'Bloat Root', desc: 'Unremarkable lookin
 
 // @ts-ignore: constructor function
 item.feip1 = new Item({ id: 3030, name: 'Fei Pill', desc: 'When an alchemist miserably fails to produce a pill, this waste is created. Compound of ruined medical materials is full of poison and impurities, it can be used to kill those with weak constitution. However, it is not useless, and can be absorbed for raw ki if one endures the pain and survives after consuming it', stype: 4,
-  use: function () {
-    giveEff(you, effect.fei1, 60, 1);
+  use: function (player: any) {
+    giveEff(player, effect.fei1, 60, 1);
     this.amount--;
     global.stat.plst++
   }
@@ -402,11 +402,11 @@ item.feip1 = new Item({ id: 3030, name: 'Fei Pill', desc: 'When an alchemist mis
 
 // @ts-ignore: constructor function
 item.stthbm1 = new Item({ id: 3031, name: 'Morgia', desc: 'Herb of might. This fiery herb is rumored to improve muscle density' + dom.dseparator + '<span style="color: springgreen">Permanently increases STR by +1</span>', stype: 4, rar: 2,
-  use: function (x: any) {
-    you.stra += 1;
+  use: function (player: any, x: any) {
+    player.stra += 1;
     msg('You feel the surge of strength!', 'crimson');
     msg('STR +1', 'lime');
-    you.stat_r();
+    player.stat_r();
     update_d();
     this.amount--;
   }
@@ -414,11 +414,11 @@ item.stthbm1 = new Item({ id: 3031, name: 'Morgia', desc: 'Herb of might. This f
 
 // @ts-ignore: constructor function
 item.stthbm2 = new Item({ id: 3032, name: 'Springsweed', desc: 'Herb of swiftness. Loved by Serpents, this herb slightly raises one\'s reaction time' + dom.dseparator + '<span style="color: springgreen">Permanently increases SPD by +1</span>', stype: 4, rar: 2,
-  use: function (x: any) {
-    you.spda += 1;
+  use: function (player: any, x: any) {
+    player.spda += 1;
     msg('You feel the surge of strength!', 'crimson');
     msg('SPD +1', 'lime');
-    you.stat_r();
+    player.stat_r();
     update_d();
     this.amount--;
   }
@@ -426,11 +426,11 @@ item.stthbm2 = new Item({ id: 3032, name: 'Springsweed', desc: 'Herb of swiftnes
 
 // @ts-ignore: constructor function
 item.stthbm3 = new Item({ id: 3033, name: 'Clearbane', desc: 'Herb of clarity. This herb is often used in making of high quality incense' + dom.dseparator + '<span style="color: springgreen">Permanently increases INT by +1</span>', stype: 4, rar: 2,
-  use: function (x: any) {
-    you.inta += 1;
+  use: function (player: any, x: any) {
+    player.inta += 1;
     msg('You feel the surge of strength!', 'crimson');
     msg('INT +1', 'lime');
-    you.stat_r();
+    player.stat_r();
     update_d();
     this.amount--;
   }
@@ -438,11 +438,11 @@ item.stthbm3 = new Item({ id: 3033, name: 'Clearbane', desc: 'Herb of clarity. T
 
 // @ts-ignore: constructor function
 item.stthbm4 = new Item({ id: 3034, name: 'Drakevine', desc: 'Herb of flexibility. There are rumors of an old hermit growing these herbs under the hidden mountain' + dom.dseparator + '<span style="color: springgreen">Permanently increases AGL by +1</span>', stype: 4, rar: 2,
-  use: function (x: any) {
-    you.agla += 1;
+  use: function (player: any, x: any) {
+    player.agla += 1;
     msg('You feel the surge of strength!', 'crimson');
     msg('AGL +1', 'lime');
-    you.stat_r();
+    player.stat_r();
     update_d();
     this.amount--;
   }

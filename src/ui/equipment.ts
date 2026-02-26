@@ -21,8 +21,8 @@ import { isort } from './inventory';
     break
     }*/  unequip(you.eqp[w.slot - 1]); you.eqp[w.slot - 1] = w;
         if (w.twoh === true) { if (you.eqp[1].id !== 10000) unequip(you.eqp[1]) } else if (you.eqp[1].id !== 10000 && you.eqp[0].twoh === true) unequip(you.eqp[0]);
-        if (w.eff.length > 0) for (let k = 0; k < w.eff.length; k++) { w.eff[k].use(w.eff[k].y, w.eff[k].z); giveEff(you, w.eff[k]) }
-        w.oneq();
+        if (w.eff.length > 0) for (let k = 0; k < w.eff.length; k++) { w.eff[k].use(you, w.eff[k].y, w.eff[k].z); giveEff(you, w.eff[k]) }
+        w.oneq(you);
         if (w.degrade) planner.itmwear.data.items.push(w)
         if (w.slot === 1) you.atkmode = w.atkmode;
         w.wc = global.text.wecs[w.rar][0];
@@ -61,8 +61,8 @@ import { isort } from './inventory';
 
     export function unequip(w: any, flags?: any) {
       if (!w.data || !w.data.uid) return;
-      if (w.eff.length > 0) for (let k = 0; k < w.eff.length; k++) { w.eff[k].un(); removeEff(w.eff[k]) }
-      w.onuneq();
+      if (w.eff.length > 0) for (let k = 0; k < w.eff.length; k++) { w.eff[k].un(you); removeEff(w.eff[k]) }
+      w.onuneq(you);
       you.eqp[w.slot - 1] = eqp.dummy;
       if (w.degrade) planner.itmwear.data.items.splice(planner.itmwear.data.items.indexOf(w), 1)
       switch (w.slot - 1) {

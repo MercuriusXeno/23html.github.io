@@ -43,7 +43,7 @@ function Creature(this: any, cfg?: any) {
   this.data = { lstdmg: 0, oneshot: true };
   this.stat_r = function (this: any) {
     this.stre = this.inte = this.agle = this.spde = this.sate = this.hpe = 1;
-    for (let idx in this.eff) this.eff[idx].mods();
+    for (let idx in this.eff) this.eff[idx].mods(you);
     this.str = (this.str_r + this.stra) * this.strm * this.stre;
     this.str_d = this.str
     this.int = (this.int_r + this.inta) * this.intm * this.inte;
@@ -55,7 +55,7 @@ function Creature(this: any, cfg?: any) {
     this.hpmax = Math.ceil((this.hp_r + this.hpa) * this.hpm * this.hpe);
     this.dmlt = 1;
     for (let idx in this.eff) {
-      if (this.eff[idx].type === 2) { this.eff[idx].un(); this.eff[idx].use(this.eff[idx].y, this.eff[idx].z) };
+      if (this.eff[idx].type === 2) { this.eff[idx].un(you); this.eff[idx].use(you, this.eff[idx].y, this.eff[idx].z) };
     } update_m(); if (this.hp > this.hpmax) this.hp = this.hpmax
   }
   this.alive = true;
@@ -72,19 +72,19 @@ function Creature(this: any, cfg?: any) {
     }
     global.stat.akills++;
     global.stat.pts += this.pts;
-    if (you.eqp[0].id !== 10000) you.eqp[0].data.kills ? you.eqp[0].data.kills++ : (you.eqp[0].data.kills = 1);
+    if (killer.eqp[0].id !== 10000) killer.eqp[0].data.kills ? killer.eqp[0].data.kills++ : (killer.eqp[0].data.kills = 1);
     if (this.type !== 2 && this.type !== 4) global.spirits++;
     else if (this.type === 4) global.spirits--;
     if (global.flags.m_blh === false) msg(this.name + ' died ', 'burlywood');
     global.flags.civil = true;
     global.flags.btl = false;
     let df = 1;
-    let ld = this.lvl - you.lvl;
+    let ld = this.lvl - killer.lvl;
     if (ld < 0) df = Math.sqrt(Math.abs(ld)) + Math.abs(ld) * .1 * Math.abs(ld);
     giveExp(this.exp + (this.exp * this.lvl / 10 << 0) / df);
     dropC(this);
     global.s_l = 0;
-    if (you.mods.enmondren > 0) if (random() < you.mods.enmondren) { let aam = 1 + rand(this.lvl << 0, (this.lvl / 4) << 0) ** (1 + (this.rnk / 5) << 0) * you.mods.enmondrts; giveWealth(rand(aam * .5 << 0 || 1, aam * 1.5 << 0 || 1)); }
+    if (killer.mods.enmondren > 0) if (random() < killer.mods.enmondren) { let aam = 1 + rand(this.lvl << 0, (this.lvl / 4) << 0) ** (1 + (this.rnk / 5) << 0) * killer.mods.enmondrts; giveWealth(rand(aam * .5 << 0 || 1, aam * 1.5 << 0 || 1)); }
     if (--global.current_z.size > 0) area_init(global.current_z);
     else { if (global.current_z.size <= -1) area_init(global.current_z); else { msg('Area cleared', 'orange'); global.current_z.onEnd(); global.flags.civil = true; global.flags.btl = false; } };
     if (global.flags.to_pause === true) global.flags.btl = false;

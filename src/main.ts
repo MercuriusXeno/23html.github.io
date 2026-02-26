@@ -63,7 +63,7 @@ declare var InstallTrigger: any;
     }
 
     function finishQst(q: any) {
-      if (q.data.started) { q.data.done = true; q.data.started = false; q.data.pending = false; msg('Quest completed: ', 'lime'); msg_add('"' + q.name + '"', 'orange'); q.rwd(); global.stat.qstc++ }
+      if (q.data.started) { q.data.done = true; q.data.started = false; q.data.pending = false; msg('Quest completed: ', 'lime'); msg_add('"' + q.name + '"', 'orange'); q.rwd(you); global.stat.qstc++ }
     }
 
     global.text.alcohol_d = ["You drank some alcohol. You feel warm inside.", "You drank alcohol. Party on!", "You drank lots of alcohol. Are those white mice?", "You drank unholy amounts of alcohol. But what do you care?", "You embalmed yourself alive with so much alcohol, that even undead will leave your dead body alone."];
@@ -1764,7 +1764,7 @@ declare var InstallTrigger: any;
         for (let obj in global.shortcuts) if (e.which === global.shortcuts[obj][0]) {
           let g = global.shortcuts[obj][2];
           if (g.amount > 0 || !!g.slot) {
-            g.use(); reduce(g); iftrunkopenc(1); if (g.id < 3000 && !g.data.tried) { g.data.tried = true; global.stat.ftried += 1; }
+            g.use(you); reduce(g); iftrunkopenc(1); if (g.id < 3000 && !g.data.tried) { g.data.tried = true; global.stat.ftried += 1; }
             break
           }
         }
@@ -3419,7 +3419,7 @@ declare var InstallTrigger: any;
         if (c > HOUR) ttxt = (c / HOUR << 0) + '</span> hours to finish';
         else ttxt = (c << 0) + '</span> minutes to finish';
         dom.trd.innerHTML = 'You are reading <span style="color:orange">' + b.name + '</span><br>It will take you about <span style="color:lime">' + ttxt;
-        if (++b.data.timep >= b.cmax) { clearInterval(timers.rdng); clearInterval(timers.rdngdots); global.stat.rdttl++; global.flags.rdng = false; for (let gg in chss) if (chss[gg].id === global.lst_loc) chss[gg].sl(); b.use(); reduce(b); b.data.timep = 0; }
+        if (++b.data.timep >= b.cmax) { clearInterval(timers.rdng); clearInterval(timers.rdngdots); global.stat.rdttl++; global.flags.rdng = false; for (let gg in chss) if (chss[gg].id === global.lst_loc) chss[gg].sl(); b.use(you); reduce(b); b.data.timep = 0; }
       }, 1000);
       chs('"Stop reading"', false).addEventListener('click', () => {
         clearInterval(timers.rdng);
@@ -4141,7 +4141,7 @@ declare var InstallTrigger: any;
     // objempty() imported from ./utils
 
     function effAct_test() {
-      for (let index in you.eff) you.eff[index].use(creature.bat);
+      for (let index in you.eff) you.eff[index].use(you, creature.bat);
     }
 
     // canRead — moved to game/utils-game.ts
@@ -4406,7 +4406,7 @@ declare var InstallTrigger: any;
         if (itm.dp - itm.degrade < 0) itm.dp = 0;
         else itm.dp -= itm.degrade;
         if (itm.dp <= 0) {
-          itm.onDegrade();
+          itm.onDegrade(you);
           planner.itmwear.data.items.splice(planner.itmwear.data.items.indexOf(itm));
           removeItem(itm);
         }
@@ -4609,7 +4609,7 @@ declare var InstallTrigger: any;
         }
       })
       test.mgui.addEventListener('click', (xy: any) => {
-        if (test.mgui.selected && test.mgui.selected.data.lvl < test.mgui.selected.limit && test.mgui.selected.have) { test.mgui.selected.data.lvl++; test.mgui.selected.onlevel(); you.stat_r(); dom.d5_1_1m.update(); dom.d5_3_1.update(); global.dscr.children[1].innerHTML = test.mgui.selected.desc(); _renderm(tmain, true); }
+        if (test.mgui.selected && test.mgui.selected.data.lvl < test.mgui.selected.limit && test.mgui.selected.have) { test.mgui.selected.data.lvl++; test.mgui.selected.onlevel(you); you.stat_r(); dom.d5_1_1m.update(); dom.d5_3_1.update(); global.dscr.children[1].innerHTML = test.mgui.selected.desc(); _renderm(tmain, true); }
       })
     }
 

@@ -1,4 +1,4 @@
-import { furniture, quest, home, dom, global, you, item, sld, chss, skl, furn, sector, wpn, eqp, callback, creature } from '../state';
+import { furniture, quest, home, dom, global, item, sld, chss, skl, furn, sector, wpn, eqp, callback, creature } from '../state';
 import { DAY } from '../constants';
 import { smove, inSector } from '../game/movement';
 import { giveItem } from '../game/inventory';
@@ -23,8 +23,8 @@ function Furniture(this: any, cfg?: any) {
   this.onSelect = function () { };
   this.onRemove = function () { };
   this.onDestroy = function () { }
-  this.activate = function () { };
-  this.deactivate = function () { };
+  this.activate = function (_player: any) { };
+  this.deactivate = function (_player: any) { };
   if (cfg) for (let k in cfg) this[k] = cfg[k];
 }
 
@@ -134,8 +134,8 @@ furniture.spillw = new Furniture({
 // @ts-ignore: constructor function
 furniture.cyrn = new Furniture({
   id: 13, removable: true, name: 'Yarn Ball', desc: 'Fluffy ball of yarn which is normally used as a material for knitting. Cats love these and often claim them as toys' + dom.dseparator + '<span style="color:deeppink">Patting EXP gain +15%</span><br><span style="color:springgreen">Passive Patting EXP +0.5</span>', data: { amount: 0 }, v: 3,
-  activate: function (this: any) { skl.pet.p += .15; you.mods.petxp += .25 },
-  deactivate: function (this: any) { skl.pet.p -= .15; you.mods.petxp -= .25 },
+  activate: function (this: any, player: any) { skl.pet.p += .15; player.mods.petxp += .25 },
+  deactivate: function (this: any, player: any) { skl.pet.p -= .15; player.mods.petxp -= .25 },
   onRemove: function (this: any) {
     giveItem(item.cyrn, 1, true);
   }
@@ -190,7 +190,7 @@ function Quest(this: any, cfg?: any) {
   this.init = function () { };
   this.check = function () { };
   this.id = 0;
-  this.rwd = function () { };
+  this.rwd = function (_player: any) { };
   this.data = { started: false, done: false, pending: false, toup: false };
   if (cfg) for (let k in cfg) this[k] = cfg[k];
 }
@@ -207,7 +207,7 @@ quest.test = new Quest({
 // @ts-ignore: constructor function
 quest.fwd1 = new Quest({
   id: 2, name: 'Firewood Gathering', rar: 1, desc: 'Secure 10 bundles of firewood for hunter Yamato', loc: 'Western Woods, Hunter\'s Lodge',
-  rwd: function (this: any) { you.karma++; giveWealth(100); giveItem(sld.bkl); smove(chss.frstn1b1, false); giveExp(15000, true, true, true) },
+  rwd: function (this: any, player: any) { player.karma++; giveWealth(100); giveItem(sld.bkl); smove(chss.frstn1b1, false); giveExp(15000, true, true, true) },
   goals: function (this: any) {
     let c;
     if (item.fwd1.amount >= 10) c = 'lime';
@@ -224,7 +224,7 @@ quest.fwd1 = new Quest({
 // @ts-ignore: constructor function
 quest.hnt1 = new Quest({
   id: 3, name: 'First Hunt', rar: 1, desc: 'Hunt for 10 peices of meat for hunter Yamato', loc: 'Western Woods, Hunter\'s Lodge',
-  rwd: function (this: any) { you.karma++; giveWealth(130); giveItem(item.jrk1, 10); giveExp(12000, true, true, true) },
+  rwd: function (this: any, player: any) { player.karma++; giveWealth(130); giveItem(item.jrk1, 10); giveExp(12000, true, true, true) },
   goals: function (this: any) {
     let c;
     if (item.rwmt1.amount >= 10) c = 'lime';

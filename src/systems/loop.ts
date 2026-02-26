@@ -17,9 +17,9 @@ import { addDesc } from '../ui/descriptions';
       for (let a in plans[0]) plans[0][a].f();
       dom.d_time.innerHTML = '<small>' + getDay(global.flags.tmmode || 2) + '</small> ' + timeDisp(time);
       //global.stat.seed1=(random()*7e+7<<7)%7&7
-      global.current_l.onStay();
+      global.current_l.onStay(you);
       runEffectors(global.current_l.effectors)
-      for (let a in sectors) { sectors[a].onStay(); runEffectors(sectors[a].effectors) }
+      for (let a in sectors) { sectors[a].onStay(you); runEffectors(sectors[a].effectors) }
       giveSkExp(skl.aba, .004);
       let timeh = (time.minute / DAY) << 0;
       if (global.timehold !== timeh) {
@@ -42,8 +42,8 @@ import { addDesc } from '../ui/descriptions';
       }
       let h = getHour();
       if (h > 5 && h < 22) { global.flags.isday = true; dom.d_moon.style.display = 'none' } else { if (global.flags.inside === false && random() < .00002 * you.mods.stdstps) { msg('A star particle landed on you!', 'gold', null, null, 'darkblue'); giveItem(item.stdst) } global.flags.isday = false; dom.d_moon.style.display = '' }
-      for (let g = 0; g < you.eff.length; g++) if (you.eff[g].type === 3 || you.eff[g].type === 5 || you.eff[g].type === 6) you.eff[g].use(you.eff[g].y, you.eff[g].z);
-      for (let g = 0; g < global.current_m.eff.length; g++) if (global.current_m.eff[g].type === 3 || global.current_m.eff[g].type === 5 || global.current_m.eff[g].type === 6) global.current_m.eff[g].use(global.current_m.eff[g].y, global.current_m.eff[g].z);
+      for (let g = 0; g < you.eff.length; g++) if (you.eff[g].type === 3 || you.eff[g].type === 5 || you.eff[g].type === 6) you.eff[g].use(you, you.eff[g].y, you.eff[g].z);
+      for (let g = 0; g < global.current_m.eff.length; g++) if (global.current_m.eff[g].type === 3 || global.current_m.eff[g].type === 5 || global.current_m.eff[g].type === 6) global.current_m.eff[g].use(you, global.current_m.eff[g].y, global.current_m.eff[g].z);
       // @ts-ignore fght() called immediately; setTimeout with void handler is intentional (no-op timer)
       if (global.flags.btl === true) timers.btl = setTimeout(fght(you, global.current_m), 1000 / global.fps);
       else giveSkExp(skl.mdt, .0065 * (1 + skl.ptnc.lvl * .15) * (effect.incsk.active === true ? 2 : 1))

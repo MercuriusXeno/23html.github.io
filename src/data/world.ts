@@ -1,4 +1,4 @@
-import { area, sector, creature, item, wpn, acc, ttl, global, dom, you, time, furn, furniture, effect, effector, skl, chss, itemgroup, act } from '../state';
+import { area, sector, creature, item, wpn, acc, ttl, global, dom, time, furn, furniture, effect, effector, skl, chss, itemgroup, act } from '../state';
 import { findbyid, select, z_bake } from '../utils';
 import { random, rand } from '../random';
 import { smove, inSector } from '../game/movement';
@@ -235,7 +235,7 @@ function Sector(this: any, cfg?: any) {
   this.active = false;
   this.onEnter = function () { }
   this.onLeave = function () { }
-  this.onStay = function () { }
+  this.onStay = function (_player: any) { }
   this.onMove = function () { }
   this.onScout = function () { }
   if (cfg) for (let k in cfg) this[k] = cfg[k];
@@ -269,21 +269,21 @@ sector.home = new Sector({
     this.data.smkt = time.minute;
     for (let f in furn) deactivatef(furn[f])
   },
-  onStay: function (this: any) {
+  onStay: function (this: any, player: any) {
     if (this.data.smkp > 0) {
       if (effect.smoke.active) effect.smoke.duration = 26;
-      else giveEff(you, effect.smoke, 26)
+      else giveEff(player, effect.smoke, 26)
       if (--this.data.smkp <= 0) smove(global.current_l)
     }
-    if (global.flags.catget) giveSkExp(skl.pet, you.mods.petxp);
+    if (global.flags.catget) giveSkExp(skl.pet, player.mods.petxp);
     global.stat.athme += global.timescale;
     global.stat.athmec += global.timescale;
     for (let x in global.nethmchk) global.nethmchk[x]();
     let fire = findbyid(furn, furniture.frplc.id);
 
-    if (effect.fplc.active === false && fire.data.fuel > 0) giveEff(you, effect.fplc, fire.data.fuel)
+    if (effect.fplc.active === false && fire.data.fuel > 0) giveEff(player, effect.fplc, fire.data.fuel)
     if (fire.data.fuel > 0) {
-      if (effect.fplc.active === false) giveEff(you, effect.fplc, 2)
+      if (effect.fplc.active === false) giveEff(player, effect.fplc, 2)
       let afire = findbyid(furn, furniture.fwdpile.id);
       if (afire && fire.data.fuel <= 2 && afire.data.fuel > 0) { fire.data.fuel += 30; afire.data.fuel-- }
     }

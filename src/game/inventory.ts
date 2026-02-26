@@ -24,7 +24,7 @@ import { kill } from './utils-game';
           if (tmp.dss) nitm.dss = tmp.dss;
           inv.push(nitm);
           msg('New item obtained: <span style="color:coral">' + nitm.name + '</span>', 'cyan', obj);
-          obj.onGet();
+          obj.onGet(you);
           if (global.sm === nitm.stype) global.sinv.push(nitm);
           if (nitm.stype === global.sm || global.sm === 1) renderItem(nitm);
           let g = obj.id / 10000 << 0;
@@ -49,7 +49,7 @@ import { kill } from './utils-game';
         inv.push(obj);
         obj.amount += am;
         msg('New item obtained: <span style="color:coral">' + obj.name + '</span><span style="color:lime"> x' + am + '</span>', 'cyan', obj);
-        obj.onGet();
+        obj.onGet(you);
         if (global.sm === obj.stype) global.sinv.push(obj);
         if (obj.stype === global.sm || global.sm === 1) renderItem(obj);
       } else {
@@ -57,7 +57,7 @@ import { kill } from './utils-game';
         msg('Item Acquired: <span style="color:chartreuse">' + obj.name + '</span><span style="color:lime"> x' + am + '</span>', 'cyan', obj);
         if (global.sm === 1) updateInv(inv.indexOf(obj));
         else if (global.sm === obj.stype) updateInv(global.sinv.indexOf(obj));
-        obj.onGet();
+        obj.onGet(you);
       }
       let g = obj.id / 10000 << 0;
       if (!scan(dar[g], obj.id)) dar[g].push(obj.id);

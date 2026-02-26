@@ -124,7 +124,7 @@ export function save(lvr?: any) {
   global.current_a.deactivate();
   dom.ct_bt3.style.backgroundColor = 'inherit';
   for (let a in you.eff) {
-    if (you.eff[a].type === 5) you.eff[a].onGive();
+    if (you.eff[a].type === 5) you.eff[a].onGive(you);
   }
   str += JSON.stringify(yu);
   str += '|';
@@ -467,7 +467,7 @@ export function load(dt?: any) {
           if (skl[b].mlstn) {
             for (let d in skl[b].mlstn) {
               if (skl[b].mlstn[d].g === false && skl[b].mlstn[d].lv <= skl[b].lvl) {
-                skl[b].mlstn[d].f();
+                skl[b].mlstn[d].f(you);
                 skl[b].mlstn[d].g = true;
                 msg("NEW PERK UNLOCKED " + '<span style="color:tomato">("' + skl[b].name + '")<span style="color:orange">lvl: ' + skl[b].mlstn[d].lv + '</span></span>', 'lime', { x: skl[b].name, y: 'Perk lvl ' + skl[b].mlstn[d].lv + ': <span style="color:yellow">' + skl[b].mlstn[d].p + '</span>' }, 7);
               }
@@ -795,7 +795,7 @@ export function load(dt?: any) {
     }
     for (let a in ttl) {
       if (ttl[a].have && ttl[a].talent && !ttl[a].tget) {
-        ttl[a].talent();
+        ttl[a].talent(you);
         ttl[a].tget = true;
       }
     }
