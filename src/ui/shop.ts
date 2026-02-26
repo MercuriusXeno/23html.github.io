@@ -10,7 +10,7 @@ import { giveItem } from '../game/inventory';
 import { spend } from '../game/economy';
 import { giveSkExp } from '../game/progression';
 
-    function mf(num: number, index: number) {
+    export function mf(num: number, index: number) {
       let d = addElement(document.body, 'small');
       let c = ['rgb(255, 116, 63)', 'rgb(192, 192, 192)', 'rgb(255, 215, 0)'];
       d.style.position = 'absolute';

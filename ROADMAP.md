@@ -47,7 +47,8 @@
   - [x] Fixed game modules: `utils-game.ts`, `economy.ts`, `exploration.ts`, `crafting.ts`, `progression.ts`, `movement.ts`, `inventory.ts`, `combat.ts`
   - [x] Fixed system modules: `loop.ts`, `save-load.ts`, `weather.ts`, `player.ts`
   - [x] Fixed all 13 data modules: titles, effects, furniture, skills, items, equipment, abilities, creatures, world, crafting, vendors, actions, mastery
-  - [ ] Fix remaining 2 `@ts-nocheck` files: `main.ts` (~4,600 lines), `random.ts` (vendored MersenneTwister — low priority)
+  - [x] Fixed `main.ts` (~4,670 lines, ~458 errors): `this: any` on 135+ callbacks, `@ts-ignore` on 78 `new` calls, param types, HTMLElement casts, bug fixes (comma expression, operator precedence, missing `let`)
+  - [ ] `random.ts` remains `@ts-nocheck` (vendored MersenneTwister IIFE — low priority)
 
 ## Known Bugs
 

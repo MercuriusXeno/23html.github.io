@@ -1,4 +1,4 @@
-// @ts-nocheck
+
 import { YEAR, MONTH, WEEK, DAY, HOUR, SILVER, GOLD } from './constants';
 import { Base64, utf8_to_b64, b64_to_utf8 } from './base64';
 import { random, rand, randf, _rand, xmur3 } from './random';
@@ -24,11 +24,11 @@ import { equip, unequip, eqpres } from './ui/equipment';
 import { renderItem, updateInv, isort, rsort, invbtsrst, rstcrtthg, reduce } from './ui/inventory';
 import { chs, clr_chs, icon, Chs, activatef, deactivatef } from './ui/choices';
 import { renderRcp, refreshRcp, renderSkl, renderAct, refreshAct, activateAct, deactivateAct, renderFurniture, showFurniturePanel } from './ui/panels';
-import { recshop, rendershopitem } from './ui/shop';
+import { recshop, rendershopitem, mf } from './ui/shop';
 import { formatw, cansee, kill, roll } from './game/utils-game';
 import { giveExp, giveSkExp, giveCrExp, giveTitle, giveRcp, lvlup, giveAction } from './game/progression';
 import { giveWealth, spend, restock } from './game/economy';
-import { giveItem, removeItem, listen_k, updateTrunkLeftItem, iftrunkopen, iftrunkopenc, addToContainer, dropC, wearing, wearingany, giveFurniture } from './game/inventory';
+import { giveItem, removeItem, listen_k, updateTrunkLeftItem, iftrunkopen, iftrunkopenc, addToContainer, dropC, wearing, wearingany, giveFurniture, rendertrunkitem, removeFromContainer } from './game/inventory';
 import { fght, attack, tattack, dmg_calc, dumb, hit_calc, wpndiestt } from './game/combat';
 import { Effector, smove, inSector, area_init, addtosector, activateEffectors, deactivateEffectors, runEffectors } from './game/movement';
 import { canMake, make } from './game/crafting';
@@ -50,16 +50,19 @@ import './data/mastery';
 // Mark as ES module (prevents esbuild CommonJS shim overhead)
 export {};
 
+// Firefox detection global
+declare var InstallTrigger: any;
+
     // ==========================================================================
     // Bootstrap
     // ==========================================================================
     window.addEventListener('load', () => { load() });
 
-    function giveQst(q) {
+    function giveQst(q: any) {
       if (!q.data.started) { q.init(); q.data.started = true; msg((q.repeatable ? '<span style="color:cyan">Repeatable</span> q' : 'Q') + 'uest accepted: ' + '<span style="color:orange">"' + q.name + '"</span>', 'lightblue', q, 8); let have = false; for (let a in qsts) if (qsts[a].id === q.id) { have = true; break } if (!have) qsts.push(q); }
     }
 
-    function finishQst(q) {
+    function finishQst(q: any) {
       if (q.data.started) { q.data.done = true; q.data.started = false; q.data.pending = false; msg('Quest completed: ', 'lime'); msg_add('"' + q.name + '"', 'orange'); q.rwd(); global.stat.qstc++ }
     }
 
@@ -74,48 +77,49 @@ export {};
       [], [], [], []];
     global.achchk = [//1 - you die, 2 - enemy dies
       [
-        function (x) { if (ttl.ddw.have === false) { if ((x.id === 103 || x.id === 102) && x.lvl === 1) { giveTitle(ttl.ddw) } } }
+        function (x: any) { if (ttl.ddw.have === false) { if ((x.id === 103 || x.id === 102) && x.lvl === 1) { giveTitle(ttl.ddw) } } }
       ],
       [
-        function (x) { if (ttl.kill1.have === false) { if (global.stat.akills >= 10000) { giveTitle(ttl.kill1) } } },
-        function (x) { if (ttl.kill2.have === false) { if (global.stat.akills >= 50000) { giveTitle(ttl.kill2) } } },
-        function (x) { if (ttl.kill3.have === false) { if (global.stat.akills >= 200000) { giveTitle(ttl.kill3) } } },
-        function (x) { if (ttl.kill4.have === false) { if (global.stat.akills >= 1000000) { giveTitle(ttl.kill4) } } },
-        function (x) { if (ttl.kill5.have === false) { if (global.stat.akills >= 5000000) { giveTitle(ttl.kill5) } } },
+        function (x: any) { if (ttl.kill1.have === false) { if (global.stat.akills >= 10000) { giveTitle(ttl.kill1) } } },
+        function (x: any) { if (ttl.kill2.have === false) { if (global.stat.akills >= 50000) { giveTitle(ttl.kill2) } } },
+        function (x: any) { if (ttl.kill3.have === false) { if (global.stat.akills >= 200000) { giveTitle(ttl.kill3) } } },
+        function (x: any) { if (ttl.kill4.have === false) { if (global.stat.akills >= 1000000) { giveTitle(ttl.kill4) } } },
+        function (x: any) { if (ttl.kill5.have === false) { if (global.stat.akills >= 5000000) { giveTitle(ttl.kill5) } } },
       ]
     ];
     global.monchk = [
-      function (x) { if (ttl.mone1.have === false) { if (global.stat.moneyg >= GOLD) { giveTitle(ttl.mone1) } } },
+      function (x: any) { if (ttl.mone1.have === false) { if (global.stat.moneyg >= GOLD) { giveTitle(ttl.mone1) } } },
     ];
     global.ttlschk = [
-      function (x) { if (ttl.ttsttl1.have === false) { if (global.titles.length >= 10) { giveTitle(ttl.ttsttl1) } } },
-      function (x) { if (ttl.ttsttl2.have === false) { if (global.titles.length >= 25) { giveTitle(ttl.ttsttl2) } } },
-      function (x) { if (ttl.ttsttl3.have === false) { if (global.titles.length >= 50) { giveTitle(ttl.ttsttl3) } } },
+      function (x: any) { if (ttl.ttsttl1.have === false) { if (global.titles.length >= 10) { giveTitle(ttl.ttsttl1) } } },
+      function (x: any) { if (ttl.ttsttl2.have === false) { if (global.titles.length >= 25) { giveTitle(ttl.ttsttl2) } } },
+      function (x: any) { if (ttl.ttsttl3.have === false) { if (global.titles.length >= 50) { giveTitle(ttl.ttsttl3) } } },
     ];
 
     global.shptchk = [
-      function (x) { if (ttl.shpt1.have === false) { if (global.stat.buyt >= 500) { giveTitle(ttl.shpt1) } } },
+      function (x: any) { if (ttl.shpt1.have === false) { if (global.stat.buyt >= 500) { giveTitle(ttl.shpt1) } } },
     ];
     global.cptchk = [
-      function (x) { if (ttl.cpet1.have === false) { if (global.stat.cat_c >= 9999) { giveTitle(ttl.cpet1) } } },
+      function (x: any) { if (ttl.cpet1.have === false) { if (global.stat.cat_c >= 9999) { giveTitle(ttl.cpet1) } } },
     ];
     global.htrchl = [
-      function (x) { if (ttl.hstr1.have === false) { if (x >= 100) { giveTitle(ttl.hstr1) } } },
-      function (x) { if (ttl.hstr2.have === false) { if (x >= 250) { giveTitle(ttl.hstr2) } } },
-      function (x) { if (ttl.hstr3.have === false) { if (x >= 500) { giveTitle(ttl.hstr3) } } },
+      function (x: any) { if (ttl.hstr1.have === false) { if (x >= 100) { giveTitle(ttl.hstr1) } } },
+      function (x: any) { if (ttl.hstr2.have === false) { if (x >= 250) { giveTitle(ttl.hstr2) } } },
+      function (x: any) { if (ttl.hstr3.have === false) { if (x >= 500) { giveTitle(ttl.hstr3) } } },
     ];
     global.nethmchk = [
-      function (x) { if (ttl.neet.have === false) { if (global.stat.athmec >= YEAR) { giveTitle(ttl.neet) } } },
-      function (x) { if (ttl.neet2.have === false) { if (global.stat.athmec >= YEAR * 5) { giveTitle(ttl.neet2) } } },
-      function (x) { if (ttl.neet3.have === false) { if (global.stat.athmec >= YEAR * 10) { giveTitle(ttl.neet3) } } },
+      function (x: any) { if (ttl.neet.have === false) { if (global.stat.athmec >= YEAR) { giveTitle(ttl.neet) } } },
+      function (x: any) { if (ttl.neet2.have === false) { if (global.stat.athmec >= YEAR * 5) { giveTitle(ttl.neet2) } } },
+      function (x: any) { if (ttl.neet3.have === false) { if (global.stat.athmec >= YEAR * 10) { giveTitle(ttl.neet3) } } },
     ];
 
     ///////////////////////////////////////////
     //U
     ///////////////////////////////////////////
 
+    // @ts-ignore: constructor function
     setYou(new You()); you.eqp[0].ctype = 2; giveTitle(ttl.new, true);
-    you.ai = function () {
+    you.ai = function (this: any) {
       //if(you.hp*100/you.hpmax<50) item.hrb1.use();
       //if(you.sat*100/you.satmax<90) item.appl.use();
     }
@@ -133,12 +137,12 @@ export {};
     dom.d2 = addElement(dom.d2c, 'div');
     dom.d2.innerHTML = you.name;
     dom.d2_a = addElement(dom.d2c, 'input', 'nch');
-    dom.d2_a.addEventListener('focusin', function () { dom.d2_a.value = you.name; you.name = ''; dom.d2.innerHTML = '　' });
-    dom.d2_a.addEventListener('focusout', function () { you.name = dom.d2_a.value; dom.d2_a.value = ''; dom.d2.innerHTML = you.name });
+    dom.d2_a.addEventListener('focusin', function (this: any) { dom.d2_a.value = you.name; you.name = ''; dom.d2.innerHTML = '　' });
+    dom.d2_a.addEventListener('focusout', function (this: any) { you.name = dom.d2_a.value; dom.d2_a.value = ''; dom.d2.innerHTML = you.name });
     addDesc(dom.d2c, null, 2, you.name, you.desc);
     dom.d3 = addElement(dom.d1, 'div', null, 'd3');
     dom.d3.innerHTML = ' lvl:' + you.lvl + ' \'' + you.title.name + '\'';
-    dom.d3.addEventListener('click', function () {
+    dom.d3.addEventListener('click', function (this: any) {
       if (!global.flags.ttlscrnopn) {
         global.flags.ttlscrnopn = true;
         dom.ttlcont = addElement(document.body, 'div', 'youttlc');
@@ -150,11 +154,11 @@ export {};
         for (let obj in global.titles) {
           this.ttlent = addElement(dom.ttlbd, 'div', null, 'title-entry');
           let title = global.titles[obj]
-          if (obj === 0) this.ttlent.style.borderTop = '';
+          if (obj as any === 0) this.ttlent.style.borderTop = '';
           this.ttlent.innerHTML = '"' + title.name + '"';
           if (global.titles[obj].talent) this.ttlent.innerHTML += " <span style='color:yellow;text-shadow:0px 0px 5px orange'>*</span>"
           addDesc(this.ttlent, title, 5);
-          this.ttlent.addEventListener('click', function () {
+          this.ttlent.addEventListener('click', function (this: any) {
             you.title = title;
             empty(dom.ttlcont);
             document.body.removeChild(dom.ttlcont);
@@ -171,9 +175,9 @@ export {};
     dom.d5_1 = addElement(dom.d1, 'div', null, 'hp');
     dom.d5_2 = addElement(dom.d1, 'div', null, 'exp');
     dom.d5_3 = addElement(dom.d1, 'div', null, 'en');
-    addDesc(dom.d5_1, null, 2, 'Health', function () { return ('Physical health points, needed to stay alive. You will probably die if it reaches 0<div style="  border-bottom: 1px solid grey;width:100%;height:8px">　</div><br><small>Growth Potential: <span style="color:lime">' + (you.stat_p[0] * 100 << 0) + '%</span></small>') }, true);
-    addDesc(dom.d5_2, null, 2, 'Experience', function () { return ('Physical and combat experience. You\'ll have to work hard to achieve new heights<div style="  border-bottom: 1px solid grey;width:100%;height:8px">　</div><br><small>EXP Gain Potential: <span style="color:gold">' + (you.exp_t * 100 << 0) + '%</span><br>Current EXP Gain: <span style="color:yellow">' + (you.exp_t * 100 * you.efficiency() << 0) + '%</span></small>') }, true);
-    addDesc(dom.d5_3, null, 2, 'Energy meter', function () {
+    addDesc(dom.d5_1, null, 2, 'Health', function (this: any) { return ('Physical health points, needed to stay alive. You will probably die if it reaches 0<div style="  border-bottom: 1px solid grey;width:100%;height:8px">　</div><br><small>Growth Potential: <span style="color:lime">' + (you.stat_p[0] * 100 << 0) + '%</span></small>') }, true);
+    addDesc(dom.d5_2, null, 2, 'Experience', function (this: any) { return ('Physical and combat experience. You\'ll have to work hard to achieve new heights<div style="  border-bottom: 1px solid grey;width:100%;height:8px">　</div><br><small>EXP Gain Potential: <span style="color:gold">' + (you.exp_t * 100 << 0) + '%</span><br>Current EXP Gain: <span style="color:yellow">' + (you.exp_t * 100 * you.efficiency() << 0) + '%</span></small>') }, true);
+    addDesc(dom.d5_3, null, 2, 'Energy meter', function (this: any) {
       let lose = you.mods.sdrate;
       if (global.flags.iswet === true) lose *= (3 / (1 + (skl.abw.lvl * .03)))
       if (global.flags.iscold === true) lose += effect.cold.duration / 1000 / (1 + skl.coldr.lvl * .05);
@@ -190,9 +194,9 @@ export {};
     dom.d4_2 = addElement(dom.d4, 'span', null, 'dd');
     dom.d4_3 = addElement(dom.d4, 'span', null, 'dd');
     dom.d4_4 = addElement(dom.d4, 'span', null, 'dd');
-    addDesc(dom.d4_1, null, 2, 'Physical Strength', function () { return ('Determines physical damage dealt and received<div style="  border-bottom: 1px solid grey;width:100%;height:8px">　</div><br><small>Growth Potential: <span style="color:lime">' + (you.stat_p[1] * 100 << 0) + '%</span></small>') }, true);
-    addDesc(dom.d4_2, null, 2, 'Agility', function () { return ('Determines hit/dodge rate<div style="  border-bottom: 1px solid grey;width:100%;height:8px">　</div><br><small>Growth Potential: <span style="color:lime">' + (you.stat_p[2] * 100 << 0) + '%</span></small>') }, true);
-    addDesc(dom.d4_3, null, 2, 'Mental acuity', function () { return ('Determines magic damage dealt and received<div style="  border-bottom: 1px solid grey;width:100%;height:8px">　</div><br><small>Growth Potential: <span style="color:lime">' + (you.stat_p[3] * 100 << 0) + '%</span></small>') }, true);
+    addDesc(dom.d4_1, null, 2, 'Physical Strength', function (this: any) { return ('Determines physical damage dealt and received<div style="  border-bottom: 1px solid grey;width:100%;height:8px">　</div><br><small>Growth Potential: <span style="color:lime">' + (you.stat_p[1] * 100 << 0) + '%</span></small>') }, true);
+    addDesc(dom.d4_2, null, 2, 'Agility', function (this: any) { return ('Determines hit/dodge rate<div style="  border-bottom: 1px solid grey;width:100%;height:8px">　</div><br><small>Growth Potential: <span style="color:lime">' + (you.stat_p[2] * 100 << 0) + '%</span></small>') }, true);
+    addDesc(dom.d4_3, null, 2, 'Mental acuity', function (this: any) { return ('Determines magic damage dealt and received<div style="  border-bottom: 1px solid grey;width:100%;height:8px">　</div><br><small>Growth Potential: <span style="color:lime">' + (you.stat_p[3] * 100 << 0) + '%</span></small>') }, true);
     addDesc(dom.d4_4, null, 2, 'Speed', 'Allows for faster attacks and multihit combos');
     dom.d7 = addElement(dom.d1, 'div', 'eq_w');
     dom.d7_1 = addElement(dom.d7, 'div', null, 'ddd_2');
@@ -238,16 +242,16 @@ export {};
     dom.d8_2.style.fontSize = '.7em';
     if (typeof InstallTrigger == 'undefined') dom.d8_2.style.paddingTop = '5px';
     dom.d8_2.innerHTML = 'Critical chance: ' + ((you.mods.crflt + you.crt) * 100) + '%';
-    dom.d7_slot_3.addEventListener('mouseenter', function () { global._tad = this.innerHTML; this.innerHTML = 'DEF: ' + Math.round(you.eqp[2].str * (you.eqp[2].dp / you.eqp[2].dpmax) + you.str_r + you.eqp[1].str * (you.eqp[1].dp / you.eqp[1].dpmax)) });
-    dom.d7_slot_3.addEventListener('mouseleave', function () { this.innerHTML = global._tad; });
-    dom.d7_slot_4.addEventListener('mouseenter', function () { global._tad = this.innerHTML; this.innerHTML = 'DEF: ' + Math.round(you.eqp[3].str * (you.eqp[3].dp / you.eqp[3].dpmax) + you.str_r + you.eqp[1].str * (you.eqp[1].dp / you.eqp[1].dpmax)) });
-    dom.d7_slot_4.addEventListener('mouseleave', function () { this.innerHTML = global._tad; });
-    dom.d7_slot_5.addEventListener('mouseenter', function () { global._tad = this.innerHTML; this.innerHTML = 'DEF: ' + Math.round(you.eqp[4].str * (you.eqp[4].dp / you.eqp[4].dpmax) + you.str_r + you.eqp[1].str * (you.eqp[1].dp / you.eqp[1].dpmax)) });
-    dom.d7_slot_5.addEventListener('mouseleave', function () { this.innerHTML = global._tad; });
-    dom.d7_slot_6.addEventListener('mouseenter', function () { global._tad = this.innerHTML; this.innerHTML = 'DEF: ' + Math.round(you.eqp[5].str * (you.eqp[5].dp / you.eqp[5].dpmax) + you.str_r + you.eqp[1].str * (you.eqp[1].dp / you.eqp[1].dpmax)) });
-    dom.d7_slot_6.addEventListener('mouseleave', function () { this.innerHTML = global._tad; });
-    dom.d7_slot_7.addEventListener('mouseenter', function () { global._tad = this.innerHTML; this.innerHTML = 'DEF: ' + Math.round(you.eqp[6].str * (you.eqp[6].dp / you.eqp[6].dpmax) + you.str_r + you.eqp[1].str * (you.eqp[1].dp / you.eqp[1].dpmax)) });
-    dom.d7_slot_7.addEventListener('mouseleave', function () { this.innerHTML = global._tad; });
+    dom.d7_slot_3.addEventListener('mouseenter', function (this: any) { global._tad = this.innerHTML; this.innerHTML = 'DEF: ' + Math.round(you.eqp[2].str * (you.eqp[2].dp / you.eqp[2].dpmax) + you.str_r + you.eqp[1].str * (you.eqp[1].dp / you.eqp[1].dpmax)) });
+    dom.d7_slot_3.addEventListener('mouseleave', function (this: any) { this.innerHTML = global._tad; });
+    dom.d7_slot_4.addEventListener('mouseenter', function (this: any) { global._tad = this.innerHTML; this.innerHTML = 'DEF: ' + Math.round(you.eqp[3].str * (you.eqp[3].dp / you.eqp[3].dpmax) + you.str_r + you.eqp[1].str * (you.eqp[1].dp / you.eqp[1].dpmax)) });
+    dom.d7_slot_4.addEventListener('mouseleave', function (this: any) { this.innerHTML = global._tad; });
+    dom.d7_slot_5.addEventListener('mouseenter', function (this: any) { global._tad = this.innerHTML; this.innerHTML = 'DEF: ' + Math.round(you.eqp[4].str * (you.eqp[4].dp / you.eqp[4].dpmax) + you.str_r + you.eqp[1].str * (you.eqp[1].dp / you.eqp[1].dpmax)) });
+    dom.d7_slot_5.addEventListener('mouseleave', function (this: any) { this.innerHTML = global._tad; });
+    dom.d7_slot_6.addEventListener('mouseenter', function (this: any) { global._tad = this.innerHTML; this.innerHTML = 'DEF: ' + Math.round(you.eqp[5].str * (you.eqp[5].dp / you.eqp[5].dpmax) + you.str_r + you.eqp[1].str * (you.eqp[1].dp / you.eqp[1].dpmax)) });
+    dom.d7_slot_6.addEventListener('mouseleave', function (this: any) { this.innerHTML = global._tad; });
+    dom.d7_slot_7.addEventListener('mouseenter', function (this: any) { global._tad = this.innerHTML; this.innerHTML = 'DEF: ' + Math.round(you.eqp[6].str * (you.eqp[6].dp / you.eqp[6].dpmax) + you.str_r + you.eqp[1].str * (you.eqp[1].dp / you.eqp[1].dpmax)) });
+    dom.d7_slot_7.addEventListener('mouseleave', function (this: any) { this.innerHTML = global._tad; });
     dom.d1m = addElement(document.body, 'div', 'd1', 'd');
     if (!global.flags.aw_u) dom.d1m.style.display = 'none';
     dom.d101m = addElement(dom.d1m, 'div', 'se_i');
@@ -266,7 +270,7 @@ export {};
     dom.d5_2m = addElement(dom.d1m, 'div', null, 'exp');
     dom.d5_1_1m = addElement(dom.d5_1m, 'div', 'hpp');
     dom.d5_2_1m = addElement(dom.d5_2m, 'div');
-    dom.d5_1_1m.update = function () {
+    dom.d5_1_1m.update = function (this: any) {
       this.innerHTML = 'hp: ' + format3(global.current_m.hp.toString()) + '/' + format3(global.current_m.hpmax.toString());
       dom.d5_1m.style.width = 100 * global.current_m.hp / global.current_m.hpmax + '%';
     }
@@ -276,13 +280,13 @@ export {};
     dom.d4_3m = addElement(dom.d4m, 'span', null, 'dd');
     dom.d4_4m = addElement(dom.d4m, 'span', null, 'dd');
     dom.d9m = addElement(dom.d1m, 'div');
-    dom.d9m.update = function () { this.innerHTML = 'rank: ' + global.text.eranks[global.current_m.rnk]; if (global.current_m.rnk <= 4) this.style.color = 'lightgrey'; else if (global.current_m.rnk > 4 && global.current_m.rnk <= 7) this.style.color = 'white'; else if (global.current_m.rnk > 7 && global.current_m.rnk <= 10) this.style.color = 'lightblue'; else if (global.current_m.rnk > 10 && global.current_m.rnk <= 13) this.style.color = 'lightgreen'; else if (global.current_m.rnk > 13 && global.current_m.rnk <= 16) this.style.color = 'lime'; else if (global.current_m.rnk > 16 && global.current_m.rnk <= 19) this.style.color = 'yellow' }
+    dom.d9m.update = function (this: any) { this.innerHTML = 'rank: ' + global.text.eranks[global.current_m.rnk]; if (global.current_m.rnk <= 4) this.style.color = 'lightgrey'; else if (global.current_m.rnk > 4 && global.current_m.rnk <= 7) this.style.color = 'white'; else if (global.current_m.rnk > 7 && global.current_m.rnk <= 10) this.style.color = 'lightblue'; else if (global.current_m.rnk > 10 && global.current_m.rnk <= 13) this.style.color = 'lightgreen'; else if (global.current_m.rnk > 13 && global.current_m.rnk <= 16) this.style.color = 'lime'; else if (global.current_m.rnk > 16 && global.current_m.rnk <= 19) this.style.color = 'yellow' }
     dom.d9m.style.borderBottom = '#545299 dotted 2px';
     dom.d9m.style.backgroundColor = '#272744';
     dom.d8m_c = addElement(dom.d1m, 'small', 'bbts');
     dom.d8m1 = addElement(dom.d8m_c, 'div', null, 'bbts');
     dom.d8m1.innerHTML = 'Pause next battle: <span style=\'color:green\'>&nbspOFF';
-    dom.d8m1.addEventListener('click', function () {
+    dom.d8m1.addEventListener('click', function (this: any) {
       if (global.flags.to_pause === true) { if (!global.flags.civil) global.flags.btl = true; global.flags.to_pause = false; this.innerHTML = 'Pause next battle: <span style=\'color:green\'>&nbspOFF'; }
       else { global.flags.to_pause = true; this.innerHTML = 'Pause next battle: <span style=\'color:crimson\'>&nbspON'; }
     });
@@ -290,10 +294,10 @@ export {};
     dom.d8m2.innerHTML = 'Resume the fight';
     dom.d8m2.style.right = '0px';
     dom.d8m2.style.position = 'absolute';
-    dom.d8m2.addEventListener('click', function () { if (!global.flags.civil) global.flags.btl = true; });
+    dom.d8m2.addEventListener('click', function (this: any) { if (!global.flags.civil) global.flags.btl = true; });
     dom.d7m_c = addElement(dom.d1m, 'div', 'ainfo');
     dom.d7m = addElement(dom.d7m_c, 'small');
-    dom.d7m.update = function () { global.current_z.size >= 0 ? this.innerHTML = 'Area: ' + global.current_z.name + ' / ' + global.current_z.size : this.innerHTML = 'Area: ' + global.current_z.name + ' / ' + '∞'; };
+    dom.d7m.update = function (this: any) { global.current_z.size >= 0 ? this.innerHTML = 'Area: ' + global.current_z.name + ' / ' + global.current_z.size : this.innerHTML = 'Area: ' + global.current_z.name + ' / ' + '∞'; };
     dom.d7m.update();
     dom.inv_ctx = addElement(document.body, 'div', 'inv');
     if (!global.flags.aw_u) dom.inv_ctx.style.display = 'none';
@@ -375,7 +379,7 @@ export {};
       dom.d_moon.style.position = 'relative';
     }
     dom.d_time = addElement(dom.ctr_1a, 'div', 'ctr_t');
-    dom.d_time.addEventListener('click', function () { if (global.flags.tmmode >= 3) global.flags.tmmode = 1; else global.flags.tmmode++; this.innerHTML = '<small>' + getDay(global.flags.tmmode) + '</small> ' + timeDisp(time) });
+    dom.d_time.addEventListener('click', function (this: any) { if (global.flags.tmmode >= 3) global.flags.tmmode = 1; else global.flags.tmmode++; this.innerHTML = '<small>' + getDay(global.flags.tmmode) + '</small> ' + timeDisp(time) });
     // Weather/time init (after DOM elements exist)
     setWeather(weather.clear, 600);
     wManager(); dom.d_time.innerHTML = '<small>' + getDay(global.flags.tmmode) + '</small> ' + timeDisp(time);
@@ -421,7 +425,7 @@ export {};
       }
     });
 
-    dom.ct_bt3.addEventListener('click', () => {
+    dom.ct_bt3.addEventListener('click', function (this: any) {
       dom.nthngdsp.style.display = 'none';
       if (global.lw_op === 3) { dom.ctrwin6.style.display = 'none'; dom.ctrwin5.style.display = 'none'; dom.ctrwin4.style.display = 'none'; dom.ctrwin3.style.display = 'none'; dom.ctrwin2.style.display = 'none'; dom.ctrwin1.style.display = ''; global.lw_op = 0; clearInterval(timers.sklupdate); clearInterval(timers.bstmonupdate) }
       else {
@@ -448,7 +452,7 @@ export {};
       }
     });
 
-    dom.ct_bt2.addEventListener('click', function () {
+    dom.ct_bt2.addEventListener('click', function (this: any) {
       dom.nthngdsp.style.display = 'none';
       if (global.lw_op === 2) { dom.ctrwin6.style.display = 'none'; dom.ctrwin5.style.display = 'none'; dom.ctrwin4.style.display = 'none'; dom.ctrwin3.style.display = 'none'; dom.ctrwin2.style.display = 'none'; dom.ctrwin1.style.display = ''; global.lw_op = 0; clearInterval(timers.sklupdate); clearInterval(timers.bstmonupdate) }
       else {
@@ -476,32 +480,32 @@ export {};
           this.skwm_e_btn_3_b = addElement(this.skwm_e, 'div', null, 'nav-button');
           this.skwm_e_btn_3_b.innerHTML = 'LVL';
           this.skwm_e_btn_3_b.style.border = '1px solid #46a';
-          this.skwm_e_btn_1_b.addEventListener('click', function () {
+          this.skwm_e_btn_1_b.addEventListener('click', function (this: any) {
             if (global.flags.ssort_a === true) {
-              you.skls.sort(function (a, b) { if (a.name < b.name) return -1; if (a.name > b.name) return 1; return 0 });
+              you.skls.sort(function (a: any, b: any) { if (a.name < b.name) return -1; if (a.name > b.name) return 1; return 0 });
               global.flags.ssort_a = false;
             } else {
-              you.skls.sort(function (a, b) { if (a.name > b.name) return -1; if (a.name < b.name) return 1; return 0 });
+              you.skls.sort(function (a: any, b: any) { if (a.name > b.name) return -1; if (a.name < b.name) return 1; return 0 });
               global.flags.ssort_a = true;
             } empty(dom.skcon)
             for (let m = 0; m < you.skls.length; m++) { renderSkl(you.skls[m]); if (m === you.skls.length - 1) dom.skcon.children[m].style.borderBottom = '1px solid #46a'; }
           });
-          this.skwm_e_btn_2_b.addEventListener('click', function () {
+          this.skwm_e_btn_2_b.addEventListener('click', function (this: any) {
             if (global.flags.ssort_b === true) {
-              you.skls.sort(function (a, b) { if (a.type < b.type) return -1; if (a.type > b.type) return 1; if (a.id < b.id) return -1; if (a.id > b.id) return 1; return 0 });
+              you.skls.sort(function (a: any, b: any) { if (a.type < b.type) return -1; if (a.type > b.type) return 1; if (a.id < b.id) return -1; if (a.id > b.id) return 1; return 0 });
               global.flags.ssort_b = false;
             } else {
-              you.skls.sort(function (a, b) { if (a.type > b.type) return -1; if (a.type < b.type) return 1; if (a.id > b.id) return -1; if (a.id < b.id) return 1; return 0 });
+              you.skls.sort(function (a: any, b: any) { if (a.type > b.type) return -1; if (a.type < b.type) return 1; if (a.id > b.id) return -1; if (a.id < b.id) return 1; return 0 });
               global.flags.ssort_b = true;
             } empty(dom.skcon)
             for (let m = 0; m < you.skls.length; m++) { renderSkl(you.skls[m]); if (m === you.skls.length - 1) dom.skcon.children[m].style.borderBottom = '1px solid #46a'; }
           });
-          this.skwm_e_btn_3_b.addEventListener('click', function () {
+          this.skwm_e_btn_3_b.addEventListener('click', function (this: any) {
             if (global.flags.ssort_b === true) {
-              you.skls.sort(function (a, b) { if (a.lvl < b.lvl) return -1; if (a.lvl > b.lvl) return 1; if (a.exp < b.exp) return -1; if (a.exp > b.exp) return 1; return 0 });
+              you.skls.sort(function (a: any, b: any) { if (a.lvl < b.lvl) return -1; if (a.lvl > b.lvl) return 1; if (a.exp < b.exp) return -1; if (a.exp > b.exp) return 1; return 0 });
               global.flags.ssort_b = false;
             } else {
-              you.skls.sort(function (a, b) { if (a.lvl > b.lvl) return -1; if (a.lvl < b.lvl) return 1; if (a.exp > b.exp) return -1; if (a.exp < b.exp) return 1; return 0 });
+              you.skls.sort(function (a: any, b: any) { if (a.lvl > b.lvl) return -1; if (a.lvl < b.lvl) return 1; if (a.exp > b.exp) return -1; if (a.exp < b.exp) return 1; return 0 });
               global.flags.ssort_b = true;
             } empty(dom.skcon)
             for (let m = 0; m < you.skls.length; m++) { renderSkl(you.skls[m]); if (m === you.skls.length - 1) dom.skcon.children[m].style.borderBottom = '1px solid #46a'; }
@@ -531,7 +535,7 @@ export {};
         } else dom.nthngdsp.style.display = ''
       }
     });
-    dom.ct_bt6.addEventListener('click', function () {
+    dom.ct_bt6.addEventListener('click', function (this: any) {
       if (!global.flags.jnlu) return; dom.nthngdsp.style.display = 'none';
       if (global.lw_op === 6) { dom.ctrwin6.style.display = 'none'; dom.ctrwin5.style.display = 'none'; dom.ctrwin4.style.display = 'none'; dom.ctrwin3.style.display = 'none'; dom.ctrwin2.style.display = 'none'; dom.ctrwin1.style.display = ''; global.lw_op = 0; clearInterval(timers.sklupdate); clearInterval(timers.bstmonupdate) }
       else {
@@ -561,7 +565,7 @@ export {};
         this.jlbrw2s2.innerHTML = 'S T A T I S T I C S';
         dom.jlbrw1s1.addEventListener('click', () => {
           empty(dom.ctrwin6); global.lw_op = -1;
-          qsts.sort(function (a, b) { if ((a.id > b.id) && a.data.started === true) return -1; if ((a.id < b.id) && a.data.done === true && a.data.started === false) return 1 });
+          qsts.sort(function (a: any, b: any) { if ((a.id > b.id) && a.data.started === true) return -1; if ((a.id < b.id) && a.data.done === true && a.data.started === false) return 1; return 0 });
           dom.qstbody = addElement(dom.ctrwin6, 'div');
           this.qstlbl = addElement(dom.qstbody, 'div');
           this.qstlbl.innerHTML = 'Q U E S T　　L I S T'
@@ -569,7 +573,7 @@ export {};
           this.qstlbl.style.padding = 7;
           this.qstlbl.style.background = 'linear-gradient(180deg,#182347,#13152f)';
           for (let a in qsts) {
-            let c, rarc, rarts = '';
+            let c: any, rarc: any, rarts = '';
             switch (qsts[a].rar) {
               case 0: { rarc = 'grey'; break }
               case 1: { rarc = 'white'; break }
@@ -592,7 +596,7 @@ export {};
             this.qstcell.innerHTML += ' <small style="font-size:.6em;color:' + rarc + ';text-shadow:' + rarts + '">' + rar + '</small>'
             if (qsts[a].repeatable) this.qstcell.innerHTML += '<small style="color:grey"> ≶</small>';
             if (qsts.length - 1 == Number(a)) this.qstcell.style.borderBottom = '1px solid #46a';
-            this.qstcell.addEventListener('click', function () {
+            this.qstcell.addEventListener('click', function (this: any) {
               empty(dom.qstbody); this.qmain = addElement(dom.qstbody, 'div');
               this.qmain.style.height = 359;
               this.qmain.style.width = '100%';
@@ -635,7 +639,7 @@ export {};
             });
           }
         });
-        dom.jlbrw1s2.addEventListener('click', function () {
+        dom.jlbrw1s2.addEventListener('click', function (this: any) {
           if (!global.flags.bstu) return; empty(dom.ctrwin6); global.lw_op = -1;
           let bst_entr_case = addElement(dom.ctrwin6, 'div');
           bst_entr_case.style.height = '84%';
@@ -670,7 +674,7 @@ export {};
             this.bst_entr_m_e3.innerHTML = global.bestiary[ii].kills;
             addDesc(this.bst_entr_m_case, mon, 10);
           } let monsize = global.bestiary.length;
-          timers.bstmonupdate = setInterval(function () {
+          timers.bstmonupdate = setInterval(function (this: any) {
             if (monsize < global.bestiary.length) {
               for (let ii = monsize; ii < global.bestiary.length; ii++) {
                 let mon;
@@ -699,7 +703,7 @@ export {};
             }
           }, 1000);
         });
-        this.jlbrw2s2.addEventListener('click', function () {
+        this.jlbrw2s2.addEventListener('click', function (this: any) {
           empty(dom.ctrwin6); global.lw_op = -1;
           dom.ch_1 = addElement(dom.ctrwin6, 'div');
           dom.ch_1.style.height = '359px';
@@ -965,11 +969,11 @@ export {};
             dom.tcleft.innerHTML = 'Books read';
             dom.tcright.innerHTML = global.stat.rdttl;
             addDesc(dom.tccon, null, 2, 'Info', '<span style="color:lie">Click to list known books</span>');
-            dom.tccon.addEventListener('click', function () {
+            dom.tccon.addEventListener('click', function (this: any) {
               if (!global.flags.bksstt) {
                 global.flags.bksstt = true;
                 dom.bkssttbd = addElement(document.body, 'div', null, 'popup-list');
-                dom.bkssttbd.addEventListener('click', function () { empty(dom.bkssttbd); document.body.removeChild(dom.bkssttbd); global.flags.bksstt = false; global.dscr.style.display = 'none' });
+                dom.bkssttbd.addEventListener('click', function (this: any) { empty(dom.bkssttbd); document.body.removeChild(dom.bkssttbd); global.flags.bksstt = false; global.dscr.style.display = 'none' });
                 let bks = [];
                 for (let a in item) if (item[a].data.finished) bks.push(item[a]);
                 for (let a in bks) {
@@ -1230,12 +1234,12 @@ export {};
     dom.ct_bt1_1_cont_d.style.backgroundColor = '#b73c0d';
     dom.ct_bt1_1_cont_e.style.backgroundColor = '#313254';
     dom.ct_bt1_1_cont_f.style.backgroundColor = '#5155d6';
-    dom.ct_bt1_1_cont_a.addEventListener('click', function () { rstcrtthg(); this.style.color = 'yellow'; rsort(0) });
-    dom.ct_bt1_1_cont_b.addEventListener('click', function () { rstcrtthg(); this.style.color = 'yellow'; rsort(1) });
-    dom.ct_bt1_1_cont_c.addEventListener('click', function () { rstcrtthg(); this.style.color = 'yellow'; rsort(2) });
-    dom.ct_bt1_1_cont_d.addEventListener('click', function () { rstcrtthg(); this.style.color = 'yellow'; rsort(3) });
-    dom.ct_bt1_1_cont_e.addEventListener('click', function () { rstcrtthg(); this.style.color = 'yellow'; rsort(4) });
-    dom.ct_bt1_1_cont_f.addEventListener('click', function () { rstcrtthg(); this.style.color = 'yellow'; rsort(5) });
+    dom.ct_bt1_1_cont_a.addEventListener('click', function (this: any) { rstcrtthg(); this.style.color = 'yellow'; rsort(0) });
+    dom.ct_bt1_1_cont_b.addEventListener('click', function (this: any) { rstcrtthg(); this.style.color = 'yellow'; rsort(1) });
+    dom.ct_bt1_1_cont_c.addEventListener('click', function (this: any) { rstcrtthg(); this.style.color = 'yellow'; rsort(2) });
+    dom.ct_bt1_1_cont_d.addEventListener('click', function (this: any) { rstcrtthg(); this.style.color = 'yellow'; rsort(3) });
+    dom.ct_bt1_1_cont_e.addEventListener('click', function (this: any) { rstcrtthg(); this.style.color = 'yellow'; rsort(4) });
+    dom.ct_bt1_1_cont_f.addEventListener('click', function (this: any) { rstcrtthg(); this.style.color = 'yellow'; rsort(5) });
     global.spbtsr = [dom.ct_bt1_1_cont_a, dom.ct_bt1_1_cont_b, dom.ct_bt1_1_cont_c, dom.ct_bt1_1_cont_d, dom.ct_bt1_1_cont_e, dom.ct_bt1_1_cont_f]
     dom.ct_bt1_1_cont_a.innerHTML = 'ALL';
     dom.ct_bt1_1_cont_b.innerHTML = 'FOD';
@@ -1258,7 +1262,7 @@ export {};
     dom.ct_bt4_1b.type = 'number';
     dom.ct_bt4_1b.min = 1;
     dom.ct_bt4_1b.max = 100;
-    dom.ct_bt4_1b.addEventListener('change', function () { if (this.value < 1) this.value = 1; else if (this.value > 100) this.value = 100; global.msgs_max = this.value });
+    dom.ct_bt4_1b.addEventListener('change', function (this: any) { if (this.value < 1) this.value = 1; else if (this.value > 100) this.value = 100; global.msgs_max = this.value });
     dom.ct_bt4_2 = addElement(dom.ctrwin4, 'div', null, 'option-row');
     dom.ct_bt4_2a = addElement(dom.ct_bt4_2, 'div', null, 'option-label');
     dom.ct_bt4_2a.innerHTML = 'BG Color';
@@ -1269,7 +1273,7 @@ export {};
     dom.ct_bt4_21b.max = 255;
     dom.ct_bt4_21b.style.width = '85px';
     dom.ct_bt4_21b.style.height = '16px';
-    dom.ct_bt4_21b.addEventListener('input', function () { document.body.removeAttribute('style'); global.flags.bgspc = false; global.bg_r = this.value; document.body.style.backgroundColor = 'rgb(' + global.bg_r + ',' + global.bg_g + ',' + global.bg_b + ')'; dom.ct_bt4_31b.innerHTML = global.bg_r });
+    dom.ct_bt4_21b.addEventListener('input', function (this: any) { document.body.removeAttribute('style'); global.flags.bgspc = false; global.bg_r = this.value; document.body.style.backgroundColor = 'rgb(' + global.bg_r + ',' + global.bg_g + ',' + global.bg_b + ')'; dom.ct_bt4_31b.innerHTML = global.bg_r });
     dom.ct_bt4_22b = addElement(dom.ct_bt4_2, 'input', null, 'option-input');
     dom.ct_bt4_22b.value = global.bg_g;
     dom.ct_bt4_22b.type = 'range';
@@ -1279,7 +1283,7 @@ export {};
     dom.ct_bt4_22b.max = 255;
     dom.ct_bt4_22b.style.width = '85px';
     dom.ct_bt4_22b.style.left = '367px';
-    dom.ct_bt4_22b.addEventListener('input', function () { document.body.removeAttribute('style'); global.flags.bgspc = false; global.bg_g = this.value; document.body.style.backgroundColor = 'rgb(' + global.bg_r + ',' + global.bg_g + ',' + global.bg_b + ')'; dom.ct_bt4_32b.innerHTML = global.bg_g });
+    dom.ct_bt4_22b.addEventListener('input', function (this: any) { document.body.removeAttribute('style'); global.flags.bgspc = false; global.bg_g = this.value; document.body.style.backgroundColor = 'rgb(' + global.bg_r + ',' + global.bg_g + ',' + global.bg_b + ')'; dom.ct_bt4_32b.innerHTML = global.bg_g });
     dom.ct_bt4_23b = addElement(dom.ct_bt4_2, 'input', null, 'option-input');
     dom.ct_bt4_23b.value = global.bg_b;
     dom.ct_bt4_23b.type = 'range';
@@ -1289,7 +1293,7 @@ export {};
     dom.ct_bt4_23b.max = 255;
     dom.ct_bt4_23b.style.width = '85px';
     dom.ct_bt4_23b.style.left = '459px';
-    dom.ct_bt4_23b.addEventListener('input', function () { document.body.removeAttribute('style'); global.flags.bgspc = false; global.bg_b = this.value; document.body.style.backgroundColor = 'rgb(' + global.bg_r + ',' + global.bg_g + ',' + global.bg_b + ')'; dom.ct_bt4_33b.innerHTML = global.bg_b });
+    dom.ct_bt4_23b.addEventListener('input', function (this: any) { document.body.removeAttribute('style'); global.flags.bgspc = false; global.bg_b = this.value; document.body.style.backgroundColor = 'rgb(' + global.bg_r + ',' + global.bg_g + ',' + global.bg_b + ')'; dom.ct_bt4_33b.innerHTML = global.bg_b });
 
     dom.ct_bt4_3 = addElement(dom.ctrwin4, 'div', null, 'option-row');
     dom.ct_bt4_3a = addElement(dom.ct_bt4_3, 'div', null, 'option-label');
@@ -1334,7 +1338,7 @@ export {};
     dom.ct_bt4_03b3.style.color = 'yellow';
     dom.ct_bt4_03b3.style.backgroundColor = 'rgb(18,18,46)';
     dom.ct_bt4_03b4.style.background = 'linear-gradient(180deg,#000,#123)';
-    dom.ct_bt4_03b1.addEventListener('click', function () {
+    dom.ct_bt4_03b1.addEventListener('click', function (this: any) {
       global.flags.bgspc = false
       global.bg_r = 255;
       global.bg_g = 255;
@@ -1348,7 +1352,7 @@ export {};
       dom.ct_bt4_23b.value = global.bg_b
       document.body.style.backgroundColor = 'rgb(' + global.bg_r + ',' + global.bg_g + ',' + global.bg_b + ')';
     });
-    dom.ct_bt4_03b2.addEventListener('click', function () {
+    dom.ct_bt4_03b2.addEventListener('click', function (this: any) {
       global.flags.bgspc = false
       global.bg_r = 188;
       global.bg_g = 188;
@@ -1362,7 +1366,7 @@ export {};
       dom.ct_bt4_23b.value = global.bg_b
       document.body.style.backgroundColor = 'rgb(' + global.bg_r + ',' + global.bg_g + ',' + global.bg_b + ')';
     });
-    dom.ct_bt4_03b3.addEventListener('click', function () {
+    dom.ct_bt4_03b3.addEventListener('click', function (this: any) {
       global.flags.bgspc = false
       global.bg_r = 18;
       global.bg_g = 18;
@@ -1376,7 +1380,7 @@ export {};
       dom.ct_bt4_23b.value = global.bg_b
       document.body.style.backgroundColor = 'rgb(' + global.bg_r + ',' + global.bg_g + ',' + global.bg_b + ')';
     });
-    dom.ct_bt4_03b4.addEventListener('click', function () {
+    dom.ct_bt4_03b4.addEventListener('click', function (this: any) {
       global.flags.bgspc = true
       dom.ct_bt4_31b.innerHTML = 'SPCL';
       dom.ct_bt4_32b.innerHTML = 'SPCL';
@@ -1395,7 +1399,7 @@ export {};
     dom.ct_bt4_5b = addElement(dom.ct_bt4_5, 'div', null, 'option-value-alt');
     dom.ct_bt4_5a.innerHTML = 'Export';
     dom.ct_bt4_5a.style.border = '1px lightgrey solid';
-    dom.ct_bt4_5a.addEventListener('click', function () {
+    dom.ct_bt4_5a.addEventListener('click', function (this: any) {
       if (!global.flags.expatv) {
         let t = save(true);
         global.flags.expatv = true;
@@ -1416,12 +1420,12 @@ export {};
         dom.ct_bt4_5a_nhv.style.marginRight = 6;
         dom.ct_bt4_5a_nhv.style.backgroundColor = 'grey';
         dom.ct_bt4_5a_nhv.innerHTML = 'Export As Text'
-        dom.ct_bt4_5a_nhv.addEventListener('click', function () { dom.ct_bt4_5a_nbc.value = t });
+        dom.ct_bt4_5a_nhv.addEventListener('click', function (this: any) { dom.ct_bt4_5a_nbc.value = t });
         dom.ct_bt4_5a_nhz = addElement(dom.ct_bt4_5a_nh, 'div');
         dom.ct_bt4_5a_nhz.style.float = 'left';
         dom.ct_bt4_5a_nhz.style.backgroundColor = 'grey';
         dom.ct_bt4_5a_nhz.innerHTML = 'Export As File'
-        dom.ct_bt4_5a_nhz.addEventListener('click', function () {
+        dom.ct_bt4_5a_nhz.addEventListener('click', function (this: any) {
           let a = new Date();
           let temp = document.createElement('a');
           temp.href = 'data:text/plain;charset=utf-8,' + t;
@@ -1435,7 +1439,7 @@ export {};
         dom.ct_bt4_5a_nhx.innerHTML = '✖';
         dom.ct_bt4_5a_nhx.style.float = 'right';
         dom.ct_bt4_5a_nhx.style.backgroundColor = 'red';
-        dom.ct_bt4_5a_nhx.addEventListener('click', function () { global.flags.expatv = false; empty(dom.ct_bt4_5a_nc); document.body.removeChild(dom.ct_bt4_5a_nc); kill(dom.ct_bt4_5a_nc) });
+        dom.ct_bt4_5a_nhx.addEventListener('click', function (this: any) { global.flags.expatv = false; empty(dom.ct_bt4_5a_nc); document.body.removeChild(dom.ct_bt4_5a_nc); kill(dom.ct_bt4_5a_nc) });
         dom.ct_bt4_5a_nb = addElement(dom.ct_bt4_5a_nc, 'div');
         dom.ct_bt4_5a_nbc = addElement(dom.ct_bt4_5a_nb, 'textArea');
         dom.ct_bt4_5a_nbc.style.fontFamily = 'MS Gothic';
@@ -1447,7 +1451,7 @@ export {};
     });
     dom.ct_bt4_5b.innerHTML = 'Import';
     dom.ct_bt4_5b.style.border = '1px lightgrey solid';
-    dom.ct_bt4_5b.addEventListener('click', function () {
+    dom.ct_bt4_5b.addEventListener('click', function (this: any) {
       if (!global.flags.impatv) {
         global.flags.impatv = true;
         dom.ct_bt4_5b_nc = addElement(document.body, 'div');
@@ -1468,7 +1472,7 @@ export {};
         dom.ct_bt4_5b_nhv.style.backgroundColor = 'grey';
         dom.ct_bt4_5b_nhv.innerHTML = 'Import As Text';
         dom.ct_bt4_5b_nhv.style.marginRight = 6
-        dom.ct_bt4_5b_nhv.addEventListener('click', function () {
+        dom.ct_bt4_5b_nhv.addEventListener('click', function (this: any) {
           if (dom.ct_bt4_5b_nbc.value == "" || dom.ct_bt4_5b_nbc.value == "?") { dom.ct_bt4_5b_nbc.value = '?'; return }
           let storage = window.localStorage;
           let t = dom.ct_bt4_5b_nbc.value;
@@ -1487,7 +1491,7 @@ export {};
         dom.ct_bt4_5b_nhx.innerHTML = '✖';
         dom.ct_bt4_5b_nhx.style.float = 'right';
         dom.ct_bt4_5b_nhx.style.backgroundColor = 'red';
-        dom.ct_bt4_5b_nhx.addEventListener('click', function () { global.flags.impatv = false; empty(dom.ct_bt4_5b_nc); document.body.removeChild(dom.ct_bt4_5b_nc) });
+        dom.ct_bt4_5b_nhx.addEventListener('click', function (this: any) { global.flags.impatv = false; empty(dom.ct_bt4_5b_nc); document.body.removeChild(dom.ct_bt4_5b_nc) });
         dom.ct_bt4_5b_nhz = addElement(dom.ct_bt4_5b_nh, 'div');
         dom.ct_bt4_5b_nhz.style.float = 'left';
         dom.ct_bt4_5b_nhz.style.backgroundColor = 'grey';
@@ -1503,15 +1507,15 @@ export {};
         dom.ct_bt4_5b_nhz2.style.width = 81;
         dom.ct_bt4_5b_nhz2.style.top = 0;
         dom.ct_bt4_5b_nhz2.style.height = 18;
-        dom.ct_bt4_5b_nhz2.addEventListener('change', function () {
+        dom.ct_bt4_5b_nhz2.addEventListener('change', function (this: any) {
           let r = new FileReader();
           r.readAsText(this.files[0]);
           let storage = window.localStorage;
-          r.addEventListener('load', function () {
-            let t = b64_to_utf8(r.result);
+          r.addEventListener('load', function (this: any) {
+            let t = b64_to_utf8(r.result as string);
             if (/savevalid/g.test(t)) {
               dom.ct_bt4_5b_nbc.value = 'Load Successful';
-              storage.setItem("v0.2a", r.result);
+              storage.setItem("v0.2a", r.result as string);
               load(r.result);
               global.flags.impatv = false;
               empty(dom.ct_bt4_5b_nc);
@@ -1597,51 +1601,51 @@ export {};
     /*dom.inv_con.addEventListener('scroll',function(){
       for(a in this.children) {if(this.children[a].offsetTop-this.scrollTop+19<0) this.children[a].style.display='none'; else dom.inv_con[a].style.display='';}
     });*/
-    dom.inv_btn_1.addEventListener('click', function () { isort(1); invbtsrst() });
-    dom.inv_btn_2.addEventListener('click', function () { isort(2); invbtsrst() });
-    dom.inv_btn_3.addEventListener('click', function () { isort(3); invbtsrst() });
-    dom.inv_btn_4.addEventListener('click', function () { isort(4); invbtsrst() });
-    dom.inv_btn_5.addEventListener('click', function () { isort(5); invbtsrst() });
-    dom.inv_btn_1_b.addEventListener('click', function () {
+    dom.inv_btn_1.addEventListener('click', function (this: any) { isort(1); invbtsrst() });
+    dom.inv_btn_2.addEventListener('click', function (this: any) { isort(2); invbtsrst() });
+    dom.inv_btn_3.addEventListener('click', function (this: any) { isort(3); invbtsrst() });
+    dom.inv_btn_4.addEventListener('click', function (this: any) { isort(4); invbtsrst() });
+    dom.inv_btn_5.addEventListener('click', function (this: any) { isort(5); invbtsrst() });
+    dom.inv_btn_1_b.addEventListener('click', function (this: any) {
       if (global.flags.sort_a === true) {
-        inv.sort(function (a, b) { if (a.name < b.name) return -1; if (a.name > b.name) return 1; return 0 });
+        inv.sort(function (a: any, b: any) { if (a.name < b.name) return -1; if (a.name > b.name) return 1; return 0 });
         global.flags.sort_a = false;
       } else {
-        inv.sort(function (a, b) { if (a.name > b.name) return -1; if (a.name < b.name) return 1; return 0 });
+        inv.sort(function (a: any, b: any) { if (a.name > b.name) return -1; if (a.name < b.name) return 1; return 0 });
         global.flags.sort_a = true;
       } iftrunkopenc(1);
       isort(global.sm)
     });
-    dom.inv_btn_2_b.addEventListener('click', function () {
+    dom.inv_btn_2_b.addEventListener('click', function (this: any) {
       if (global.flags.sort_b === true) {
-        inv.sort(function (a, b) { if (a.amount < b.amount) return -1; if (a.amount > b.amount) return 1; if (a.name < b.name) return -1; if (a.name > b.name) return 1; return 0 });
+        inv.sort(function (a: any, b: any) { if (a.amount < b.amount) return -1; if (a.amount > b.amount) return 1; if (a.name < b.name) return -1; if (a.name > b.name) return 1; return 0 });
         global.flags.sort_b = false;
       } else {
-        inv.sort(function (a, b) { if (a.amount > b.amount) return -1; if (a.amount < b.amount) return 1; if (a.name > b.name) return -1; if (a.name < b.name) return 1; return 0 });
+        inv.sort(function (a: any, b: any) { if (a.amount > b.amount) return -1; if (a.amount < b.amount) return 1; if (a.name > b.name) return -1; if (a.name < b.name) return 1; return 0 });
         global.flags.sort_b = true;
       } iftrunkopenc(1);
       isort(global.sm)
     });
-    dom.inv_btn_3_b.addEventListener('click', function () {
+    dom.inv_btn_3_b.addEventListener('click', function (this: any) {
       if (global.flags.sort_c === true) {
-        inv.sort(function (a, b) { if (a.id < b.id) return -1; if (a.id > b.id) return 1; if (a.name < b.name) return -1; if (a.name > b.name) return 1; return 0 });
+        inv.sort(function (a: any, b: any) { if (a.id < b.id) return -1; if (a.id > b.id) return 1; if (a.name < b.name) return -1; if (a.name > b.name) return 1; return 0 });
         global.flags.sort_c = false;
       } else {
-        inv.sort(function (a, b) { if (a.id > b.id) return -1; if (a.id < b.id) return 1; if (a.name > b.name) return -1; if (a.name < b.name) return 1; return 0 });
+        inv.sort(function (a: any, b: any) { if (a.id > b.id) return -1; if (a.id < b.id) return 1; if (a.name > b.name) return -1; if (a.name < b.name) return 1; return 0 });
         global.flags.sort_c = true;
       } iftrunkopenc(1);
       isort(global.sm)
     });
-    dom.d3.update = function () { this.innerHTML = ' lvl:' + you.lvl + ' \'' + you.title.name + '\''; }
-    dom.d5_1_1.update = function () { this.innerHTML = 'hp: ' + format3(you.hp.toString()) + '/' + format3(you.hpmax.toString()); dom.d5_1.style.width = 100 * you.hp / you.hpmax + '%' };
-    dom.d5_2_1.update = function () { this.innerHTML = 'exp: ' + format3(Math.round(you.exp).toString()) + '/' + format3(you.expnext_t.toString()); dom.d5_2.style.width = 100 * you.exp / you.expnext_t + '%' };
+    dom.d3.update = function (this: any) { this.innerHTML = ' lvl:' + you.lvl + ' \'' + you.title.name + '\''; }
+    dom.d5_1_1.update = function (this: any) { this.innerHTML = 'hp: ' + format3(you.hp.toString()) + '/' + format3(you.hpmax.toString()); dom.d5_1.style.width = 100 * you.hp / you.hpmax + '%' };
+    dom.d5_2_1.update = function (this: any) { this.innerHTML = 'exp: ' + format3(Math.round(you.exp).toString()) + '/' + format3(you.expnext_t.toString()); dom.d5_2.style.width = 100 * you.exp / you.expnext_t + '%' };
     dom.d5_2_1.update();
-    dom.d5_3_1.update = function () { this.innerHTML = 'energy: ' + format3(Math.round(you.sat).toString()) + '/' + format3(you.satmax.toString()) + ' eff: ' + Math.round(you.efficiency() * 100) + '%'; dom.d5_3.style.width = you.sat >= 0 ? 100 * you.sat / you.satmax + '%' : '0%' };
-    dom.d6.update = function () { this.innerHTML = 'rank: ' + format3(you.rank().toString()) };
+    dom.d5_3_1.update = function (this: any) { this.innerHTML = 'energy: ' + format3(Math.round(you.sat).toString()) + '/' + format3(you.satmax.toString()) + ' eff: ' + Math.round(you.efficiency() * 100) + '%'; dom.d5_3.style.width = you.sat >= 0 ? 100 * you.sat / you.satmax + '%' : '0%' };
+    dom.d6.update = function (this: any) { this.innerHTML = 'rank: ' + format3(you.rank().toString()) };
     dom.d6.update();
-    dom.hit_c = function () {
-      let hit_a = hit_calc(1);
-      let hit_b = hit_calc(2);
+    dom.hit_c = function (this: any) {
+      let hit_a = hit_calc(1)!;
+      let hit_b = hit_calc(2)!;
       let drk = (global.flags.isdark && !cansee());
       if (hit_a > 100) hit_a = 100;
       else if (hit_a < 0) hit_a = 0;
@@ -1657,7 +1661,7 @@ export {};
     dom.sl_s.addEventListener('click', () => { save(); let j = addElement(dom.sl, 'span'); j.style.fontSize = '.9em'; j.style.padding = '3px'; j.innerHTML = 'saved...'; fade(j); setTimeout(() => { dom.sl.removeChild(j) }, 500) });
     dom.sl_l = addElement(dom.sl, 'span', null, 'sl');
     dom.sl_l.innerHTML = 'load';
-    dom.sl_l.addEventListener('click', () => load(null, true));
+    dom.sl_l.addEventListener('click', () => load());
     dom.sl_extra = addElement(dom.sl, 'span', null, 'sl');
     dom.sl_extra.style.borderLeft = 'none';
     dom.sl_extra.innerHTML = '<span style="color:crimson">game not saved!</span>';
@@ -1673,9 +1677,9 @@ export {};
     dom.autosves.margin = 0;
     dom.autosves.style.position = 'fixed';
     if (typeof InstallTrigger === 'undefined') dom.autosves.style.bottom = 'inherit';
-    dom.autosves.addEventListener('click', function () {
+    dom.autosves.addEventListener('click', function (this: any) {
       global.flags.autosave = !global.flags.autosave;
-      if (global.flags.autosave === true) timers.autos = setInterval(function () { save(true); }, 30000);
+      if (global.flags.autosave === true) timers.autos = setInterval(function (this: any) { save(true); }, 30000);
       else clearInterval(timers.autos)
     });
     dom.sl_h = addElement(dom.sl, 'span', null, 'sl');
@@ -1709,7 +1713,7 @@ export {};
     dom.vrs.style.bottom = '1px';
     dom.vrs.style.color = 'black';
     dom.vrs.style.textDecoration = 'underline'
-    dom.vrs.addEventListener('click', function () { window.open('/changelog/changelog.html', '_blank') });
+    dom.vrs.addEventListener('click', function (this: any) { window.open('/changelog/changelog.html', '_blank') });
     dom.vrs.href = 'changelog';
     dom.sl_kill = addElement(dom.sl, 'span', null, 'sl');
     dom.sl_kill.style.position = 'fixed';
@@ -1785,7 +1789,7 @@ export {};
     global.text.cln = ['Sleeping', 'Playing', 'Catching fireflies', 'Eating', 'Fish', 'People', 'Running outside', 'Warm places', 'Water', 'Fighting', 'Meowing', 'Singing', 'Catching mice', 'Its Master', 'Climbing trees', 'Toppling objects', 'Hiding', 'Safe places', 'Rooftops', 'Sitting by the window', 'Watching others', 'Master\'s bed', 'Being petted', 'Being brushed', 'Sitting on laps', 'Other cats', 'Dogs', 'Warm weather', 'Watching stars', 'Toys', 'Meat', 'Rain', 'Snow'];
 
 
-    function chs_spec(type, x) {
+    function chs_spec(type: any, x?: any) {
       switch (type) {
         case 1: {
           clr_chs(); let c = findbyid(furn, furniture.cat.id); let br = time.minute - c.data.age;
@@ -1885,29 +1889,30 @@ export {};
     global._preic2_tmain = global._preic2.getContext('2d');
     global._preic2.width = 512;
     global._preic2.height = 512;
-    global._preig.onload = function () { global._preic_tmain.drawImage(global._preig, 0, 0); global._preic2_tmain.imageSmoothingEnabled = false;; global._preic2_tmain.drawImage(global._preig, 0, 0, 400, 400) };
+    global._preig.onload = function (this: any) { global._preic_tmain.drawImage(global._preig, 0, 0); global._preic2_tmain.imageSmoothingEnabled = false;; global._preic2_tmain.drawImage(global._preig, 0, 0, 400, 400) };
     document.body.removeChild(global._preig);
     document.body.removeChild(global._preic);
     document.body.removeChild(global._preic2);
 
 
+// @ts-ignore: constructor function
     chss.t1 = new Chs();
     chss.t1.id = 101;
-    chss.t1.sl = function () {
+    chss.t1.sl = function (this: any) {
       global.lst_loc = 101; global.flags.inside = true; d_loc('Dojo, training area');
       chs('???: Kid', true);
-      chs('"..."', false).addEventListener('click', function () {
+      chs('"..."', false).addEventListener('click', function (this: any) {
         global.time += DAY;
         appear(dom.ctr_1);
         chs('???: Quit daydreaming', true);
-        chs('"?"', false).addEventListener('click', function () {
+        chs('"?"', false).addEventListener('click', function (this: any) {
           appear(dom.d0);
           chs('???: You have training to complete', true);
-          chs('"!"', false).addEventListener('click', function () {
+          chs('"!"', false).addEventListener('click', function (this: any) {
             appear(dom.inv_ctx);
             appear(dom.d_lct);
             chs('???: Grab your stuff and get to it', true);
-            chs('"..."', false).addEventListener('click', function () { appear(dom.ct_ctrl); smove(chss.tdf, false); giveItem(wpn.stk1); giveItem(item.hrb1, 15); global.flags.aw_u = true; });
+            chs('"..."', false).addEventListener('click', function (this: any) { appear(dom.ct_ctrl); smove(chss.tdf, false); giveItem(wpn.stk1); giveItem(item.hrb1, 15); global.flags.aw_u = true; });
           });
         });
       });
@@ -1920,39 +1925,41 @@ export {};
       home.bed = _b;
     }
 
+// @ts-ignore: constructor function
     chss.tdf = new Chs();
     chss.tdf.id = 102;
-    chss.tdf.sl = function () {
+    chss.tdf.sl = function (this: any) {
       global.lst_loc = 102; global.flags.inside = true;
       clr_chs();
       if (!global.flags.dmap) { appear(dom.gmsgs); global.flags.dmap = true }
       chs('"Select the difficulty"', true);
-      if (!global.flags.tr1_win) chs('"Easiest"', false).addEventListener('click', function () {
+      if (!global.flags.tr1_win) chs('"Easiest"', false).addEventListener('click', function (this: any) {
         chs('"You are fighting training dummies"', true);
         if (!global.flags.dm1ap) { appear(dom.d1m); global.flags.dm1ap = true };
         area_init(area.trn1);
       });
-      if (!global.flags.tr2_win) chs('"Easy"', false).addEventListener('click', function () {
+      if (!global.flags.tr2_win) chs('"Easy"', false).addEventListener('click', function (this: any) {
         chs('"You are fighting training dummies"', true);
         if (!global.flags.dm1ap) { appear(dom.d1m); global.flags.dm1ap = true }
         area_init(area.trn2);
       });
-      if (!global.flags.tr3_win) chs('"Normal"', false).addEventListener('click', function () {
+      if (!global.flags.tr3_win) chs('"Normal"', false).addEventListener('click', function (this: any) {
         chs('"You are fighting training dummies"', true);
         if (!global.flags.dm1ap) { appear(dom.d1m); global.flags.dm1ap = true };
         area_init(area.trn3);
       });
     }
-    chss.tdf.onEnter = function () {
+    chss.tdf.onEnter = function (this: any) {
       area_init(area.nwh);
     }
 
+// @ts-ignore: constructor function
     chss.t2 = new Chs();
     chss.t2.id = 103;
-    chss.t2.sl = function () {
+    chss.t2.sl = function (this: any) {
       global.lst_loc = 103; global.flags.inside = true;
       chs('"Instructor: ' + select(['Good', 'Nice', 'Great', 'Excellent']) + ' ' + select(['job', 'work']) + ' kid! Here\'s the reward for completing the course"', true, 'lime');
-      chs('"->"', false).addEventListener('click', function () {
+      chs('"->"', false).addEventListener('click', function (this: any) {
         if (global.flags.tr1_win === true && !global.flags.rwd1) { global.flags.rwd1 = true; giveItem(item.appl, 4); giveItem(item.hrb1, 5); smove(chss.tdf); }
         else if (global.flags.tr2_win === true && !global.flags.rwd2) { global.flags.rwd2 = true; giveItem(item.brd, 2); giveItem(item.hrb1, 5); giveItem(eqp.sndl); smove(chss.tdf); }
         else if (global.flags.tr3_win === true && !global.flags.rwd3) { global.flags.rwd3 = true; let itm = giveItem(eqp.vst); itm.dp *= .7; if (global.flags.m_un === true) giveItem(item.cp, 10); }
@@ -1961,6 +1968,7 @@ export {};
       });
     }
 
+// @ts-ignore: constructor function
     chss.t3 = new Chs();
     chss.t3.id = 104;
     chss.t3.sl = () => {
@@ -2185,10 +2193,11 @@ export {};
         }
       }
     }
-    chss.t3.onEnter = function () {
+    chss.t3.onEnter = function (this: any) {
       area_init(area.nwh);
     }
 
+// @ts-ignore: constructor function
     chss.djinf = new Chs();
     chss.djinf.id = 160;
     chss.djinf.sl = () => {
@@ -2235,6 +2244,7 @@ export {};
       });
     }
 
+// @ts-ignore: constructor function
     chss.trne1e1 = new Chs();
     chss.trne1e1.id = 124;
     chss.trne1e1.sl = () => {
@@ -2247,6 +2257,7 @@ export {};
       });
     }
 
+// @ts-ignore: constructor function
     chss.trne2e1 = new Chs();
     chss.trne2e1.id = 125;
     chss.trne2e1.sl = () => {
@@ -2260,6 +2271,7 @@ export {};
       });
     }
 
+// @ts-ignore: constructor function
     chss.trne3e1 = new Chs();
     chss.trne3e1.id = 126;
     chss.trne3e1.sl = () => {
@@ -2272,6 +2284,7 @@ export {};
       });
     }
 
+// @ts-ignore: constructor function
     chss.trne4e1 = new Chs();
     chss.trne4e1.id = 162;
     chss.trne4e1.sl = () => {
@@ -2283,6 +2296,7 @@ export {};
       });
     }
 
+// @ts-ignore: constructor function
     chss.return1 = new Chs();
     chss.return1.id = 105;
     chss.return1.sl = () => {
@@ -2295,6 +2309,7 @@ export {};
       });
     }
 
+// @ts-ignore: constructor function
     chss.frstn1main = new Chs();
     chss.frstn1main.id = 113;
     chss.frstn1main.sl = () => {
@@ -2314,6 +2329,7 @@ export {};
       });
     }
 
+// @ts-ignore: constructor function
     chss.frstn1a3 = new Chs();
     chss.frstn1a3.id = 130;
     addtosector(sector.forest1, chss.frstn1a3)
@@ -2324,10 +2340,11 @@ export {};
         smove(chss.frstn1main);
       });
     }
-    chss.frstn1a3.onEnter = function () {
+    chss.frstn1a3.onEnter = function (this: any) {
       area_init(area.frstn1a3);
     }
 
+// @ts-ignore: constructor function
     chss.frstn1a4 = new Chs();
     chss.frstn1a4.id = 161;
     addtosector(sector.forest1, chss.frstn1a4)
@@ -2363,10 +2380,10 @@ export {};
         })
       }
     }
-    chss.frstn1a4.onEnter = function () {
+    chss.frstn1a4.onEnter = function (this: any) {
       if (area.frstn1a4.size > 0) area_init(area.frstn1a4);
     }
-    chss.frstn1a4.onLeave = function () {
+    chss.frstn1a4.onLeave = function (this: any) {
       area.frstn1a4.size = rand(5) + 20;
     }
     chss.frstn1a4.data = { scoutm: 600, scout: 0, scoutf: false, gets: [false], gotmod: 0 }
@@ -2374,9 +2391,10 @@ export {};
       { c: .009, f: () => { msg('You discover a pouch half-etched into the ground and covered by a rock. It probably belonged to the corpse', 'lime'); giveItem(item.mnblm, 3); chss.frstn1a4.data.gets[0] = true }, exp: 35 },
       { c: .0005, cond: () => { if (getHour() >= 0 && getHour() <= 3 && getLunarPhase() === 0) return true }, f: () => { msg('You found Moonbloom!', 'lime'); giveItem(item.mnblm); }, exp: 10 },
     ]
-    chss.frstn1a4.onScout = function () { scoutGeneric(this) }
+    chss.frstn1a4.onScout = function (this: any) { scoutGeneric(this) }
 
 
+// @ts-ignore: constructor function
     chss.frstn1b1 = new Chs();
     chss.frstn1b1.id = 118;
     chss.frstn1b1.sl = () => {
@@ -2406,7 +2424,7 @@ export {};
         });
         return;
       }
-      if (!global.flags.frstn1b1int) { chs('<span style="color:limegreen">Head Hunter Yamato</span>: Hm? Your face is unfamiliar. Might be your first time around here I take it? These are the Western Woods, or simply the western part of the forest. Spots here are very meek and mild on danger and resources, it is perfect for newbies like you. You are free to come and hunt as much as you like. Consider doing some of the available jobs while you\'re at it. Won\'t pay much, but you can be of help to the people.', true, 'orange', null, null, null, '.9em'); global.flags.frstn1b1int = true } else global.flags.wkrtndrt && random() > .5 ? chs(select(['You sight the hunter thinking deeply about something', 'You hear mumbling']), true) : chs(select(['You see a variety of bows and other hunting tools arranged on the table and hanging from the walls', 'You notice head hunter maintaining his hunting gear', 'The smell of beef jerky assaults your nose']), true);
+      if (!global.flags.frstn1b1int) { chs('<span style="color:limegreen">Head Hunter Yamato</span>: Hm? Your face is unfamiliar. Might be your first time around here I take it? These are the Western Woods, or simply the western part of the forest. Spots here are very meek and mild on danger and resources, it is perfect for newbies like you. You are free to come and hunt as much as you like. Consider doing some of the available jobs while you\'re at it. Won\'t pay much, but you can be of help to the people.', true, 'orange', undefined, undefined, undefined, '.9em'); global.flags.frstn1b1int = true } else global.flags.wkrtndrt && random() > .5 ? chs(select(['You sight the hunter thinking deeply about something', 'You hear mumbling']), true) : chs(select(['You see a variety of bows and other hunting tools arranged on the table and hanging from the walls', 'You notice head hunter maintaining his hunting gear', 'The smell of beef jerky assaults your nose']), true);
       chs('"!Ask about the jobs"', false, 'yellow').addEventListener('click', () => {
         smove(chss.frstn1b1j, false);
       });
@@ -2444,6 +2462,7 @@ export {};
       }
     }
 
+// @ts-ignore: constructor function
     chss.htrtch0 = new Chs();
     chss.htrtch0.id = 164;
     chss.htrtch0.sl = () => {
@@ -2457,6 +2476,7 @@ export {};
       chs('"<= Return"', false).addEventListener('click', () => { smove(chss.frstn1b1, false) });
     }
 
+// @ts-ignore: constructor function
     chss.htrtch1 = new Chs();
     chss.htrtch1.id = 163;
     chss.htrtch1.sl = () => {
@@ -2490,6 +2510,7 @@ export {};
     }
 
 
+// @ts-ignore: constructor function
     chss.frstn1b1s = new Chs();
     chss.frstn1b1s.id = 121;
     chss.frstn1b1s.sl = () => {
@@ -2525,6 +2546,7 @@ export {};
       });
     }
 
+// @ts-ignore: constructor function
     chss.frstn1b1j = new Chs();
     chss.frstn1b1j.id = 119;
     chss.frstn1b1j.sl = () => {
@@ -2641,6 +2663,7 @@ export {};
       });
     }
 
+// @ts-ignore: constructor function
     chss.frstn1a1 = new Chs();
     chss.frstn1a1.id = 114;
     addtosector(sector.forest1, chss.frstn1a1)
@@ -2651,10 +2674,11 @@ export {};
         smove(chss.frstn1main);
       });
     }
-    chss.frstn1a1.onEnter = function () {
+    chss.frstn1a1.onEnter = function (this: any) {
       area_init(area.frstn1a2);
     }
 
+// @ts-ignore: constructor function
     chss.frstn1a2 = new Chs();
     chss.frstn1a2.id = 115;
     addtosector(sector.forest1, chss.frstn1a2)
@@ -2675,9 +2699,10 @@ export {};
     chss.frstn1a2.scout = [
       { c: .008, f: () => { msg('You uncover a hidden passage!', 'lime'); global.flags.frstnscgr = true; smove(chss.frstn1a4); chss.frstn1a2.data.gets[0] = true }, exp: 66 },
     ]
-    chss.frstn1a2.onScout = function () { scoutGeneric(this) }
+    chss.frstn1a2.onScout = function (this: any) { scoutGeneric(this) }
 
 
+// @ts-ignore: constructor function
     chss.frstn2a1 = new Chs();
     chss.frstn2a1.id = 120;
     addtosector(sector.forest1, chss.frstn2a1)
@@ -2688,10 +2713,11 @@ export {};
         smove(chss.frstn1main);
       });
     }
-    chss.frstn2a1.onEnter = function () {
+    chss.frstn2a1.onEnter = function (this: any) {
       area_init(area.frstn2a2);
     }
 
+// @ts-ignore: constructor function
     chss.frstn3main = new Chs();
     chss.frstn3main.id = 168;
     chss.frstn3main.sl = () => {
@@ -2705,6 +2731,7 @@ export {};
       });
     }
 
+// @ts-ignore: constructor function
     chss.frstn9a1m = new Chs();
     chss.frstn9a1m.id = 169;
     chss.frstn9a1m.sl = () => {
@@ -2714,11 +2741,12 @@ export {};
         smove(chss.frstn3main);
       });
     }
-    chss.frstn9a1m.onEnter = function () {
+    chss.frstn9a1m.onEnter = function (this: any) {
       area_init(area.frstn9a1);
     }
 
 
+// @ts-ignore: constructor function
     chss.lsmain1 = new Chs();
     chss.lsmain1.id = 106;
     addtosector(sector.vcent, chss.lsmain1);
@@ -2787,6 +2815,7 @@ export {};
       }
     }
 
+// @ts-ignore: constructor function
     chss.mrktvg1 = new Chs();
     chss.mrktvg1.id = 127;
     addtosector(sector.vmain1, chss.mrktvg1)
@@ -2832,16 +2861,17 @@ export {};
         smove(chss.lsmain1);
       });
     }
-    chss.mrktvg1.onEnter = function () {
-      if (!timers.mktwawa1) timers.mktwawa1 = setInterval(function () {
+    chss.mrktvg1.onEnter = function (this: any) {
+      if (!timers.mktwawa1) timers.mktwawa1 = setInterval(function (this: any) {
         if (random() < .1) { if (!global.text.mktwawa1) global.text.mktwawa1 = ['<small>"...for that price? Are you cr..."</small>', '<small>"...no, go by yourself..."</small>', '<small>"...right, I\'ll take ' + rand(15) + ', put them in..."</small>', '<small>"...is this really?..."</small>', '<small>"...never seen this thing..."</small>', '<small>"...is this real?..."</small>', '<small>"...yeah, he said it\'s there..."</small>', '<small>"...mama!!..."</small>', '<small>"...right, coming next evening. You should probably p..."</small>', '<small>"...stop pushing!..."</small>', '<small>"...what a scam..."</small>', '<small>"...this isn\'t even fresh!..."</small>', '<small>"...why is this so expensive?..."</small>', '<small>"...I won\'t lower it further!..."</small>', '<small>"...I\'ll come back, just wait for a minute..."</small>', '<small>"...break time!..."</small>', '<small>"...who said so? Gotta be a lie..."</small>', '<small>"...whatever, I\'m not buying..."</small>', '<small>"...turn right and then..."</small>', '<small>"...check for yourself then..."</small>', '<small>"...she\'ll return shortly. As for you..."</small>', '<small>"...deal!..."</small>', '<small>"...try a different one..."</small>', '<small>"...buy it! You won\'t regret it!..."</small>', '<small>"Oh no! I dropped it in the forest!..."</small>']; msg(select(global.text.mktwawa1), 'rgb(' + rand(255) + ',' + rand(255) + ',' + rand(255) + ')') }
       }, 1000);
     }
-    chss.mrktvg1.onLeave = function () {
+    chss.mrktvg1.onLeave = function (this: any) {
       clearInterval(timers.mktwawa1);
       delete timers.mktwawa1
     }
 
+// @ts-ignore: constructor function
     chss.jbgd1 = new Chs();
     chss.jbgd1.id = 159;
     chss.jbgd1.sl = () => {
@@ -2858,7 +2888,7 @@ export {};
         msg(select(['Right...', 'This is boring', '*whistle*', 'Ah...', '...', 'Yeah...', 'Mhm...', 'Yawn..']), 'lightgrey')
       });
     }
-    chss.jbgd1.onEnter = function () {
+    chss.jbgd1.onEnter = function (this: any) {
       timers.job1t = setInterval(() => {
         if (getHour() >= 20) {
           msg('Lookout Guard: Work\'s done for today, you have performed your duty just well and earned your salary, take it. You are advised to go straight home after you check out');
@@ -2878,11 +2908,12 @@ export {};
         }
       }, 1000)
     }
-    chss.jbgd1.onLeave = function () {
+    chss.jbgd1.onLeave = function (this: any) {
       clearInterval(timers.job1t);
       global.flags.work = false;
     }
 
+// @ts-ignore: constructor function
     chss.fdwrg1qt = new Chs();
     chss.fdwrg1qt.id = 165;
     chss.fdwrg1qt.sl = () => {
@@ -2894,6 +2925,7 @@ export {};
     }
 
 
+// @ts-ignore: constructor function
     chss.grc1 = new Chs();
     chss.grc1.id = 128;
     chss.grc1.effectors = [{ e: effector.shop }];
@@ -2904,8 +2936,8 @@ export {};
         chs_spec(4, vendor.grc1)
         vendor.grc1.restocked = false;
         clearInterval(timers.vndrstkchk);
-        timers.vndrstkchk = setInterval(function () { if (vendor.grc1.restocked === true) { clearInterval(timers.vndrstkchk); vendor.grc1.restocked = false; msg('We\'re restocking, step out for a minute'); smove(chss.mrktvg1, false); } });
-        chs('"<= Return"', false, '', '', null, null, null, true).addEventListener('click', () => {
+        timers.vndrstkchk = setInterval(function (this: any) { if (vendor.grc1.restocked === true) { clearInterval(timers.vndrstkchk); vendor.grc1.restocked = false; msg('We\'re restocking, step out for a minute'); smove(chss.mrktvg1, false); } });
+        chs('"<= Return"', false, '', '', undefined, undefined, undefined, true).addEventListener('click', () => {
           smove(chss.grc1, false);
           clearInterval(timers.vndrstkchk);
         });
@@ -2918,9 +2950,10 @@ export {};
     chss.grc1.scout = [
       { c: .01, f: () => { msg(select(['You notice a coin on the ground!', 'You pick a coin from under the counter', 'You snatch a coin while no one is looking']), 'lime'); giveItem(select([item.cp, item.cn, item.cq, item.cd])); chss.grc1.data.gets[0] = true }, exp: 5 },
     ]
-    chss.grc1.onScout = function () { scoutGeneric(this) }
+    chss.grc1.onScout = function (this: any) { scoutGeneric(this) }
 
 
+// @ts-ignore: constructor function
     chss.gens1 = new Chs();
     chss.gens1.id = 129;
     chss.gens1.effectors = [{ e: effector.shop }];
@@ -2931,8 +2964,8 @@ export {};
         chs_spec(4, vendor.gens1)
         vendor.gens1.restocked = false;
         clearInterval(timers.vndrstkchk);
-        timers.vndrstkchk = setInterval(function () { if (vendor.gens1.restocked === true) { clearInterval(timers.vndrstkchk); vendor.gens1.restocked = false; msg('We\'re restocking, step out for a minute'); smove(chss.mrktvg1, false); } });
-        chs('"<= Return"', false, '', '', null, null, null, true).addEventListener('click', () => {
+        timers.vndrstkchk = setInterval(function (this: any) { if (vendor.gens1.restocked === true) { clearInterval(timers.vndrstkchk); vendor.gens1.restocked = false; msg('We\'re restocking, step out for a minute'); smove(chss.mrktvg1, false); } });
+        chs('"<= Return"', false, '', '', undefined, undefined, undefined, true).addEventListener('click', () => {
           smove(chss.gens1, false);
           clearInterval(timers.vndrstkchk);
         });
@@ -2975,8 +3008,9 @@ export {};
     chss.gens1.scout = [
       { c: .01, f: () => { msg(select(['You notice a coin on the ground!', 'You pick a coin from under the counter', 'You snatch a coin while no one is looking']), 'lime'); giveItem(select([item.cp, item.cn, item.cq, item.cd])); chss.gens1.data.gets[0] = true }, exp: 5 },
     ]
-    chss.gens1.onScout = function () { scoutGeneric(this) }
+    chss.gens1.onScout = function (this: any) { scoutGeneric(this) }
 
+// @ts-ignore: constructor function
     chss.pha1 = new Chs();
     chss.pha1.id = 166;
     chss.pha1.effectors = [{ e: effector.shop }];
@@ -2987,8 +3021,8 @@ export {};
         chs_spec(4, vendor.pha1)
         vendor.pha1.restocked = false;
         clearInterval(timers.vndrstkchk);
-        timers.vndrstkchk = setInterval(function () { if (vendor.pha1.restocked === true) { clearInterval(timers.vndrstkchk); vendor.pha1.restocked = false; msg('We\'re restocking, step out for a minute'); smove(chss.mrktvg1, false); } });
-        chs('"<= Return"', false, '', '', null, null, null, true).addEventListener('click', () => {
+        timers.vndrstkchk = setInterval(function (this: any) { if (vendor.pha1.restocked === true) { clearInterval(timers.vndrstkchk); vendor.pha1.restocked = false; msg('We\'re restocking, step out for a minute'); smove(chss.mrktvg1, false); } });
+        chs('"<= Return"', false, '', '', undefined, undefined, undefined, true).addEventListener('click', () => {
           smove(chss.pha1, false);
           clearInterval(timers.vndrstkchk);
         });
@@ -3034,9 +3068,10 @@ export {};
     chss.pha1.scout = [
       { c: .01, f: () => { msg(select(['You notice a coin on the ground!', 'You pick a coin from under the counter', 'You snatch a coin while no one is looking']), 'lime'); giveItem(select([item.cp, item.cn, item.cq, item.cd])); chss.pha1.data.gets[0] = true }, exp: 5 },
     ]
-    chss.pha1.onScout = function () { scoutGeneric(this) }
+    chss.pha1.onScout = function (this: any) { scoutGeneric(this) }
 
 
+// @ts-ignore: constructor function
     chss.vndr1 = new Chs();
     chss.vndr1.id = 116;
     chss.vndr1.effectors = [{ e: effector.shop }];
@@ -3046,13 +3081,13 @@ export {};
       d_loc('Village Center, Street Food Stand'); global.lst_loc = 116;
       vendor.stvr1.restocked = false;
       clearInterval(timers.vndrstkchk);
-      timers.vndrstkchk = setInterval(function () { if (vendor.stvr1.restocked === true) { clearInterval(timers.vndrstkchk); vendor.stvr1.restocked = false; msg('We\'re restocking, step out for a minute'); smove(chss.lsmain1, false); } });
+      timers.vndrstkchk = setInterval(function (this: any) { if (vendor.stvr1.restocked === true) { clearInterval(timers.vndrstkchk); vendor.stvr1.restocked = false; msg('We\'re restocking, step out for a minute'); smove(chss.lsmain1, false); } });
       let hi = 'Street Merchant Ran: Welcome! What would you like?';
       dom.vndr1 = chs(hi, true);
       for (let ost = 0; ost < vendor.stvr1.stock.length; ost++) {
         let itm = vendor.stvr1.stock[ost];
         dom.vndrs = chs(itm[0].name + ' <small style="color:rgb(255, 116, 63)">' + itm[2] + '●</small> x' + itm[1], false);
-        dom.vndrs.addEventListener('click', function () {
+        dom.vndrs.addEventListener('click', function (this: any) {
           if (you.wealth - itm[2] >= 0) { spend(itm[2]); mf(-itm[2], 1); m_update(); giveItem(itm[0]); global.stat.buyt++; if (--itm[1] === 0) { clr_chs(vendor.stvr1.stock.indexOf(itm) + 1); vendor.stvr1.stock.splice(vendor.stvr1.stock.indexOf(itm), 1); empty(global.dscr); global.dscr.style.display = 'none' } else this.innerHTML = itm[0].name + ' <small style="color:rgb(255, 116, 63)">' + itm[2] + '●</small> x' + itm[1]; } else { clearTimeout(timers.shopcant); dom.vndr1.innerHTML = 'Sorry you can\'t afford that!'; timers.shopcant = setTimeout(() => { dom.vndr1.innerHTML = hi }, 1000) }
         });
         addDesc(dom.vndrs, itm[0]);
@@ -3063,6 +3098,7 @@ export {};
       });
     }
 
+// @ts-ignore: constructor function
     chss.vndrkd1 = new Chs();
     chss.vndrkd1.id = 123;
     chss.vndrkd1.shop = true;
@@ -3072,13 +3108,13 @@ export {};
       d_loc('Village Center, Child Trader'); global.lst_loc = 123;
       vendor.kid1.restocked = false;
       clearInterval(timers.vndrstkchk);
-      timers.vndrstkchk = setInterval(function () { if (vendor.kid1.restocked === true) { clearInterval(timers.vndrstkchk); vendor.kid1.restocked = false; msg('You, step out for a moment, I\'m getting new stuff'); smove(chss.lsmain1, false); } });
+      timers.vndrstkchk = setInterval(function (this: any) { if (vendor.kid1.restocked === true) { clearInterval(timers.vndrstkchk); vendor.kid1.restocked = false; msg('You, step out for a moment, I\'m getting new stuff'); smove(chss.lsmain1, false); } });
       let hi = 'Hey, I\'ve got some good stuff for you';
       dom.vndr1 = chs(hi, true);
       for (let ost = 0; ost < vendor.kid1.stock.length; ost++) {
         let itm = vendor.kid1.stock[ost];
         dom.vndrs = chs(itm[0].name + ' <small style="color:rgb(255, 116, 63)">' + itm[2] + '●</small> x' + itm[1], false);
-        dom.vndrs.addEventListener('click', function () {
+        dom.vndrs.addEventListener('click', function (this: any) {
           if (you.wealth - itm[2] >= 0) { spend(itm[2]); mf(-itm[2], 1); m_update(); giveItem(itm[0]); global.stat.buyt++; if (--itm[1] === 0) { clr_chs(vendor.kid1.stock.indexOf(itm) + 1); vendor.kid1.stock.splice(vendor.kid1.stock.indexOf(itm), 1); empty(global.dscr); global.dscr.style.display = 'none' } else this.innerHTML = itm[0].name + ' <small style="color:rgb(255, 116, 63)">' + itm[2] + '●</small> x' + itm[1]; } else { clearTimeout(timers.shopcant); dom.vndr1.innerHTML = 'Bring money next time'; timers.shopcant = setTimeout(() => { dom.vndr1.innerHTML = hi }, 1000) }
         });
         addDesc(dom.vndrs, itm[0]);
@@ -3137,8 +3173,9 @@ export {};
         smove(chss.lsmain1, false);
       });
     }
-    chss.vndrkd1.onLeave = function () { clearInterval(timers.vndrstkchk) }
+    chss.vndrkd1.onLeave = function (this: any) { clearInterval(timers.vndrstkchk) }
 
+// @ts-ignore: constructor function
     chss.tstauto = new Chs();
     chss.tstauto.id = -1;
     chss.tstauto.sl = () => {
@@ -3158,6 +3195,7 @@ export {};
       });
     }
 
+// @ts-ignore: constructor function
     chss.tst = new Chs();
     chss.tst.id = -1;
     chss.tst.sl = () => {
@@ -3171,6 +3209,7 @@ export {};
       });
     }
 
+// @ts-ignore: constructor function
     chss.cat1 = new Chs();
     chss.cat1.id = 107;
     addtosector(sector.vcent, chss.cat1);
@@ -3178,8 +3217,8 @@ export {};
     chss.cat1.sl = () => {
       d_loc('Village Center, Cat'); //global.lst_loc = 107;
       let w = !global.stat.cat_c ? chs('There is a cat.', true) : chs('There is a cat. Pets: ' + global.stat.cat_c, true);
-      chs('"Pet the cat"', false).addEventListener('click', x => {
-        let a = addElement(document.body, 'span');
+      chs('"Pet the cat"', false).addEventListener('click', (x: any) => {
+        let a: any = addElement(document.body, 'span');
         a.style.pointerEvents = 'none';
         a.style.position = 'absolute';
         a.style.color = 'lime';
@@ -3261,6 +3300,7 @@ export {};
 
     global.text.mbrdtt = ['"If you do not work your hours daily, you will not get any dessert"', '"Do your job well and you will be rewarded"', 'There is a report of a missing cat', 'There is a section of useless gossip', 'This is an  advertisement for fresh vegetables', 'This is an advertisement for dojo membership', 'This is an advertisement for wooden furniture', 'This is an advertisement for dried meat', 'This is an advertisement for joining the militia', '"The Hunter Association offers you a large variety of boxes full of smoked meat and furs"', 'This is an advertisement for herbal medicine', 'This is an advertisement for wine kegs', 'This is an advertisement for farming equipment', 'This is an advertisement for carpentery supplies', '"All the children must return home by 8PM!"', 'This is an advertisement for smithing orders', 'This is an advertisement for cooking courses', 'This is an advertisement for bottled water', 'This is an advertisement for knitting advices', 'This is an advertisement for cleaning services', 'This is a warning to stay away from fortune tellers', 'This is an advertisement for woven straw baskets', 'This is an advertisement for hemp clothing']
 
+// @ts-ignore: constructor function
     chss.mbrd = new Chs();
     chss.mbrd.id = 108;
     addtosector(sector.vcent, chss.mbrd);
@@ -3310,6 +3350,7 @@ export {};
       });
     }
 
+// @ts-ignore: constructor function
     chss.xpgdqt1 = new Chs();
     chss.xpgdqt1.id = 167;
     addtosector(sector.vcent, chss.xpgdqt1);
@@ -3350,9 +3391,10 @@ export {};
       });
     }
 
+// @ts-ignore: constructor function
     chss.trd = new Chs();
     chss.trd.id = 109;
-    chss.trd.sl = function (b, x) {
+    chss.trd.sl = function (b: any, x: any) {
       global.flags.rdng = true; let rd = skl.rdg.use(); b.data.timep = b.data.timep || 0;
       b.cmax = (b.data.time * (1 / (1 + (rd) / 10)) / you.mods.rdgrt) - (1 / (1 + (rd) / 10) - 1) / you.mods.rdgrt;
       let c = b.cmax - b.data.timep;
@@ -3387,6 +3429,7 @@ export {};
       });
     }
 
+// @ts-ignore: constructor function
     chss.home = new Chs();
     chss.home.id = 111;
     addtosector(sector.home, chss.home);
@@ -3452,7 +3495,7 @@ export {};
           chs_spec(1);
           if (tcat.data.named === false) chs('"Rename"', false).addEventListener('click', () => {
             chs('Give your cat a name!<br><small>(can\'t rename later!)</small>', true);
-            let inp = addElement(dom.ctr_2, 'input', 'chs');
+            let inp = addElement(dom.ctr_2, 'input', 'chs') as HTMLInputElement;
             inp.style.textAlign = 'center';
             inp.style.color = 'white';
             inp.style.fontFamily = 'MS Gothic';
@@ -3465,8 +3508,8 @@ export {};
             });
           });
           dom.ctspcl = chs('"Pet ' + tcat.data.name + '"', false);
-          dom.ctspcl.addEventListener('click', x => {
-            let a = addElement(document.body, 'span');
+          dom.ctspcl.addEventListener('click', (x: any) => {
+            let a: any = addElement(document.body, 'span');
             global.stat.cat_c++;
             for (let x in global.cptchk) global.cptchk[x]()
             a.style.pointerEvents = 'none';
@@ -3510,11 +3553,12 @@ export {};
       { c: .006, f: () => { msg('Oh, you forgot you had this around', 'orange'); giveItem(wpn.kiknif); chss.home.data.gets[0] = true; }, exp: 30 },
       { c: .01, f: () => { msg('There was a coin stuck between the floor boards', 'orange'); giveItem(item.lcn); chss.home.data.gets[1] = true; }, exp: 3 },
     ]
-    chss.home.onScout = function () { scoutGeneric(this) }
+    chss.home.onScout = function (this: any) { scoutGeneric(this) }
 
     global.text.bssel = ['Ack! There\'s dust and cobweb everywhere in this place', 'Spiderweb lands on your face as you enter', 'Various broken garbage is littered around', 'You step on some glass shards and crush them']
     global.text.bsseldark = ['Ack! Something touches you from the darkness', 'You step in and something crunches underneath', 'You feel like something moved in front of you', 'You touched cobweb and felt gross']
 
+// @ts-ignore: constructor function
     chss.bsmnthm1 = new Chs();
     chss.bsmnthm1.id = 158;
     addtosector(sector.home, chss.bsmnthm1);
@@ -3574,7 +3618,7 @@ export {};
     chss.bsmnthm1.data = { scoutm: 900, scout: 0, scoutf: false, gets: [false, false], gotmod: 0 }
     chss.bsmnthm1.scout = [
       { c: .01, f: () => { msg('You found a pouch with some coins!', 'lime'); giveItem(item.cp, rand(1, 5)); giveItem(item.cn, rand(1, 5)); giveItem(item.cq, rand(1, 5)); chss.bsmnthm1.data.gets[0] = true; }, exp: 40 },
-      { c: .03, f: () => { msg('You found a pile of scattered firewood, some logs seem useful but others have rotted completely. You decide to grab them anyway'); giveItem(item.fwd1, rand(2, 4)); giveItem(item.wdc, (45, 90)); chss.bsmnthm1.data.gets[1] = true; }, exp: 10 },
+      { c: .03, f: () => { msg('You found a pile of scattered firewood, some logs seem useful but others have rotted completely. You decide to grab them anyway'); giveItem(item.fwd1, rand(2, 4)); giveItem(item.wdc, rand(45, 90)); chss.bsmnthm1.data.gets[1] = true; }, exp: 10 },
       {
         c: .03, f: () => {
           chs('Among the rabble and remains of collapsed bookshelves you decide to confirm if anything survived. Rotten and soaked in basement juices books seems unsalvagable, bookshelves as well, you can\'t even tell if they are made of wood anymore. One of the books was incased into a small mound formed by rocks and sand, it seems surprisingly fine', true);
@@ -3582,8 +3626,9 @@ export {};
         }, exp: 15
       },
     ];
-    chss.bsmnthm1.onScout = function () { scoutGeneric(this) }
+    chss.bsmnthm1.onScout = function (this: any) { scoutGeneric(this) }
 
+// @ts-ignore: constructor function
     chss.hbed = new Chs();
     chss.hbed.id = 112;
     addtosector(sector.home, chss.hbed)
@@ -3595,7 +3640,7 @@ export {};
         for (let i in chss) if (chss[i].id === global.home_loc) smove(chss[i]);
       });
     }
-    chss.hbed.onStay = function () {
+    chss.hbed.onStay = function (this: any) {
       let hpr = (skl.sleep.use(home.bed) + (global.flags.catget ? 5 : 1) + 1) << 0;
       if (!effect.fei1.active && you.hp < you.hpmax) { you.hp + hpr <= you.hpmax ? you.hp += hpr : you.hp = you.hpmax; dom.d5_1_1.update() }
       // if(global.current_z.id!==-666&&random()<.00001){
@@ -3606,17 +3651,18 @@ export {};
       //   ta.size = 1; z_bake(ta); area_init(ta); dom.d7m.update(); msg('Your sins are crawling up on you','red')
       //}
     }
-    chss.hbed.onEnter = function () {
+    chss.hbed.onEnter = function (this: any) {
       global.flags.sleepmode = true;
       if (effect.slep.active === false) giveEff(you, effect.slep);
       global.timescale = 5;
     }
-    chss.hbed.onLeave = function () {
+    chss.hbed.onLeave = function (this: any) {
       global.flags.sleepmode = false;
       global.timescale = 1;
       removeEff(effect.slep);
     }
 
+// @ts-ignore: constructor function
     chss.ofrplc = new Chs();
     chss.ofrplc.id = 117;
     addtosector(sector.home, chss.ofrplc)
@@ -3637,14 +3683,14 @@ export {};
       else if (fire.data.fuel >= 300 && fire.data.fuel <= 540) textra0 = global.text.frplcfrextra[2];
       else if (fire.data.fuel >= 540) textra0 = global.text.frplcfrextra[3];
       dom.frpls = chs('Comfy fireplace. ' + (select(global.text.fplcextra) + '<br>' + textra0), true);
-      if (!global.flags.fplcgtwd) chs('"Retrieve spare firewood. You have a feeling you\'ll need it"', false).addEventListener('click', function () {
+      if (!global.flags.fplcgtwd) chs('"Retrieve spare firewood. You have a feeling you\'ll need it"', false).addEventListener('click', function (this: any) {
         msg("You have some lying around nearby", 'orange');
         global.flags.fplcgtwd = true;
         giveItem(item.fwd1, 3);
         smove(chss.ofrplc, false);
       });
       for (let a in its) {
-        chs('"' + (select(["Toss ", "Throw "])) + its[a][1] + ' into the fireplace"', false).addEventListener('click', function () {
+        chs('"' + (select(["Toss ", "Throw "])) + its[a][1] + ' into the fireplace"', false).addEventListener('click', function (this: any) {
           its[a][0].amount--;
           fire.data.fuel = fire.data.fuel + its[a][2] > its[a][2] ? its[a][2] : fire.data.fuel + its[a][2];
           if (fire.data.fuel <= its[a][2]) dom.frpls.innerHTML = global.text.frplcfrextra[0]
@@ -3667,6 +3713,7 @@ export {};
       });
     }
 
+// @ts-ignore: constructor function
     chss.sboxhm = new Chs();
     chss.sboxhm.id = 131;
     addtosector(sector.home, chss.sboxhm)
@@ -3674,7 +3721,7 @@ export {};
       d_loc('Your Home, Storage Box');
       //  chs('"Your botomless storage container, full of your belongings"',true)
       chs_spec(3, home.trunk)
-      chs('"<= Step Away"', false, '', '', null, null, null, true).addEventListener('click', () => {
+      chs('"<= Step Away"', false, '', '', undefined, undefined, undefined, true).addEventListener('click', () => {
         smove(chss.home, false);
       });
     }
@@ -3683,6 +3730,7 @@ export {};
       'Something growls in the distance', 'Damp stagnant air of the underground makes it difficult to breathe', 'You hear bones', 'You notice something move in the darkness',
       'You feel sinister aura', 'Aged walls have something written on them, but you are unable to decipher what it is', 'Bone bits are littered on the ground', 'Old rotting cloth is hanging from the walls', 'Something rusty sparkes from below', 'old stale air fills your lungs'];
 
+// @ts-ignore: constructor function
     chss.catamn = new Chs();
     chss.catamn.id = 132;
     addtosector(sector.cata1, chss.catamn);
@@ -3697,6 +3745,7 @@ export {};
       });
     }
 
+// @ts-ignore: constructor function
     chss.cata1 = new Chs();
     chss.cata1.id = 133;
     addtosector(sector.cata1, chss.cata1)
@@ -3714,6 +3763,7 @@ export {};
       });
     }
 
+// @ts-ignore: constructor function
     chss.cata2 = new Chs();
     chss.cata2.id = 134;
     addtosector(sector.cata1, chss.cata2)
@@ -3728,6 +3778,7 @@ export {};
       });
     }
 
+// @ts-ignore: constructor function
     chss.cata3 = new Chs();
     chss.cata3.id = 135;
     addtosector(sector.cata1, chss.cata3)
@@ -3742,6 +3793,7 @@ export {};
       });
     }
 
+// @ts-ignore: constructor function
     chss.cata4 = new Chs();
     chss.cata4.id = 136;
     addtosector(sector.cata1, chss.cata4)
@@ -3756,6 +3808,7 @@ export {};
       });
     }
 
+// @ts-ignore: constructor function
     chss.cata5 = new Chs();
     chss.cata5.id = 137;
     addtosector(sector.cata1, chss.cata5)
@@ -3773,6 +3826,7 @@ export {};
       });
     }
 
+// @ts-ignore: constructor function
     chss.cata6 = new Chs();
     chss.cata6.id = 138;
     addtosector(sector.cata1, chss.cata6)
@@ -3787,6 +3841,7 @@ export {};
       });
     }
 
+// @ts-ignore: constructor function
     chss.cata7 = new Chs();
     chss.cata7.id = 139;
     addtosector(sector.cata1, chss.cata7)
@@ -3801,6 +3856,7 @@ export {};
       });
     }
 
+// @ts-ignore: constructor function
     chss.cata8 = new Chs();
     chss.cata8.id = 140;
     addtosector(sector.cata1, chss.cata8)
@@ -3815,6 +3871,7 @@ export {};
       });
     }
 
+// @ts-ignore: constructor function
     chss.cata9 = new Chs();
     chss.cata9.id = 141;
     addtosector(sector.cata1, chss.cata9)
@@ -3829,6 +3886,7 @@ export {};
       });
     }
 
+// @ts-ignore: constructor function
     chss.cata10 = new Chs();
     chss.cata10.id = 142;
     addtosector(sector.cata1, chss.cata10)
@@ -3843,6 +3901,7 @@ export {};
       });
     }
 
+// @ts-ignore: constructor function
     chss.cata11 = new Chs();
     chss.cata11.id = 143;
     addtosector(sector.cata1, chss.cata11)
@@ -3857,6 +3916,7 @@ export {};
       });
     }
 
+// @ts-ignore: constructor function
     chss.cata12 = new Chs();
     chss.cata12.id = 144;
     addtosector(sector.cata1, chss.cata12)
@@ -3871,6 +3931,7 @@ export {};
       });
     }
 
+// @ts-ignore: constructor function
     chss.cata13 = new Chs();
     chss.cata13.id = 145;
     addtosector(sector.cata1, chss.cata13)
@@ -3885,6 +3946,7 @@ export {};
       });
     }
 
+// @ts-ignore: constructor function
     chss.cata14 = new Chs();
     chss.cata14.id = 146;
     addtosector(sector.cata1, chss.cata14)
@@ -3899,6 +3961,7 @@ export {};
       });
     }
 
+// @ts-ignore: constructor function
     chss.cata15 = new Chs();
     chss.cata15.id = 147;
     addtosector(sector.cata1, chss.cata15)
@@ -3913,6 +3976,7 @@ export {};
       });
     }
 
+// @ts-ignore: constructor function
     chss.cata16 = new Chs();
     chss.cata16.id = 148;
     addtosector(sector.cata1, chss.cata16)
@@ -3927,6 +3991,7 @@ export {};
       });
     }
 
+// @ts-ignore: constructor function
     chss.cata17 = new Chs();
     chss.cata17.id = 149;
     addtosector(sector.cata1, chss.cata17)
@@ -3941,6 +4006,7 @@ export {};
       });
     }
 
+// @ts-ignore: constructor function
     chss.cata18 = new Chs();
     chss.cata18.id = 150;
     addtosector(sector.cata1, chss.cata18)
@@ -3955,6 +4021,7 @@ export {};
       });
     }
 
+// @ts-ignore: constructor function
     chss.cata19 = new Chs();
     chss.cata19.id = 151;
     addtosector(sector.cata1, chss.cata19)
@@ -3969,6 +4036,7 @@ export {};
       });
     }
 
+// @ts-ignore: constructor function
     chss.cata20 = new Chs();
     chss.cata20.id = 152;
     addtosector(sector.cata1, chss.cata20)
@@ -3983,6 +4051,7 @@ export {};
       });
     }
 
+// @ts-ignore: constructor function
     chss.cata21 = new Chs();
     chss.cata21.id = 153;
     addtosector(sector.cata1, chss.cata21)
@@ -3997,6 +4066,7 @@ export {};
       });
     }
 
+// @ts-ignore: constructor function
     chss.cata22 = new Chs();
     chss.cata22.id = 154;
     addtosector(sector.cata1, chss.cata22)
@@ -4011,6 +4081,7 @@ export {};
       });
     }
 
+// @ts-ignore: constructor function
     chss.cata23 = new Chs();
     chss.cata23.id = 155;
     addtosector(sector.cata1, chss.cata23)
@@ -4025,6 +4096,7 @@ export {};
       });
     }
 
+// @ts-ignore: constructor function
     chss.cata24 = new Chs();
     chss.cata24.id = 156;
     addtosector(sector.cata1, chss.cata24)
@@ -4039,6 +4111,7 @@ export {};
       });
     }
 
+// @ts-ignore: constructor function
     chss.cata25 = new Chs();
     chss.cata25.id = 157;
     addtosector(sector.cata1, chss.cata25)
@@ -4057,7 +4130,7 @@ export {};
 
     // format3() imported from ./utils
 
-    function d_loc(text) {
+    function d_loc(text: any) {
       let txt;
       if (global.flags.inside === true) txt = '|' + text + '|';
       else txt = text
@@ -4079,32 +4152,32 @@ export {};
     // ontick — moved to systems/loop.ts
 
     (function update() {
-      setTimeout(function () { update(); ontick(); }, 1000 / global.fps);
+      setTimeout(function (this: any) { update(); ontick(); }, 1000 / global.fps);
     })();
 
     // select() imported from ./utils
 
-    function nograd(s) {
+    function nograd(s: any) {
       if (s === true) {
-        for (let i = 0; i < document.getElementsByClassName('d2').length; i++) document.getElementsByClassName('d2')[i].style.background = '#0e574b';
-        for (let i = 0; i < document.getElementsByClassName('d3').length; i++) document.getElementsByClassName('d3')[i].style.background = '#0e574b';
-        for (let i = 0; i < document.getElementsByClassName('hp').length; i++) document.getElementsByClassName('hp')[i].style.background = '#91e6b6';
-        for (let i = 0; i < document.getElementsByClassName('exp').length; i++) document.getElementsByClassName('exp')[i].style.background = '#ea9c83';
-        for (let i = 0; i < document.getElementsByClassName('en').length; i++) document.getElementsByClassName('en')[i].style.background = '#4f3170';
+        for (let i = 0; i < document.getElementsByClassName('d2').length; i++) (document.getElementsByClassName('d2')[i] as HTMLElement).style.background = '#0e574b';
+        for (let i = 0; i < document.getElementsByClassName('d3').length; i++) (document.getElementsByClassName('d3')[i] as HTMLElement).style.background = '#0e574b';
+        for (let i = 0; i < document.getElementsByClassName('hp').length; i++) (document.getElementsByClassName('hp')[i] as HTMLElement).style.background = '#91e6b6';
+        for (let i = 0; i < document.getElementsByClassName('exp').length; i++) (document.getElementsByClassName('exp')[i] as HTMLElement).style.background = '#ea9c83';
+        for (let i = 0; i < document.getElementsByClassName('en').length; i++) (document.getElementsByClassName('en')[i] as HTMLElement).style.background = '#4f3170';
         dom.inv_ctx.style.background = dom.inv_control_b.style.background = dom.ctrmg.style.background = '#00224e';
         dom.d7m_c.style.background = '#392c72';
-        for (let i = 0; i < document.styleSheets[0].rules.length; i++) if (document.styleSheets[0].rules[i].selectorText == ".opt_c:hover, .ct_bts:hover, .chs:hover, .bts:hover, .bbts:hover, .bts_b:hover, .inv_slot:hover, .bts_m:hover") document.styleSheets[0].rules[i].style.background = '#0e574b';
+        for (let i = 0; i < document.styleSheets[0].rules.length; i++) if ((document.styleSheets[0].rules[i] as any).selectorText == ".opt_c:hover, .ct_bts:hover, .chs:hover, .bts:hover, .bbts:hover, .bts_b:hover, .inv_slot:hover, .bts_m:hover") (document.styleSheets[0].rules[i] as any).style.background = '#0e574b';
         global.flags.grd_s = false;
       }
       else {
-        for (let i = 0; i < document.getElementsByClassName('d2').length; i++) document.getElementsByClassName('d2')[i].style.background = 'linear-gradient(90deg,rgb(25,129,108),rgb(1,41,39))';
-        for (let i = 0; i < document.getElementsByClassName('d3').length; i++) document.getElementsByClassName('d3')[i].style.background = 'linear-gradient(90deg,rgb(25,129,108),rgb(1,41,39))';
-        for (let i = 0; i < document.getElementsByClassName('hp').length; i++) document.getElementsByClassName('hp')[i].style.background = 'linear-gradient(90deg,rgb(254,239,157),rgb(45,223,206))';
-        for (let i = 0; i < document.getElementsByClassName('exp').length; i++) document.getElementsByClassName('exp')[i].style.background = 'linear-gradient(90deg,rgb(254,239,157),rgb(219,119,158))';
-        for (let i = 0; i < document.getElementsByClassName('en').length; i++) document.getElementsByClassName('en')[i].style.background = 'linear-gradient(270deg,rgb(124,68,112),rgb(29,29,113))';
+        for (let i = 0; i < document.getElementsByClassName('d2').length; i++) (document.getElementsByClassName('d2')[i] as HTMLElement).style.background = 'linear-gradient(90deg,rgb(25,129,108),rgb(1,41,39))';
+        for (let i = 0; i < document.getElementsByClassName('d3').length; i++) (document.getElementsByClassName('d3')[i] as HTMLElement).style.background = 'linear-gradient(90deg,rgb(25,129,108),rgb(1,41,39))';
+        for (let i = 0; i < document.getElementsByClassName('hp').length; i++) (document.getElementsByClassName('hp')[i] as HTMLElement).style.background = 'linear-gradient(90deg,rgb(254,239,157),rgb(45,223,206))';
+        for (let i = 0; i < document.getElementsByClassName('exp').length; i++) (document.getElementsByClassName('exp')[i] as HTMLElement).style.background = 'linear-gradient(90deg,rgb(254,239,157),rgb(219,119,158))';
+        for (let i = 0; i < document.getElementsByClassName('en').length; i++) (document.getElementsByClassName('en')[i] as HTMLElement).style.background = 'linear-gradient(270deg,rgb(124,68,112),rgb(29,29,113))';
         dom.inv_ctx.style.background = dom.inv_control_b.style.background = dom.ctrmg.style.background = 'linear-gradient(90deg,rgb(0,5,51),rgb(0,65,107))';
         dom.d7m_c.style.background = 'linear-gradient(270deg,rgb(84,28,112),rgb(29,62,116))';
-        for (let i = 0; i < document.styleSheets[0].rules.length; i++) if (document.styleSheets[0].rules[i].selectorText == ".opt_c:hover, .ct_bts:hover, .chs:hover, .bts:hover, .bbts:hover, .bts_b:hover, .inv_slot:hover, .bts_m:hover") document.styleSheets[0].rules[i].style.background = 'linear-gradient(90deg,rgb(25,129,108),rgb(1,41,39))';
+        for (let i = 0; i < document.styleSheets[0].rules.length; i++) if ((document.styleSheets[0].rules[i] as any).selectorText == ".opt_c:hover, .ct_bts:hover, .chs:hover, .bts:hover, .bbts:hover, .bts_b:hover, .inv_slot:hover, .bts_m:hover") (document.styleSheets[0].rules[i] as any).style.background = 'linear-gradient(90deg,rgb(25,129,108),rgb(1,41,39))';
         global.flags.grd_s = true;
       }
     }
@@ -4162,19 +4235,19 @@ export {};
       }
     }
 
-    function draggable(root, target) {
-      root.addEventListener('mousedown', function (x) { global.ctarget = target; this.boxoffsetx = x.clientX - parseInt(target.style.left); this.boxoffsety = x.clientY - parseInt(target.style.top); global.croot = root; document.body.addEventListener('mousemove', draggablemove) });
-      root.addEventListener('mouseup', function (x) { global.ctarget = null; global.croot = null; document.body.removeEventListener('mousemove', draggablemove) });
+    function draggable(root: any, target: any) {
+      root.addEventListener('mousedown', function (this: any, x: any) { global.ctarget = target; this.boxoffsetx = x.clientX - parseInt(target.style.left); this.boxoffsety = x.clientY - parseInt(target.style.top); global.croot = root; document.body.addEventListener('mousemove', draggablemove) });
+      root.addEventListener('mouseup', function (x: any) { global.ctarget = null; global.croot = null; document.body.removeEventListener('mousemove', draggablemove) });
     }
 
-    function draggablemove(x) {
+    function draggablemove(x: any) {
       if (global.ctarget) { global.ctarget.style.left = x.clientX - global.croot.boxoffsetx; global.ctarget.style.top = x.clientY - global.croot.boxoffsety }
     }
 
     function _dbgman() { let g = 0; for (let a in chss) if (chss[a].id > g) g = chss[a].id; return g; }
-    function _dbgitc() { let g = 0; for (let a in item) g++; for (let a in acc) g++; for (let a in sld) g++; for (a in eqp) g++; for (let a in wpn) g++; return g; }
-    function _dbgspawn(arr, times) {
-      let result = [];
+    function _dbgitc() { let g = 0; for (let a in item) g++; for (let a in acc) g++; for (let a in sld) g++; for (let a in eqp) g++; for (let a in wpn) g++; return g; }
+    function _dbgspawn(arr: any, times: any) {
+      let result: any[] = [];
       for (let g = 0; g < times; g++) {
         for (let a in arr) {
           let t = 0;
@@ -4183,7 +4256,7 @@ export {};
               if (result[b].item.id === arr[a].item.id) { result[b].am++; break }
               if (++t === result.length) result.push({ item: arr[a].item, am: 1 });
             }
-            if (!result.length > 0) result.push({ item: arr[a].item, am: 1 });
+            if (result.length === 0) result.push({ item: arr[a].item, am: 1 });
           }
         }
       }
@@ -4192,7 +4265,7 @@ export {};
       console.log('::END::')
     }
 
-    function _dbggibberish(w, l) {
+    function _dbggibberish(w: any, l: any) {
       let a = new String();
       for (let b = 0; b < w; b++) {
         let lr = rand(1, l);
@@ -4202,7 +4275,7 @@ export {};
       } return a;
     }
 
-    function giveall(what) {
+    function giveall(what: any) {
       /*switch(what){
         case item: for(let a in item) giveItem(item[a]);
         break;
@@ -4222,34 +4295,36 @@ export {};
     // scan, scanbyid, scanbyuid, find, findbyid imported from ./utils
     // findbest, findworst imported from ./utils
 
-    function addPlan(plan, data) {
+    function addPlan(plan: any, data?: any) {
       let p = deepCopy(plan);
       if (data) p.data = data;
       plans[plan.id].push(p);
     }
 
     /////plans/////
-    function Plan() {
+    function Plan(this: any) {
       this.id = 0;
-      this.f = function () { };
+      this.f = function (this: any) { };
       this.data = {};
-      this.destroy = function () { plans.splice(plans.indexOf(this), 1) }
+      this.destroy = function (this: any) { plans.splice(plans.indexOf(this), 1) }
     }
 
+// @ts-ignore: constructor function
     planner.test = new Plan();
     planner.test.id = 1;
     planner.test.data = { date: 42 };
-    planner.test.f = function () {
+    planner.test.f = function (this: any) {
       if (time.minute >= this.data.date) {
         msg('done');
         this.destroy();
       }
     }
 
+// @ts-ignore: constructor function
     planner.chkrot = new Plan();
     planner.chkrot.id = 1;
     planner.chkrot.data = { items: [] };
-    planner.chkrot.f = function () {
+    planner.chkrot.f = function (this: any) {
       for (let a in planner.chkrot.data.items) {
         let itm = planner.chkrot.data.items[a];
         let wmod = 1;
@@ -4269,10 +4344,11 @@ export {};
       }
     };
 
+// @ts-ignore: constructor function
     planner.imorph = new Plan();
     planner.imorph.id = 1;
     planner.imorph.data = { items: [] };
-    planner.imorph.f = function () {
+    planner.imorph.f = function (this: any) {
       for (let a in planner.imorph.data.items) {
         planner.imorph.data.items[a].alttype = planner.imorph.data.items[a].alttype || 1;
         switch (planner.imorph.data.items[a].alttype) {
@@ -4293,9 +4369,10 @@ export {};
       }
     }; addPlan(planner.imorph)
 
+// @ts-ignore: constructor function
     planner.cchk = new Plan();
     planner.cchk.id = 1;
-    planner.cchk.f = function () {
+    planner.cchk.f = function (this: any) {
       for (let a in container.home_strg.c) {
         if (container.home_strg.c[a].item.rot) {
           let itm = container.home_strg.c[a].item;
@@ -4310,7 +4387,7 @@ export {};
             if (container.home_strg.c[a].am <= 0) removeFromContainer(container.home_strg, container.home_strg.c[a]);
             if (itm.onChange) {
               let nitm = itm.onChange(am, true);
-              let citm = false;
+              let citm: any = false;
               for (let b in container.home_strg.c) if (container.home_strg.c[b].item.id === nitm[0].id) { citm = container.home_strg.c[b]; break }
               if (citm) citm.am += nitm[1];
               else addToContainer(container.home_strg, nitm[0], nitm[1]);
@@ -4320,9 +4397,10 @@ export {};
       }
     }; addPlan(planner.cchk)
 
+// @ts-ignore: constructor function
     planner.itmwear = new Plan();
     planner.itmwear.data = { items: [] };
-    planner.itmwear.f = function () {
+    planner.itmwear.f = function (this: any) {
       for (let a in planner.itmwear.data.items) {
         let itm = planner.itmwear.data.items[a];
         if (itm.dp - itm.degrade < 0) itm.dp = 0;
@@ -4335,21 +4413,24 @@ export {};
       }
     }; addPlan(planner.itmwear)
 
+// @ts-ignore: constructor function
     planner.djfood = new Plan();
     planner.djfood.id = 1;
-    planner.djfood.f = function () {
+    planner.djfood.f = function (this: any) {
       if (getDay(1) === "Sunday") global.flags.djmlet = true;
     }; addPlan(planner.djfood)
 
+// @ts-ignore: constructor function
     planner.areafillw = new Plan();
     planner.areafillw.id = 2;
-    planner.areafillw.f = function () {
+    planner.areafillw.f = function (this: any) {
       area.hmbsmnt.size += rand(5, 15);
     }; addPlan(planner.areafillw)
 
+// @ts-ignore: constructor function
     planner.zrespawn = new Plan();
     planner.zrespawn.id = 1;
-    planner.zrespawn.f = function () {
+    planner.zrespawn.f = function (this: any) {
       if (random() <= .03 && global.flags.catget) {
         let things = [{ t: item.dmice1, c: .25 }, { t: item.dbdc1, c: .25 }, { t: item.d6, c: .05 }, { t: item.mcps, c: .2 }, { t: item.pcn, c: .2 }, { t: item.cp, c: .4 }]
         for (let a in things) if (random() <= things[a].c) sector.home.data.ctlt.push(things[a].t.id)
@@ -4374,7 +4455,7 @@ export {};
     test.maps.mapdata[0].c = ['white', 'grey', 'red', 'ghostwhite'];
     test.maps.mapdata[0].d = ['corridor', 'wall', 'secret', 'secret enter'];
 
-    function _drawmap(mapdata) {
+    function _drawmap(mapdata: any) {
       if (test.maps.gui) {
         empty(test.maps.gui);
         document.body.removeChild(test.maps.gui);
@@ -4405,11 +4486,11 @@ export {};
       for (let y in mapdata.data) {
         for (let x in mapdata.data[y]) {
           tmain.fillStyle = mapdata.c[mapdata.data[y][x]];
-          tmain.fillRect(x * size, y * size, size, size);
+          tmain.fillRect((x as any) * size, (y as any) * size, size, size);
         }
       }
       // mapdata.guicache = tmain.getImageData(0,0,canvas.width,canvas.height);
-      test.maps.gui.addEventListener('mousemove', xy => {
+      test.maps.gui.addEventListener('mousemove', (xy: any) => {
         //tmain.clearRect(0,0,canvas.height,canvas.width)
         tmaino.clearRect(0, 0, test.maps.guioverlay.height, test.maps.guioverlay.width)
         //tmain.putImageData(mapdata.guicache,0,0)
@@ -4487,7 +4568,7 @@ export {};
       test.mguidk.style.float = 'right';
       test.mguidk.style.color = 'black'
       test.mguidk.style.backgroundColor = 'crimson';
-      test.mguidk.addEventListener('click', function () { empty(test.mguic); document.body.removeChild(test.mguic); delete test.mguic });
+      test.mguidk.addEventListener('click', function (this: any) { empty(test.mguic); document.body.removeChild(test.mguic); delete test.mguic });
       test.mgui = addElement(test.mguic, 'canvas');
       test.mgui.offsetx = 0;
       test.mgui.offsety = 0;
@@ -4506,7 +4587,7 @@ export {};
       tmain.c = canvas;
       tmain._bg = tmain.getImageData(0, 0, WIDTH, HEIGHT);
       _renderm(tmain)
-      test.mgui.addEventListener('mousemove', xy => {
+      test.mgui.addEventListener('mousemove', (xy: any) => {
         for (let a in mastery) {
           let m = mastery[a];
           if (xy.offsetX > m.x - 3 && xy.offsetX < m.x + 53 && xy.offsetY > m.y - 3 && xy.offsetY < m.y + 53) {
@@ -4527,12 +4608,12 @@ export {};
           _renderm(tmain);
         }
       })
-      test.mgui.addEventListener('click', xy => {
+      test.mgui.addEventListener('click', (xy: any) => {
         if (test.mgui.selected && test.mgui.selected.data.lvl < test.mgui.selected.limit && test.mgui.selected.have) { test.mgui.selected.data.lvl++; test.mgui.selected.onlevel(); you.stat_r(); dom.d5_1_1m.update(); dom.d5_3_1.update(); global.dscr.children[1].innerHTML = test.mgui.selected.desc(); _renderm(tmain, true); }
       })
     }
 
-    function _renderm(tmain, forced) {
+    function _renderm(tmain: any, forced?: any) {
       tmain.clearRect(0, 0, tmain.c.width, tmain.c.height);
       tmain.putImageData(tmain._bg, 0, 0)
       let ofx = test.mgui.offsetx;

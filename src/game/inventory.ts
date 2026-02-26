@@ -114,7 +114,7 @@ import { kill } from './utils-game';
       if (obj.slot) kill(obj)
     }
 
-    function rendertrunkitem(root: any, item: any, ni?: any) {
+    export function rendertrunkitem(root: any, item: any, ni?: any) {
       if (!ni) { ni = new Object(); ni.right = false }; let trunk = global.cchest;
       dom.invp1_con = addElement(root, 'div', null, 'tracked-item');
       ni.right === true ? dom.invp1_con.style.borderLeft = '1px rgb(204, 68, 68) solid' : dom.invp1_con.style.borderRight = '1px rgb(204, 68, 68) solid';
@@ -284,7 +284,7 @@ import { kill } from './utils-game';
       return r;
     }
 
-    function removeFromContainer(cont: any, item: any, find?: any) {
+    export function removeFromContainer(cont: any, item: any, find?: any) {
       if (find) {
         for (let a in cont.c) if (cont.c.indexOf(cont.c[a]) === cont.c.indexOf(item)) {
           cont.c.splice(cont.c.indexOf(item), 1)

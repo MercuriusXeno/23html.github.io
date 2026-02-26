@@ -38,7 +38,7 @@ export function format3(a: string): string {
   } return a;
 }
 
-export function col(txt: string, c?: string, bc?: string): string {
+export function col(txt: any, c?: string, bc?: string): string {
   let cc;
   let bcc;
   if (c) cc = 'color:' + c + ';';

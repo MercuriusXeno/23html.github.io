@@ -4,13 +4,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**Proto23** is a browser-based text RPG game, deployed as a GitHub Pages site (`23html.github.io`). The game is split across `src/main.ts` (~4,600 lines), `src/game/` (8 modules, ~1,260 lines), `src/ui/` (9 modules, ~1,540 lines), `src/data/` (13 modules, ~5,870 lines), and `src/systems/` (4 modules, ~1,710 lines), bundled via esbuild to `dist/bundle.js`, which `index.html` loads. CSS is in `styles.css`.
+**Proto23** is a browser-based text RPG game, deployed as a GitHub Pages site (`23html.github.io`). The game is split across `src/main.ts` (~4,670 lines), `src/game/` (8 modules, ~1,260 lines), `src/ui/` (9 modules, ~1,540 lines), `src/data/` (13 modules, ~5,870 lines), and `src/systems/` (4 modules, ~1,710 lines), bundled via esbuild to `dist/bundle.js`, which `index.html` loads. CSS is in `styles.css`.
 
 ## Architecture
 
 ### File structure
 - `index.html` — shell HTML, loads `styles.css` and `dist/bundle.js`
-- `src/main.ts` — core game logic, DOM setup, location scripts (~4,600 lines)
+- `src/main.ts` — core game logic, DOM setup, location scripts (~4,670 lines)
 - `src/game/` — 8 game logic modules (~1,260 lines):
   - `utils-game.ts` — Game utility functions (`formatw`, `cansee`, `kill`, `roll`, `canRead`)
   - `progression.ts` — XP/leveling (`giveExp`, `giveSkExp`, `giveCrExp`, `giveTitle`, `giveRcp`, `lvlup`, `giveAction`)
@@ -49,7 +49,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `ctst.png` — sprite sheet, `laugh6.wav` — sound effect, `favicon.ico`
 
 ### Refactoring artifacts
-- `ROADMAP.md` — 4-phase refactoring plan with checkboxes (Phases 1-3 complete, Phase 4.1-4.2 complete, 4.6 in progress, 4.3+ future)
+- `ROADMAP.md` — 4-phase refactoring plan with checkboxes (Phases 1-3 complete, Phase 4.1-4.2 complete, 4.6 near-complete, 4.3+ future)
 - `CLASS_MAP.md` — CSS class rename mapping (cryptic → semantic, pending application)
 - `frontend-refactoring.md` — CSS design token and component class analysis (future work)
 
@@ -108,7 +108,7 @@ Copper-based: `SILVER = 100`, `GOLD = 10000`. Use `giveWealth()` / `spend()`.
 ### Build commands
 - `npm run build` — bundle `src/main.ts` → `dist/bundle.js` (esbuild, IIFE format)
 - `npm run watch` — rebuild on file changes
-- `npm run typecheck` — run `tsc --noEmit` for type checking (0 errors; only `main.ts` and `random.ts` use `@ts-nocheck`)
+- `npm run typecheck` — run `tsc --noEmit` for type checking (0 errors; only `random.ts` uses `@ts-nocheck` — vendored MersenneTwister)
 
 ### Workflow
 Edit files in `src/`, run `npm run build` (or use `npm run watch`), refresh `index.html` in browser. In VSCode, press F5 to build and launch in Chrome. The game uses `localStorage` for saves — clearing it resets progress. The game targets modern browsers and uses MS Gothic font.

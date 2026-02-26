@@ -2,7 +2,7 @@ import { addElement, empty } from '../dom-utils';
 import { dom, global, you, timers, skl } from '../state';
 import { giveSkExp } from '../game/progression';
 
-    export function chs(txt: string, f?: any, c?: string, bc?: string, iconx?: number, icony?: number, size?: string, ignore?: any, slimsize?: string) {
+    export function chs(txt: string, f?: any, c?: any, bc?: any, iconx?: number, icony?: number, size?: any, ignore?: any, slimsize?: string) {
       if (f === true) { clr_chs(); dom.ch_1 = addElement(dom.ctr_2, 'div', 'chs'); dom.ch_1.innerHTML = txt; }
       else { dom.ch_1 = addElement(dom.ctr_2, 'div', null, 'chs'); dom.ch_1.innerHTML = txt; }
       if (!!iconx) { dom.ch_1.insertBefore(icon(dom.ch_1, iconx, icony!), dom.ch_1.firstChild); }
