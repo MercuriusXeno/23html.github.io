@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { random, rand } from '../random';
 import { copy, deepCopy, scan, scanbyid } from '../utils';
 import { addElement, empty } from '../dom-utils';
@@ -11,7 +10,7 @@ import { renderFurniture } from '../ui/panels';
 import { giveSkExp } from './progression';
 import { kill } from './utils-game';
 
-    export function giveItem(obj, am?, ignore?, flag?) {
+    export function giveItem(obj: any, am?: any, ignore?: any, flag?: any) {
       am = am || 1;
       if (!!obj.slot) {
         let nitm; for (let p = 0; p < am; p++) {
@@ -41,7 +40,7 @@ import { kill } from './utils-game';
           global.spnew++; clearInterval(timers.nsblk); timers.nsblk = setInterval(function () {
             let a = document.querySelectorAll('.blinks');
             let g = a.length;
-            for (let i = 0; i < g; i++) a[i].style.opacity = global.vsnew / 10;
+            for (let i = 0; i < g; i++) (a[i] as HTMLElement).style.opacity = '' + global.vsnew / 10;
             if (--global.vsnew < 0) global.vsnew = 10;
           }, 100)
         }
@@ -74,7 +73,7 @@ import { kill } from './utils-game';
       return obj;
     }
 
-    export function listen_k(e) {
+    export function listen_k(e: any) {
       global.keytarget = e.target;
       if (e.which === 46) {
         for (let obj in global.shortcuts) if (global.shortcuts[obj][0] === global.keyobj.data.skey) global.shortcuts.splice(global.shortcuts.indexOf(global.shortcuts[obj]), 1)
@@ -91,7 +90,7 @@ import { kill } from './utils-game';
       }
     }
 
-    export function removeItem(obj, flag) {
+    export function removeItem(obj: any, flag?: any) {
       if (obj.slot) if (wearing(obj)) unequip(obj)
       if (obj.data.skey) {
         for (let s in global.shortcuts) if (obj.data.skey === global.shortcuts[s][0]) { global.shortcuts.splice(global.shortcuts.indexOf(obj.data.skey), 1); continue };
@@ -115,7 +114,7 @@ import { kill } from './utils-game';
       if (obj.slot) kill(obj)
     }
 
-    function rendertrunkitem(root, item, ni) {
+    function rendertrunkitem(root: any, item: any, ni?: any) {
       if (!ni) { ni = new Object(); ni.right = false }; let trunk = global.cchest;
       dom.invp1_con = addElement(root, 'div', null, 'tracked-item');
       ni.right === true ? dom.invp1_con.style.borderLeft = '1px rgb(204, 68, 68) solid' : dom.invp1_con.style.borderRight = '1px rgb(204, 68, 68) solid';
@@ -127,9 +126,9 @@ import { kill } from './utils-game';
       } else addDesc(dom.invp1_con, item);
       dom.invp1_s = addElement(dom.invp1_con, 'small');
       dom.invp2_s = addElement(dom.invp1_con, 'small');
-      dom.invp1_s.style.marginLeft = ni.right ? 23 : 3;
+      dom.invp1_s.style.marginLeft = ni.right ? '23px' : '3px';
       dom.invp1_s.innerHTML = item.name;
-      dom.invp2_s.style.right = ni.right ? 3 : 20;
+      dom.invp2_s.style.right = ni.right ? '3px' : '20px';
       dom.invp2_s.innerHTML = !item.slot ? ('x' + (ni.right === true ? ni.nit.am : item.amount)) : '';
       dom.invp2_s.style.position = 'absolute';
       if (!!item.c || !!item.bc) {
@@ -147,7 +146,7 @@ import { kill } from './utils-game';
         }
       }
 
-      dom.invp1_con.addEventListener('mouseenter', function () {
+      dom.invp1_con.addEventListener('mouseenter', function (this: any) {
         dom.invp1_op2 = addElement(this, 'small', null, ni.right ? 'track-move-left' : 'track-move-right');
         dom.invp1_op2.innerHTML = ni.right ? '<<' : '>>';
         dom.invp1_op2.addEventListener('mouseenter', function () { global.flags.rtcrutch = true });
@@ -195,11 +194,11 @@ import { kill } from './utils-game';
           } iftrunkopen();
         });
       });
-      dom.invp1_con.addEventListener('mouseleave', function () {
+      dom.invp1_con.addEventListener('mouseleave', function (this: any) {
         empty(this.children[2]);
         this.removeChild(this.children[2]);
       });
-      dom.invp1_con.addEventListener('click', function () {
+      dom.invp1_con.addEventListener('click', function (this: any) {
         if (global.flags.rtcrutch === true) { this.children[0].click(); return } else {
           let scann = false; let titem;
           if (ni.right === false) {
@@ -240,11 +239,11 @@ import { kill } from './utils-game';
       });
     }
 
-    function updateTrunkItem(root, idx, item, am) {
+    function updateTrunkItem(root: any, idx: any, item: any, am: any) {
       if (root.children[idx]) root.children[idx].children[1].innerHTML = item.slot ? '' : 'x' + am;
     }
 
-    export function updateTrunkLeftItem(item, kill) {
+    export function updateTrunkLeftItem(item: any, kill?: any) {
       if (global.menuo === 3) {
         for (let a in inv) if ((inv[a].data.uid && inv[a].data.uid === item.data.uid) || (inv[a].id === item.id)) {
           if (kill) dom.invp1.removeChild(dom.invp1.children[inv.indexOf(inv[a])]);
@@ -255,7 +254,7 @@ import { kill } from './utils-game';
       }
     }
 
-    export function iftrunkopen(side) {
+    export function iftrunkopen(side?: any) {
       if (global.menuo === 3) {
         let trunk = global.cchest;
         if (!side || side === 1) for (let obj in inv) updateTrunkItem(dom.invp1, obj, inv[obj], inv[obj].amount);
@@ -265,7 +264,7 @@ import { kill } from './utils-game';
       }
     }
 
-    export function iftrunkopenc(side) {
+    export function iftrunkopenc(side?: any) {
       if (global.menuo === 3) {
         let trunk = global.cchest;
         if (!side || side === 1) { empty(dom.invp1); for (let obj in inv) rendertrunkitem(dom.invp1, inv[obj]); }
@@ -275,7 +274,7 @@ import { kill } from './utils-game';
       }
     }
 
-    export function addToContainer(cont, thing, am, data) {
+    export function addToContainer(cont: any, thing: any, am?: any, data?: any) {
       let it = thing;
       if (thing.slot) it = deepCopy(thing);
       let r = { item: it, am: am || 1, data: data || thing.data, dp: thing.slot ? thing.dp : 0 }
@@ -285,7 +284,7 @@ import { kill } from './utils-game';
       return r;
     }
 
-    function removeFromContainer(cont, item, find) {
+    function removeFromContainer(cont: any, item: any, find?: any) {
       if (find) {
         for (let a in cont.c) if (cont.c.indexOf(cont.c[a]) === cont.c.indexOf(item)) {
           cont.c.splice(cont.c.indexOf(item), 1)
@@ -295,7 +294,7 @@ import { kill } from './utils-game';
       else cont.c.splice(cont.c.indexOf(item), 1);
     }
 
-    export function dropC(crt, t) {
+    export function dropC(crt: any, t?: any) {
       t = t || 1;
       for (let j in crt.drop) if (!crt.drop[j].cond || (!!crt.drop[j].cond && crt.drop[j].cond() === true)) if (random() < crt.drop[j].chance + (crt.drop[j].chance / 100 * you.luck)) {
         giveItem(crt.drop[j].item, !!crt.drop[j].min ? rand(crt.drop[j].min, crt.drop[j].max) : t); if (you.mods.lkdbt > 0 && random() < you.mods.lkdbt) giveItem(crt.drop[j].item);
@@ -307,10 +306,10 @@ import { kill } from './utils-game';
       if (crt.rnk < 22) { let ar = (crt.rnk - 1) / 3 << 0; for (let a in global.rdrop[ar]) if (random() < global.rdrop[ar][a].c + (global.rdrop[ar][a].c / 100 * you.luck)) giveItem(global.rdrop[ar][a].item, t) }
     }
 
-    export function wearing(itm) { for (let obj in you.eqp) if (itm.data.uid === you.eqp[obj].data.uid && you.eqp[obj].id !== 10000) return true }
-    export function wearingany(itm) { for (let obj in you.eqp) if (itm.id === you.eqp[obj].id && you.eqp[obj].id !== 10000) return true }
+    export function wearing(itm: any) { for (let obj in you.eqp) if (itm.data.uid === you.eqp[obj].data.uid && you.eqp[obj].id !== 10000) return true }
+    export function wearingany(itm: any) { for (let obj in you.eqp) if (itm.id === you.eqp[obj].id && you.eqp[obj].id !== 10000) return true }
 
-    export function giveFurniture(frt, l, show) {
+    export function giveFurniture(frt: any, l?: any, show?: any) {
       let frn = l === true ? copy(frt) : frt;
       if (show !== false) msg('Furniture Acquired: <span style="color:orange">"' + frt.name + '"</span>', 'yellow', frt, 9);
       if (scanbyid(furn, frn.id)) frn.data.amount++;

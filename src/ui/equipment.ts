@@ -1,11 +1,10 @@
-// @ts-nocheck
 import { dom, global, you, eqp, planner } from '../state';
 import { giveEff, removeEff } from './effects';
 import { update_d } from './stats';
 import { msg } from './messages';
 import { isort } from './inventory';
 
-    export function equip(w, flags) {
+    export function equip(w: any, flags?: any) {
       if (!w.data || !w.data.uid) return;
       if (w.data.uid === you.eqp[w.slot - 1].data.uid) { unequip(w); if (w.twoh === true) { dom.d7_slot_2.innerHTML = 'Shield'; dom.d7_slot_2.style.color = 'grey' }; isort(global.sm) } else {
         if (w.req && !w.req() && !global.flags.loadstate) { msg("Requirenments not met!", 'red'); return }
@@ -60,7 +59,7 @@ import { isort } from './inventory';
       }
     }
 
-    export function unequip(w, flags) {
+    export function unequip(w: any, flags?: any) {
       if (!w.data || !w.data.uid) return;
       if (w.eff.length > 0) for (let k = 0; k < w.eff.length; k++) { w.eff[k].un(); removeEff(w.eff[k]) }
       w.onuneq();

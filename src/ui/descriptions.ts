@@ -1,10 +1,9 @@
-// @ts-nocheck
 import { addElement, empty } from '../dom-utils';
 import { col } from '../utils';
 import { dom, global, you, timers, furn, skl } from '../state';
 import { giveSkExp } from '../game/progression';
 
-    export function dscr(c, what, type, ttl, dsc, id) {
+    export function dscr(c: any, what: any, type?: any, ttl?: any, dsc?: any, id?: any) {
       let self: any = {};
       id = id || 0;
       global.dscr.style.display = '';
@@ -131,7 +130,7 @@ import { giveSkExp } from '../game/progression';
           if (what.data.kills) {
             let sp = addElement(self.sltic, 'small');
             sp.style.position = 'absolute';
-            sp.style.right = 6;
+            sp.style.right = '6px';
             sp.innerHTML = 'kills: ' + col(what.data.kills, 'yellow');
             clearInterval(timers.wpnkilsch);
             timers.wpnkilsch = setInterval(function () {
@@ -150,7 +149,7 @@ import { giveSkExp } from '../game/progression';
               let owned = false;
               let sp = addElement(self.sltic, 'small');
               sp.style.position = 'absolute';
-              sp.style.right = 6;
+              sp.style.right = '6px';
               for (let a in furn) if (furn[a].id === what.parent.id) { owned = true; break };
               sp.innerHTML = 'owned: <span style="color:' + (owned ? 'lime' : 'red') + '">' + (owned ? 'yes' : 'no') + '</span>'
             }
@@ -249,7 +248,7 @@ import { giveSkExp } from '../game/progression';
         self.label.innerHTML = !!what.bname ? what.bname : what.name;
         self.sp = addElement(self.label, 'small');
         self.sp.style.position = 'absolute';
-        self.sp.style.right = 6;
+        self.sp.style.right = '6px';
         self.sp.innerHTML = 'Ｐ: ' + (col((Math.round(what.p * 100) + '%'), 'magenta'));
         self.text = addElement(global.dscr, 'div', 'd_t');
         self.text.innerHTML = what.desc;
@@ -307,8 +306,8 @@ import { giveSkExp } from '../game/progression';
         self.text = addElement(global.dscr, 'div', 'd_t');
         self.text.innerHTML = what.desc + dom.dseparator;
         let t = Object.keys(global.drdata);
-        let ids = [];
-        for (let a in t) ids[a] = Number(t[a].substring(1));
+        let ids: any[] = [];
+        for (let a in t) ids[a as any] = Number(t[a as any].substring(1));
         self.o = addElement(self.text, 'small');
         self.o.innerHTML = 'drop table';
         self.o.style.color = 'cyan';
@@ -327,7 +326,7 @@ import { giveSkExp } from '../game/progression';
               self.dcell1.style.width = '80%';
               self.dcell1.style.borderRight = '#1f72a2 1px solid';
               self.dcell2.style.width = '20%';
-              if (b != what.drop.length - 1) self.dbig.style.borderBottom = 'none'
+              if (Number(b) != what.drop.length - 1) self.dbig.style.borderBottom = 'none'
               self.dcell2.innerHTML = ((what.drop[b].chance * 100000000 << 0) / 1000000 + '%');
               if (what.drop[b].chance >= .05) self.dcell2.style.color = 'lime';
               else if (what.drop[b].chance < .05 && what.drop[b].chance > .01) self.dcell2.style.color = 'yellow';
@@ -369,7 +368,7 @@ import { giveSkExp } from '../game/progression';
             self.dcell1.style.width = '80%';
             self.dcell1.style.borderRight = '#1f72a2 1px solid';
             self.dcell2.style.width = '20%'
-            if (b != what.drop.length - 1) self.dbig.style.borderBottom = 'none'
+            if (Number(b) != what.drop.length - 1) self.dbig.style.borderBottom = 'none'
             self.dcell1.innerHTML = '???????????';
             self.dcell1.style.color = 'yellow';
             self.dcell2.innerHTML = ((what.drop[b].chance * 100000000 << 0) / 1000000 + '%');
@@ -388,13 +387,13 @@ import { giveSkExp } from '../game/progression';
       }
     }
 
-    export function addDesc(dm, what, type?, ttl?, dsc?, f?, id?) {
-      dm.addEventListener('mouseenter', a => { dscr(a, what, type, ttl, f === true ? (dsc)() : dsc, id); giveSkExp(skl.rdg, .002); global.stat.popt++; global.curwds = this; global.shiftid = id; if (global.kkey === 1) descsinfo(global.shiftid) });
-      dm.addEventListener('mousemove', a => { global.dscr.style.top = global.dscr.clientHeight + 60 + a.clientY > document.body.clientHeight ? (a.clientY + 30 + global.dscr.clientHeight) - ((a.clientY + 30 + global.dscr.clientHeight) - document.body.clientHeight) - global.dscr.clientHeight - 30 : a.clientY + 30; global.dscr.style.left = global.dscr.clientWidth + 60 + a.clientX > document.body.clientWidth ? (a.clientX + 30 + global.dscr.clientWidth) - ((a.clientX + 30 + global.dscr.clientWidth) - document.body.clientWidth) - global.dscr.clientWidth - 30 : a.clientX + 30; });
+    export function addDesc(this: any, dm: any, what: any, type?: any, ttl?: any, dsc?: any, f?: any, id?: any) {
+      dm.addEventListener('mouseenter', (a: any) => { dscr(a, what, type, ttl, f === true ? (dsc)() : dsc, id); giveSkExp(skl.rdg, .002); global.stat.popt++; global.curwds = this; global.shiftid = id; if (global.kkey === 1) descsinfo(global.shiftid) });
+      dm.addEventListener('mousemove', (a: any) => { global.dscr.style.top = global.dscr.clientHeight + 60 + a.clientY > document.body.clientHeight ? (a.clientY + 30 + global.dscr.clientHeight) - ((a.clientY + 30 + global.dscr.clientHeight) - document.body.clientHeight) - global.dscr.clientHeight - 30 : a.clientY + 30; global.dscr.style.left = global.dscr.clientWidth + 60 + a.clientX > document.body.clientWidth ? (a.clientX + 30 + global.dscr.clientWidth) - ((a.clientX + 30 + global.dscr.clientWidth) - document.body.clientWidth) - global.dscr.clientWidth - 30 : a.clientX + 30; });
       dm.addEventListener('mouseleave', () => { global.shiftid = 0; empty(global.dscr); global.dscr.style.display = 'none'; clearInterval(timers.inup); clearInterval(timers.dp_tmr); clearInterval(timers.wpnkilsch); if (dom.dscshe) dom.dscshe.innerHTML = '' });
     }
 
-    export function descsinfo(id) {
+    export function descsinfo(id: any) {
       if (id === 100) if (global.shiftitem.item.rot && you.mods.survinf > 0) {
         let itm = global.shiftitem.item;
         let ds, rs, dt, rt, c

@@ -1,4 +1,3 @@
-// @ts-nocheck
 // ==========================================================================
 // Crafting System
 // ==========================================================================
@@ -9,19 +8,19 @@ import { global, inv } from '../state';
 import { isort } from '../ui/inventory';
 import { giveItem, removeItem } from './inventory';
 
-function evaluateSpecialRequirementsForRecipe(recipe) {
+function evaluateSpecialRequirementsForRecipe(recipe: any): any[] {
   if (recipe.srect == null) {
     return [0];
   }
 
-  let results = [];
+  let results: any[] = [];
   for (let i in recipe.srec) {
-    results[i] = (recipe.srec[i]() === true) ? 1 : 2;
+    results[i as any] = (recipe.srec[i]() === true) ? 1 : 2;
   }
   return results;
 }
 
-function scan2(arr, val, am) {
+function scan2(arr: any[], val: any, am: number): any {
   for (let o = 0; o < arr.length + 1; o++) {
     if (o === arr.length) return { a: false, b: arr[o] };
     if (arr[o].id === val.id && arr[o].amount >= am) return { a: true, b: arr[o] };
@@ -29,15 +28,15 @@ function scan2(arr, val, am) {
   }
 }
 
-export function canMake(rc, times) {
-  let missing = [];
-  let has = [];
-  let z = [];
-  let b = [];
-  let r = [];
+export function canMake(rc: any, times: number): any {
+  let missing: any[] = [];
+  let has: any[] = [];
+  let z: any[] = [];
+  let b: any[] = [];
+  let r: any[] = [];
   let o = evaluateSpecialRequirementsForRecipe(rc);
   for (let i = 0; i < rc.rec.length; i++) {
-    let sc = new Object();
+    let sc: any = new Object();
     if (!rc.rec[i].item.slot) {
       sc = scan2(inv, rc.rec[i].item, rc.rec[i].amount * times);
       z.push(rc.rec[i].item.amount * times);
@@ -59,7 +58,7 @@ export function canMake(rc, times) {
 }
 
 
-export function make(rc, rp, times) {
+export function make(rc: any, rp?: any, times?: number): any {
   times = times || 1
   let check = canMake(rc, times);
   if (rp || !check.success) {
@@ -73,7 +72,7 @@ export function make(rc, rp, times) {
         if (itemToAlter.amount === 0) removeItem(itemToAlter);
       } else {
         let ar = findworst(inv, rc.rec[j].item);
-        let finar = [];
+        let finar: any[] = [];
         for (let m = 0; m < rc.rec[j].amount; m++) finar.push(ar[m]);
         for (let m in finar) removeItem(finar[m]);
       }

@@ -42,8 +42,12 @@
 - [ ] **Step 4.5:** Constructor delegate cleanup — pass `.use`, `.onDeath`, and other function delegates via constructor config instead of deferred assignment
 - [ ] **Step 4.6:** Enable `strict: true` in tsconfig incrementally — fix type errors module by module
   - [x] Enabled `strict: true`, added `@ts-nocheck` to 33 unfixed files (0 typecheck errors)
-  - [x] Fixed leaf modules: `dom-utils.ts`, `utils.ts`, `base64.ts`, `ui/messages.ts`, `ui/effects.ts`, `game/utils-game.ts`
-  - [ ] Fix remaining 33 `@ts-nocheck` modules (data/, systems/, ui/, game/, main.ts, random.ts)
+  - [x] Fixed leaf utility modules: `dom-utils.ts`, `utils.ts`, `base64.ts`
+  - [x] Fixed UI modules: `messages.ts`, `effects.ts`, `stats.ts`, `equipment.ts`, `choices.ts`, `shop.ts`, `descriptions.ts`, `panels.ts`, `inventory.ts`
+  - [x] Fixed game modules: `utils-game.ts`, `economy.ts`, `exploration.ts`, `crafting.ts`, `progression.ts`, `movement.ts`, `inventory.ts`, `combat.ts`
+  - [x] Fixed system modules: `loop.ts`, `save-load.ts`, `weather.ts`, `player.ts`
+  - [x] Fixed all 13 data modules: titles, effects, furniture, skills, items, equipment, abilities, creatures, world, crafting, vendors, actions, mastery
+  - [ ] Fix remaining 2 `@ts-nocheck` files: `main.ts` (~4,600 lines), `random.ts` (vendored MersenneTwister — low priority)
 
 ## Known Bugs
 

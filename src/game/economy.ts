@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { random, rand } from '../random';
 import { shuffle } from '../utils';
 import { appear } from '../dom-utils';
@@ -9,7 +8,7 @@ import { m_update } from '../ui/stats';
 import { giveSkExp } from './progression';
 import { recshop } from '../ui/shop';
 
-    export function giveWealth(val, mes, f) {
+    export function giveWealth(val: number, mes?: any, f?: any): void {
       if (you.mods.wthexrt !== 0 && f) val += 1;
       you.wealth += val;
       global.stat.moneyg += val;
@@ -25,17 +24,17 @@ import { recshop } from '../ui/shop';
       } recshop();
     }
 
-    export function spend(m) {
+    export function spend(m: number): void {
       if (you.wealth < m) return
       you.wealth -= m;
       global.stat.moneysp += m;
       m_update()
     }
 
-    export function restock(vnd) {
+    export function restock(vnd: any): void {
       vnd.stock = []; shuffle(vnd.items);
       for (let ims = 0; ims < vnd.items.length; ims++) {
         if ((!vnd.items[ims].cond || vnd.items[ims].cond() === true) && random() <= vnd.items[ims].c) vnd.stock.push([vnd.items[ims].item, rand(vnd.items[ims].min, vnd.items[ims].max), vnd.items[ims].p]);
-        vnd.stock.sort(function (a, b) { if (a[0].id < b[0].id) return -1; if (a[0].id > b[0].id) return 1; return 0 });
+        vnd.stock.sort(function (a: any, b: any) { if (a[0].id < b[0].id) return -1; if (a[0].id > b[0].id) return 1; return 0 });
       }
     }

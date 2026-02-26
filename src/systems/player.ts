@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { ttl, eqp, item, you, skl, callback, creature, global, act, dom, sector, area, timers, setYou } from '../state';
 import { random } from '../random';
 import { smove } from '../game/movement';
@@ -15,20 +14,20 @@ import { chss } from '../state';
 // Player Constructor
 // ==========================================================================
 
-export function You() {
+export function You(this: any) {
   this.name = 'You';
   this.title = ttl.new;
   this.desc = 'This is you';
   this.id = -1;
   this.type = 0;
-  this.rank = function () { return Math.ceil(50000000000000 * (1 / (((this.agl + this.str + (you.eqp[0].str) + this.spd + this.int) ** 2) / Math.sqrt((this.agl + this.str + this.int + (this.spd / this.lvl)) * 512 / (this.luck * .1 + 1))))) };
+  this.rank = function (this: any) { return Math.ceil(50000000000000 * (1 / (((this.agl + this.str + (you.eqp[0].str) + this.spd + this.int) ** 2) / Math.sqrt((this.agl + this.str + this.int + (this.spd / this.lvl)) * 512 / (this.luck * .1 + 1))))) };
   this.rnk = 0;
   this.lvl = 1;
   this.exp = 0;
-  this.expnext = function () { return this.lvl * ((this.lvl * 2) ** 2) + (this.lvl ** 2) };
+  this.expnext = function (this: any) { return this.lvl * ((this.lvl * 2) ** 2) + (this.lvl ** 2) };
   this.expnext_t = this.expnext();
   this.exp_t = 1;
-  this.efficiency = function () { let g = skl.fmn.use(); g = g >= .6 ? .6 : g; let e = (.8 - g) * this.sat / this.satmax + (.2 + g) + you.mods.sbonus; return e < 0 ? 0 : e }
+  this.efficiency = function (this: any) { let g = skl.fmn.use(); g = g >= .6 ? .6 : g; let e = (.8 - g) * this.sat / this.satmax + (.2 + g) + you.mods.sbonus; return e < 0 ? 0 : e }
   this.mods = { sbonus: 0, sdrate: .1, infsrate: 1, enmondren: 0, enmondrts: 1, ddgmod: 0, rdgrt: 1, cpwr: 1, crflt: 0, wthexrt: 0, tstl: 0, lkdbt: 0, ckfre: 0, rnprtk: 0, light: 0, undc: 0, petxp: .005, stdstps: 1, survinf: 0, runerg: 1 };
   this.ki = new Object();
   this.sat = this.satmax = this.sat_r = 200;
@@ -57,7 +56,7 @@ export function You() {
   this.eff = [];
   this.skls = [];
   this.drop = [{ item: item.death_b, chance: 1 }];
-  this.onDeath = function (killer) {
+  this.onDeath = function (this: any, killer: any) {
     if (you.res.death < 1 && random() >= you.res.death) { msg('You avoid death...', 'lightgrey'); you.hp = Math.ceil(you.hpmax * .1) } else {
       callback.onDeath.fire(this, killer)
       this.alive = false;
@@ -89,8 +88,8 @@ export function You() {
   }
   this.onDeathE = function () { }
   this.ai = function () { }
-  this.battle_ai = function (x, y, z) { return attack(x, y) }
-  this.stat_r = function () {
+  this.battle_ai = function (x: any, y: any, z: any) { return attack(x, y) }
+  this.stat_r = function (this: any) {
     this.stre = this.inte = this.agle = this.spde = this.sate = this.hpe = 1;
     for (let idx in this.eff) this.eff[idx].mods();
     this.str = (this.str_r + this.stra) * this.strm * this.stre;

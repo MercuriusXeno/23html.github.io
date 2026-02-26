@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { act, global, you, dom, effect, skl, timers } from '../state';
 import { findbyid, select } from '../utils';
 import { canScout } from '../game/exploration';
@@ -12,7 +11,7 @@ import { deactivateAct } from '../ui/panels';
 // Action constructor + instances
 // ==========================================================================
 
-function Action(cfg) {
+function Action(this: any, cfg?: any) {
   this.name = 'dummy';
   this.desc = 'dummy';
   this.id = 0;
@@ -25,6 +24,7 @@ function Action(cfg) {
   this.activate = function () { }
   this.deactivate = function () { }
   if (cfg) for (let k in cfg) this[k] = cfg[k];
+// @ts-ignore: constructor function
 }; act.default = new Action(); global.current_a = act.default;
 
 //tendon transformation scripture
@@ -33,9 +33,10 @@ function Action(cfg) {
 //eff iron determination / golden rule / wisdom of crisis
 //arhat/deep sitting arhat/raised bowl arhat/raised pagoda arhat/meditating arhat/overseas arhat/elephant riding arhat/taming tiger arhat/taming dragon arhat/
 
+// @ts-ignore: constructor function
 act.demo = new Action({ id: 1, name: 'Run' });
 act.demo.desc = function () { return 'Run within this area to improve your physique' + dom.dseparator + '<span style="color:pink">Exp +0.5/s</span><br><span style="color:skyblue">Trains Walking</span><br><span style="color:crimson">Energy Consumption +0.1\/s</span>'; };
-act.demo.cond = function (l) {
+act.demo.cond = function (l: any) {
   if (!global.flags.btl && global.flags.civil && !global.flags.inside && !global.flags.sleepmode && !global.flags.rdng && !global.flags.isshop && !global.flags.work) return true;
   else { if (l !== false) msg('This isn\'t the best place to run around', 'red'); return false }
 }
@@ -45,7 +46,7 @@ act.demo.use = function () {
   else giveSkExp(skl.walk, .5);
   you.eqp[6].dp = you.eqp[6].dp - .005 < 0 ? 0 : you.eqp[6].dp - .005;
 }
-act.demo.activate = function () {
+act.demo.activate = function (this: any) {
   msg('You start running', 'orange');
   this.active = true;
   you.mods.sdrate += .1 * you.mods.runerg;
@@ -56,16 +57,17 @@ act.demo.activate = function () {
     this.use();
   }, 1000);
 };
-act.demo.deactivate = function () { msg('You stop', 'skyblue'); clearInterval(timers.actm); this.active = false; removeEff(effect.run); you.mods.sdrate -= .1 * you.mods.runerg; you.mods.stdstps -= .5; }
+act.demo.deactivate = function (this: any) { msg('You stop', 'skyblue'); clearInterval(timers.actm); this.active = false; removeEff(effect.run); you.mods.sdrate -= .1 * you.mods.runerg; you.mods.stdstps -= .5; }
 
+// @ts-ignore: constructor function
 act.scout = new Action({ id: 2, name: 'Investigate' });
 act.scout.desc = function () { return 'Thoroughly examine current area in search for hidden passages, treasure, secrets or anything of interest' };
-act.scout.cond = function (l) {
+act.scout.cond = function (l: any) {
   if (global.flags.isdark && !cansee()) { return false }
   if (!global.flags.btl && global.flags.civil && !global.flags.sleepmode && !global.flags.rdng) return true;
   else { if (l !== false) msg('You\'re too occupied with something else', 'red'); return false }
 }
-act.scout.activate = function () {
+act.scout.activate = function (this: any) {
   msg('You begin to look around', 'springgreen');
   this.active = true;
   clearInterval(timers.actm);
@@ -77,7 +79,7 @@ act.scout.activate = function () {
     this.use();
   }, 1000);
 };
-act.scout.use = function () {
+act.scout.use = function (this: any) {
   if (global.flags.isdark && !cansee()) { deactivateAct(this); msg('You can\'t see anything', 'grey'); return }
   let a1 = canScout(global.current_l);
   let a2c = []
@@ -94,8 +96,9 @@ act.scout.use = function () {
     deactivateAct(this);
   }
 }
-act.scout.deactivate = function () { msg('You stop', 'skyblue'); clearInterval(timers.actm); this.active = false; removeEff(effect.scout); }
+act.scout.deactivate = function (this: any) { msg('You stop', 'skyblue'); clearInterval(timers.actm); this.active = false; removeEff(effect.scout); }
 
+// @ts-ignore: constructor function
 act.demo2 = new Action({ id: -3, name: 'Selfharm', type: 2 });
 act.demo2.desc = function () { return 'Injure yourself' };
 act.demo2.use = function () {

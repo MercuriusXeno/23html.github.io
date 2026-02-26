@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**Proto23** is a browser-based text RPG game, deployed as a GitHub Pages site (`23html.github.io`). The game is split across `src/main.ts` (~4,600 lines), `src/game/` (8 modules, ~1,260 lines), `src/ui/` (9 modules, ~1,540 lines), `src/data/` (13 modules, ~5,180 lines), and `src/systems/` (4 modules, ~1,690 lines), bundled via esbuild to `dist/bundle.js`, which `index.html` loads. CSS is in `styles.css`.
+**Proto23** is a browser-based text RPG game, deployed as a GitHub Pages site (`23html.github.io`). The game is split across `src/main.ts` (~4,600 lines), `src/game/` (8 modules, ~1,260 lines), `src/ui/` (9 modules, ~1,540 lines), `src/data/` (13 modules, ~5,870 lines), and `src/systems/` (4 modules, ~1,710 lines), bundled via esbuild to `dist/bundle.js`, which `index.html` loads. CSS is in `styles.css`.
 
 ## Architecture
 
@@ -30,8 +30,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - `choices.ts` — Choice buttons and icons (`chs`, `clr_chs`, `icon`, `Chs`)
   - `panels.ts` — Crafting/skill/action/furniture panels (`renderRcp`, `renderSkl`, `renderAct`, `deactivateAct`, `renderFurniture`, `showFurniturePanel`)
   - `shop.ts` — Shop UI rendering (`recshop`, `rendershopitem`, `buycbs`, `mf`)
-- `src/data/` — 13 data definition modules (~5,180 lines): titles, effects, furniture, skills, items, equipment, abilities, creatures, world, crafting, vendors, actions, mastery
-- `src/systems/` — 4 system modules (~1,690 lines):
+- `src/data/` — 13 data definition modules (~5,870 lines): titles, effects, furniture, skills, items, equipment, abilities, creatures, world, crafting, vendors, actions, mastery
+- `src/systems/` — 4 system modules (~1,710 lines):
   - `weather.ts` — Weather/time/calendar system, callbacks, season display (`wdrseason`) (~620 lines)
   - `save-load.ts` — Save/load serialization (~880 lines)
   - `player.ts` — Player (`You`) constructor (~110 lines)
@@ -108,7 +108,7 @@ Copper-based: `SILVER = 100`, `GOLD = 10000`. Use `giveWealth()` / `spend()`.
 ### Build commands
 - `npm run build` — bundle `src/main.ts` → `dist/bundle.js` (esbuild, IIFE format)
 - `npm run watch` — rebuild on file changes
-- `npm run typecheck` — run `tsc --noEmit` for type checking (0 errors; unfixed modules use `@ts-nocheck`)
+- `npm run typecheck` — run `tsc --noEmit` for type checking (0 errors; only `main.ts` and `random.ts` use `@ts-nocheck`)
 
 ### Workflow
 Edit files in `src/`, run `npm run build` (or use `npm run watch`), refresh `index.html` in browser. In VSCode, press F5 to build and launch in Chrome. The game uses `localStorage` for saves — clearing it resets progress. The game targets modern browsers and uses MS Gothic font.

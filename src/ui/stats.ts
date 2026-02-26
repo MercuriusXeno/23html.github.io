@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { format3 } from '../utils';
 import { dom, global, you } from '../state';
 

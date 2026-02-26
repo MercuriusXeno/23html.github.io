@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { WEEK, DAY } from '../constants';
 import { utf8_to_b64, b64_to_utf8 } from '../base64';
 import { random } from '../random';
@@ -31,7 +30,7 @@ import { You } from './player';
 // Save/Load Helpers
 // ==========================================================================
 
-function serializeIdData(collection, filter?) {
+function serializeIdData(collection: any, filter?: any) {
   let arr = [];
   for (let obj in collection) {
     if (filter && !filter(collection[obj])) continue;
@@ -40,7 +39,7 @@ function serializeIdData(collection, filter?) {
   return arr;
 }
 
-function loadEquipCategory(savedArr, namespace) {
+function loadEquipCategory(savedArr: any, namespace: any) {
   for (let o = 0; o < savedArr.length; o++) {
     for (let obj in namespace) {
       if (namespace[obj].id === savedArr[o].id) {
@@ -58,7 +57,7 @@ function loadEquipCategory(savedArr, namespace) {
   }
 }
 
-function restoreDiscovery(savedIds, namespace) {
+function restoreDiscovery(savedIds: any, namespace: any) {
   for (let o = 0; o < savedIds.length; o++)
     for (let obj in namespace) if (namespace[obj].id === savedIds[o]) namespace[obj].data.dscv = true;
 }
@@ -67,7 +66,7 @@ function restoreDiscovery(savedIds, namespace) {
 // Save
 // ==========================================================================
 
-export function save(lvr?) {
+export function save(lvr?: any) {
   let storage = window.localStorage;
   global.flags.savestate = true;
   global.stat.gsvs++;
@@ -79,9 +78,9 @@ export function save(lvr?) {
   dom.sl_extra.innerHTML = 'Last save: ' + global.lst_sve;
 
   // Temporarily unequip everything and snapshot equipment
-  let o = [];
+  let o: any[] = [];
   for (let obj in you.eqp) {
-    o[obj] = you.eqp[obj];
+    o[obj as any] = you.eqp[obj];
     unequip(you.eqp[obj], { save: true });
   }
   you.stat_r();
@@ -131,12 +130,12 @@ export function save(lvr?) {
   str += '|';
 
   // --- Segment 1: Active effects ---
-  let a4 = [];
+  let a4: any[] = [];
   for (let obj in you.eff) {
     if (!!you.eff[obj].id) {
       var pw;
       !!you.eff[obj].power ? pw = you.eff[obj].power : pw = 1;
-      a4[obj] = { a: you.eff[obj].id, b: you.eff[obj].duration, c: pw };
+      a4[obj as any] = { a: you.eff[obj].id, b: you.eff[obj].duration, c: pw };
     }
   }
   global.flags.m_freeze = false;
@@ -144,10 +143,10 @@ export function save(lvr?) {
   str += '|';
 
   // --- Segment 2: Player skills (levels + milestones) ---
-  let a6 = [];
+  let a6: any[] = [];
   for (let obj in you.skls) {
-    a6[obj] = { id: you.skls[obj].id, lvl: you.skls[obj].lvl, mst: [] };
-    for (let m in you.skls[obj].mlstn) a6[obj].mst[m] = you.skls[obj].mlstn[m].g;
+    a6[obj as any] = { id: you.skls[obj].id, lvl: you.skls[obj].lvl, mst: [] as any[] };
+    for (let m in you.skls[obj].mlstn) a6[obj as any].mst[m as any] = you.skls[obj].mlstn[m].g;
   }
   str += JSON.stringify(a6);
   str += '|';
@@ -191,8 +190,8 @@ export function save(lvr?) {
   str += '|';
 
   // --- Segment 6: Inventory (5 item categories + saved item data) ---
-  let a3 = [[], [], [], [], [], []];
-  for (let obj in o) equip(o[obj], { save: true });
+  let a3: any[][] = [[], [], [], [], [], []];
+  for (let obj in o) equip(o[obj as any], { save: true });
   you.stat_r();
   for (let obj in inv) {
     let expectedIndex = Math.max(0, Math.min(4, Math.floor(inv[obj].id / 10000)));
@@ -227,10 +226,10 @@ export function save(lvr?) {
   str += '|';
 
   // --- Segment 10: Vendors ---
-  let a10 = {};
-  let a11 = {};
+  let a10: any = {};
+  let a11: any = {};
   for (let obj in vendor) {
-    let stock = [];
+    let stock: any[] = [];
     for (let i = 0; i < vendor[obj].stock.length; i++) {
       stock[i] = [];
       stock[i][0] = vendor[obj].stock[i][0].id;
@@ -249,7 +248,7 @@ export function save(lvr?) {
   str += '|';
 
   // --- Segment 12: Home furniture assignments ---
-  let a13 = new Object();
+  let a13: any = {};
   for (let s in home) a13[s] = home[s].id;
   str += JSON.stringify(a13);
   str += '|';
@@ -284,7 +283,7 @@ export function save(lvr?) {
   str += '|';
 
   // --- Segment 17: Location data ---
-  str += JSON.stringify(serializeIdData(chss, o => JSON.stringify(o.data) !== '{}'));
+  str += JSON.stringify(serializeIdData(chss, (o: any) => JSON.stringify(o.data) !== '{}'));
   str += '|savevalid|';
 
   // --- Segment 19: Title talents ---
@@ -335,7 +334,7 @@ dom.loadingt.style.left = window.innerWidth / 2 - 150;
 // Load
 // ==========================================================================
 
-export function load(dt?) {
+export function load(dt?: any) {
   var str = dt || window.localStorage.getItem("v0.3");
   str = b64_to_utf8(str);
 
@@ -709,9 +708,9 @@ export function load(dt?) {
     for (let obj in a14) {
       for (let q in quest) {
         if (quest[q].id === a14[obj].id) {
-          qsts[obj] = quest[q];
-          qsts[obj].data = a14[obj].data;
-          if (qsts[obj].callback) qsts[obj].callback();
+          qsts[obj as any] = quest[q];
+          qsts[obj as any].data = a14[obj].data;
+          if (qsts[obj as any].callback) qsts[obj as any].callback();
         }
       }
     }
@@ -724,8 +723,8 @@ export function load(dt?) {
     for (let obj in a15) {
       for (let q in act) {
         if (act[q].id === a15[obj].id) {
-          acts[obj] = act[q];
-          acts[obj].data = a15[obj].data;
+          acts[obj as any] = act[q];
+          acts[obj as any].data = a15[obj].data;
           act[q].have = true;
         }
       }

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { addElement, empty } from '../dom-utils';
 import { scanbyuid } from '../utils';
 import { dom, global, you, item, skl, inv, timers } from '../state';
@@ -10,7 +9,7 @@ import { removeItem, giveItem, listen_k,
 import { giveSkExp } from '../game/progression';
 import { renderRcp } from './panels';
 
-    export function renderItem(obj) {
+    export function renderItem(obj: any) {
       let inv_slot_c = addElement(dom.inv_con, 'div', null, 'no-outline');
       let inv_slot = addElement(inv_slot_c, 'div', null, 'inventory-slot no-outline');
       /*switch(obj.wtype){
@@ -42,28 +41,28 @@ import { renderRcp } from './panels';
             if (obj.data.uid === you.eqp[obj.slot - 1].data.uid) {
               let prm = addElement(document.body, 'div');
               prm.style.backgroundColor = 'grey';
-              prm.style.width = document.body.clientWidth;
-              prm.style.height = document.body.clientHeight;
+              prm.style.width = document.body.clientWidth + 'px';
+              prm.style.height = document.body.clientHeight + 'px';
               prm.style.position = 'absolute';
-              prm.style.left = 0;
-              prm.style.top = 0;
-              prm.style.opacity = .4;
+              prm.style.left = '0';
+              prm.style.top = '0';
+              prm.style.opacity = '0.4';
               let prm2 = addElement(document.body, 'div');
               prm2.style.position = 'absolute';
-              prm2.style.top = document.body.clientHeight / 2 - 40;
-              prm2.style.left = 1300 / 2 - 195;
-              prm2.style.width = 390;
-              prm2.style.height = 80;
+              prm2.style.top = (document.body.clientHeight / 2 - 40) + 'px';
+              prm2.style.left = (1300 / 2 - 195) + 'px';
+              prm2.style.width = '390px';
+              prm2.style.height = '80px';
               prm2.style.border = '4px black solid';
-              prm2.style.padding = 5;
+              prm2.style.padding = '5px';
               prm2.style.backgroundColor = 'lightgrey';
               let pin = addElement(prm2, 'div');
-              pin.style.height = 32;
+              pin.style.height = '32px';
               pin.innerHTML = 'Really destroy \"' + obj.name + '\"\?';
               pin.style.textAlign = 'center';
               pin.style.width = '100%';
               pin.style.borderBottom = '2px solid black';
-              pin.style.paddingTop = 10;
+              pin.style.paddingTop = '10px';
               let pcon = addElement(prm2, 'div');
               pcon.style.display = 'flex';
               pcon.style.textAlign = 'center';
@@ -71,17 +70,17 @@ import { renderRcp } from './panels';
               let phai = addElement(pcon, 'div');
               phai.style.width = '50%';
               phai.innerHTML = 'YES';
-              phai.style.paddingTop = 9;
-              phai.style.paddingBottom = 9;
+              phai.style.paddingTop = '9px';
+              phai.style.paddingBottom = '9px';
               let piie = addElement(pcon, 'div');
               piie.style.width = '50%';
               piie.innerHTML = 'NO';
-              piie.style.paddingTop = 9;
-              piie.style.paddingBottom = 9;
-              phai.addEventListener('mouseenter', function () { this.style.backgroundColor = '#666' });
-              piie.addEventListener('mouseenter', function () { this.style.backgroundColor = '#666' });
-              phai.addEventListener('mouseleave', function () { this.style.backgroundColor = 'darkgrey' });
-              piie.addEventListener('mouseleave', function () { this.style.backgroundColor = 'darkgrey' });
+              piie.style.paddingTop = '9px';
+              piie.style.paddingBottom = '9px';
+              phai.addEventListener('mouseenter', function (this: any) { this.style.backgroundColor = '#666' });
+              piie.addEventListener('mouseenter', function (this: any) { this.style.backgroundColor = '#666' });
+              phai.addEventListener('mouseleave', function (this: any) { this.style.backgroundColor = 'darkgrey' });
+              piie.addEventListener('mouseleave', function (this: any) { this.style.backgroundColor = 'darkgrey' });
               phai.addEventListener('click', () => { giveSkExp(skl.rccln, (2 ** obj.rar) * 5 - 9.5); giveSkExp(skl.thr, .5); global.stat.thrt++; removeItem(obj); document.body.removeChild(prm); document.body.removeChild(prm2) });
               piie.addEventListener('click', () => { document.body.removeChild(prm); document.body.removeChild(prm2) });
             }
@@ -93,19 +92,19 @@ import { renderRcp } from './panels';
           dom.eq_l = addElement(inv_slot_c, 'small', null, 'eq_l');
           dom.eq_l.innerHTML = 'L';
           addDesc(dom.eq_l, obj);
-          dom.eq_l.addEventListener('click', () => { if (obj.data.uid !== you.eqp[4].data.uid && obj.data.uid !== you.eqp[5].data.uid) { obj.slot = 5; equip(obj); } else if (obj.data.uid !== you.eqp[4].data.uid && obj.data.uid === you.eqp[5].data.uid) { unequip(obj); obj.slot = 5; equip(obj); } else { unequip(obj); dom.eq_l.style.backgroundColor = 'royalblue'; this.children[0].removeChild(this.children[0].lastChild) } });
+          dom.eq_l.addEventListener('click', () => { if (obj.data.uid !== you.eqp[4].data.uid && obj.data.uid !== you.eqp[5].data.uid) { obj.slot = 5; equip(obj); } else if (obj.data.uid !== you.eqp[4].data.uid && obj.data.uid === you.eqp[5].data.uid) { unequip(obj); obj.slot = 5; equip(obj); } else { unequip(obj); dom.eq_l.style.backgroundColor = 'royalblue'; inv_slot_c.children[0].removeChild(inv_slot_c.children[0].lastChild!) } });
           if (obj.data.uid === you.eqp[4].data.uid) dom.eq_l.style.backgroundColor = 'crimson';
           dom.eq_r = addElement(inv_slot_c, 'small', null, 'eq_r');
           dom.eq_r.innerHTML = 'R';
           addDesc(dom.eq_r, obj);
-          dom.eq_r.addEventListener('click', () => { if (obj.data.uid !== you.eqp[4].data.uid && obj.data.uid !== you.eqp[5].data.uid) { obj.slot = 6; equip(obj); } else if (obj.data.uid === you.eqp[4].data.uid && obj.data.uid !== you.eqp[5].data.uid) { unequip(obj); obj.slot = 6; equip(obj); } else { unequip(obj); dom.eq_r.style.backgroundColor = 'royalblue'; this.children[0].removeChild(this.children[0].lastChild) } });
+          dom.eq_r.addEventListener('click', () => { if (obj.data.uid !== you.eqp[4].data.uid && obj.data.uid !== you.eqp[5].data.uid) { obj.slot = 6; equip(obj); } else if (obj.data.uid === you.eqp[4].data.uid && obj.data.uid !== you.eqp[5].data.uid) { unequip(obj); obj.slot = 6; equip(obj); } else { unequip(obj); dom.eq_r.style.backgroundColor = 'royalblue'; inv_slot_c.children[0].removeChild(inv_slot_c.children[0].lastChild!) } });
           if (obj.data.uid === you.eqp[5].data.uid) dom.eq_r.style.backgroundColor = 'crimson';
         }
         if (obj.dss && item.toolbx.have) {
           dom.inv_dss = addElement(inv_slot_c, 'span', null, 'disassemble-btn');
           dom.inv_dss.innerHTML = '∥';
-          if (!obj.slot) dom.inv_dss.style.left = 242;
-          else if (obj.slot === 5 || obj.slot === 6) dom.inv_dss.style.left = 208
+          if (!obj.slot) dom.inv_dss.style.left = '242px';
+          else if (obj.slot === 5 || obj.slot === 6) dom.inv_dss.style.left = '208px'
           let t = '';
           for (let a in obj.dss) {
             let am = obj.dss[a].amount;
@@ -121,28 +120,28 @@ import { renderRcp } from './panels';
             if (obj.slot && obj.data.uid === you.eqp[obj.slot - 1].data.uid) {
               let prm = addElement(document.body, 'div');
               prm.style.backgroundColor = 'grey';
-              prm.style.width = document.body.clientWidth;
-              prm.style.height = document.body.clientHeight;
+              prm.style.width = document.body.clientWidth + 'px';
+              prm.style.height = document.body.clientHeight + 'px';
               prm.style.position = 'absolute';
-              prm.style.left = 0;
-              prm.style.top = 0;
-              prm.style.opacity = .4;
+              prm.style.left = '0';
+              prm.style.top = '0';
+              prm.style.opacity = '0.4';
               let prm2 = addElement(document.body, 'div');
               prm2.style.position = 'absolute';
-              prm2.style.top = document.body.clientHeight / 2 - 40;
-              prm2.style.left = 1300 / 2 - 195;
-              prm2.style.width = 390;
-              prm2.style.height = 90;
+              prm2.style.top = (document.body.clientHeight / 2 - 40) + 'px';
+              prm2.style.left = (1300 / 2 - 195) + 'px';
+              prm2.style.width = '390px';
+              prm2.style.height = '90px';
               prm2.style.border = '4px black solid';
-              prm2.style.padding = 5;
+              prm2.style.padding = '5px';
               prm2.style.backgroundColor = 'lightgrey';
               let pin = addElement(prm2, 'div');
-              pin.style.height = 42;
+              pin.style.height = '42px';
               pin.innerHTML = 'You are currently wearing \"<span style="color:crimson">' + obj.name + '</span>\"<br>Really deconstruct?';
               pin.style.textAlign = 'center';
               pin.style.width = '100%';
               pin.style.borderBottom = '2px solid black';
-              pin.style.paddingTop = 10;
+              pin.style.paddingTop = '10px';
               let pcon = addElement(prm2, 'div');
               pcon.style.display = 'flex';
               pcon.style.textAlign = 'center';
@@ -150,17 +149,17 @@ import { renderRcp } from './panels';
               let phai = addElement(pcon, 'div');
               phai.style.width = '50%';
               phai.innerHTML = 'YES';
-              phai.style.paddingTop = 9;
-              phai.style.paddingBottom = 9;
+              phai.style.paddingTop = '9px';
+              phai.style.paddingBottom = '9px';
               let piie = addElement(pcon, 'div');
               piie.style.width = '50%';
               piie.innerHTML = 'NO';
-              piie.style.paddingTop = 9;
-              piie.style.paddingBottom = 9;
-              phai.addEventListener('mouseenter', function () { this.style.backgroundColor = '#666' });
-              piie.addEventListener('mouseenter', function () { this.style.backgroundColor = '#666' });
-              phai.addEventListener('mouseleave', function () { this.style.backgroundColor = 'darkgrey' });
-              piie.addEventListener('mouseleave', function () { this.style.backgroundColor = 'darkgrey' });
+              piie.style.paddingTop = '9px';
+              piie.style.paddingBottom = '9px';
+              phai.addEventListener('mouseenter', function (this: any) { this.style.backgroundColor = '#666' });
+              piie.addEventListener('mouseenter', function (this: any) { this.style.backgroundColor = '#666' });
+              phai.addEventListener('mouseleave', function (this: any) { this.style.backgroundColor = 'darkgrey' });
+              piie.addEventListener('mouseleave', function (this: any) { this.style.backgroundColor = 'darkgrey' });
               phai.addEventListener('click', () => { disassembleGeneric(obj); document.body.removeChild(prm); document.body.removeChild(prm2) });
               piie.addEventListener('click', () => { document.body.removeChild(prm); document.body.removeChild(prm2) });
             }
@@ -185,8 +184,8 @@ import { renderRcp } from './panels';
       if (!obj.slot) {
         let s_am = addElement(inv_slot, 'small', null, 'stack-amount');
         s_am.innerHTML = ' x' + (obj.amount);
-        inv_slot.addEventListener('mouseenter', function () { global.flags.kfocus = true; this.tabIndex = 0; this.focus(); global.keyobj = obj; this.addEventListener('keydown', listen_k) })
-        inv_slot.addEventListener('mouseleave', function () { global.flags.kfocus = false; this.tabIndex = -1; global.keyobj = 0; this.removeEventListener('keydown', listen_k); })
+        inv_slot.addEventListener('mouseenter', function (this: any) { global.flags.kfocus = true; this.tabIndex = 0; this.focus(); global.keyobj = obj; this.addEventListener('keydown', listen_k) })
+        inv_slot.addEventListener('mouseleave', function (this: any) { global.flags.kfocus = false; this.tabIndex = -1; global.keyobj = 0; this.removeEventListener('keydown', listen_k); })
       }
       if (!!obj.c || !!obj.bc) {
         if (!!obj.c) inv_name.style.color = obj.c;
@@ -207,12 +206,12 @@ import { renderRcp } from './panels';
       inv_slot.addEventListener('mouseleave', function () { if (obj.new === true) { obj.new = false; clearTimeout(timers.nsblk); inv_name.innerHTML = obj.name } });
     }
 
-    export function updateInv(slot) {
+    export function updateInv(slot: any) {
       if (global.sm === 1) dom.inv_con.children[slot].children[0].children[1].innerHTML = ' x' + inv[slot].amount;
       else dom.inv_con.children[slot].children[0].children[1].innerHTML = ' x' + global.sinv[slot].amount;
     }
 
-    export function isort(type, flags) {
+    export function isort(type: any, flags?: any) {
       empty(dom.inv_con);
       if (type === 1) for (let k = 0; k < inv.length; k++) renderItem(inv[k]);
       else {
@@ -223,7 +222,7 @@ import { renderRcp } from './panels';
       if (flags && flags.tr) iftrunkopenc(1);
     }
 
-    export function rsort(type) {
+    export function rsort(type: any) {
       empty(dom.ct_bt1_1);
       if (type === 0 || !type) for (let ind in global.rec_d) renderRcp(global.rec_d[ind]);
       else {
@@ -261,4 +260,4 @@ import { renderRcp } from './panels';
 
     export function rstcrtthg() { for (let a in global.spbtsr) global.spbtsr[a].style.color = 'inherit'; }
 
-    export function reduce(itm, am) { if (am) { itm.amount = itm.amount - am <= 0 ? 0 : itm.amount - am } if (itm.amount <= 0) { removeItem(itm); updateTrunkLeftItem(itm, true) } else if (global.sm === 1) updateInv(inv.indexOf(itm)); else if (global.sm === itm.stype) updateInv(global.sinv.indexOf(itm)); updateTrunkLeftItem(itm) }
+    export function reduce(itm: any, am?: any) { if (am) { itm.amount = itm.amount - am <= 0 ? 0 : itm.amount - am } if (itm.amount <= 0) { removeItem(itm); updateTrunkLeftItem(itm, true) } else if (global.sm === 1) updateInv(inv.indexOf(itm)); else if (global.sm === itm.stype) updateInv(global.sinv.indexOf(itm)); updateTrunkLeftItem(itm) }

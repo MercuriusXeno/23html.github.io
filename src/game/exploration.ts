@@ -1,4 +1,3 @@
-// @ts-nocheck
 // ==========================================================================
 // Exploration & Scouting
 // ==========================================================================
@@ -13,14 +12,14 @@ import { giveSkExp } from './progression';
 import { giveItem, removeItem } from './inventory';
 import { cansee } from './utils-game';
 
-export function canScout(what) {
+export function canScout(what: any): number {
   if (what.data.scoutm) {
     for (let a in what.scout) if (what.data.gets[a] !== true && (!what.scout[a].cond || what.scout[a].cond() === true)) return 1;
     return 2
   } return 3
 }
 
-export function scoutGeneric(chs) {
+export function scoutGeneric(chs: any): void {
   if (global.flags.isdark && !cansee()) return msg('You can\'t see anything', 'grey')
   let sct = select(chs.scout);
   let idx = chs.scout.indexOf(sct);
@@ -34,7 +33,7 @@ export function scoutGeneric(chs) {
   if (canScout(global.current_l) >= 2 && t >= 2) { deactivateAct(act.scout); msg('There doesn\'t seem to be anything of interest left in this area') }
 }
 
-export function disassembleGeneric(obj) {
+export function disassembleGeneric(obj: any): void {
   for (let a in obj.dss) {
     let am = obj.dss[a].amount;
     if (obj.dss[a].q) am = (am + am * (obj.dss[a].q * skl.dssmb.lvl)) << 0;

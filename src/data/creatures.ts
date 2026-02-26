@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { creature, eqp, global, you, dom, callback, checksd, item, wpn, acc, abl, effect, skl } from '../state';
 import { random, rand } from '../random';
 import { giveSkExp } from '../game/progression';
@@ -14,7 +13,7 @@ import { msg } from '../ui/messages';
 // ==========================================================================
 // Creature constructor + instances
 // ==========================================================================
-function Creature(cfg) {
+function Creature(this: any, cfg?: any) {
   this.name = 'Nothing';
   this.desc = 'Empty space';
   this.type = 3;
@@ -42,7 +41,7 @@ function Creature(cfg) {
   this.pts = 1;
   this.eva = 0;
   this.data = { lstdmg: 0, oneshot: true };
-  this.stat_r = function () {
+  this.stat_r = function (this: any) {
     this.stre = this.inte = this.agle = this.spde = this.sate = this.hpe = 1;
     for (let idx in this.eff) this.eff[idx].mods();
     this.str = (this.str_r + this.stra) * this.strm * this.stre;
@@ -62,7 +61,7 @@ function Creature(cfg) {
   this.alive = true;
   this.eff = [];
   this.drop = [];
-  this.onDeath = function (killer) {
+  this.onDeath = function (this: any, killer: any) {
     callback.onDeath.fire(this, killer)
     this.hp = 0;
     this.alive = false;
@@ -97,10 +96,10 @@ function Creature(cfg) {
     dom.d7m.update();
     kill(this)
   };
-  this.onDeathE = function () {
+  this.onDeathE = function (this: any) {
     giveSkExp(skl.war, (this.rnk * 2 - 1) * (1 + this.lvl * .05) * .1);
   }
-  this.battle_ai = function (x, y, z) {
+  this.battle_ai = function (this: any, x: any, y: any, z: any) {
   /*me = this.data;
 if(!me.lasthp) me.lasthp=this.hp;
 me.cdmg = me.lasthp-this.hp;
@@ -111,70 +110,92 @@ if(this.hp-me.avgdmg<=0) {msg('too scary, running away'); global.flags.btlinterr
 */return attack(x, y)
   }
   if (cfg) for (let k in cfg) this[k] = cfg[k];
-} creature.default = new Creature(); global.current_m = creature.default;
+}
+// @ts-ignore: constructor function
+creature.default = new Creature(); global.current_m = creature.default;
 
+// @ts-ignore: constructor function
 creature.bat = new Creature({ name: 'Bat', id: 101, desc: 'Aggressive little bats living in the dark', type: 1, exp: 8, hp_r: 39, blood: .0852, stat_p: [.5, 1, 1.5, .5], aff: [-5, 25, -5, -5, 10, -5, 5], cls: [-4, -7, -3], atype: 1, ctype: 1, str_r: 2, agl_r: 10, spd_r: 2, drop: [{ item: item.sbone, chance: .1 }, { item: item.appl, chance: .06 }], rnk: 3, pts: 6 });
 
+// @ts-ignore: constructor function
 creature.cbat = new Creature({ id: 109, name: 'Cave bat', desc: 'Large, agile bats that swooop down to strike from the air', drop: [] });
 
+// @ts-ignore: constructor function
 creature.stirge = new Creature({ id: 110, name: 'Stirge', desc: 'Giant vampire bats rumored to drain a victim\'s life in a single blow', drop: [] });
 
+// @ts-ignore: constructor function
 creature.spd1 = new Creature({ name: 'Attic spider', id: 104, desc: 'Small docile spiders who live in damp and dark places', type: 1, exp: 8, hp_r: 26, stat_p: [.6, 1.1, 1.6, 1], aff: [2, 5, 10, -35, 10, -5, 15], cls: [4, 6, -6], str_r: 3, agl_r: 8, spd_r: 2, rnk: 3, pts: 5, drop: [{ item: item.ltcc, chance: .01 }, { item: item.thrdnl, chance: .1 }] });
-creature.spd1.battle_ai = function (x, y, z) {
+creature.spd1.battle_ai = function (this: any, x: any, y: any, z: any) {
   if (random() <= .3) return attack(x, y, abl.pbite, 3);
   return attack(x, y)
 }
 
+// @ts-ignore: constructor function
 creature.tdummy = new Creature({ id: 103, name: 'Training dummy', desc: 'He\'s made of fabric', drop: [{ item: wpn.knf1, chance: .01, cond: () => { return you.lvl <= 20 } }, { item: eqp.brc, chance: .03, cond: () => { return you.lvl <= 20 } }, { item: item.hrb1, chance: .02 }], aff: [0, 0, 15, -25, -5, -666, 666], stat_p: [.1, .5, .4, .2], ctype: 2, int_r: 0, rnk: 1 });
-creature.tdummy.battle_ai = function (x, y, z) {
+creature.tdummy.battle_ai = function (this: any, x: any, y: any, z: any) {
   if (random() <= .001) return attack(x, y, abl.rstab);
   return attack(x, y)
 }
-creature.tdummy.onDeathE = function () { };
+creature.tdummy.onDeathE = function (this: any) { };
 
+// @ts-ignore: constructor function
 creature.sdummy = new Creature({ id: 102, name: 'Straw dummy', desc: 'He\'s made of straw', drop: [{ item: item.sstraw, chance: .085 }, { item: item.hrb1, chance: .02 }], aff: [0, 0, 15, -25, -5, -666, 666], stat_p: [.25, .6, .3, .2], ctype: 2, int_r: 0, rnk: 1 });
-creature.sdummy.battle_ai = function (x, y, z) {
+creature.sdummy.battle_ai = function (this: any, x: any, y: any, z: any) {
   if (random() <= .001) return attack(x, y, abl.rstab);
   return attack(x, y)
 }
-creature.sdummy.onDeathE = function () { };
+creature.sdummy.onDeathE = function (this: any) { };
 
+// @ts-ignore: constructor function
 creature.wdummy = new Creature({ id: 112, name: 'Wooden dummy', desc: 'He\'s made of wood', stat_p: [.4, .8, .12, .2], aff: [0, 0, 15, -30, 20, -666, 666], cls: [-1, 2, 4], str_r: 3, ctype: 2, rnk: 1, drop: [{ item: eqp.pnt, chance: .008, cond: () => { return you.lvl <= 20 } }, { item: eqp.vst, chance: .007, cond: () => { return you.lvl <= 20 } }, { item: eqp.bnd, chance: .01, cond: () => { return you.lvl <= 20 } }, { item: item.wdc, chance: .03 }, { item: wpn.wsrd2, chance: .002, cond: () => { return you.lvl <= 20 } }] });
-creature.wdummy.battle_ai = function (x, y, z) {
+creature.wdummy.battle_ai = function (this: any, x: any, y: any, z: any) {
   if (random() <= .001) return attack(x, y, abl.rstab);
   return attack(x, y)
 }
-creature.wdummy.onDeathE = function () { };
+creature.wdummy.onDeathE = function (this: any) { };
 
+// @ts-ignore: constructor function
 creature.puppet = new Creature({ id: 105, name: 'Puppet', desc: 'Animated doll with agile movements', drop: [] });
-creature.puppet.battle_ai = function (x, y, z) { }
+creature.puppet.battle_ai = function (this: any, x: any, y: any, z: any) { }
 
+// @ts-ignore: constructor function
 creature.bpuppet = new Creature({ id: 106, name: 'Battle Puppet', desc: 'Animated doll with martial ability', drop: [] });
-creature.bpuppet.battle_ai = function (x, y, z) { }
+creature.bpuppet.battle_ai = function (this: any, x: any, y: any, z: any) { }
 
+// @ts-ignore: constructor function
 creature.doll = new Creature({ id: 107, name: 'Doll', desc: 'Child\'s toy possessed by an evil spirit', drop: [] });
-creature.doll.battle_ai = function (x, y, z) { }
+creature.doll.battle_ai = function (this: any, x: any, y: any, z: any) { }
 
+// @ts-ignore: constructor function
 creature.ndoll = new Creature({ id: 108, name: 'Necro doll', desc: 'Evil Dolls used in dark rituals', drop: [] });
-creature.ndoll.battle_ai = function (x, y, z) { }
+creature.ndoll.battle_ai = function (this: any, x: any, y: any, z: any) { }
 
+// @ts-ignore: constructor function
 creature.cdoll = new Creature({ id: 111, name: 'Quicksilver', desc: 'Dolls possessed by the souls of children who lost their lives to war or illness', drop: [] });
-creature.cdoll.battle_ai = function (x, y, z) { }
+creature.cdoll.battle_ai = function (this: any, x: any, y: any, z: any) { }
 
+// @ts-ignore: constructor function
 creature.zomb1 = new Creature({ id: 113, name: 'Zombie', desc: 'Once the inhabitants of the surface, zombies emerge from the Dark to attack the living' });
 
+// @ts-ignore: constructor function
 creature.mumy = new Creature({ id: 114, name: 'Mummy', desc: 'Ancient corpses infused with the power of Dark' });
 
+// @ts-ignore: constructor function
 creature.ghl = new Creature({ id: 115, name: 'Ghoul', desc: 'Ghouls lurk in the Catacombs, longing for human flesh. Attacking their heads proves effective' });
 
+// @ts-ignore: constructor function
 creature.ght = new Creature({ id: 116, name: 'Ghast', desc: 'The living dead, given power by demons of the Underworld' });
 
+// @ts-ignore: constructor function
 creature.zmbf = new Creature({ id: 117, name: 'Zombie Fighter', desc: 'Corpses of common soldiers, brought back to life through the Dark\'s taint' });
 
+// @ts-ignore: constructor function
 creature.zmbk = new Creature({ id: 118, name: 'Zombie Knight', desc: 'Zombies of the Knights of the Cross, still in possession of potent martial skills' });
 
+// @ts-ignore: constructor function
 creature.zmbm = new Creature({ id: 119, name: 'Zombie Mage', desc: 'Zombies of Dark mages, who employ powerful offensive magic' });
 
+// @ts-ignore: constructor function
 creature.skl = new Creature();
 creature.skl.name = 'Skeleton';
 creature.skl.id = 120;
@@ -195,8 +216,10 @@ creature.skl.drop = [];
 creature.skl.rnk = 7;
 creature.skl.pts = 17;
 
+// @ts-ignore: constructor function
 creature.slm1 = new Creature({ name: 'Blue Slime', id: 121, desc: 'Lesser slimes, devoid of any senses. They survive by absorbing debris from the ground', type: 1, exp: 3, hp_r: 65, stat_p: [0.7, .8, 1.5, .3], aff: [5, 5, 15, -20, -15, 25, 34], cls: [5, 5, 20], ctype: 2, str_r: 2, agl_r: 5, eva: 6, spd_r: 1, drop: [{ item: item.watr, chance: .01 }, { item: item.slm, chance: .03 }, { item: item.jll, chance: .01 }], rnk: 2, pts: 3 });
 
+// @ts-ignore: constructor function
 creature.slm2 = new Creature();
 creature.slm2.name = 'Green Slime';
 creature.slm2.id = 122;
@@ -218,6 +241,7 @@ creature.slm2.drop = [{ item: item.watr, chance: .01 }, { item: item.slm, chance
 creature.slm2.rnk = 2;
 creature.slm2.pts = 3;
 
+// @ts-ignore: constructor function
 creature.rbt1 = new Creature();
 creature.rbt1.name = 'Wild Rabbit';
 creature.rbt1.id = 123;
@@ -240,6 +264,7 @@ creature.rbt1.drop = [{ item: item.sbone, chance: .1 }, { item: item.rwmt1, chan
 creature.rbt1.rnk = 2;
 creature.rbt1.pts = 4;
 
+// @ts-ignore: constructor function
 creature.slm3 = new Creature();
 creature.slm3.name = 'Cyan Slime';
 creature.slm3.id = 124;
@@ -262,6 +287,7 @@ creature.slm3.drop = [{ item: item.watr, chance: .03 }, { item: item.slm, chance
 creature.slm3.rnk = 3;
 creature.slm3.pts = 4;
 
+// @ts-ignore: constructor function
 creature.slm4 = new Creature();
 creature.slm4.name = 'Clear Slime';
 creature.slm4.id = 125;
@@ -284,36 +310,47 @@ creature.slm4.drop = [{ item: item.watr, chance: .035 }, { item: item.slm, chanc
 creature.slm4.rnk = 3;
 creature.slm4.pts = 5;
 
+// @ts-ignore: constructor function
 creature.kksh = new Creature({ name: 'Scarecrow', id: 126, desc: 'Once protector of fields, this figure has turned to evil by the influence of Dark. It hangs still in ambush, waiting for unsuspecting passersby', exp: 5, hp_r: 100, stat_p: [1.1, 1.2, 2.9, .8], aff: [15, 5, 15, -10, -5, 55, 34], cls: [9, 9, 35], ctype: 1, atype: 1, str_r: 5, agl_r: 13, spd_r: 2, drop: [{ item: item.watr, chance: .03 }, { item: item.slm, chance: .06 }, { item: item.jll, chance: .02 }], rnk: 10 });
 
+// @ts-ignore: constructor function
 creature.golem1 = new Creature({ name: 'Straw Golem', id: 127, desc: 'Big golem composed of straw. These golems are brittle and weak, their main purpose is to assist newbies in training', exp: 50, hp_r: 500, stat_p: [0.05, 0.2, 0.2, 0.2], aff: [10, 8, 5, -60, -5, 15, 14], cls: [10, 15, 10], ctype: 2, str_r: 15, agl_r: 30, spd_r: 3, drop: [{ item: item.sstraw, chance: 1, min: 13, max: 25 }, { item: item.lsrd, chance: 1 }], rnk: 4, un: true, pts: 200 });
 
+// @ts-ignore: constructor function
 creature.golem2 = new Creature({ name: 'Reinforced Straw Golem', id: 128, desc: 'This golem\'s joints have been binded by the rope, giving it sturdier and more stable frame', exp: 60, hp_r: 700, stat_p: [0.06, 0.25, 0.2, 0.25], aff: [11, 8, 5, -60, -5, 15, 14], cls: [11, 16, 11], ctype: 2, str_r: 18, agl_r: 35, spd_r: 3, rnk: 4, un: true, drop: [{ item: item.sstraw, chance: 1, min: 13, max: 25 }, { item: item.lsrd, chance: 1, min: 2, max: 2 }, { item: item.rope, chance: .1 }], pts: 400 });
 
+// @ts-ignore: constructor function
 creature.golem3 = new Creature({ name: 'Paper Golem', id: 129, desc: 'Slim golem made of paper-like material. While not as tough as other training golems, it has a light body which allows it to move faster', exp: 80, hp_r: 400, stat_p: [0.06, 0.3, 0.3, 0.3], aff: [11, 8, 5, -60, -5, 15, 14], cls: [10, 20, 14], ctype: 2, str_r: 21, agl_r: 70, spd_r: 4, rnk: 4, un: true, drop: [{ item: item.lsrd, chance: 1, min: 4, max: 4 }, { item: item.bhd, chance: .5, min: 1, max: 4 }], pts: 500 });
 
+// @ts-ignore: constructor function
 creature.golem4 = new Creature({ name: 'Attack Golem', id: 130, desc: 'Golem with implanted martial prowess. Somewhat similar to a trained militant, they pose a dangerous threat to any unprepared opponent', exp: 120, hp_r: 730, stat_p: [0.06, 0.3, 0.3, 0.3], aff: [19, 8, 5, -60, -5, 15, 14], cls: [20, 25, 18], ctype: 2, str_r: 25, agl_r: 50, spd_r: 4, rnk: 5, un: true, pts: 800, drop: [{ item: item.lsstn, chance: 1 }] });
-creature.golem4.battle_ai = function (x, y, z) {
+creature.golem4.battle_ai = function (this: any, x: any, y: any, z: any) {
   if (random() <= .2) return attack(x, y, abl.bash);
   return attack(x, y)
 }
 
+// @ts-ignore: constructor function
 creature.ngtmr1 = new Creature({ name: 'Nightmare', id: 131, desc: 'Manifestation of your fears', exp: 1, hp_r: 100000000, stat_p: [0, 0, 0, 0], cls: [9999, 9999, 9999], str_r: 1, agl_r: 1, rnk: 0 });
-creature.ngtmr1.battle_ai = function () {
+creature.ngtmr1.battle_ai = function (this: any) {
   return false
 }
 
+// @ts-ignore: constructor function
 creature.lrck = new Creature({ name: 'Locked Rock', id: 132, desc: 'A rock shaped monster found in caves and dungeons. It has a habit of closing of paths by mimicking a wall, but it\'s fighting prowess is close to zero.', exp: 123, hp_r: 9000, stat_p: [1.5, 1.2, 1, 1], cls: [90, 120, 60], str_r: 90, agl_r: 1, rnk: 11 });
-creature.lrck.battle_ai = function () {
+creature.lrck.battle_ai = function (this: any) {
   return false
 }
 
+// @ts-ignore: constructor function
 creature.lsprt = new Creature({ name: 'Lamp Spirit', id: 133, desc: 'Small fire sprites that manifest inside oil lamps located in mines and other places with low human activity. While not sinister by nature, they enjoy playing pranks on people', exp: 5, hp_r: 100, stat_p: [1.1, 1.2, 2.9, .8], aff: [15, 5, 15, -10, -5, 55, 34], cls: [9, 9, 35], ctype: 1, atype: 1, str_r: 5, agl_r: 13, spd_r: 2, drop: [{ item: item.watr, chance: .03 }, { item: item.slm, chance: .06 }, { item: item.jll, chance: .02 }], rnk: 10 });
 
+// @ts-ignore: constructor function
 creature.dcrps1 = new Creature({ id: 134, name: 'Disaster Corpse', desc: 'Undead bodies manifested purely by death ki. They appear in ancient battlefields or other areas with extremely heavy concentration of dark ki. These corpses share countless memories of residue souls' });
 
+// @ts-ignore: constructor function
 creature.unsctn = new Creature({ id: 135, name: 'Unchanging Skeleton', desc: 'People that neither die nor dissolve, active in the world but don\'t have minds or memories. They won\'t hurt people other than pulling pranks and causing trouble, but would go frenzy if exposed to death ki for too long' });
 
+// @ts-ignore: constructor function
 creature.wolf1 = new Creature();
 creature.wolf1.name = 'Weakened Wolf';
 creature.wolf1.id = 136;
@@ -336,12 +373,13 @@ creature.wolf1.drop = [{ item: item.sbone, chance: .15 }, { item: item.rwmt1, ch
 creature.wolf1.rnk = 4;
 creature.wolf1.blood = .986
 creature.wolf1.pts = 9;
-creature.wolf1.battle_ai = function (x, y, z) {
+creature.wolf1.battle_ai = function (this: any, x: any, y: any, z: any) {
   if (random() <= .3) return attack(x, y, abl.bite);
   else if (random() <= .1) return attack(x, y, abl.scratch)
   return attack(x, y)
 }
 
+// @ts-ignore: constructor function
 creature.slm5 = new Creature();
 creature.slm5.name = 'Blue Slime';
 creature.slm5.id = 137;
@@ -363,7 +401,7 @@ creature.slm5.spd_r = 2;
 creature.slm5.drop = [{ item: item.watr, chance: .085 }, { item: item.slm, chance: .03 }, { item: item.jll, chance: .07 }, { item: acc.jln3, chance: .0005 }];
 creature.slm5.rnk = 3;
 creature.slm5.pts = 5;
-creature.slm5.battle_ai = function (x, y, z) {
+creature.slm5.battle_ai = function (this: any, x: any, y: any, z: any) {
   if (random() <= .15) return attack(x, y, abl.bash);
   return attack(x, y)
 }

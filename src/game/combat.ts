@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { random, rand, randf } from '../random';
 import { select } from '../utils';
 import { addElement } from '../dom-utils';
@@ -9,7 +8,7 @@ import { giveSkExp } from './progression';
 import { giveItem } from './inventory';
 import { cansee, formatw } from './utils-game';
 
-function allbuff(who) {
+function allbuff(who: any) {
   who.stat_r();
   for (let g in who.eff) if (who.eff[g].type === 1) who.eff[g].use(who.eff[g].y, who.eff[g].z);
   if (who.id === you.id) {
@@ -21,7 +20,7 @@ function allbuff(who) {
   }
 }
 
-export function fght(att, def) {
+export function fght(att: any, def: any) {
   /*if(global.flags.btlinterrupt===true){
     msg('battle interrupted');
     if(global.current_z.size>0) {area_init(global.current_z);global.current_z.size--;}else if(global.current_z.size===-1)area_init(global.current_z);
@@ -84,15 +83,15 @@ export function fght(att, def) {
   }, 500 / global.fps);
 }
 
-export function attack(att, def, atk, power) {
+export function attack(att: any, def: any, atk?: any, power?: any) {
   if (!global.flags.btl) return
   allbuff(att);
   allbuff(def);
   atk = atk || abl.default;
   let isyou = att.id === you.id;
   global.mabl = atk;
-  let dmg;
-  let hit;
+  let dmg: any;
+  let hit: any;
   let dk = false
   let a = 2 + rand(4);
   if (isyou === true) {
@@ -159,7 +158,7 @@ export function attack(att, def, atk, power) {
   return dmg || 0;
 }
 
-export function tattack(pow, type, e) {
+export function tattack(pow: any, type: any, e: any) {
   let dmg;
   let ddat = skl.thr.use();
   let m = global.current_m;
@@ -185,7 +184,7 @@ export function tattack(pow, type, e) {
   }
 }
 
-export function dmg_calc(att, def, atk) {
+export function dmg_calc(att: any, def: any, atk: any) {
   let isyou = att.id === you.id;
   let atea = atk.aff || isyou ? att.eqp[0].atype : att.atype;
   let atcs = atk.class || isyou ? att.eqp[0].ctype : att.ctype;
@@ -260,11 +259,11 @@ export function dmg_calc(att, def, atk) {
   } else return dmg > 0 ? Math.ceil(dmg * att.dmlt * randf(.9, 1.1)) : 0;
 }
 
-export function dumb(x) {
+export function dumb(x: any) {
   if (x) {
-    let arr = [];
+    let arr: any[] = [];
     for (let m = 0; m < 5; m++) {
-      arr[m] = new Object();
+      arr[m] = {} as any;
       arr[m].obj = addElement(document.body, 'span', null, 'floating-text');
       arr[m].obj.style.pointerEvents = 'none';
       arr[m].obj.innerHTML = select(['x', 'X', '*', '#', '$']);
@@ -291,7 +290,7 @@ export function dumb(x) {
   }
 }
 
-export function hit_calc(tp) {
+export function hit_calc(tp: any) {
   if (tp === 1) {
     let agl_bonus = 0;
     let spd = global.current_m.spd > 0 ? global.current_m.spd : 0;
@@ -329,7 +328,7 @@ function wpnhitstt() {
   }
 }
 
-export function wpndiestt(killer, me) {
+export function wpndiestt(killer: any, me: any) {
   switch (killer.eqp[0].wtype) {
     case 0: global.stat.msts[0][1]++;
       break
@@ -383,7 +382,7 @@ function usePlayerWeaponSkill() {
   }
 }
 
-function printBodyPartHit(partNumber) {
+function printBodyPartHit(partNumber: any) {
   switch (partNumber) {
     case 2: msg_add(' (head)', 'orange');
       break;
@@ -402,7 +401,7 @@ function printCritIfCrit() {
   if (global.flags.crti) { msg_add(' CRIT! ', 'yellow'); global.flags.crti = false }
 }
 
-function printDamageNumber(ddmg) {
+function printDamageNumber(ddmg: any) {
   let col;
   let bcol = '';
   let shd = '';
@@ -429,25 +428,25 @@ function printDamageNumber(ddmg) {
   msg_add(ddmg, col, bcol, shd);
 }
 
-function printHitMessage(attackerName, ddmg, targetsPlayer) {
+function printHitMessage(attackerName: any, ddmg: any, targetsPlayer: any) {
   if (global.mabl.id === 0) msg(attackerName + (targetsPlayer === true ? global.mabl.atrg : global.mabl.btrg));
   else msg((targetsPlayer === true ? attackerName : '') + (targetsPlayer === true ? global.mabl.atrg : ('You ' + global.mabl.btrg)));
   printHitMessageResult(ddmg, targetsPlayer);
 }
 
-function printMultihitMessage(times, attackerName, acc_dmg, targetsPlayer) {
+function printMultihitMessage(times: any, attackerName: any, acc_dmg: any, targetsPlayer: any) {
   msg(attackerName + ' -> x' + (times - global.miss) + '(<span style="color:lightgrey">' + times + '</span>) for ');
   printHitMessageResult(acc_dmg, targetsPlayer);
   if (time - global.miss > 0) printBodyPartHit(global.target_g)
 }
 
-function printHitMessageResult(ddmg, targetsPlayer) {
+function printHitMessageResult(ddmg: any, targetsPlayer: any) {
   printDamageNumber(ddmg);
   printCritIfCrit();
   if (targetsPlayer === true && !global.flags.msd) printBodyPartHit(global.t_n)
 }
 
-function doSingleAttack(attacker, defender, isPlayerAttacking) {
+function doSingleAttack(attacker: any, defender: any, isPlayerAttacking: any) {
   if (isPlayerAttacking) {
     let dm = skl.fgt.use();
     if (you.eqp[0].twoh === true) dm += skl.twoh.use();

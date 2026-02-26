@@ -1,5 +1,5 @@
-// @ts-nocheck
 import { addElement, empty } from '../dom-utils';
+declare var InstallTrigger: any;
 import { dom, global, you, skl, timers, acts, act, home, furn, chss } from '../state';
 import { addDesc } from './descriptions';
 import { chs, clr_chs, deactivatef } from './choices';
@@ -10,7 +10,7 @@ import { giveSkExp } from '../game/progression';
 import { smove } from '../game/movement';
 import { formatw } from '../game/utils-game';
 
-    export function renderRcp(rcp) {
+    export function renderRcp(rcp: any) {
       let self: any = {};
       dom.ct_bt1_1_mc = addElement(dom.ct_bt1_1, 'div', null, 'craft-log-entry');
       dom.ct_bt1_1_mc.style.position = 'relative';
@@ -93,7 +93,7 @@ import { formatw } from '../game/utils-game';
           self.ct_bt1_2cc = addElement(dom.ct_bt1_2, 'small');
           self.ct_bt1_2cc.style.display = 'flex';
           self.ct_bt1_2cc.style.position = 'absolute';
-          self.ct_bt1_2cc.style.bottom = (typeof InstallTrigger !== 'undefined') ? (48 - g * 21) : (50 - g * 21);
+          self.ct_bt1_2cc.style.bottom = (typeof InstallTrigger !== 'undefined') ? (48 - Number(g) * 21) : (50 - Number(g) * 21);
           self.ct_bt1_2cc.style.width = '55%';
           self.ct_bt1_2cc1 = addElement(self.ct_bt1_2cc, 'div', 'toh', 'recipe-cell');
           self.ct_bt1_2cc2 = addElement(self.ct_bt1_2cc, 'div', null, 'recipe-cell');
@@ -132,13 +132,13 @@ import { formatw } from '../game/utils-game';
           self.ct_bt1_3cc.style.left = '255px';
           if (l > 1) {
             for (let nu in test.o) {
-              if (test.o[nu] === 1) self.ct_bt1_3cc.innerHTML += '<span style="color:lime">' + rcp.srect[nu] + '</span>' + (l - 1 == nu ? '' : ', ');
-              else if (test.o[nu] === 2) self.ct_bt1_3cc.innerHTML += '<span style="color:red">' + rcp.srect[nu] + '</span>' + (l - 1 == nu ? '' : ', ');
+              if (test.o[nu] === 1) self.ct_bt1_3cc.innerHTML += '<span style="color:lime">' + rcp.srect[nu] + '</span>' + (l - 1 == Number(nu) ? '' : ', ');
+              else if (test.o[nu] === 2) self.ct_bt1_3cc.innerHTML += '<span style="color:red">' + rcp.srect[nu] + '</span>' + (l - 1 == Number(nu) ? '' : ', ');
             }
           } else { if (test.o[0] === 1) self.ct_bt1_3cc.style.color = 'lime'; else if (test.o[0] === 2) self.ct_bt1_3cc.style.color = 'red'; self.ct_bt1_3cc.innerHTML += rcp.srect[0] }
         }
       });
-      dom.ct_bt1_1_mc.addEventListener('mouseenter', function () {
+      dom.ct_bt1_1_mc.addEventListener('mouseenter', function (this: any) {
         if (dom.rcpcurar) dom.spcldom.removeChild(dom.rcpcurar);
         dom.rcpcurar = addElement(this, 'span');
         dom.rcpcurar.innerHTML = '⋗⋗';
@@ -156,7 +156,7 @@ import { formatw } from '../game/utils-game';
       });
     }
 
-    export function refreshRcp(fl) {
+    export function refreshRcp(fl: any) {
       if (global.rm === 0 || !global.rm) {
         for (let a in global.rec_d) _refreshRcpCnt(global.rec_d[a], global.rec_d[a]._t)
       } else {
@@ -178,17 +178,17 @@ import { formatw } from '../game/utils-game';
       }
     }
 
-    function _refreshRcpCnt(r, t, t2) {
+    function _refreshRcpCnt(r: any, t: any, t2?: any) {
       let test = make(r, true);
       if (test.y.length != r.rec.length || test.o[0] === 2) t.style.color = 'grey';
       else t.style.color = 'rgb(188,254,254)';
     }
 
-    function _fcraft(what, safe) {
+    function _fcraft(what: any, safe: any) {
       if (safe) { safe = false; if (global.flags.sleepmode === true) { msg('You may want to wake up first', 'red'); return }; if (global.flags.btl === true) { msg('You\'re too busy fighting', 'red'); return }; if (global.flags.rdng === true) { msg('You\'re too occupied with reading', 'red'); return }; if (global.flags.busy === true) { msg('You\'re too busy with something else', 'red'); return }; let ntest = make(what, true); for (let g = 0; g < what.rec.length; g++) { if (what.rec.length === ntest.y.length && ntest.o[0] !== 2) safe = true } if (safe) { make(what); global.stat.crftt++; iftrunkopen(1) } else { if (global.flags.rptbncgtf) { clearInterval(timers.rptbncgt); global.flags.rptbncgtf = false; } } }
     }
 
-    export function renderSkl(skl) {
+    export function renderSkl(skl: any) {
       let self: any = {};
       self.skwmmc = addElement(dom.skcon, 'div', null, 'skill-entry');
       addDesc(self.skwmmc, skl, 6);
@@ -212,7 +212,7 @@ import { formatw } from '../game/utils-game';
       self.skwmm3.style.backgroundColor = 'yellow';
     }
 
-    export function renderAct(a) {
+    export function renderAct(a: any) {
       let self: any = {};
       self.accm = addElement(dom.acccon, 'div', null, 'skill-entry');
       a.t = self.accm;
@@ -237,9 +237,9 @@ import { formatw } from '../game/utils-game';
       })
     }
 
-    export function refreshAct(e, a) { e.style.color = 'inherit'; if (a.cond(false) !== true) e.style.color = 'grey'; if (a.active === true) e.style.color = 'lime'; }
+    export function refreshAct(e: any, a: any) { e.style.color = 'inherit'; if (a.cond(false) !== true) e.style.color = 'grey'; if (a.active === true) e.style.color = 'lime'; }
 
-    export function activateAct(actn) {
+    export function activateAct(actn: any) {
       global.current_a.deactivate();
       actn.activate();
       global.current_a = actn;
@@ -247,7 +247,7 @@ import { formatw } from '../game/utils-game';
       dom.ct_bt3.style.backgroundColor = 'darkslategray'
     }
 
-    export function deactivateAct(actn) {
+    export function deactivateAct(actn: any) {
       actn.deactivate();
       global.current_a = act.default;
       global.flags.busy = false;
@@ -255,7 +255,7 @@ import { formatw } from '../game/utils-game';
       for (let a in acts) refreshAct(acts[a].t, acts[a])
     }
 
-    export function renderFurniture(frn) {
+    export function renderFurniture(frn: any) {
       dom.ch_etn = addElement(dom.ch_1h, 'div', 'bst_entrh', 'list-row');
       dom.ch_etn.style.backgroundColor = 'rgb(10,30,54)';
       dom.ch_etn1 = addElement(dom.ch_etn, 'div', null, 'list-col-name');
@@ -274,24 +274,24 @@ import { formatw } from '../game/utils-game';
           dom.ch_etn1.innerHTML += ' <small style="color:pink">[t]</small>';
           break
       }
-      dom.ch_etn.addEventListener('mouseenter', function () {
+      dom.ch_etn.addEventListener('mouseenter', function (this: any) {
         if (frn.removable === true) {
-          dom.chsfdel = addElement(self.children[0], 'div', null, 'delete-btn');
+          dom.chsfdel = addElement(this.children[0], 'div', null, 'delete-btn');
           dom.chsfdel.innerHTML = 'x';
           dom.chsfdel.style.right = 5;
           dom.chsfdel.style.top = 19;
-          dom.chsfdel.addEventListener('click', function () {
+          dom.chsfdel.addEventListener('click', function (this: any) {
             frn.data.amount--;
             frn.onRemove();
             if (frn.data.amount === 0) { deactivatef(frn); frn.onDestroy(); global.dscr.style.display = 'none'; furn.splice(furn.indexOf(frn), 1); showFurniturePanel(); chs('"<= Return"', false).addEventListener('click', () => { smove(chss.home, false) }) } else
-              self.parentElement.parentElement.children[1].innerHTML = 'x' + frn.data.amount;
+              this.parentElement.parentElement.children[1].innerHTML = 'x' + frn.data.amount;
             let v = 0;
             for (let a in furn) if (furn[a].v) { if (furn[a].multv) v += furn[a].v * furn[a].amount; else v += furn[a].v } dom.flsthdrbb.innerHTML = v;
           });
         }
       });
-      dom.ch_etn.addEventListener('mouseleave', function () {
-        if (frn.removable === true) self.children[0].removeChild(dom.chsfdel);
+      dom.ch_etn.addEventListener('mouseleave', function (this: any) {
+        if (frn.removable === true) this.children[0].removeChild(dom.chsfdel);
       });
       dom.ch_etn.addEventListener('click', function () {
         frn.onSelect();

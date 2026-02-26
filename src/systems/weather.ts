@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { w_manager, global, effect, you, skl, dom, callback, time, setTime } from '../state';
 import { random, rand } from '../random';
 import { findbyid, copy } from '../utils';
@@ -10,7 +9,7 @@ import { msg } from '../ui/messages';
 // Weather System
 // ==========================================================================
 
-export function Weather(id) {
+export function Weather(this: any, id: any) {
   this.name = '?';
   this.id = id || -1
   this.ontick = function () { };
@@ -18,55 +17,69 @@ export function Weather(id) {
 
 export var weather: any = new Object();
 
+// @ts-ignore: constructor function
 weather.sunny = new Weather(100);
 weather.sunny.name = 'Sunny';
 weather.sunny.c = 'yellow';
+// @ts-ignore: constructor function
 weather.cloudy = new Weather(101);
 weather.cloudy.name = 'Cloudy';
 weather.cloudy.c = 'ghostwhite';
+// @ts-ignore: constructor function
 weather.stormy = new Weather(102);
 weather.stormy.name = 'Stormy';
 weather.stormy.c = '#bdbdbd';
+// @ts-ignore: constructor function
 weather.overcast = new Weather(103);
 weather.overcast.name = 'Overcast';
 weather.overcast.c = 'lightgrey';
+// @ts-ignore: constructor function
 weather.storm = new Weather(104);
 weather.storm.name = 'Storm';
 weather.storm.frain = true;
 weather.storm.c = 'lightgrey';
 weather.storm.bc = '#5a5a5a';
+// @ts-ignore: constructor function
 weather.thunder = new Weather(105);
 weather.thunder.name = 'Thunderstorm';
 weather.thunder.frain = true;
 weather.thunder.c = 'yellow';
 weather.thunder.bc = '#5a5a5a';
+// @ts-ignore: constructor function
 weather.rain = new Weather(106);
 weather.rain.name = 'Rain';
 weather.rain.c = 'cyan';
 weather.rain.bc = '#2a3971';
 weather.rain.frain = true;
+// @ts-ignore: constructor function
 weather.heavyrain = new Weather(107);
 weather.heavyrain.name = 'Heavy rain';
 weather.heavyrain.frain = true;
 weather.heavyrain.c = 'cyan';
 weather.heavyrain.bc = '#4d5eb3';
+// @ts-ignore: constructor function
 weather.misty = new Weather(108);
 weather.misty.name = 'Misty';
 weather.misty.bc = '#244b68';
+// @ts-ignore: constructor function
 weather.foggy = new Weather(109);
 weather.foggy.name = 'Foggy';
 weather.foggy.bc = '#7c8b9a';
+// @ts-ignore: constructor function
 weather.drizzle = new Weather(110);
 weather.drizzle.name = 'Drizzle';
 weather.drizzle.bc = '254863';
 weather.drizzle.frain = true;
+// @ts-ignore: constructor function
 weather.clear = new Weather(111);
 weather.clear.name = 'Clear';
+// @ts-ignore: constructor function
 weather.snow = new Weather(112);
 weather.snow.name = 'Snow';
 weather.snow.c = 'white';
 weather.snow.bc = '#aaa';
 weather.snow.fsnow = true;
+// @ts-ignore: constructor function
 weather.sstorm = new Weather(113);
 weather.sstorm.name = 'Snow Storm';
 weather.sstorm.c = 'white';
@@ -100,22 +113,23 @@ weather.thunder.ontick = function () {
 // Callback System
 // ==========================================================================
 
-function callbackManager(id) {
+function callbackManager(this: any, id: any) {
   this.id = id || 0
-  this.hooks = [{ f: function (victim, killer) { }, id: 0, data: {} }]
+  this.hooks = [{ f: function (victim: any, killer: any) { }, id: 0, data: {} }]
   this.fire = function () { }
 }
 
+// @ts-ignore: constructor function
 callback.onDeath = new callbackManager(1);
-callback.onDeath.fire = function (victim, killer) {
+callback.onDeath.fire = function (this: any, victim: any, killer: any) {
   for (let a in this.hooks) this.hooks[a].f(victim, killer)
 }
 
-export function attachCallback(callback, what, data) {
+export function attachCallback(callback: any, what: any, data?: any) {
   callback.hooks.push(what)
 }
 
-export function detachCallback(callback, what) {
+export function detachCallback(callback: any, what: any) {
   for (let a in callback.hooks) if (callback.hooks[a].id === what) callback.hooks.splice(callback.hooks[a], 1)
 }
 
@@ -123,7 +137,7 @@ export function detachCallback(callback, what) {
 // Time System
 // ==========================================================================
 
-export function Time() {
+export function Time(this: any) {
   this.minute = 0;
   this.hour = 0;
   this.day = 0;
@@ -131,6 +145,7 @@ export function Time() {
   this.year = 0;
 }
 
+// @ts-ignore: constructor function
 setTime(new Time());
 time.minute = 338144100;
 global.text.d_l = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
@@ -140,37 +155,37 @@ global.text.d_j = ["月", "火", "水", "木", "金", "土", "日"];
 // --- Time accessor functions ---
 export function getMinute() { return time.minute % 60 }
 export function getHour() { return time.hour % 24; }
-export function getDay(n) { return n === 1 ? global.text.d_l[time.day % 7] : (n === 2 ? global.text.d_s[time.day % 7] : global.text.d_j[time.day % 7]) }
+export function getDay(n: any) { return n === 1 ? global.text.d_l[time.day % 7] : (n === 2 ? global.text.d_s[time.day % 7] : global.text.d_j[time.day % 7]) }
 export function getMonth() { return time.month % 12 + 1; }
 export function getYear() { return time.year; }
 export function getLunarPhase() { return (time.day % 62.64 / 7.83) << 0 }
 
-export function getSeason(flag?) {
+export function getSeason(flag?: any) {
   if (getMonth() > 2 && getMonth() <= 5) return !flag ? 1 : "Spring";
   else if (getMonth() > 5 && getMonth() <= 8) return !flag ? 2 : "Summer";
   else if (getMonth() > 8 && getMonth() <= 11) return !flag ? 3 : "Autumn";
   else return !flag ? 4 : "Winter";
 }
 
-export function timeConv(chrono) {
+export function timeConv(chrono: any) {
   chrono.year = (chrono.minute / (518400)) << 0;
   chrono.month = (chrono.minute / (43200)) << 0;
   chrono.day = (chrono.minute / (1440)) << 0;
   chrono.hour = (chrono.minute / 60) << 0;
 }
 
-export function timeDisp(time, future?) {
+export function timeDisp(time: any, future?: any) {
   let time_t = time;
   if (future) { time_t = copy(time); time_t.minute += future; }
   timeConv(time_t);
-  let mm = time_t.minute % 60;
+  let mm: any = time_t.minute % 60;
   if (mm < 10) mm = '0' + mm;
   return time_t.year + '/' + ((time_t.month % 12) + 1) + '/' + ((time_t.day % 30) + 1) + ' ' + time_t.hour % 24 + ':' + mm;
 }
 
 // --- Weather state machine ---
 
-export function setWeather(w, d) {
+export function setWeather(w: any, d: any) {
   w_manager.curr = w;
   w_manager.duration = d;
   dom.d_weathert.style.backgroundColor = dom.d_weathert.style.color = 'inherit';
@@ -180,11 +195,11 @@ export function setWeather(w, d) {
   if (w.bc) dom.d_weathert.style.backgroundColor = w.bc;
 }
 
-export function isWeather(w) {
+export function isWeather(w: any) {
   return w_manager.curr.id === w.id
 }
 
-function onSeasonTick(season) {
+function onSeasonTick(season: any) {
   switch (season) {
     case 4:
       if (global.stat.wsnrest > 0) { global.stat.wsnrest--; return }
@@ -604,9 +619,9 @@ export function wManager() {
 // NOTE: Eval-time init (setWeather, wManager, dom.d_time update) moved to main.ts
 // because DOM elements (d_weathert, d_anomaly, d_time) must exist first.
 
-    export function wdrseason(flag) {
+    export function wdrseason(flag: any) {
       let s;
-      s = !flag ? getSeason(true) : global.text.ssns[getSeason() - 1];
+      s = !flag ? getSeason(true) : global.text.ssns[(getSeason() as number) - 1];
       dom.d_weathers.innerHTML = '[' + s + ']';
       switch (getSeason()) {
         case 1: dom.d_weathers.style.color = 'springgreen';

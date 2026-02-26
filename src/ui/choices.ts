@@ -1,12 +1,11 @@
-// @ts-nocheck
 import { addElement, empty } from '../dom-utils';
 import { dom, global, you, timers, skl } from '../state';
 import { giveSkExp } from '../game/progression';
 
-    export function chs(txt, f, c, bc, iconx, icony, size, ignore, slimsize) {
+    export function chs(txt: string, f?: any, c?: string, bc?: string, iconx?: number, icony?: number, size?: string, ignore?: any, slimsize?: string) {
       if (f === true) { clr_chs(); dom.ch_1 = addElement(dom.ctr_2, 'div', 'chs'); dom.ch_1.innerHTML = txt; }
       else { dom.ch_1 = addElement(dom.ctr_2, 'div', null, 'chs'); dom.ch_1.innerHTML = txt; }
-      if (!!iconx) { dom.ch_1.insertBefore(icon(dom.ch_1, iconx, icony), dom.ch_1.firstChild); }
+      if (!!iconx) { dom.ch_1.insertBefore(icon(dom.ch_1, iconx, icony!), dom.ch_1.firstChild); }
       if (c) dom.ch_1.style.color = c;
       if (bc) dom.ch_1.style.backgroundColor = bc;
       if (size) dom.ch_1.style.fontSize = size;
@@ -16,15 +15,15 @@ import { giveSkExp } from '../game/progression';
       return dom.ch_1;
     }
 
-    export function clr_chs(index) {
+    export function clr_chs(index?: number) {
       if (!index) empty(dom.ctr_2);
       else dom.ctr_2.removeChild(dom.ctr_2.children[index]);
     }
 
-    export function icon(root, x, y, sx, sy, sz) { //sz=2
+    export function icon(root: any, x: number, y: number, sx?: number, sy?: number, sz?: number) { //sz=2
       if (window.location.pathname.length === 1) {
         sx = sx || 16; sy = sy || 16
-        var div = addElement(root, 'canvas');
+        var div: any = addElement(root, 'canvas');
         div.width = sx;
         div.height = sy;
         let data = global._preic_tmain.getImageData(x * sx - sx, y * sy - sy, sx, sy);
@@ -39,7 +38,7 @@ import { giveSkExp } from '../game/progression';
       return div;
     }
 
-    export function Chs() {
+    export function Chs(this: any) {
       this.ttl;
       this.sl = function () { };
       this.data = {};
@@ -50,14 +49,14 @@ import { giveSkExp } from '../game/progression';
       this.sector = []
     }
 
-    export function activatef(f) {
+    export function activatef(f: any) {
       if (!f.active) {
         f.activate();
         f.active = true;
       }
     }
 
-    export function deactivatef(f) {
+    export function deactivatef(f: any) {
       if (f.active) {
         f.deactivate();
         f.active = false;

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { DAY, WEEK } from '../constants';
 import { random } from '../random';
 import { empty } from '../dom-utils';
@@ -45,6 +44,7 @@ import { addDesc } from '../ui/descriptions';
       if (h > 5 && h < 22) { global.flags.isday = true; dom.d_moon.style.display = 'none' } else { if (global.flags.inside === false && random() < .00002 * you.mods.stdstps) { msg('A star particle landed on you!', 'gold', null, null, 'darkblue'); giveItem(item.stdst) } global.flags.isday = false; dom.d_moon.style.display = '' }
       for (let g = 0; g < you.eff.length; g++) if (you.eff[g].type === 3 || you.eff[g].type === 5 || you.eff[g].type === 6) you.eff[g].use(you.eff[g].y, you.eff[g].z);
       for (let g = 0; g < global.current_m.eff.length; g++) if (global.current_m.eff[g].type === 3 || global.current_m.eff[g].type === 5 || global.current_m.eff[g].type === 6) global.current_m.eff[g].use(global.current_m.eff[g].y, global.current_m.eff[g].z);
+      // @ts-ignore fght() called immediately; setTimeout with void handler is intentional (no-op timer)
       if (global.flags.btl === true) timers.btl = setTimeout(fght(you, global.current_m), 1000 / global.fps);
       else giveSkExp(skl.mdt, .0065 * (1 + skl.ptnc.lvl * .15) * (effect.incsk.active === true ? 2 : 1))
       for (let obj in furn) furn[obj].use();

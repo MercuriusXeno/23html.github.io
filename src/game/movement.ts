@@ -1,4 +1,3 @@
-// @ts-nocheck
 // ==========================================================================
 // Movement & Area System
 // ==========================================================================
@@ -13,7 +12,7 @@ import { update_m } from '../ui/stats';
 import { giveEff } from '../ui/effects';
 import { giveSkExp, lvlup } from './progression';
 
-export function Effector() {
+export function Effector(this: any) {
   this.id = 0;
   this.x = '@';
   this.c = 'white';
@@ -23,43 +22,45 @@ export function Effector() {
   this.use = function () { }
 }
 
+// @ts-ignore: constructor function
 effector.dark = new Effector();
 effector.dark.activate = function () { global.flags.isdark = true }
 effector.dark.deactivate = function () { global.flags.isdark = false }
 effector.dark.x = '闇';
 effector.dark.c = 'darkgrey';
 
+// @ts-ignore: constructor function
 effector.shop = new Effector();
 effector.shop.activate = function () { global.flags.isshop = true }
 effector.shop.deactivate = function () { global.flags.isshop = false }
 effector.shop.x = '$';
 effector.shop.c = 'gold';
 
-export function activateEffectors(e) {
+export function activateEffectors(e: any) {
   if (!e) return;
   for (let a in e) if (!e[a].e.active && (!e[a].c || e[a].c() === true)) { e[a].e.activate(); e[a].e.active = true }
 }
 
-export function deactivateEffectors(e) {
+export function deactivateEffectors(e: any) {
   if (!e) return
   for (let a in e) if (e[a].e.active) { e[a].e.deactivate(); e[a].e.active = false }
 }
 
-export function runEffectors(e) {
+export function runEffectors(e: any) {
   if (!e) return
   for (let a in e) e[a].e.use();
 }
 
-export function inSector(sector) {
+export function inSector(sector: any) {
   for (let a in global.current_l.sector) if (global.current_l.sector[a].id === sector.id) return true
 }
 
-export function addtosector(sector, loc) {
+export function addtosector(sector: any, loc: any) {
   sector.group.push(loc.id);
   loc.sector.push(sector);
 }
 
-function mon_gen(crt) {
+function mon_gen(crt: any) {
   crt.eff = [];
   global.e_em = [];
   empty(dom.d101m);
@@ -73,7 +74,7 @@ function mon_gen(crt) {
   return newobj;
 }
 
-export function area_init(area) {
+export function area_init(area: any) {
   if (area.size !== 0) {
     if (area.id !== 101) {
       let rnd = random();
@@ -99,7 +100,7 @@ export function area_init(area) {
   dom.d5_1_1m.update();
 }
 
-function rfeff(what) {
+function rfeff(what: any) {
   let t = '';
   for (let a in what.sector) if (what.sector[a].effectors)
     for (let b in what.sector[a].effectors) t += '<span style="color:' + what.sector[a].effectors[b].e.c + ';font-size:1.2em">&nbsp' + what.sector[a].effectors[b].e.x + '<span>';
@@ -107,7 +108,7 @@ function rfeff(what) {
   dom.d_lctte.innerHTML = t;
 }
 
-export function smove(where, lv) {
+export function smove(where: any, lv?: any) {
   global.flags.busy = false; global.flags.work = false; global.wdwidx = 0;
   if (global.flags.loadstate) return;
   if (!global.flags.wkdis) { global.flags.wkdis = true; if (lv !== false) giveSkExp(skl.walk, .25); setTimeout(() => { global.flags.wkdis = false }, 500) }
