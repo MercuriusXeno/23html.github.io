@@ -39,8 +39,8 @@
 - [x] **Step 4.2:** Extract remaining main.ts exports — moved `giveAction`, `wdrseason`, `ontick`, `recshop`+shop helpers, `giveFurniture`+`renderFurniture` to proper modules. Zero imports from `main.ts` remain. Created `src/systems/loop.ts` and `src/ui/shop.ts`.
 - [ ] **Step 4.3:** Dependency injection for state — replace direct singleton access with scoped objects where possible
 - [ ] **Step 4.4:** Externalize game content — move item/creature/area definitions to JSON data files, hydrate at startup
-- [ ] **Step 4.5:** Constructor delegate cleanup — pass `.use`, `.onDeath`, and other function delegates via constructor config instead of deferred assignment
-- [ ] **Step 4.6:** Enable `strict: true` in tsconfig incrementally — fix type errors module by module
+- [x] **Step 4.5:** Constructor delegate cleanup — folded ~389 post-construction delegate assignments (`.use`, `.oneq`, `.onuneq`, `.onDeath`, `.onGet`, etc.) into constructor config objects across 8 data modules (equipment, skills, effects, world, actions, furniture, items, creatures)
+- [x] **Step 4.6:** Enable `strict: true` in tsconfig incrementally — fix type errors module by module
   - [x] Enabled `strict: true`, added `@ts-nocheck` to 33 unfixed files (0 typecheck errors)
   - [x] Fixed leaf utility modules: `dom-utils.ts`, `utils.ts`, `base64.ts`
   - [x] Fixed UI modules: `messages.ts`, `effects.ts`, `stats.ts`, `equipment.ts`, `choices.ts`, `shop.ts`, `descriptions.ts`, `panels.ts`, `inventory.ts`

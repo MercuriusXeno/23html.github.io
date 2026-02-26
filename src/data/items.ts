@@ -42,6 +42,11 @@ function Item(this: any, cfg: any) {
 // --- Item factory helpers ---
 
 function foodItem(opts: any) {
+  let stat = opts.stat || 'fooda';
+  let glt = opts.glt || 1;
+  let poisonChance = opts.poison || 0;
+  let drunk = opts.drunk || null;
+  let drka = opts.drka || 0;
 // @ts-ignore: constructor function
   let it = new Item({
     id: opts.id,
@@ -49,31 +54,26 @@ function foodItem(opts: any) {
     val: opts.val,
     desc: opts.desc + dom.dseparator + 'Restores<span style=\'color:lime\'> ' + opts.val + ' </span>energy',
     stype: 4,
-    rar: opts.rar || 1
+    rar: opts.rar || 1,
+    use: function () {
+      if (poisonChance > 0 && random() < poisonChance) {
+        if (effect.fpn.active === false) giveEff(you, effect.fpn, rand(15, 35));
+        else effect.fpn.duration += rand(5, 25);
+      }
+      you.sat + this.val > you.satmax ? you.sat = you.satmax : you.sat += this.val;
+      skl.glt.use(glt);
+      global.stat[stat]++;
+      if (drka) giveSkExp(skl.drka, drka);
+      if (drunk) {
+        global.stat.foodal++;
+        if (effect.drunk.active === false) giveEff(you, effect.drunk, drunk.dur);
+        else effect.drunk.duration += drunk.add;
+      }
+      this.amount--;
+      dom.d5_3_1.update();
+      msg('Restored ' + this.val + ' energy', 'lime');
+    }
   });
-  let stat = opts.stat || 'fooda';
-  let glt = opts.glt || 1;
-  let poisonChance = opts.poison || 0;
-  let drunk = opts.drunk || null;
-  let drka = opts.drka || 0;
-  it.use = function () {
-    if (poisonChance > 0 && random() < poisonChance) {
-      if (effect.fpn.active === false) giveEff(you, effect.fpn, rand(15, 35));
-      else effect.fpn.duration += rand(5, 25);
-    }
-    you.sat + this.val > you.satmax ? you.sat = you.satmax : you.sat += this.val;
-    skl.glt.use(glt);
-    global.stat[stat]++;
-    if (drka) giveSkExp(skl.drka, drka);
-    if (drunk) {
-      global.stat.foodal++;
-      if (effect.drunk.active === false) giveEff(you, effect.drunk, drunk.dur);
-      else effect.drunk.duration += drunk.add;
-    }
-    this.amount--;
-    dom.d5_3_1.update();
-    msg('Restored ' + this.val + ' energy', 'lime');
-  };
   if (opts.rot) it.rot = opts.rot;
   if (opts.onChange) it.onChange = opts.onChange;
   if (opts.onGet) it.onGet = opts.onGet;
@@ -82,6 +82,7 @@ function foodItem(opts: any) {
 }
 
 function healItem(opts: any) {
+  let potion = opts.potion || false;
 // @ts-ignore: constructor function
   let it = new Item({
     id: opts.id,
@@ -89,17 +90,16 @@ function healItem(opts: any) {
     val: opts.val,
     desc: opts.desc + dom.dseparator + 'Restores<span style=\'color:lime\'> ' + opts.val + ' </span>health',
     stype: 4,
-    rar: opts.rar || 1
+    rar: opts.rar || 1,
+    use: function () {
+      you.hp + this.val > you.hpmax ? you.hp = you.hpmax : you.hp += this.val;
+      if (potion) global.stat.potnst++;
+      global.stat.medst++;
+      this.amount--;
+      dom.d5_1_1.update();
+      msg('Restored ' + this.val + ' hp', 'lime');
+    }
   });
-  let potion = opts.potion || false;
-  it.use = function () {
-    you.hp + this.val > you.hpmax ? you.hp = you.hpmax : you.hp += this.val;
-    if (potion) global.stat.potnst++;
-    global.stat.medst++;
-    this.amount--;
-    dom.d5_1_1.update();
-    msg('Restored ' + this.val + ' hp', 'lime');
-  };
   if (opts.onGet) it.onGet = opts.onGet;
   item[opts.key] = it;
   return it;
@@ -112,56 +112,61 @@ function expItem(opts: any) {
     name: opts.name,
     desc: opts.desc,
     stype: 4,
-    rar: opts.rar || 1
+    rar: opts.rar || 1,
+    use: function () {
+      giveExp(opts.exp, true, true, true);
+      global.stat.plst++;
+      global.stat.medst++;
+      if (opts.extra) opts.extra();
+      this.amount--;
+    }
   });
-  it.use = function () {
-    giveExp(opts.exp, true, true, true);
-    global.stat.plst++;
-    global.stat.medst++;
-    if (opts.extra) opts.extra();
-    this.amount--;
-  };
   item[opts.key] = it;
   return it;
 }
 
 // @ts-ignore: constructor function
-item.rcs = new Item({ id: 3000, name: 'Reality shot', desc: 'Amplifies surrounding awareness and perception senses', stype: 4, rar: 3 });
-item.rcs.use = function () {
-  msg('placeholder');
-}
+item.rcs = new Item({ id: 3000, name: 'Reality shot', desc: 'Amplifies surrounding awareness and perception senses', stype: 4, rar: 3,
+  use: function () {
+    msg('placeholder');
+  }
+});
 
-healItem({ key: 'hrb1', id: 3001, name: 'Cure Grass', val: 7, desc: 'Herb with minor healing properties. Has to be processed before use. Can somewhat speed up recovery of tiny cuts and bruises if applied directly' });
-item.hrb1.onGet = function () {
-  if (this.amount >= 50) { giveRcp(rcp.hlstw); this.onGet = function () { } }
-}
-
-// @ts-ignore: constructor function
-item.atd1 = new Item({ id: 3002, name: 'Herbal Antidote', desc: 'Bundle of certain common herbs, mixed together. Tastes incredibly bitter, but helps to detoxify blood from containments' + dom.dseparator + '<span style=\'color:lime\'> Neautralizes the effects of weak poisons </span>', stype: 4 });
-item.atd1.use = function () {
-  global.stat.medst++
-  if (effect.psn.active === true) { if (effect.psn.duration - 30 <= 0) { removeEff(effect.psn); msg('You feel better', 'lime') } else { effect.psn.duration -= 30; msg('You feel a little better', 'lightgreen') } } else msg('Tastes like medicine..', 'lightblue');
-  this.amount--;
-}
+healItem({ key: 'hrb1', id: 3001, name: 'Cure Grass', val: 7, desc: 'Herb with minor healing properties. Has to be processed before use. Can somewhat speed up recovery of tiny cuts and bruises if applied directly',
+  onGet: function () {
+    if (this.amount >= 50) { giveRcp(rcp.hlstw); this.onGet = function () { } }
+  }
+});
 
 // @ts-ignore: constructor function
-item.psnwrd = new Item({ id: 3003, name: 'Poison Ward', desc: 'Solution developed to protect residents from diseases during times of plague' + dom.dseparator + '<span style=\'color:lime\'> Grants invulnerability to poisons for a few hours </span>', stype: 4, rar: 2 });
-item.psnwrd.use = function () {
-  global.stat.medst++
-  if (effect.psnwrd.active === false) giveEff(you, effect.psnwrd, 600);
-  else effect.psnwrd.duration = 600;
-  this.amount--;
-}
+item.atd1 = new Item({ id: 3002, name: 'Herbal Antidote', desc: 'Bundle of certain common herbs, mixed together. Tastes incredibly bitter, but helps to detoxify blood from containments' + dom.dseparator + '<span style=\'color:lime\'> Neautralizes the effects of weak poisons </span>', stype: 4,
+  use: function () {
+    global.stat.medst++
+    if (effect.psn.active === true) { if (effect.psn.duration - 30 <= 0) { removeEff(effect.psn); msg('You feel better', 'lime') } else { effect.psn.duration -= 30; msg('You feel a little better', 'lightgreen') } } else msg('Tastes like medicine..', 'lightblue');
+    this.amount--;
+  }
+});
+
+// @ts-ignore: constructor function
+item.psnwrd = new Item({ id: 3003, name: 'Poison Ward', desc: 'Solution developed to protect residents from diseases during times of plague' + dom.dseparator + '<span style=\'color:lime\'> Grants invulnerability to poisons for a few hours </span>', stype: 4, rar: 2,
+  use: function () {
+    global.stat.medst++
+    if (effect.psnwrd.active === false) giveEff(you, effect.psnwrd, 600);
+    else effect.psnwrd.duration = 600;
+    this.amount--;
+  }
+});
 
 healItem({ key: 'hlpd', id: 3004, name: 'Low-grade Healing Powder', val: 16, desc: 'Finely crushed cure grass. Used as a base to make weak medicine' });
 
 // @ts-ignore: constructor function
-item.smm = new Item({ id: 3005, name: 'Stomach Medicine', desc: 'Mixture of ginger, bittervine,  and other herbs. Destroys toxins in one\'s body' + dom.dseparator + '<span style=\'color:lime\'> Alliviates food poisoning </span>', stype: 4 });
-item.smm.use = function () {
-  global.stat.medst++
-  if (effect.fpn.active === true) { if (effect.fpn.duration - 30 <= 0) { removeEff(effect.fpn); msg('You feel better', 'lime') } else { effect.fpn.duration -= 30; msg('You feel a little better', 'lightgreen') } } else msg('Tastes like medicine..', 'lightblue');
-  this.amount--;
-}
+item.smm = new Item({ id: 3005, name: 'Stomach Medicine', desc: 'Mixture of ginger, bittervine,  and other herbs. Destroys toxins in one\'s body' + dom.dseparator + '<span style=\'color:lime\'> Alliviates food poisoning </span>', stype: 4,
+  use: function () {
+    global.stat.medst++
+    if (effect.fpn.active === true) { if (effect.fpn.duration - 30 <= 0) { removeEff(effect.fpn); msg('You feel better', 'lime') } else { effect.fpn.duration -= 30; msg('You feel a little better', 'lightgreen') } } else msg('Tastes like medicine..', 'lightblue');
+    this.amount--;
+  }
+});
 
 expItem({ key: 'sp1', id: 3006, name: 'Low-grade Spirit Pill', desc: 'Tiny cheap spirit pill, made from condensed Ki. Lowest type, given to weak people and children to nourish their bodies.' + dom.dseparator + '<span style=\'color:orange\'> Grants +500 EXP </span>', exp: 500 });
 
@@ -170,178 +175,193 @@ expItem({ key: 'sp2', id: 3007, name: 'Mid-grade Spirit Pill', desc: 'Small chea
 expItem({ key: 'sp3', id: 3008, name: 'High-grade Spirit Pill', desc: 'Small spirit pill, made from condensed Ki. Given to young warriors as energy supplement' + dom.dseparator + '<span style=\'color:orange\'> Grants +15000 EXP </span>', exp: 15000 });
 
 // @ts-ignore: constructor function
-item.lsrd = new Item({ id: 3009, name: 'Life Shard', desc: 'A fragment of living energy, trapped within a crystallic shell. Absorbing these slightly increases lifespan' + dom.dseparator + '<span style=\'color:hotpink\'> Increases HP by +2 permanently </span>', stype: 4 });
-item.lsrd.use = function () {
-  you.hpmax += 2;
-  you.hp += 2;
-  you.hpa += 2;
-  dom.d5_1_1.update();
-  msg('HP increased by +2 permanently', 'hotpink')
-  this.amount--;
-}
+item.lsrd = new Item({ id: 3009, name: 'Life Shard', desc: 'A fragment of living energy, trapped within a crystallic shell. Absorbing these slightly increases lifespan' + dom.dseparator + '<span style=\'color:hotpink\'> Increases HP by +2 permanently </span>', stype: 4,
+  use: function () {
+    you.hpmax += 2;
+    you.hp += 2;
+    you.hpa += 2;
+    dom.d5_1_1.update();
+    msg('HP increased by +2 permanently', 'hotpink')
+    this.amount--;
+  }
+});
 
 healItem({ key: 'hptn1', id: 3010, name: 'Lesser Healing Potion', val: 50, desc: 'Weakest healing potion you can possibly find. Nearly useless for actual healing, but can act as a headache reliever', potion: true });
 
 // @ts-ignore: constructor function
-item.lckl = new Item({ id: 3011, name: 'Lucky Clover', desc: 'Clover of the rare breed. Whoever is able to find even one will be blessed by the Gods of Luck' + dom.dseparator + '<span style="color: red">L</span><span style="color: orange">U</span><span style="color: gold">C</span><span style="color: YELLOW">K +1</span>', stype: 4, rar: 4 });
-item.lckl.onGet = function () {
-  if (this.amount >= 7) { giveRcp(rcp.clrpin); this.onGet = function () { } }
-}
-item.lckl.use = function (x: any) {
-  you.luck += 1;
-  msg('Your Luck Increases!', 'gold');
-  this.amount--;
-}
-
-// @ts-ignore: constructor function
-item.wstn1 = new Item({ id: 3012, name: 'Grey Whetsone', desc: 'Cheap and crude piece of whetstone. Not nearly good enough to maintain the life of a weapon, you can at least scrap off dirt and blood with it' + dom.dseparator + '<span style="color: lightgreen">Repairs equipped Weapon for <span style="color: lime">+2 DP</span></span>', stype: 4 });
-item.wstn1.use = function (x: any) {
-  if (you.eqp[0].id === 10000) msg('Repair what?...', 'lightgrey');
-  else {
-    you.eqp[0].dp + 2 >= you.eqp[0].dpmax ? you.eqp[0].dp = you.eqp[0].dpmax : you.eqp[0].dp += 2;
-    msg('You\'ve repaired ' + you.eqp[0].name + ' slightly', 'yellow');
+item.lckl = new Item({ id: 3011, name: 'Lucky Clover', desc: 'Clover of the rare breed. Whoever is able to find even one will be blessed by the Gods of Luck' + dom.dseparator + '<span style="color: red">L</span><span style="color: orange">U</span><span style="color: gold">C</span><span style="color: YELLOW">K +1</span>', stype: 4, rar: 4,
+  onGet: function () {
+    if (this.amount >= 7) { giveRcp(rcp.clrpin); this.onGet = function () { } }
+  },
+  use: function (x: any) {
+    you.luck += 1;
+    msg('Your Luck Increases!', 'gold');
     this.amount--;
   }
-}
+});
 
 // @ts-ignore: constructor function
-item.bdgh = new Item({ id: 3013, name: 'Bandage', desc: 'Clean piece of thin sturdy cloth, perfect for wrapping and securing open wounds' + dom.dseparator + '<span style="color:lime">Somewhat stops bleeding</span>', stype: 4 });
-item.bdgh.use = function () {
-  if (!effect.bled.active) { msg('You\'re not bleeding', 'orange'); return }
-  let f = findbyid(you.eff, effect.bled.id);
-  if (f.duration - 20 <= 0) removeEff(f, f.target);
-  else f.duration -= 20;
-  msg("You bandage your wounds", 'lime');
-  this.amount--;
-}
-item.bdgh.onGet = function () {
-  if (this.amount >= 5) { giveRcp(rcp.mdcag); this.onGet = function () { } }
-}
-
-// @ts-ignore: constructor function
-item.amshrm = new Item({ id: 3014, name: 'Asura Mushroom', desc: 'The ultimate mushroom of the mushroom world. Eating it makes you feel a mysterious kind of vitality' + dom.dseparator + '<span style="color: springgreen">Permanently increases STR by +5</span>', stype: 4, rar: 4 });
-item.amshrm.use = function (x: any) {
-  you.stra += 5;
-  msg('You feel the surge of strength!', 'crimson');
-  msg('STR +5!', 'lime');
-  you.stat_r();
-  update_d();
-  this.amount--;
-}
-
-// @ts-ignore: constructor function
-item.akhrb = new Item({ id: 3015, name: 'Aspha Herb', desc: 'Diet-oriented vegetable with misleading effect. It was such a terrible taste and bitter texture that no one would willingly eat them' + dom.dseparator + '<span style="color: orange">Makes you feel bad</span>', stype: 4, rar: 2 });
-item.akhrb.use = function (x: any) {
-  if (this.disabled !== true) {
-    this.disabled = true;
-    if (random() < .005) { msg('You managed to consume it', 'lime'); giveSkExp(skl.glt, rand(100, (355 * (skl.glt.lvl * .2 + 1)))); you.sat *= .2; this.amount--; } else { msg(select(['You retch..', 'You feel like vomiting..', 'You feel sick..', 'Your insides turn just by looking at this thing..', 'You immidiately spit it out..', 'Your body rejects this..', 'Your body screams..']), 'grey') } setTimeout(() => { this.disabled = false }, 200);
+item.wstn1 = new Item({ id: 3012, name: 'Grey Whetsone', desc: 'Cheap and crude piece of whetstone. Not nearly good enough to maintain the life of a weapon, you can at least scrap off dirt and blood with it' + dom.dseparator + '<span style="color: lightgreen">Repairs equipped Weapon for <span style="color: lime">+2 DP</span></span>', stype: 4,
+  use: function (x: any) {
+    if (you.eqp[0].id === 10000) msg('Repair what?...', 'lightgrey');
+    else {
+      you.eqp[0].dp + 2 >= you.eqp[0].dpmax ? you.eqp[0].dp = you.eqp[0].dpmax : you.eqp[0].dp += 2;
+      msg('You\'ve repaired ' + you.eqp[0].name + ' slightly', 'yellow');
+      this.amount--;
+    }
   }
-}
+});
 
 // @ts-ignore: constructor function
-item.cndl = new Item({ id: 3016, name: 'Candle', desc: 'A tall wax candle, made to burn for a very long time', stype: 4 });
-item.cndl.use = function (x: any) {
-  if (!effect.cdlt.active) giveEff(you, effect.cdlt);
-  else effect.cdlt.duration = 360;
-  this.amount--;
-}
+item.bdgh = new Item({ id: 3013, name: 'Bandage', desc: 'Clean piece of thin sturdy cloth, perfect for wrapping and securing open wounds' + dom.dseparator + '<span style="color:lime">Somewhat stops bleeding</span>', stype: 4,
+  use: function () {
+    if (!effect.bled.active) { msg('You\'re not bleeding', 'orange'); return }
+    let f = findbyid(you.eff, effect.bled.id);
+    if (f.duration - 20 <= 0) removeEff(f, f.target);
+    else f.duration -= 20;
+    msg("You bandage your wounds", 'lime');
+    this.amount--;
+  },
+  onGet: function () {
+    if (this.amount >= 5) { giveRcp(rcp.mdcag); this.onGet = function () { } }
+  }
+});
 
 // @ts-ignore: constructor function
-item.incsk = new Item({ id: 3017, name: 'Incense Stick', desc: 'A stick of aromatic incense. It calms your soul and mind' + dom.dseparator + '<span style="color: skyblue">Doubles meditation gain<br>Doubles cultivation gain</span>', stype: 4 });
-item.incsk.use = function (x: any) {
-  if (effect.incsk.active === true) effect.insck.duration = 600;
-  else giveEff(you, effect.incsk);
-  this.amount--;
-}
+item.amshrm = new Item({ id: 3014, name: 'Asura Mushroom', desc: 'The ultimate mushroom of the mushroom world. Eating it makes you feel a mysterious kind of vitality' + dom.dseparator + '<span style="color: springgreen">Permanently increases STR by +5</span>', stype: 4, rar: 4,
+  use: function (x: any) {
+    you.stra += 5;
+    msg('You feel the surge of strength!', 'crimson');
+    msg('STR +5!', 'lime');
+    you.stat_r();
+    update_d();
+    this.amount--;
+  }
+});
 
 // @ts-ignore: constructor function
-item.sp0a = new Item({ id: 3018, name: 'Spirit Opening Powder', desc: 'Powder refined from blood of the wyrm. Has potential to improve internal energy' + dom.dseparator + '<span style=\'color:orange\'> Grants +95000 EXP </span><br><span style=\'color:deeppink\'>EXP Gain +1%</span>', stype: 4, rar: 2 });
-item.sp0a.use = function () {
-  global.stat.medst++
-  giveExp(95000, true, true, true);
-  you.exp_t += .01;
-  this.amount--;
-}
+item.akhrb = new Item({ id: 3015, name: 'Aspha Herb', desc: 'Diet-oriented vegetable with misleading effect. It was such a terrible taste and bitter texture that no one would willingly eat them' + dom.dseparator + '<span style="color: orange">Makes you feel bad</span>', stype: 4, rar: 2,
+  use: function (x: any) {
+    if (this.disabled !== true) {
+      this.disabled = true;
+      if (random() < .005) { msg('You managed to consume it', 'lime'); giveSkExp(skl.glt, rand(100, (355 * (skl.glt.lvl * .2 + 1)))); you.sat *= .2; this.amount--; } else { msg(select(['You retch..', 'You feel like vomiting..', 'You feel sick..', 'Your insides turn just by looking at this thing..', 'You immidiately spit it out..', 'Your body rejects this..', 'Your body screams..']), 'grey') } setTimeout(() => { this.disabled = false }, 200);
+    }
+  }
+});
 
 // @ts-ignore: constructor function
-item.smkbmb = new Item({ id: 3019, name: 'Smoke Bomb', desc: 'Pellets that release thick smog when crushed. Can create a smokescreen to help you escape from danger' + dom.dseparator + '<span style=\'color:springgreen\'>Bypasses current enemy</span>', stype: 4 });
-item.smkbmb.use = function () {
-  if (global.flags.civil === true && global.flags.btl === false) { msg('You\'re not in combat!', 'red'); return }
-  if (global.current_z.size === 1 || global.current_z.size === 0 || global.current_z.isboss) { msg('You can\'t pass this enemy!', 'red'); return }
-  else {
-    clearInterval(timers.btl); clearInterval(timers.btl2); msg('*Puff*', 'black', null, null, 'lightgrey'); global.flags.smkactv = true;
-    global.current_z.size--;
-    area_init(global.current_z);
+item.cndl = new Item({ id: 3016, name: 'Candle', desc: 'A tall wax candle, made to burn for a very long time', stype: 4,
+  use: function (x: any) {
+    if (!effect.cdlt.active) giveEff(you, effect.cdlt);
+    else effect.cdlt.duration = 360;
+    this.amount--;
+  }
+});
+
+// @ts-ignore: constructor function
+item.incsk = new Item({ id: 3017, name: 'Incense Stick', desc: 'A stick of aromatic incense. It calms your soul and mind' + dom.dseparator + '<span style="color: skyblue">Doubles meditation gain<br>Doubles cultivation gain</span>', stype: 4,
+  use: function (x: any) {
+    if (effect.incsk.active === true) effect.insck.duration = 600;
+    else giveEff(you, effect.incsk);
+    this.amount--;
+  }
+});
+
+// @ts-ignore: constructor function
+item.sp0a = new Item({ id: 3018, name: 'Spirit Opening Powder', desc: 'Powder refined from blood of the wyrm. Has potential to improve internal energy' + dom.dseparator + '<span style=\'color:orange\'> Grants +95000 EXP </span><br><span style=\'color:deeppink\'>EXP Gain +1%</span>', stype: 4, rar: 2,
+  use: function () {
+    global.stat.medst++
+    giveExp(95000, true, true, true);
+    you.exp_t += .01;
+    this.amount--;
+  }
+});
+
+// @ts-ignore: constructor function
+item.smkbmb = new Item({ id: 3019, name: 'Smoke Bomb', desc: 'Pellets that release thick smog when crushed. Can create a smokescreen to help you escape from danger' + dom.dseparator + '<span style=\'color:springgreen\'>Bypasses current enemy</span>', stype: 4,
+  use: function () {
+    if (global.flags.civil === true && global.flags.btl === false) { msg('You\'re not in combat!', 'red'); return }
+    if (global.current_z.size === 1 || global.current_z.size === 0 || global.current_z.isboss) { msg('You can\'t pass this enemy!', 'red'); return }
+    else {
+      clearInterval(timers.btl); clearInterval(timers.btl2); msg('*Puff*', 'black', null, null, 'lightgrey'); global.flags.smkactv = true;
+      global.current_z.size--;
+      area_init(global.current_z);
+      dom.d7m.update();
+      this.amount--;
+    }
+  }
+});
+
+// @ts-ignore: constructor function
+item.svial1 = new Item({ id: 3020, name: 'Skeleton Vial', desc: 'Summons a lvl 10 Skeleton', stype: 4,
+  use: function () {
+    if (global.flags.civil === true && global.flags.btl === false) {
+      if (global.flags.sleepmode || global.flags.rdng || global.flags.isshop || global.flags.busy || global.flags.work) { msg('Unable to summon!', 'red'); return }
+      let ta = new area._ctor();
+      ta.id = -1
+      ta.name = 'Somewhere';
+      ta.pop = [{ crt: creature.skl, lvlmin: 10, lvlmax: 10, c: 1 }];
+      ta.protected = true;
+      ta.onEnd = function () { area_init(area.nwh); global.flags.civil = true; global.flags.btl = false; };
+      global.flags.civil = false;
+      global.flags.btl = true;
+      ta.size = 1;
+      z_bake(ta);
+      area_init(ta);
+      dom.d7m.update();
+      msg('The creature arises from the ground!', 'white', null, null, 'red')
+      this.amount--;
+    } else msg('You\'re already in a battle!', 'red')
+  }
+});
+
+// @ts-ignore: constructor function
+item.mpwdr = new Item({ id: 3021, name: 'Monster Powder', desc: 'Dried and grounded sunbloom mixed with red salts, it emits aura often mistaken for soul energy that attracts nearby creatures<br>' + dom.dseparator + '<span style=\'color:seagreen\'>Increases area size by 5</span>', stype: 4,
+  use: function () {
+    if (global.current_z.protected || global.current_z.id <= 101 || global.current_z.size <= 1) { msg('Unable to use it here!', 'red'); return }
+    msg('You spread some powder on the ground', 'lime', null, null, 'brown')
+    global.current_z.size += 5;
     dom.d7m.update();
     this.amount--;
   }
-}
+});
 
 // @ts-ignore: constructor function
-item.svial1 = new Item({ id: 3020, name: 'Skeleton Vial', desc: 'Summons a lvl 10 Skeleton', stype: 4 });
-item.svial1.use = function () {
-  if (global.flags.civil === true && global.flags.btl === false) {
-    if (global.flags.sleepmode || global.flags.rdng || global.flags.isshop || global.flags.busy || global.flags.work) { msg('Unable to summon!', 'red'); return }
-    let ta = new area._ctor();
-    ta.id = -1
-    ta.name = 'Somewhere';
-    ta.pop = [{ crt: creature.skl, lvlmin: 10, lvlmax: 10, c: 1 }];
-    ta.protected = true;
-    ta.onEnd = function () { area_init(area.nwh); global.flags.civil = true; global.flags.btl = false; };
-    global.flags.civil = false;
-    global.flags.btl = true;
-    ta.size = 1;
-    z_bake(ta);
-    area_init(ta);
-    dom.d7m.update();
-    msg('The creature arises from the ground!', 'white', null, null, 'red')
+item.smbpll = new Item({ id: 3022, name: 'Slumber Pill', desc: 'Pill with a strong sedative effect. Normally used by sick and old people to treat insomnia, if they can afford it. Has other uses if you are creative enough' + dom.dseparator + '<span style=\'color:lightgrey\'>Makes you sleep through 18 hours in an instant</span>', stype: 4,
+  use: function (x: any) {
+    if (global.flags.btl || global.flags.rdng || global.flags.isshop || global.flags.busy || global.flags.work) { msg('You can\'t sleep now!', 'red'); return } else {
+      let b = .1; let s = HOUR * 18; if (!global.flags.sleepmode) giveEff(you, effect.slep); else if (global.current_l.id === 112) b += home.bed.sq; global.stat.plst++
+      for (let a = 0; a < s; a++) { giveSkExp(skl.sleep, .1); ontick() } if (!global.flags.sleepmode) removeEff(effect.slep);
+    }
     this.amount--;
-  } else msg('You\'re already in a battle!', 'red')
-}
-
-// @ts-ignore: constructor function
-item.mpwdr = new Item({ id: 3021, name: 'Monster Powder', desc: 'Dried and grounded sunbloom mixed with red salts, it emits aura often mistaken for soul energy that attracts nearby creatures<br>' + dom.dseparator + '<span style=\'color:seagreen\'>Increases area size by 5</span>', stype: 4 });
-item.mpwdr.use = function () {
-  if (global.current_z.protected || global.current_z.id <= 101 || global.current_z.size <= 1) { msg('Unable to use it here!', 'red'); return }
-  msg('You spread some powder on the ground', 'lime', null, null, 'brown')
-  global.current_z.size += 5;
-  dom.d7m.update();
-  this.amount--;
-}
-
-// @ts-ignore: constructor function
-item.smbpll = new Item({ id: 3022, name: 'Slumber Pill', desc: 'Pill with a strong sedative effect. Normally used by sick and old people to treat insomnia, if they can afford it. Has other uses if you are creative enough' + dom.dseparator + '<span style=\'color:lightgrey\'>Makes you sleep through 18 hours in an instant</span>', stype: 4 });
-item.smbpll.use = function (x: any) {
-  if (global.flags.btl || global.flags.rdng || global.flags.isshop || global.flags.busy || global.flags.work) { msg('You can\'t sleep now!', 'red'); return } else {
-    let b = .1; let s = HOUR * 18; if (!global.flags.sleepmode) giveEff(you, effect.slep); else if (global.current_l.id === 112) b += home.bed.sq; global.stat.plst++
-    for (let a = 0; a < s; a++) { giveSkExp(skl.sleep, .1); ontick() } if (!global.flags.sleepmode) removeEff(effect.slep);
   }
-  this.amount--;
-}
+});
 
 // @ts-ignore: constructor function
-item.lifedr = new Item({ id: 3023, name: 'Life Drop', desc: 'A single drop of revitalizing liquid. Consuming even such a meager amount has a miraclous effect on the lifeforce of a mortal' + dom.dseparator + '<span style=\'color:hotpink\'> Increases HP by +40 permanently </span><br><span style=\'color:lime\'>HP growth rate +2%</span>', stype: 4, rar: 2 });
-item.lifedr.use = function () {
-  you.stat_p[0] += .03;
-  you.hpmax += 40;
-  you.hp += 40;
-  you.hpa += 40;
-  dom.d5_1_1.update();
-  msg('HP increased by +40 permanently', 'hotpink');
-  msg('HP potential grows!', 'pink')
-  this.amount--;
-}
+item.lifedr = new Item({ id: 3023, name: 'Life Drop', desc: 'A single drop of revitalizing liquid. Consuming even such a meager amount has a miraclous effect on the lifeforce of a mortal' + dom.dseparator + '<span style=\'color:hotpink\'> Increases HP by +40 permanently </span><br><span style=\'color:lime\'>HP growth rate +2%</span>', stype: 4, rar: 2,
+  use: function () {
+    you.stat_p[0] += .03;
+    you.hpmax += 40;
+    you.hp += 40;
+    you.hpa += 40;
+    dom.d5_1_1.update();
+    msg('HP increased by +40 permanently', 'hotpink');
+    msg('HP potential grows!', 'pink')
+    this.amount--;
+  }
+});
 
 // @ts-ignore: constructor function
-item.mnblm = new Item({ id: 3024, name: 'Moonbloom', desc: 'A yellow flower which is said to bud on new moons. The flower\' nectar is the favourite of spirits and is effective for recovering from exhaustion, but only by refining it into a pill or elixir is it possible to draw out its full potential, which makes it prized by alchemists' + dom.dseparator + '<span style=\'color:hotpink\'> Increases SAT by +2 permanently </span>', stype: 4, rar: 2 });
-item.mnblm.use = function () {
-  you.satmax += 2;
-  you.sat += 2;
-  you.sata += 2;
-  dom.d5_3_1.update();
-  msg('SAT increased by +2 permanently', 'hotpink');
-  this.amount--;
-}
+item.mnblm = new Item({ id: 3024, name: 'Moonbloom', desc: 'A yellow flower which is said to bud on new moons. The flower\' nectar is the favourite of spirits and is effective for recovering from exhaustion, but only by refining it into a pill or elixir is it possible to draw out its full potential, which makes it prized by alchemists' + dom.dseparator + '<span style=\'color:hotpink\'> Increases SAT by +2 permanently </span>', stype: 4, rar: 2,
+  use: function () {
+    you.satmax += 2;
+    you.sat += 2;
+    you.sata += 2;
+    dom.d5_3_1.update();
+    msg('SAT increased by +2 permanently', 'hotpink');
+    this.amount--;
+  }
+});
 
 healItem({ key: 'hptn2', id: 3025, name: 'Minor Healing Potion', val: 450, desc: 'Healing potion with weak healing powers. It is usually used by commoners as first aid before deciding whether to go see a doctor or not', potion: true });
 
@@ -350,100 +370,110 @@ healItem({ key: 'hptn3', id: 3026, name: 'Healing Potion', val: 2100, desc: 'Sta
 healItem({ key: 'hptn4', id: 3027, name: 'Major Healing Potion', val: 7900, desc: 'Potions given to the knights in times of war. Can heal moderate wounds and dull out the pain. These potions sneak their way into the market by all kinds of illegal means, yet actually selling them isn\'t prohibited', potion: true, rar: 2 });
 
 // @ts-ignore: constructor function
-item.lsstn = new Item({ id: 3028, name: 'Life Stone', desc: 'Life vessel that lost its energy and became impure, now looks like an ordinary small pebble and serves very little purpose. Can be absorbed for minor health benefits' + dom.dseparator + '<span style=\'color:hotpink\'> Increases HP by +25 permanently </span>', stype: 4 });
-item.lsstn.use = function () {
-  you.hpmax += 25;
-  you.hp += 25;
-  you.hpa += 25;
-  dom.d5_1_1.update();
-  msg('HP increased by +25 permanently', 'hotpink')
-  this.amount--;
-}
+item.lsstn = new Item({ id: 3028, name: 'Life Stone', desc: 'Life vessel that lost its energy and became impure, now looks like an ordinary small pebble and serves very little purpose. Can be absorbed for minor health benefits' + dom.dseparator + '<span style=\'color:hotpink\'> Increases HP by +25 permanently </span>', stype: 4,
+  use: function () {
+    you.hpmax += 25;
+    you.hp += 25;
+    you.hpa += 25;
+    dom.d5_1_1.update();
+    msg('HP increased by +25 permanently', 'hotpink')
+    this.amount--;
+  }
+});
 
 // @ts-ignore: constructor function
-item.bltrt = new Item({ id: 3029, name: 'Bloat Root', desc: 'Unremarkable looking grey root that is bland and tasteless, but eating it makes you feel full. It doesn\'t seem to have any other qualities, hovewer' + dom.dseparator + 'Restores<span style=\'color:lime\'> 100 </span>energy', stype: 4, rar: 2 });
-item.bltrt.use = function () {
-  you.sat + 100 > you.satmax ? you.sat = you.satmax : you.sat += 100;
-  dom.d5_3_1.update();
-  this.amount--;
-  msg('Restored 100 energy', 'lime');
-}
+item.bltrt = new Item({ id: 3029, name: 'Bloat Root', desc: 'Unremarkable looking grey root that is bland and tasteless, but eating it makes you feel full. It doesn\'t seem to have any other qualities, hovewer' + dom.dseparator + 'Restores<span style=\'color:lime\'> 100 </span>energy', stype: 4, rar: 2,
+  use: function () {
+    you.sat + 100 > you.satmax ? you.sat = you.satmax : you.sat += 100;
+    dom.d5_3_1.update();
+    this.amount--;
+    msg('Restored 100 energy', 'lime');
+  }
+});
 
 // @ts-ignore: constructor function
-item.feip1 = new Item({ id: 3030, name: 'Fei Pill', desc: 'When an alchemist miserably fails to produce a pill, this waste is created. Compound of ruined medical materials is full of poison and impurities, it can be used to kill those with weak constitution. However, it is not useless, and can be absorbed for raw ki if one endures the pain and survives after consuming it', stype: 4 });
-item.feip1.use = function () {
-  giveEff(you, effect.fei1, 60, 1);
-  this.amount--;
-  global.stat.plst++
-}
+item.feip1 = new Item({ id: 3030, name: 'Fei Pill', desc: 'When an alchemist miserably fails to produce a pill, this waste is created. Compound of ruined medical materials is full of poison and impurities, it can be used to kill those with weak constitution. However, it is not useless, and can be absorbed for raw ki if one endures the pain and survives after consuming it', stype: 4,
+  use: function () {
+    giveEff(you, effect.fei1, 60, 1);
+    this.amount--;
+    global.stat.plst++
+  }
+});
 
 // @ts-ignore: constructor function
-item.stthbm1 = new Item({ id: 3031, name: 'Morgia', desc: 'Herb of might. This fiery herb is rumored to improve muscle density' + dom.dseparator + '<span style="color: springgreen">Permanently increases STR by +1</span>', stype: 4, rar: 2 });
-item.stthbm1.use = function (x: any) {
-  you.stra += 1;
-  msg('You feel the surge of strength!', 'crimson');
-  msg('STR +1', 'lime');
-  you.stat_r();
-  update_d();
-  this.amount--;
-}
+item.stthbm1 = new Item({ id: 3031, name: 'Morgia', desc: 'Herb of might. This fiery herb is rumored to improve muscle density' + dom.dseparator + '<span style="color: springgreen">Permanently increases STR by +1</span>', stype: 4, rar: 2,
+  use: function (x: any) {
+    you.stra += 1;
+    msg('You feel the surge of strength!', 'crimson');
+    msg('STR +1', 'lime');
+    you.stat_r();
+    update_d();
+    this.amount--;
+  }
+});
 
 // @ts-ignore: constructor function
-item.stthbm2 = new Item({ id: 3032, name: 'Springsweed', desc: 'Herb of swiftness. Loved by Serpents, this herb slightly raises one\'s reaction time' + dom.dseparator + '<span style="color: springgreen">Permanently increases SPD by +1</span>', stype: 4, rar: 2 });
-item.stthbm2.use = function (x: any) {
-  you.spda += 1;
-  msg('You feel the surge of strength!', 'crimson');
-  msg('SPD +1', 'lime');
-  you.stat_r();
-  update_d();
-  this.amount--;
-}
+item.stthbm2 = new Item({ id: 3032, name: 'Springsweed', desc: 'Herb of swiftness. Loved by Serpents, this herb slightly raises one\'s reaction time' + dom.dseparator + '<span style="color: springgreen">Permanently increases SPD by +1</span>', stype: 4, rar: 2,
+  use: function (x: any) {
+    you.spda += 1;
+    msg('You feel the surge of strength!', 'crimson');
+    msg('SPD +1', 'lime');
+    you.stat_r();
+    update_d();
+    this.amount--;
+  }
+});
 
 // @ts-ignore: constructor function
-item.stthbm3 = new Item({ id: 3033, name: 'Clearbane', desc: 'Herb of clarity. This herb is often used in making of high quality incense' + dom.dseparator + '<span style="color: springgreen">Permanently increases INT by +1</span>', stype: 4, rar: 2 });
-item.stthbm3.use = function (x: any) {
-  you.inta += 1;
-  msg('You feel the surge of strength!', 'crimson');
-  msg('INT +1', 'lime');
-  you.stat_r();
-  update_d();
-  this.amount--;
-}
+item.stthbm3 = new Item({ id: 3033, name: 'Clearbane', desc: 'Herb of clarity. This herb is often used in making of high quality incense' + dom.dseparator + '<span style="color: springgreen">Permanently increases INT by +1</span>', stype: 4, rar: 2,
+  use: function (x: any) {
+    you.inta += 1;
+    msg('You feel the surge of strength!', 'crimson');
+    msg('INT +1', 'lime');
+    you.stat_r();
+    update_d();
+    this.amount--;
+  }
+});
 
 // @ts-ignore: constructor function
-item.stthbm4 = new Item({ id: 3034, name: 'Drakevine', desc: 'Herb of flexibility. There are rumors of an old hermit growing these herbs under the hidden mountain' + dom.dseparator + '<span style="color: springgreen">Permanently increases AGL by +1</span>', stype: 4, rar: 2 });
-item.stthbm4.use = function (x: any) {
-  you.agla += 1;
-  msg('You feel the surge of strength!', 'crimson');
-  msg('AGL +1', 'lime');
-  you.stat_r();
-  update_d();
-  this.amount--;
-}
+item.stthbm4 = new Item({ id: 3034, name: 'Drakevine', desc: 'Herb of flexibility. There are rumors of an old hermit growing these herbs under the hidden mountain' + dom.dseparator + '<span style="color: springgreen">Permanently increases AGL by +1</span>', stype: 4, rar: 2,
+  use: function (x: any) {
+    you.agla += 1;
+    msg('You feel the surge of strength!', 'crimson');
+    msg('AGL +1', 'lime');
+    you.stat_r();
+    update_d();
+    this.amount--;
+  }
+});
 
 // @ts-ignore: constructor function
-item.bmsmktt = new Item({ id: 3035, name: 'Smoke Pellet Cluster', desc: 'Repurposed smoke bomb, made by concentrating multiple volatile components together, making the moke several times more hazardous, but not enough to cause real damage to a living person. Since the ignition period from such a modification is much longer, it has fewer uses than a regular smoke bomb', stype: 4 });
-item.bmsmktt.use = function () {
-  if (global.current_l.id !== 111) { msg('This isn\'t the best place to use this', 'red'); return }
-  area.hmbsmnt.size = 0;
-  msg('You toss a cluster down your basement and hear a distant shrill', 'yellow')
-  dom.d_lctt.innerHTML += '<span style="color:grey;font-size:1.2em">&nbsp煙<span>'
-  sector.home.data.smkp = 900;
-  sector.home.data.smkt = time.minute;
-  this.amount--;
-}
+item.bmsmktt = new Item({ id: 3035, name: 'Smoke Pellet Cluster', desc: 'Repurposed smoke bomb, made by concentrating multiple volatile components together, making the moke several times more hazardous, but not enough to cause real damage to a living person. Since the ignition period from such a modification is much longer, it has fewer uses than a regular smoke bomb', stype: 4,
+  use: function () {
+    if (global.current_l.id !== 111) { msg('This isn\'t the best place to use this', 'red'); return }
+    area.hmbsmnt.size = 0;
+    msg('You toss a cluster down your basement and hear a distant shrill', 'yellow')
+    dom.d_lctt.innerHTML += '<span style="color:grey;font-size:1.2em">&nbsp煙<span>'
+    sector.home.data.smkp = 900;
+    sector.home.data.smkt = time.minute;
+    this.amount--;
+  }
+});
 
 
 foodItem({ key: 'appl', id: 1, name: 'Apple', val: 7, desc: 'Juicy red fruit. Makes a fine breakfast if you have nothing else...', glt: 2 });
 
-foodItem({ key: 'brd', id: 2, name: 'Bread', val: 14, desc: 'Simple loaf of bread, baked with care. It\'s crunchy and smells nice', glt: 2 });
+foodItem({ key: 'brd', id: 2, name: 'Bread', val: 14, desc: 'Simple loaf of bread, baked with care. It\'s crunchy and smells nice', glt: 2,
+  onChange: function (x: any, y: any) { if (y) return [item.spb, x]; giveItem(item.spb, x) }
+});
 item.brd.rot = [.15, .25, .05, .15];
-item.brd.onChange = function (x: any, y: any) { if (y) return [item.spb, x]; giveItem(item.spb, x) }
 
-foodItem({ key: 'crrt', id: 3, name: 'Carrot', val: 5, desc: 'It gets very sweet when boiled', glt: 1 });
-item.crrt.onGet = function () {
-  if (this.amount >= 20) { giveRcp(rcp.bcrrt); this.onGet = function () { } }
-}
+foodItem({ key: 'crrt', id: 3, name: 'Carrot', val: 5, desc: 'It gets very sweet when boiled', glt: 1,
+  onGet: function () {
+    if (this.amount >= 20) { giveRcp(rcp.bcrrt); this.onGet = function () { } }
+  }
+});
 
 foodItem({ key: 'potat', id: 4, name: 'Potato', val: 7, desc: 'Universal vegetable that can be prepared in hundreds different ways', glt: 2, poison: 0.1 });
 
@@ -451,12 +481,13 @@ foodItem({ key: 'eggn', id: 5, name: 'Egg', val: 4, desc: 'Whole chicken egg, ve
 
 foodItem({ key: 'mlkn', id: 6, name: 'Milk', val: 8, desc: 'Power potion for your bones', glt: 2, stat: 'foodb' });
 
-foodItem({ key: 'rwmt1', id: 7, name: 'Raw Meat', val: 11, desc: 'Edible part of some animal, has to be cooked before consumption', glt: 6, poison: 0.15 });
+foodItem({ key: 'rwmt1', id: 7, name: 'Raw Meat', val: 11, desc: 'Edible part of some animal, has to be cooked before consumption', glt: 6, poison: 0.15,
+  onChange: function (x: any, y: any) { if (y) return [item.rtnmt, x]; giveItem(item.rtnmt, x) },
+  onGet: function () {
+    if (this.amount >= 5) { giveRcp(rcp.rsmt); this.onGet = function () { } }
+  }
+});
 item.rwmt1.rot = [.25, .45, .1, .2];
-item.rwmt1.onChange = function (x: any, y: any) { if (y) return [item.rtnmt, x]; giveItem(item.rtnmt, x) }
-item.rwmt1.onGet = function () {
-  if (this.amount >= 5) { giveRcp(rcp.rsmt); this.onGet = function () { } }
-}
 
 foodItem({ key: 'rice', id: 8, name: 'Rice', val: 2, desc: 'Clean rice grains. Healthy and delicious when cooked, but awful to eat in dry state', glt: 2 });
 
@@ -873,10 +904,11 @@ foodItem({ key: 'bcrrt', id: 212, name: 'Boiled Carrot', val: 9, desc: 'Regular 
 
 foodItem({ key: 'jsdch', id: 213, name: 'Jelly Sandwich', val: 27, desc: 'Awful sandwich that doesn\'t taste like anything. It is filling, at the very least', glt: 12 });
 
-foodItem({ key: 'agrns', id: 214, name: 'Assorted Grains', val: 3, desc: 'Buckwheat, sunflower seeds, oats, rye... Various grains, seeds and nuts in very small quantities as such making them not very useful for pretty much anything', glt: 5 });
-item.agrns.onGet = function () {
-  if (this.amount >= 10) { giveRcp(rcp.wsb); this.onGet = function () { } }
-}
+foodItem({ key: 'agrns', id: 214, name: 'Assorted Grains', val: 3, desc: 'Buckwheat, sunflower seeds, oats, rye... Various grains, seeds and nuts in very small quantities as such making them not very useful for pretty much anything', glt: 5,
+  onGet: function () {
+    if (this.amount >= 10) { giveRcp(rcp.wsb); this.onGet = function () { } }
+  }
+});
 
 foodItem({ key: 'eggfrc', id: 215, name: 'Egg Fried Rice', val: 33, desc: 'Stir fried egg cooked together with golden rice. Excellent and refreshing dish', glt: 9 });
 
@@ -898,302 +930,311 @@ foodItem({ key: 'klngbr', id: 222, name: 'Kaoliang', val: 52, desc: 'Strong trad
 
 
 // @ts-ignore: constructor function
-item.sbone = new Item({ id: 5000, name: 'Small Bone', desc: 'Brittle bone of some animal', stype: 5 });
-item.sbone.use = function () { msg('You rattle the bone') }
-item.sbone.onGet = function () {
-  if (this.amount >= 50) { giveRcp(rcp.bdl1); this.onGet = function () { } }
-}
-
-// @ts-ignore: constructor function
-item.death_b = new Item({ id: 5001, name: 'Death Badge', desc: 'Awarded by fate for dying. Congratulations', stype: 5 });
-item.death_b.use = function () { msg('Looking at this fills you with bad memories'); }
-
-// @ts-ignore: constructor function
-item.sstraw = new Item({ id: 5002, name: 'Strand Of Straw', desc: 'This fell out of a dummy when you punched it to death', stype: 5 });
-item.sstraw.use = function () { msg('You put one in your mouth...'); }
-item.sstraw.onGet = function () {
-  if (this.amount >= 30) giveRcp(rcp.strwks);
-  if (this.amount >= 40) giveRcp(rcp.wvbkt);
-  if (this.amount >= 50) { giveRcp(rcp.sdl1); this.onGet = function () { } }
-}
-
-// @ts-ignore: constructor function
-item.d6 = new Item({ id: 5003, name: 'Red Die', desc: 'Die with 6 sides. Brings luck', stype: 5, rar: 2 });
-item.d6.use = function () {
-  let r = rand(1, 6); global.stat.die_p += r; global.stat.die_p_t += r;
-  msg('You roll <span style="color:red">' + r + '</span>');
-  skl.dice.use(1);
-  if (random() < .05) {
-    this.amount--; msg("The die crumbles in your hands", 'Magenta');
+item.sbone = new Item({ id: 5000, name: 'Small Bone', desc: 'Brittle bone of some animal', stype: 5,
+  use: function () { msg('You rattle the bone') },
+  onGet: function () {
+    if (this.amount >= 50) { giveRcp(rcp.bdl1); this.onGet = function () { } }
   }
-}
+});
 
 // @ts-ignore: constructor function
-item.cp = new Item();
-item.cp.id = 5004;
-item.cp.name = 'Penny';
-item.cp.desc = 'A single penny, outdated form of currency. For some reason it\'s still in circulation';
-item.cp.stype = 4;
-item.cp.use = function (x: any) {
-  giveWealth(1, false, true);
-  this.amount--;
-  dumb(x);
-}
+item.death_b = new Item({ id: 5001, name: 'Death Badge', desc: 'Awarded by fate for dying. Congratulations', stype: 5,
+  use: function () { msg('Looking at this fills you with bad memories'); }
+});
 
 // @ts-ignore: constructor function
-item.lcn = new Item();
-item.lcn.id = 5005;
-item.lcn.name = 'Large Copper Coin';
-item.lcn.desc = 'Local currency in a form of a heavy coin. Poor people can eat for a whole day with a few of those';
-item.lcn.stype = 4;
-item.lcn.use = function (x: any) {
-  giveWealth(20, false, true);
-  this.amount--;
-  dumb(x);
-}
+item.sstraw = new Item({ id: 5002, name: 'Strand Of Straw', desc: 'This fell out of a dummy when you punched it to death', stype: 5,
+  use: function () { msg('You put one in your mouth...'); },
+  onGet: function () {
+    if (this.amount >= 30) giveRcp(rcp.strwks);
+    if (this.amount >= 40) giveRcp(rcp.wvbkt);
+    if (this.amount >= 50) { giveRcp(rcp.sdl1); this.onGet = function () { } }
+  }
+});
 
 // @ts-ignore: constructor function
-item.cn = new Item();
-item.cn.id = 5006;
-item.cn.name = 'Nickel';
-item.cn.desc = 'Small nickel, outdated form of currency. It was worth much more in the past';
-item.cn.stype = 4;
-item.cn.use = function (x: any) {
-  giveWealth(5, false, true);
-  this.amount--;
-  dumb(x);
-}
+item.d6 = new Item({ id: 5003, name: 'Red Die', desc: 'Die with 6 sides. Brings luck', stype: 5, rar: 2,
+  use: function () {
+    let r = rand(1, 6); global.stat.die_p += r; global.stat.die_p_t += r;
+    msg('You roll <span style="color:red">' + r + '</span>');
+    skl.dice.use(1);
+    if (random() < .05) {
+      this.amount--; msg("The die crumbles in your hands", 'Magenta');
+    }
+  }
+});
 
 // @ts-ignore: constructor function
-item.cd = new Item();
-item.cd.id = 5007;
-item.cd.name = 'Dime';
-item.cd.desc = 'Round copper dime. Still shiny';
-item.cd.stype = 4;
-item.cd.use = function (x: any) {
-  giveWealth(10, false, true);
-  this.amount--;
-  dumb(x);
-}
-
-// @ts-ignore: constructor function
-item.cq = new Item();
-item.cq.id = 5008;
-item.cq.name = 'Quarter';
-item.cq.desc = 'Very large coin, made of copper. Not much worth as money, but collected and used by poor blacksmiths for resmelting into tools';
-item.cq.stype = 4;
-item.cq.use = function (x: any) {
-  giveWealth(25, false, true);
-  this.amount--;
-  dumb(x);
-}
-
-// @ts-ignore: constructor function
-item.watr = new Item({ id: 5009, name: 'Water', desc: 'Regular drinkable water', stype: 5 });
-item.watr.use = function () {
-  msg('You took a sip', 'aqua');
-}
-
-// @ts-ignore: constructor function
-item.psb = new Item({ id: 5010, name: 'Pleasant Sleep Blanket', desc: 'Soft warm blanket. It makes you sleep better', stype: 5 });
-item.psb.use = function () {
-}
-
-// @ts-ignore: constructor function
-item.wdc = new Item({ id: 5011, name: 'Wood Splint', desc: 'A small chipped piece of wood. Not very useful by itself', stype: 5 });
-item.wdc.onGet = function () {
-  if (this.amount >= 10) giveRcp(rcp.wbdl);
-  if (this.amount >= 50) { giveRcp(rcp.wdl1); this.onGet = function () { } }
-}
-item.wdc.use = function () {
-  msg('Ouch');
-}
-
-// @ts-ignore: constructor function
-item.bgl = new Item({ id: 5012, name: 'Bag of lost items', desc: 'Lost possession of waifarers and travellers', stype: 4 });
-item.bgl.use = function () {
-  this.amount--;
-}
-
-// @ts-ignore: constructor function
-item.salt = new Item({ id: 5013, name: 'Salt', desc: 'Rock salt crushed into tiny crystals. Yuck! You surely wouldn\'t want to eat this. It\'s good for preserving perishable foods and cooking, though', stype: 5 });
-item.salt.use = function () {
-  msg('It stings your tongue', 'silver');
-}
-
-// @ts-ignore: constructor function
-item.slm = new Item({ id: 5014, name: 'Slime', desc: 'Clear blob of slime. Used in elementary alchemy to make adhesives. Also acts as a base for some potions', stype: 5 });
-item.slm.use = function () {
-  msg('Sticky..', 'silver');
-}
-
-// @ts-ignore: constructor function
-item.tlvs = new Item({ id: 5015, name: 'Tea leaves', desc: 'A pinch of fragnant tea leaves, ready for brewing', stype: 5 });
-item.tlvs.use = function () {
-  msg('They feel just dry enough', 'blue');
-}
-
-// @ts-ignore: constructor function
-item.key1 = new Item({ id: 5016, name: 'Bronze Key', desc: '', stype: 5 });
-item.key1.use = function () {
-}
-
-// @ts-ignore: constructor function
-item.key2 = new Item({ id: 5017, name: 'Iron Key', desc: '', stype: 5 });
-item.key2.use = function () {
-}
-
-// @ts-ignore: constructor function
-item.key3 = new Item({ id: 5018, name: 'Silver Key', desc: '', stype: 5 });
-item.key3.use = function () {
-}
-
-// @ts-ignore: constructor function
-item.key4 = new Item({ id: 5019, name: 'Gold Key', desc: '', stype: 5 });
-item.key4.use = function () {
-}
-
-// @ts-ignore: constructor function
-item.key5 = new Item({ id: 5020, name: 'Platinum Key', desc: '', stype: 5 });
-item.key5.use = function () {
-}
-
-// @ts-ignore: constructor function
-item.key6 = new Item({ id: 5021, name: 'Steel Key', desc: '', stype: 5 });
-item.key6.use = function () {
-}
-
-// @ts-ignore: constructor function
-item.key7 = new Item({ id: 5022, name: 'Crimson Key', desc: '', stype: 5 });
-item.key7.use = function () {
-}
-
-// @ts-ignore: constructor function
-item.key0 = new Item({ id: 5023, name: 'Rusty Key', stype: 5 });
-item.key0.desc = function () { return ('Scummy old key. ' + (global.flags.hbs1 ? 'You can open your basement with it' : 'What could it be for?')) }
-item.key0.use = function () {
-  msg(global.flags.hbs1 ? 'Thankfully it didn\'t break apart when you used it' : 'It looks familiar...', 'lightgrey');
-}
-
-// @ts-ignore: constructor function
-item.ywlt = new Item({ id: 5024, name: 'Woven Wallet', desc: 'This is your personal wallet, you received it as a gift' + dom.dseparator + '<span style=\'color:orange\'>You can feel coinage inside</spam>', stype: 4, rar: 2 });
-item.ywlt.use = function (x: any) {
-  giveItem(item.cd, 2);
-  giveItem(item.cq, 1);
-  giveItem(item.cn, 1);
-  giveItem(item.cp, rand(2, 10));
-  this.amount--;
-  global.flags.m_un = true;
-  appear(dom.mn_2);
-  appear(dom.mn_4);
-  appear(dom.mn_3);
-
-}
-
-// @ts-ignore: constructor function
-item.hnhn = new Item({ id: 5025, name: 'Teruterubōzu', desc: 'Holy talisman. Leave it out on the rain to gain blessing of good fortune', stype: 5, rar: 2 });
-item.hnhn.use = function (x: any) {
-}
-
-// @ts-ignore: constructor function
-item.pcn = new Item({ id: 5026, name: 'Pinecone', desc: 'A spiny pod from a pine tree.  Dry seeds rattle around inside when you shake it', stype: 4 });
-item.pcn.use = function (x: any) {
-  msg(select(["*Crack..* ", "*Crunch..* ", "*Pop..* "]), 'lightgrey');
-  if (random() <= (.3 + skl.dice.lvl * .03)) { msg_add("You have discovered some pine nuts inside!", 'lime'); giveItem(item.pcns, rand(1, 3)); giveSkExp(skl.dice, 2); } else { msg_add("The cone was empty..", 'grey'); giveSkExp(skl.dice, .5); }
-  this.amount--;
-}
-
-// @ts-ignore: constructor function
-item.pbl = new Item({ id: 5027, name: 'Pebble', desc: 'A tiny useless stone, found everywhere. Can be thrown to create distraction' + dom.dseparator + '<span style="color:yellow">+5 Throwing Damage</span>', stype: 2, c: 'yellow' });
-item.pbl.use = function () {
-  if (this.disabled !== true) {
-    this.disabled = true;
-    if (global.flags.civil === true || global.flags.btl === false) { msg("You threw " + this.name + " into the distance", "grey"); giveSkExp(skl.thr, 1) } else tattack(5, 1, 1);
+item.cp = new Item({ id: 5004, name: 'Penny', desc: 'A single penny, outdated form of currency. For some reason it\'s still in circulation', stype: 4,
+  use: function (x: any) {
+    giveWealth(1, false, true);
     this.amount--;
-    setTimeout(() => { this.disabled = false }, (500 / (skl.thr.lvl || 1)))
+    dumb(x);
   }
-}
+});
 
 // @ts-ignore: constructor function
-item.ptng1 = new Item({ id: 5028, name: 'Tattered Painting', desc: 'Scratched up and faded painting of a lady. It\'s nearly impossible to recognize any details', stype: 5 });
-item.ptng1.use = function () {
-}
+item.lcn = new Item({ id: 5005, name: 'Large Copper Coin', desc: 'Local currency in a form of a heavy coin. Poor people can eat for a whole day with a few of those', stype: 4,
+  use: function (x: any) {
+    giveWealth(20, false, true);
+    this.amount--;
+    dumb(x);
+  }
+});
 
 // @ts-ignore: constructor function
-item.fwd1 = new Item({ id: 5029, name: 'Firewood', desc: 'Type of dry wood, prepared for easy burning. Useful at camps or during winter', stype: 5 });
-item.fwd1.use = function () {
-  msg('*Donk* ..It sounds hollow', 'ghostwhite')
-}
-item.fwd1.onGet = function () {
-  if (this.amount >= 60) { giveRcp(rcp.fwdpile); this.onGet = function () { } }
-}
+item.cn = new Item({ id: 5006, name: 'Nickel', desc: 'Small nickel, outdated form of currency. It was worth much more in the past', stype: 4,
+  use: function (x: any) {
+    giveWealth(5, false, true);
+    this.amount--;
+    dumb(x);
+  }
+});
 
 // @ts-ignore: constructor function
-item.coal1 = new Item({ id: 5030, name: 'Coal', desc: 'Black rocks of fossilized organic mass. This coal burns for a very long time', stype: 5 });
-item.coal1.use = function () {
-  msg('You can picture it smoldering inside your fireplace', 'grey');
-}
+item.cd = new Item({ id: 5007, name: 'Dime', desc: 'Round copper dime. Still shiny', stype: 4,
+  use: function (x: any) {
+    giveWealth(10, false, true);
+    this.amount--;
+    dumb(x);
+  }
+});
 
 // @ts-ignore: constructor function
-item.coal2 = new Item({ id: 5031, name: 'Charcoal', desc: 'Coal made from carefuly burning quality wood for lengths of time. This coal cinders for a very long time', stype: 5 });
-item.coal2.use = function () {
-  msg('Your hands get all dirty', 'black', null, null, 'lightgrey');
-}
+item.cq = new Item({ id: 5008, name: 'Quarter', desc: 'Very large coin, made of copper. Not much worth as money, but collected and used by poor blacksmiths for resmelting into tools', stype: 4,
+  use: function (x: any) {
+    giveWealth(25, false, true);
+    this.amount--;
+    dumb(x);
+  }
+});
+
+// @ts-ignore: constructor function
+item.watr = new Item({ id: 5009, name: 'Water', desc: 'Regular drinkable water', stype: 5,
+  use: function () {
+    msg('You took a sip', 'aqua');
+  }
+});
+
+// @ts-ignore: constructor function
+item.psb = new Item({ id: 5010, name: 'Pleasant Sleep Blanket', desc: 'Soft warm blanket. It makes you sleep better', stype: 5,
+  use: function () {
+  }
+});
+
+// @ts-ignore: constructor function
+item.wdc = new Item({ id: 5011, name: 'Wood Splint', desc: 'A small chipped piece of wood. Not very useful by itself', stype: 5,
+  onGet: function () {
+    if (this.amount >= 10) giveRcp(rcp.wbdl);
+    if (this.amount >= 50) { giveRcp(rcp.wdl1); this.onGet = function () { } }
+  },
+  use: function () {
+    msg('Ouch');
+  }
+});
+
+// @ts-ignore: constructor function
+item.bgl = new Item({ id: 5012, name: 'Bag of lost items', desc: 'Lost possession of waifarers and travellers', stype: 4,
+  use: function () {
+    this.amount--;
+  }
+});
+
+// @ts-ignore: constructor function
+item.salt = new Item({ id: 5013, name: 'Salt', desc: 'Rock salt crushed into tiny crystals. Yuck! You surely wouldn\'t want to eat this. It\'s good for preserving perishable foods and cooking, though', stype: 5,
+  use: function () {
+    msg('It stings your tongue', 'silver');
+  }
+});
+
+// @ts-ignore: constructor function
+item.slm = new Item({ id: 5014, name: 'Slime', desc: 'Clear blob of slime. Used in elementary alchemy to make adhesives. Also acts as a base for some potions', stype: 5,
+  use: function () {
+    msg('Sticky..', 'silver');
+  }
+});
+
+// @ts-ignore: constructor function
+item.tlvs = new Item({ id: 5015, name: 'Tea leaves', desc: 'A pinch of fragnant tea leaves, ready for brewing', stype: 5,
+  use: function () {
+    msg('They feel just dry enough', 'blue');
+  }
+});
+
+// @ts-ignore: constructor function
+item.key1 = new Item({ id: 5016, name: 'Bronze Key', desc: '', stype: 5,
+  use: function () { }
+});
+
+// @ts-ignore: constructor function
+item.key2 = new Item({ id: 5017, name: 'Iron Key', desc: '', stype: 5,
+  use: function () { }
+});
+
+// @ts-ignore: constructor function
+item.key3 = new Item({ id: 5018, name: 'Silver Key', desc: '', stype: 5,
+  use: function () { }
+});
+
+// @ts-ignore: constructor function
+item.key4 = new Item({ id: 5019, name: 'Gold Key', desc: '', stype: 5,
+  use: function () { }
+});
+
+// @ts-ignore: constructor function
+item.key5 = new Item({ id: 5020, name: 'Platinum Key', desc: '', stype: 5,
+  use: function () { }
+});
+
+// @ts-ignore: constructor function
+item.key6 = new Item({ id: 5021, name: 'Steel Key', desc: '', stype: 5,
+  use: function () { }
+});
+
+// @ts-ignore: constructor function
+item.key7 = new Item({ id: 5022, name: 'Crimson Key', desc: '', stype: 5,
+  use: function () { }
+});
+
+// @ts-ignore: constructor function
+item.key0 = new Item({ id: 5023, name: 'Rusty Key', stype: 5,
+  desc: function () { return ('Scummy old key. ' + (global.flags.hbs1 ? 'You can open your basement with it' : 'What could it be for?')) },
+  use: function () {
+    msg(global.flags.hbs1 ? 'Thankfully it didn\'t break apart when you used it' : 'It looks familiar...', 'lightgrey');
+  }
+});
+
+// @ts-ignore: constructor function
+item.ywlt = new Item({ id: 5024, name: 'Woven Wallet', desc: 'This is your personal wallet, you received it as a gift' + dom.dseparator + '<span style=\'color:orange\'>You can feel coinage inside</spam>', stype: 4, rar: 2,
+  use: function (x: any) {
+    giveItem(item.cd, 2);
+    giveItem(item.cq, 1);
+    giveItem(item.cn, 1);
+    giveItem(item.cp, rand(2, 10));
+    this.amount--;
+    global.flags.m_un = true;
+    appear(dom.mn_2);
+    appear(dom.mn_4);
+    appear(dom.mn_3);
+  }
+});
+
+// @ts-ignore: constructor function
+item.hnhn = new Item({ id: 5025, name: 'Teruterubōzu', desc: 'Holy talisman. Leave it out on the rain to gain blessing of good fortune', stype: 5, rar: 2,
+  use: function (x: any) { }
+});
+
+// @ts-ignore: constructor function
+item.pcn = new Item({ id: 5026, name: 'Pinecone', desc: 'A spiny pod from a pine tree.  Dry seeds rattle around inside when you shake it', stype: 4,
+  use: function (x: any) {
+    msg(select(["*Crack..* ", "*Crunch..* ", "*Pop..* "]), 'lightgrey');
+    if (random() <= (.3 + skl.dice.lvl * .03)) { msg_add("You have discovered some pine nuts inside!", 'lime'); giveItem(item.pcns, rand(1, 3)); giveSkExp(skl.dice, 2); } else { msg_add("The cone was empty..", 'grey'); giveSkExp(skl.dice, .5); }
+    this.amount--;
+  }
+});
+
+// @ts-ignore: constructor function
+item.pbl = new Item({ id: 5027, name: 'Pebble', desc: 'A tiny useless stone, found everywhere. Can be thrown to create distraction' + dom.dseparator + '<span style="color:yellow">+5 Throwing Damage</span>', stype: 2, c: 'yellow',
+  use: function () {
+    if (this.disabled !== true) {
+      this.disabled = true;
+      if (global.flags.civil === true || global.flags.btl === false) { msg("You threw " + this.name + " into the distance", "grey"); giveSkExp(skl.thr, 1) } else tattack(5, 1, 1);
+      this.amount--;
+      setTimeout(() => { this.disabled = false }, (500 / (skl.thr.lvl || 1)))
+    }
+  }
+});
+
+// @ts-ignore: constructor function
+item.ptng1 = new Item({ id: 5028, name: 'Tattered Painting', desc: 'Scratched up and faded painting of a lady. It\'s nearly impossible to recognize any details', stype: 5,
+  use: function () { }
+});
+
+// @ts-ignore: constructor function
+item.fwd1 = new Item({ id: 5029, name: 'Firewood', desc: 'Type of dry wood, prepared for easy burning. Useful at camps or during winter', stype: 5,
+  use: function () {
+    msg('*Donk* ..It sounds hollow', 'ghostwhite')
+  },
+  onGet: function () {
+    if (this.amount >= 60) { giveRcp(rcp.fwdpile); this.onGet = function () { } }
+  }
+});
+
+// @ts-ignore: constructor function
+item.coal1 = new Item({ id: 5030, name: 'Coal', desc: 'Black rocks of fossilized organic mass. This coal burns for a very long time', stype: 5,
+  use: function () {
+    msg('You can picture it smoldering inside your fireplace', 'grey');
+  }
+});
+
+// @ts-ignore: constructor function
+item.coal2 = new Item({ id: 5031, name: 'Charcoal', desc: 'Coal made from carefuly burning quality wood for lengths of time. This coal cinders for a very long time', stype: 5,
+  use: function () {
+    msg('Your hands get all dirty', 'black', null, null, 'lightgrey');
+  }
+});
 
 // @ts-ignore: constructor function
 item.cndl2 = new Item({ id: 5032, name: 'placehold', desc: 'hldplace' });
 
 // @ts-ignore: constructor function
-item.skl = new Item({ id: 5033, name: 'Skull', desc: 'Mostly undamaged human skull, taken from some unlucky corpse. It is used in various ways by all sorts of dark sorcerers, witches and alchemists', stype: 5 });
-item.skl.use = function () {
-  msg('It looks menacing', 'purple', null, null, 'lightgrey');
-}
+item.skl = new Item({ id: 5033, name: 'Skull', desc: 'Mostly undamaged human skull, taken from some unlucky corpse. It is used in various ways by all sorts of dark sorcerers, witches and alchemists', stype: 5,
+  use: function () {
+    msg('It looks menacing', 'purple', null, null, 'lightgrey');
+  }
+});
 
 global.text.kntsct = ['Adjustable bend', 'Adjustable grip hitch', 'Albright special', 'Alpine Butterfly', 'Anchor bend', 'Angle\'s loop ', 'Arbor knot', 'Artillery loop', 'Ashley\'s bend', 'Axle hitch', 'Bachmann knot', 'Bag knot', 'Bait loop', 'Barrel knot', 'Basket weave knot', 'Becket hitch ', 'Beer knot', 'Bimini twist', 'Blackwall hitch', 'Blake\'s hitch', 'Blood knot', 'Boa knot', 'Boling knot', 'Boom hitch', 'Bourchier knot', 'Heraldic knot', 'Bumper knot', 'Bunny ears', 'Butterfly loop', 'Carrick bend', 'Cat\'s paw', 'Catshank', 'Celtic button knot', 'Chain sinnet', 'Chair knot', 'Clove hitch', 'Constrictor knot', 'Cow hitch', 'Crown knot', 'Double loop', 'Dogshank', 'Diamond knot', 'Dropper loop', 'Death knot', 'Eye splice', 'Falconer\'s knot', 'Farmer\'s loop', 'Fiador knot', 'Figure-eight knot', 'Fisherman\'s bend', 'Friendship knot', 'Hackamore', 'Garda hitch', 'Grief knot', 'Gordian knot', 'Grantchester knot', 'Ground-line hitch', 'Gripping sailor\'s hitch', 'Halter hitch', 'Handcuff knot', 'Hangman\'s noose', 'Highpoint hitch', 'Highwayman\'s hitch', 'Hitching tie', 'Hunter\'s bend', 'Icicle hitch', 'Jamming knot', 'Killick hitch', 'Klemheist knot', 'Knot of isis', 'Lariat loop', 'Lighterman\'s hitch', 'Lineman\s loop', 'Lissajous knot', 'Lobster buoy hitch', 'Magnus hitch', 'Marlinespike hitch', 'Midshipman\'s hitch', 'Miller\'s knot', 'Monkey\'s fist', 'Mountaineer\'s coil', 'Munter hitch', 'Nail knot', 'Ossel hitch', 'Overhand bend', 'Palomar knot', 'Pile hitch', 'Pipe hitch', 'Pretzel link knot', 'Power cinch', 'Racking bend', 'Reef knot', 'Reever Knot', 'Rolling hitch', 'Round turn', 'Running bowline', 'Sailor\'s hitch', 'Sheepshank', 'Shoelace knot', 'Simple knot', 'Slip knot', 'Snell knot', 'Snuggle hitch', 'Span loop', 'Square knot', 'Strangle knot', 'Surgeon\'s loop', 'Tape knot', 'Thief knot', 'Transom knot', 'Thumb knot', 'Threefoil knot', 'Trident loop', 'Trilene knot', 'Triple crown knot', 'True lover\'s knot', 'Turle knot', 'Versatackle knot', 'Underhand knot', 'Underwriter\'s knot', 'Uni knot', 'Wall and crown knot', 'Water knot', 'Windsor knot', 'Yosemite bowlin', 'Zeppelin bend']
 
 // @ts-ignore: constructor function
-item.rope = new Item({ id: 5034, name: 'Rope', desc: 'A length of sturdy rope, for tying things up', stype: 5 });
-item.rope.use = function () {
-  msg('You practiced knot tying for a short while and made <span style="color:orange">"' + select(global.text.kntsct) + '"</span>!', 'springgreen');
-}
-
-// @ts-ignore: constructor function
-item.mcps = new Item({ id: 5035, name: 'Clay Milk Cap', desc: 'Milk caps made from packed clay. Children like to play with these' + dom.dseparator + '<span style="color:yellow">+9 Throwing Damage</span>', stype: 2, c: 'yellow' });
-item.mcps.use = function () {
-  if (this.disabled !== true) {
-    this.disabled = true;
-    if (global.flags.civil === true || global.flags.btl === false) { msg("You threw " + this.name + " into the distance", "grey"); giveSkExp(skl.thr, 1) } else tattack(9, 1, 1);
-    this.amount--;
-    setTimeout(() => { this.disabled = false }, (500 / (skl.thr.lvl || 1)))
+item.rope = new Item({ id: 5034, name: 'Rope', desc: 'A length of sturdy rope, for tying things up', stype: 5,
+  use: function () {
+    msg('You practiced knot tying for a short while and made <span style="color:orange">"' + select(global.text.kntsct) + '"</span>!', 'springgreen');
   }
-}
+});
 
 // @ts-ignore: constructor function
-item.stdst = new Item({ id: 5036, name: 'Stardust', desc: 'Tiny bits of solar pieces that came from the Sky. They shine in darkness and hold the energy of stars', stype: 5 });
-item.stdst.use = function (x: any) {
-  msg('It is glittering', 'gold', null, null, 'darkblue');
-}
+item.mcps = new Item({ id: 5035, name: 'Clay Milk Cap', desc: 'Milk caps made from packed clay. Children like to play with these' + dom.dseparator + '<span style="color:yellow">+9 Throwing Damage</span>', stype: 2, c: 'yellow',
+  use: function () {
+    if (this.disabled !== true) {
+      this.disabled = true;
+      if (global.flags.civil === true || global.flags.btl === false) { msg("You threw " + this.name + " into the distance", "grey"); giveSkExp(skl.thr, 1) } else tattack(9, 1, 1);
+      this.amount--;
+      setTimeout(() => { this.disabled = false }, (500 / (skl.thr.lvl || 1)))
+    }
+  }
+});
 
 // @ts-ignore: constructor function
-item.gcre1 = new Item({ id: 5037, name: 'Lesser Golem Core', desc: 'Exhausted power core of a golem. It has nearly no use anymore, the entire energy supply of this thing has been used up', stype: 5 });
-item.gcre1.use = function (x: any) {
-  msg('You notice specks of dull light flickering inside');
-}
+item.stdst = new Item({ id: 5036, name: 'Stardust', desc: 'Tiny bits of solar pieces that came from the Sky. They shine in darkness and hold the energy of stars', stype: 5,
+  use: function (x: any) {
+    msg('It is glittering', 'gold', null, null, 'darkblue');
+  }
+});
 
 // @ts-ignore: constructor function
-item.wvbkt = new Item({ id: 5038, name: 'Straw Basket', desc: furniture.wvbkt.desc, stype: 4, isf: true, parent: furniture.wvbkt });
-item.wvbkt.use = function (x: any) {
-  giveFurniture(furniture.wvbkt);
-  this.amount--;
-}
+item.gcre1 = new Item({ id: 5037, name: 'Lesser Golem Core', desc: 'Exhausted power core of a golem. It has nearly no use anymore, the entire energy supply of this thing has been used up', stype: 5,
+  use: function (x: any) {
+    msg('You notice specks of dull light flickering inside');
+  }
+});
 
 // @ts-ignore: constructor function
-item.tbwr1 = new Item({ id: 5039, name: 'Wooden Tableware', desc: furniture.tbwr1.desc, stype: 4, isf: true, parent: furniture.tbwr1 });
-item.tbwr1.use = function (x: any) {
-  let f = giveFurniture(furniture.tbwr1);
-  if (inSector(sector.home)) activatef(f);
-  this.amount--;
-}
+item.wvbkt = new Item({ id: 5038, name: 'Straw Basket', desc: furniture.wvbkt.desc, stype: 4, isf: true, parent: furniture.wvbkt,
+  use: function (x: any) {
+    giveFurniture(furniture.wvbkt);
+    this.amount--;
+  }
+});
+
+// @ts-ignore: constructor function
+item.tbwr1 = new Item({ id: 5039, name: 'Wooden Tableware', desc: furniture.tbwr1.desc, stype: 4, isf: true, parent: furniture.tbwr1,
+  use: function (x: any) {
+    let f = giveFurniture(furniture.tbwr1);
+    if (inSector(sector.home)) activatef(f);
+    this.amount--;
+  }
+});
 
 // @ts-ignore: constructor function
 item.ess1 = new Item({ id: 5040, name: 'Essence of Air', desc: 'Spirit shard of concentrated Wind power', stype: 5, rar: 2 });
@@ -1214,309 +1255,315 @@ item.ess5 = new Item({ id: 5044, name: 'Essence of Light', desc: 'Spirit shard o
 item.ess6 = new Item({ id: 5045, name: 'Essence of Night', desc: 'Spirit shard of concentrated Demonic power', stype: 5, rar: 2 });
 
 // @ts-ignore: constructor function
-item.toolbx = new Item({ id: 5046, name: 'Toolbox', desc: 'Metal box with a variety of fine tools inside, multipurpose knives, mallets, pincers, chisels and a few more. Used for precision work and tinkering with simple and complex objects' + dom.dseparator + '<span style="color:chartreuse">Allows deconstruction of items and equipment when kept in inventory</span>', stype: 5 });
-item.toolbx.use = function () {
-  if (random() < .1) msg('You almost dropped the box..', 'orange');
-  else msg('Dozens of tools tumble inside as you shake it', 'yellow');
-}
+item.toolbx = new Item({ id: 5046, name: 'Toolbox', desc: 'Metal box with a variety of fine tools inside, multipurpose knives, mallets, pincers, chisels and a few more. Used for precision work and tinkering with simple and complex objects' + dom.dseparator + '<span style="color:chartreuse">Allows deconstruction of items and equipment when kept in inventory</span>', stype: 5,
+  use: function () {
+    if (random() < .1) msg('You almost dropped the box..', 'orange');
+    else msg('Dozens of tools tumble inside as you shake it', 'yellow');
+  }
+});
 
 // @ts-ignore: constructor function
-item.cpdst = new Item();
-item.cpdst.id = 5047;
-item.cpdst.name = 'Corpse Dust';
-item.cpdst.desc = 'Dust derived from the remains of the deciesed, often used for witchcraft and enchantments';
-item.cpdst.stype = 5;
-item.cpdst.use = function () {
-  msg('Disgusting', 'lightgrey');
-}
+item.cpdst = new Item({ id: 5047, name: 'Corpse Dust', desc: 'Dust derived from the remains of the deciesed, often used for witchcraft and enchantments', stype: 5,
+  use: function () {
+    msg('Disgusting', 'lightgrey');
+  }
+});
 
 // @ts-ignore: constructor function
-item.cclth = new Item();
-item.cclth.id = 5048;
-item.cclth.name = 'Cheap Cloth';
-item.cclth.desc = 'A poor quality swatch of cloth. Unstitches when you so much as breathe on it';
-item.cclth.stype = 5;
-item.cclth.use = function () {
-  msg('Can you even work with something this worthless?', 'lightgrey');
-}
+item.cclth = new Item({ id: 5048, name: 'Cheap Cloth', desc: 'A poor quality swatch of cloth. Unstitches when you so much as breathe on it', stype: 5,
+  use: function () {
+    msg('Can you even work with something this worthless?', 'lightgrey');
+  }
+});
 
 // @ts-ignore: constructor function
-item.thrdnl = new Item();
-item.thrdnl.id = 5049;
-item.thrdnl.name = 'Thread';
-item.thrdnl.desc = 'A small quantity of thread that could be used in sewing and tailoring projects';
-item.thrdnl.stype = 5;
-item.thrdnl.use = function () {
-  msg('It doesn\'t seem very sturdy', 'lightgrey');
-}
-item.thrdnl.onGet = function () {
-  if (this.amount >= 100) { giveRcp(rcp.cyrn); this.onGet = function () { } }
-}
+item.thrdnl = new Item({ id: 5049, name: 'Thread', desc: 'A small quantity of thread that could be used in sewing and tailoring projects', stype: 5,
+  use: function () {
+    msg('It doesn\'t seem very sturdy', 'lightgrey');
+  },
+  onGet: function () {
+    if (this.amount >= 100) { giveRcp(rcp.cyrn); this.onGet = function () { } }
+  }
+});
 
 // @ts-ignore: constructor function
-item.sktbad = new Item();
-item.sktbad.id = 5050;
-item.sktbad.name = 'Mistake';
-item.sktbad.desc = 'A failed product of an unskilled artisan. Once destined to become something worty of display, this mangled mess is repulsive to look at';
-item.sktbad.stype = 5;
-item.sktbad.use = function () {
-  msg('Better put this away', 'lightgrey');
-}
+item.sktbad = new Item({ id: 5050, name: 'Mistake', desc: 'A failed product of an unskilled artisan. Once destined to become something worty of display, this mangled mess is repulsive to look at', stype: 5,
+  use: function () {
+    msg('Better put this away', 'lightgrey');
+  }
+});
 
 // @ts-ignore: constructor function
-item.bblkt = new Item({ id: 5051, name: 'Ragwork Blanket', desc: furniture.bblkt.desc, stype: 4, isf: true, parent: furniture.bblkt });
-item.bblkt.use = function (x: any) {
-  let f = giveFurniture(furniture.bblkt);
-  if (inSector(sector.home)) activatef(f);
-  this.amount--;
-}
+item.bblkt = new Item({ id: 5051, name: 'Ragwork Blanket', desc: furniture.bblkt.desc, stype: 4, isf: true, parent: furniture.bblkt,
+  use: function (x: any) {
+    let f = giveFurniture(furniture.bblkt);
+    if (inSector(sector.home)) activatef(f);
+    this.amount--;
+  }
+});
 
 // @ts-ignore: constructor function
-item.spillw = new Item({ id: 5052, name: 'Straw Pillow', desc: furniture.spillw.desc, stype: 4, isf: true, parent: furniture.spillw });
-item.spillw.use = function (x: any) {
-  let f = giveFurniture(furniture.spillw);
-  if (inSector(sector.home)) activatef(f);
-  this.amount--;
-}
+item.spillw = new Item({ id: 5052, name: 'Straw Pillow', desc: furniture.spillw.desc, stype: 4, isf: true, parent: furniture.spillw,
+  use: function (x: any) {
+    let f = giveFurniture(furniture.spillw);
+    if (inSector(sector.home)) activatef(f);
+    this.amount--;
+  }
+});
 
 // @ts-ignore: constructor function
-item.cyrn = new Item({ id: 5053, name: 'Yarn Ball', desc: furniture.cyrn.desc, stype: 4, isf: true, parent: furniture.cyrn });
-item.cyrn.use = function (x: any) {
-  let f = giveFurniture(furniture.cyrn);
-  if (inSector(sector.home)) activatef(f);
-  this.amount--;
-}
+item.cyrn = new Item({ id: 5053, name: 'Yarn Ball', desc: furniture.cyrn.desc, stype: 4, isf: true, parent: furniture.cyrn,
+  use: function (x: any) {
+    let f = giveFurniture(furniture.cyrn);
+    if (inSector(sector.home)) activatef(f);
+    this.amount--;
+  }
+});
 
 // @ts-ignore: constructor function
-item.dfish = new Item({ id: 5054, name: 'Dead Fish', desc: 'Carcass of some fish, looking bad, grey and dead. Can be dismantled into fishbait', stype: 5 });
-item.dfish.use = function () {
-  msg('Gross!', 'lightgrey');
-}
+item.dfish = new Item({ id: 5054, name: 'Dead Fish', desc: 'Carcass of some fish, looking bad, grey and dead. Can be dismantled into fishbait', stype: 5,
+  use: function () {
+    msg('Gross!', 'lightgrey');
+  }
+});
 
 // @ts-ignore: constructor function
-item.fbait1 = new Item({ id: 5055, name: 'Bait', desc: 'Organic remains rolled into a ball, favoured by fish and other aquatic population', stype: 5 });
-item.fbait1.use = function () {
-}
+item.fbait1 = new Item({ id: 5055, name: 'Bait', desc: 'Organic remains rolled into a ball, favoured by fish and other aquatic population', stype: 5,
+  use: function () { }
+});
 
 // @ts-ignore: constructor function
-item.htrdvr = new Item({ id: 5056, name: 'Hunter\'s Crate', desc: 'Heavy wooden crate you were asked to deliver to dojo. It is sealed shut and you can\'t look inside. It smells faintly of meat, spices and mushrooms. Probably filled with preserved dry produce', stype: 5 });
-item.htrdvr.use = function () {
-  msg('You resist the temptation to open it', 'lightgrey')
-}
+item.htrdvr = new Item({ id: 5056, name: 'Hunter\'s Crate', desc: 'Heavy wooden crate you were asked to deliver to dojo. It is sealed shut and you can\'t look inside. It smells faintly of meat, spices and mushrooms. Probably filled with preserved dry produce', stype: 5,
+  use: function () {
+    msg('You resist the temptation to open it', 'lightgrey')
+  }
+});
 
 // @ts-ignore: constructor function
-item.htrsvr = new Item({ id: 5057, name: 'Hunter\'s Bag', desc: 'Heavy canvas bag you were asked to deliver to the herbalist. It is filled with separated bundles of various herbs you can\'t identify. You\'d rather not touch anything inside as it looks dangerously poisonous', stype: 5 });
-item.htrsvr.use = function () {
-  msg('Strong aroma eminating from this bag makes your head spin', 'orange')
-}
+item.htrsvr = new Item({ id: 5057, name: 'Hunter\'s Bag', desc: 'Heavy canvas bag you were asked to deliver to the herbalist. It is filled with separated bundles of various herbs you can\'t identify. You\'d rather not touch anything inside as it looks dangerously poisonous', stype: 5,
+  use: function () {
+    msg('Strong aroma eminating from this bag makes your head spin', 'orange')
+  }
+});
 
 // @ts-ignore: constructor function
-item.hbtsvr = new Item({ id: 5058, name: 'Herbalist\'s Satchel', desc: 'Heavy leather satchel you were asked to deliver to the head hunter. Hundreds of vials clang Violently no matter how carefully you attempt to carry it', stype: 5 });
-item.hbtsvr.use = function () {
-  msg('You\'ll be in trouble of you break anything inside', 'lightgrey')
-}
+item.hbtsvr = new Item({ id: 5058, name: 'Herbalist\'s Satchel', desc: 'Heavy leather satchel you were asked to deliver to the head hunter. Hundreds of vials clang Violently no matter how carefully you attempt to carry it', stype: 5,
+  use: function () {
+    msg('You\'ll be in trouble of you break anything inside', 'lightgrey')
+  }
+});
 
 // @ts-ignore: constructor function
-item.fwdpile = new Item({ id: 5059, name: 'Firewood Pile', desc: 'Stockpile of firewood neatly packed together for easy storage', stype: 4, isf: true, parent: furniture.fwdpile });
-item.fwdpile.use = function (x: any) {
-  let f = giveFurniture(furniture.fwdpile);
-  if (inSector(sector.home)) activatef(f);
-  this.amount--;
-}
+item.fwdpile = new Item({ id: 5059, name: 'Firewood Pile', desc: 'Stockpile of firewood neatly packed together for easy storage', stype: 4, isf: true, parent: furniture.fwdpile,
+  use: function (x: any) {
+    let f = giveFurniture(furniture.fwdpile);
+    if (inSector(sector.home)) activatef(f);
+    this.amount--;
+  }
+});
 
 // @ts-ignore: constructor function
-item.lprmt = new Item();
-item.lprmt.id = 5060;
-item.lprmt.name = 'Travel Permit';
-item.lprmt.desc = 'Written document used in your village. Acts as a proof of one\'s strength, meaning the owner has the ability to protect himself when leaving the village, you will need this when going out. Nearly every adult you know has this';
-item.lprmt.stype = 5;
-item.lprmt.rar = 2;
-item.lprmt.use = function () {
-  msg('You feel pride holding this', 'green')
-}
+item.lprmt = new Item({ id: 5060, name: 'Travel Permit', desc: 'Written document used in your village. Acts as a proof of one\'s strength, meaning the owner has the ability to protect himself when leaving the village, you will need this when going out. Nearly every adult you know has this', stype: 5, rar: 2,
+  use: function () {
+    msg('You feel pride holding this', 'green')
+  }
+});
 
 // @ts-ignore: constructor function
-item.bed2 = new Item({ id: 5061, name: 'Plain Bed', desc: furniture.bed2.desc, stype: 4, isf: true, parent: furniture.bed2 });
-item.bed2.use = function (x: any) {
-  let f = giveFurniture(furniture.bed2);
-  if (inSector(sector.home)) activatef(f);
-  this.amount--;
-}
+item.bed2 = new Item({ id: 5061, name: 'Plain Bed', desc: furniture.bed2.desc, stype: 4, isf: true, parent: furniture.bed2,
+  use: function (x: any) {
+    let f = giveFurniture(furniture.bed2);
+    if (inSector(sector.home)) activatef(f);
+    this.amount--;
+  }
+});
 
 // @ts-ignore: constructor function
-item.wfng = new Item({ id: 5062, name: 'Wolf Fang', desc: 'Clear and sharp fang of a predator. It still looks dangerous', stype: 5 });
-item.wfng.use = function () {
-  msg('You may prick your finger if you mishandle it', 'lightgrey')
-}
-item.wfng.onGet = function () {
-  if (this.amount >= 10) giveRcp(rcp.wfng)
-}
+item.wfng = new Item({ id: 5062, name: 'Wolf Fang', desc: 'Clear and sharp fang of a predator. It still looks dangerous', stype: 5,
+  use: function () {
+    msg('You may prick your finger if you mishandle it', 'lightgrey')
+  },
+  onGet: function () {
+    if (this.amount >= 10) giveRcp(rcp.wfng)
+  }
+});
 
 // @ts-ignore: constructor function
-item.bookgen = new Item({ id: 5063, name: 'Book', desc: furniture.bookgen.desc, stype: 4, isf: true, parent: furniture.bookgen });
-item.bookgen.use = function (x: any) {
-  let f = giveFurniture(furniture.bookgen);
-  if (inSector(sector.home) && !f.active) activatef(f);
-  this.amount--;
-}
+item.bookgen = new Item({ id: 5063, name: 'Book', desc: furniture.bookgen.desc, stype: 4, isf: true, parent: furniture.bookgen,
+  use: function (x: any) {
+    let f = giveFurniture(furniture.bookgen);
+    if (inSector(sector.home) && !f.active) activatef(f);
+    this.amount--;
+  }
+});
 
 // @ts-ignore: constructor function
-item.dmice1 = new Item({ id: 5064, name: 'Dead Mouse', desc: 'Vermin hunted by your cat, now proudly displayed before you', stype: 5, rar: 0 });
-item.dmice1.use = function () {
-  msg('Yeah..', 'grey')
-}
+item.dmice1 = new Item({ id: 5064, name: 'Dead Mouse', desc: 'Vermin hunted by your cat, now proudly displayed before you', stype: 5, rar: 0,
+  use: function () {
+    msg('Yeah..', 'grey')
+  }
+});
 
 // @ts-ignore: constructor function
-item.dbdc1 = new Item({ id: 5065, name: 'Dead Bird', desc: 'A proof of loyalty brought to you by your cat', stype: 5, rar: 0 });
-item.dbdc1.use = function () {
-  msg('Indeed..', 'grey')
-}
+item.dbdc1 = new Item({ id: 5065, name: 'Dead Bird', desc: 'A proof of loyalty brought to you by your cat', stype: 5, rar: 0,
+  use: function () {
+    msg('Indeed..', 'grey')
+  }
+});
 
 
 // @ts-ignore: constructor function
-item.ip1 = new Item({ id: 9000, name: '"Idea paper"', desc: 'Tiny scrap of paper with information. You wrote it yourself to remember things.', stype: 4 });
+item.ip1 = new Item({ id: 9000, name: '"Idea paper"', desc: 'Tiny scrap of paper with information. You wrote it yourself to remember things.', stype: 4,
+  use: function () {
+    if (canRead()) {
+      if (this.data.timep >= this.cmax) {
+        giveRcp(rcp.strawp);
+        giveRcp(rcp.hlpd);
+        giveRcp(rcp.borc);
+        giveRcp(rcp.begg);
+        this.amount--;
+        this.data.read = false;
+        this.data.finished = true;
+      } else chss.trd.sl(this, .2);
+    }
+  }
+});
 item.ip1.data.time = HOUR;
-item.ip1.use = function () {
-  if (canRead()) {
-    if (this.data.timep >= this.cmax) {
-      giveRcp(rcp.strawp);
-      giveRcp(rcp.hlpd);
-      giveRcp(rcp.borc);
-      giveRcp(rcp.begg);
-      this.amount--;
-      this.data.read = false;
-      this.data.finished = true;
-    } else chss.trd.sl(this, .2);
-  }
-}
 
 // @ts-ignore: constructor function
-item.skl1 = new Item({ id: 9001, name: 'P Skillbook (Swords)', desc: 'Entry level practitioner skillbook about sword combat' + dom.dseparator + '<span style="color:deeppink">Sword Mastery EXP gain +5%</span>', stype: 4 });
+item.skl1 = new Item({ id: 9001, name: 'P Skillbook (Swords)', desc: 'Entry level practitioner skillbook about sword combat' + dom.dseparator + '<span style="color:deeppink">Sword Mastery EXP gain +5%</span>', stype: 4,
+  use: function () {
+    if (canRead()) {
+      if (this.data.timep >= this.cmax) {
+        this.amount--;
+        giveSkExp(skl.srdc, 150);
+        skl.srdc.p += .05;
+        this.data.read = false;
+        this.data.finished = true;
+        giveItem(item.bookgen)
+      } else chss.trd.sl(this, .5);
+    }
+  }
+});
 item.skl1.data.time = HOUR * 4;
-item.skl1.use = function () {
-  if (canRead()) {
-    if (this.data.timep >= this.cmax) {
-      this.amount--;
-      giveSkExp(skl.srdc, 150);
-      skl.srdc.p += .05;
-      this.data.read = false;
-      this.data.finished = true;
-      giveItem(item.bookgen)
-    } else chss.trd.sl(this, .5);
-  }
-}
 
 // @ts-ignore: constructor function
-item.skl2 = new Item({ id: 9002, name: 'P Skillbook (Knives)', desc: 'Entry level practitioner skillbook about knife combat' + dom.dseparator + '<span style="color:deeppink">Knife Mastery EXP gain +5%</span>', stype: 4 });
+item.skl2 = new Item({ id: 9002, name: 'P Skillbook (Knives)', desc: 'Entry level practitioner skillbook about knife combat' + dom.dseparator + '<span style="color:deeppink">Knife Mastery EXP gain +5%</span>', stype: 4,
+  use: function () {
+    if (canRead()) {
+      if (this.data.timep >= this.cmax) {
+        this.amount--;
+        giveSkExp(skl.knfc, 150);
+        skl.knfc.p += .05;
+        this.data.read = false;
+        this.data.finished = true;
+        giveItem(item.bookgen)
+      } else chss.trd.sl(this, .5);
+    }
+  }
+});
 item.skl2.data.time = HOUR * 4;
-item.skl2.use = function () {
-  if (canRead()) {
-    if (this.data.timep >= this.cmax) {
-      this.amount--;
-      giveSkExp(skl.knfc, 150);
-      skl.knfc.p += .05;
-      this.data.read = false;
-      this.data.finished = true;
-      giveItem(item.bookgen)
-    } else chss.trd.sl(this, .5);
-  }
-}
 
 // @ts-ignore: constructor function
-item.skl3 = new Item({ id: 9003, name: 'P Skillbook (Axes)', desc: 'Entry level practitioner skillbook about axe combat' + dom.dseparator + '<span style="color:deeppink">Axe Mastery EXP gain +5%</span>', stype: 4 });
+item.skl3 = new Item({ id: 9003, name: 'P Skillbook (Axes)', desc: 'Entry level practitioner skillbook about axe combat' + dom.dseparator + '<span style="color:deeppink">Axe Mastery EXP gain +5%</span>', stype: 4,
+  use: function () {
+    if (canRead()) {
+      if (this.data.timep >= this.cmax) {
+        this.amount--;
+        giveSkExp(skl.axc, 150);
+        skl.axc.p += .05;
+        this.data.read = false;
+        this.data.finished = true;
+        giveItem(item.bookgen)
+      } else chss.trd.sl(this, .5);
+    }
+  }
+});
 item.skl3.data.time = HOUR * 4;
-item.skl3.use = function () {
-  if (canRead()) {
-    if (this.data.timep >= this.cmax) {
-      this.amount--;
-      giveSkExp(skl.axc, 150);
-      skl.axc.p += .05;
-      this.data.read = false;
-      this.data.finished = true;
-      giveItem(item.bookgen)
-    } else chss.trd.sl(this, .5);
-  }
-}
 
 // @ts-ignore: constructor function
-item.skl4 = new Item({ id: 9004, name: 'P Skillbook (Spears)', desc: 'Entry level practitioner skillbook about spear combat' + dom.dseparator + '<span style="color:deeppink">Polearm Mastery EXP gain +5%</span>', stype: 4 });
+item.skl4 = new Item({ id: 9004, name: 'P Skillbook (Spears)', desc: 'Entry level practitioner skillbook about spear combat' + dom.dseparator + '<span style="color:deeppink">Polearm Mastery EXP gain +5%</span>', stype: 4,
+  use: function () {
+    if (canRead()) {
+      if (this.data.timep >= this.cmax) {
+        this.amount--;
+        giveSkExp(skl.plrmc, 150);
+        skl.plrmc.p += .05;
+        this.data.read = false;
+        this.data.finished = true;
+        giveItem(item.bookgen)
+      } else chss.trd.sl(this, .5);
+    }
+  }
+});
 item.skl4.data.time = HOUR * 4;
-item.skl4.use = function () {
-  if (canRead()) {
-    if (this.data.timep >= this.cmax) {
-      this.amount--;
-      giveSkExp(skl.plrmc, 150);
-      skl.plrmc.p += .05;
-      this.data.read = false;
-      this.data.finished = true;
-      giveItem(item.bookgen)
-    } else chss.trd.sl(this, .5);
-  }
-}
 
 // @ts-ignore: constructor function
-item.skl5 = new Item({ id: 9005, name: 'P Skillbook (Hammers)', desc: 'Entry level practitioner skillbook about hammer combat' + dom.dseparator + '<span style="color:deeppink">Hammer Mastery EXP gain +5%</span>', stype: 4 });
+item.skl5 = new Item({ id: 9005, name: 'P Skillbook (Hammers)', desc: 'Entry level practitioner skillbook about hammer combat' + dom.dseparator + '<span style="color:deeppink">Hammer Mastery EXP gain +5%</span>', stype: 4,
+  use: function () {
+    if (canRead()) {
+      if (this.data.timep >= this.cmax) {
+        this.amount--;
+        giveSkExp(skl.hmrc, 150);
+        skl.hmrc.p += .05;
+        this.data.read = false;
+        this.data.finished = true;
+        giveItem(item.bookgen)
+      } else chss.trd.sl(this, .5);
+    }
+  }
+});
 item.skl5.data.time = HOUR * 4;
-item.skl5.use = function () {
-  if (canRead()) {
-    if (this.data.timep >= this.cmax) {
-      this.amount--;
-      giveSkExp(skl.hmrc, 150);
-      skl.hmrc.p += .05;
-      this.data.read = false;
-      this.data.finished = true;
-      giveItem(item.bookgen)
-    } else chss.trd.sl(this, .5);
-  }
-}
 
 // @ts-ignore: constructor function
-item.skl6 = new Item({ id: 9006, name: 'P Skillbook (Martial)', desc: 'Entry level practitioner skillbook about unarmed combat' + dom.dseparator + '<span style="color:deeppink">Martial Mastery EXP gain +5%</span>', stype: 4 });
+item.skl6 = new Item({ id: 9006, name: 'P Skillbook (Martial)', desc: 'Entry level practitioner skillbook about unarmed combat' + dom.dseparator + '<span style="color:deeppink">Martial Mastery EXP gain +5%</span>', stype: 4,
+  use: function () {
+    if (canRead()) {
+      if (this.data.timep >= this.cmax) {
+        this.amount--;
+        giveSkExp(skl.unc, 150);
+        skl.unc.p += .05;
+        this.data.read = false;
+        this.data.finished = true;
+        giveItem(item.bookgen)
+      } else chss.trd.sl(this, .5);
+    }
+  }
+});
 item.skl6.data.time = HOUR * 4;
-item.skl6.use = function () {
-  if (canRead()) {
-    if (this.data.timep >= this.cmax) {
-      this.amount--;
-      giveSkExp(skl.unc, 150);
-      skl.unc.p += .05;
-      this.data.read = false;
-      this.data.finished = true;
-      giveItem(item.bookgen)
-
-    } else chss.trd.sl(this, .5);
-  }
-}
 
 // @ts-ignore: constructor function
-item.bstr = new Item({ id: 9007, name: '"Animalis Vicipaedia"', rar: 2, desc: 'Heavy Hunter\'s Encyclopedia. There are a few entries about wild life, beasts, and mythical creatures you can encounter, the other pages are blank. You feel the urge to fill them in' + dom.dseparator + '<span style="color:lime">Unlocks Bestiary</span>', stype: 4 });
+item.bstr = new Item({ id: 9007, name: '"Animalis Vicipaedia"', rar: 2, desc: 'Heavy Hunter\'s Encyclopedia. There are a few entries about wild life, beasts, and mythical creatures you can encounter, the other pages are blank. You feel the urge to fill them in' + dom.dseparator + '<span style="color:lime">Unlocks Bestiary</span>', stype: 4,
+  use: function () {
+    if (canRead()) {
+      if (this.data.timep >= this.cmax) {
+        msg('Bestiary Unlocked!', 'cyan');
+        this.data.read = false;
+        this.amount--;
+        global.flags.bstu = true;
+        this.data.finished = true;
+        if (dom.jlbrw1s2) dom.jlbrw1s2.innerHTML = 'B E S T I A R Y'
+      } else chss.trd.sl(this);
+    }
+  }
+});
 item.bstr.data.time = HOUR * 17;
-item.bstr.use = function () {
-  if (canRead()) {
-    if (this.data.timep >= this.cmax) {
-      msg('Bestiary Unlocked!', 'cyan');
-      this.data.read = false;
-      this.amount--;
-      global.flags.bstu = true;
-      this.data.finished = true;
-      if (dom.jlbrw1s2) dom.jlbrw1s2.innerHTML = 'B E S T I A R Y'
-    } else chss.trd.sl(this);
-  }
-}
 
 // @ts-ignore: constructor function
-item.tbrwdb = new Item({ id: 9008, name: '"The Art of Teabrewing"', rar: 2, desc: 'Informative little book in detail describing the ways of teamaking, starting from precise amounts and proportions, specific water temperatures, correct tableware, to the defferent styles and etiquette', stype: 4 });
-item.tbrwdb.data.time = HOUR * 26;
-item.tbrwdb.use = function () {
-  if (canRead()) {
-    if (this.data.timep >= this.cmax) {
-      giveRcp(rcp.tbrwd);
-      this.data.finished = true;
-      this.data.read = false;
-      this.amount--;
-      giveItem(item.bookgen)
-    } else chss.trd.sl(this);
+item.tbrwdb = new Item({ id: 9008, name: '"The Art of Teabrewing"', rar: 2, desc: 'Informative little book in detail describing the ways of teamaking, starting from precise amounts and proportions, specific water temperatures, correct tableware, to the defferent styles and etiquette', stype: 4,
+  use: function () {
+    if (canRead()) {
+      if (this.data.timep >= this.cmax) {
+        giveRcp(rcp.tbrwd);
+        this.data.finished = true;
+        this.data.read = false;
+        this.amount--;
+        giveItem(item.bookgen)
+      } else chss.trd.sl(this);
+    }
   }
-}
+});
+item.tbrwdb.data.time = HOUR * 26;
 
 global.text.mscbkatxt = ["This fairy tale is about a wolf who eats so much salted meat she becomes trapped in the butcher's cellar.",
   "In this traditional story of beastly intrigue a clever fox convinces an elderly lion to kill a derogatory wolf.",
@@ -1538,330 +1585,342 @@ global.text.mscbkatxt = ["This fairy tale is about a wolf who eats so much salte
   "Titled \"The Fleeing Pancake\", this collection of silly folk tales is suitable for small children."];
 
 // @ts-ignore: constructor function
-item.msc1 = new Item({ id: 9009, name: '"Book of Fairy Tales"', save: true, stype: 4 });
+item.msc1 = new Item({ id: 9009, name: '"Book of Fairy Tales"', save: true, stype: 4,
+  desc: function () { return 'An amusing collection of folklore featuring the usual cast of fairies and demons' + dom.dseparator + '<span style="color:limegreen">' + global.text.mscbkatxt[this.data.bid] + '</span>' },
+  use: function () {
+    if (canRead()) {
+      if (this.data.timep >= this.cmax) {
+        giveExp(this.data.exp || 500, true, true, true); this.data.bid = rand(global.text.mscbkatxt.length - 1); this.data.exp = rand(500, 5000); this.desc = 'An amusing collection of folklore featuring the usual cast of fairies and demons' + dom.dseparator + '<span style="color:limegreen">' + global.text.mscbkatxt[item.msc1.data.bid] + '</span>'; this.data.time = this.data.timep = rand(2, 10) * HOUR;
+        this.data.bid = rand(global.text.mscbkatxt.length - 1);
+        this.data.finished = true;
+        this.data.read = false;
+        this.amount--;
+        giveItem(item.bookgen)
+      } else chss.trd.sl(this);
+    }
+  }
+});
 item.msc1.data.time = HOUR * 6;
-item.msc1.desc = function () { return 'An amusing collection of folklore featuring the usual cast of fairies and demons' + dom.dseparator + '<span style="color:limegreen">' + global.text.mscbkatxt[this.data.bid] + '</span>' }
-item.msc1.use = function () {
-  if (canRead()) {
-    if (this.data.timep >= this.cmax) {
-      giveExp(this.data.exp || 500, true, true, true); this.data.bid = rand(global.text.mscbkatxt.length - 1); this.data.exp = rand(500, 5000); this.desc = 'An amusing collection of folklore featuring the usual cast of fairies and demons' + dom.dseparator + '<span style="color:limegreen">' + global.text.mscbkatxt[item.msc1.data.bid] + '</span>'; this.data.time = this.data.timep = rand(2, 10) * HOUR;
-      this.data.bid = rand(global.text.mscbkatxt.length - 1);
-      this.data.finished = true;
-      this.data.read = false;
-      this.amount--;
-      giveItem(item.bookgen)
-    } else chss.trd.sl(this);
-  }
-}
 
 // @ts-ignore: constructor function
-item.bcpn = new Item({ id: 9010, name: '"Cooking with Poison"', rar: 2, desc: 'A leatherbound book with an embossed cauldron on the cover. Inside it describes ways to purify food through alchemy', stype: 4 });
+item.bcpn = new Item({ id: 9010, name: '"Cooking with Poison"', rar: 2, desc: 'A leatherbound book with an embossed cauldron on the cover. Inside it describes ways to purify food through alchemy', stype: 4,
+  use: function () {
+    if (canRead()) {
+      if (this.data.timep >= this.cmax) {
+        this.data.finished = true;
+        this.data.read = false;
+        this.amount--;
+        giveItem(item.bookgen)
+      } else chss.trd.sl(this);
+    }
+  }
+});
 item.bcpn.data.time = HOUR * 30;
-item.bcpn.use = function () {
-  if (canRead()) {
-    if (this.data.timep >= this.cmax) {
-      this.data.finished = true;
-      this.data.read = false;
-      this.amount--;
-      giveItem(item.bookgen)
-    } else chss.trd.sl(this);
-  }
-}
 
 // @ts-ignore: constructor function
-item.mdc1 = new Item({ id: 9011, name: '"First Aid Manual"', desc: 'Tiny red pocket-sized guide to emergency care, covers basic bandaging and wound treating', stype: 4 });
+item.mdc1 = new Item({ id: 9011, name: '"First Aid Manual"', desc: 'Tiny red pocket-sized guide to emergency care, covers basic bandaging and wound treating', stype: 4,
+  use: function () {
+    if (canRead()) {
+      if (this.data.timep >= this.cmax) {
+        let dt = 0;
+        dt += giveRcp(rcp.bdgh);
+        dt += giveRcp(rcp.mdcag);
+        dt += giveRcp(rcp.hptn1);
+        this.data.finished = true;
+        giveItem(item.bookgen)
+        if (dt === 0) msg('You haven\'t learned anything new...', 'lightgrey')
+        this.data.read = false;
+        this.amount--;
+      } else chss.trd.sl(this);
+    }
+  }
+});
 item.mdc1.data.time = HOUR * 12;
-item.mdc1.use = function () {
-  if (canRead()) {
-    if (this.data.timep >= this.cmax) {
-      let dt = 0;
-      dt += giveRcp(rcp.bdgh);
-      dt += giveRcp(rcp.mdcag);
-      dt += giveRcp(rcp.hptn1);
-      this.data.finished = true;
-      giveItem(item.bookgen)
-      if (dt === 0) msg('You haven\'t learned anything new...', 'lightgrey')
-      this.data.read = false;
-      this.amount--;
-    } else chss.trd.sl(this);
-  }
-}
 
 // @ts-ignore: constructor function
-item.dmkbk = new Item({ id: 9012, name: '"Dollmaker\'s Handbook"', desc: 'A very short manual filled with illustrations about primitive dollmaking. The instructions are easy to understand so children could make the dolls too. Looks like there was a chapter dedicated to sewing, now it\'s almost entirely missing', stype: 4 });
+item.dmkbk = new Item({ id: 9012, name: '"Dollmaker\'s Handbook"', desc: 'A very short manual filled with illustrations about primitive dollmaking. The instructions are easy to understand so children could make the dolls too. Looks like there was a chapter dedicated to sewing, now it\'s almost entirely missing', stype: 4,
+  use: function () {
+    if (canRead()) {
+      if (this.data.timep >= this.cmax) {
+        giveItem(item.bookgen)
+        let dt = 0;
+        dt += giveRcp(rcp.sdl1);
+        dt += giveRcp(rcp.wdl1);
+        dt += giveRcp(rcp.gdl1);
+        dt += giveRcp(rcp.bdl1);
+        dt += giveRcp(rcp.cyrn);
+        this.data.finished = true;
+        if (dt === 0) msg('You haven\'t learned anything new...', 'lightgrey')
+        this.data.read = false;
+        this.amount--;
+      } else chss.trd.sl(this);
+    }
+  }
+});
 item.dmkbk.data.time = HOUR * 12;
-item.dmkbk.use = function () {
-  if (canRead()) {
-    if (this.data.timep >= this.cmax) {
-      giveItem(item.bookgen)
-      let dt = 0;
-      dt += giveRcp(rcp.sdl1);
-      dt += giveRcp(rcp.wdl1);
-      dt += giveRcp(rcp.gdl1);
-      dt += giveRcp(rcp.bdl1);
-      dt += giveRcp(rcp.cyrn);
-      this.data.finished = true;
-      if (dt === 0) msg('You haven\'t learned anything new...', 'lightgrey')
-      this.data.read = false;
-      this.amount--;
-    } else chss.trd.sl(this);
-  }
-}
 
 // @ts-ignore: constructor function
-item.scrlw = new Item({ id: 9013, name: '"Ragged Parchment"', desc: 'Scummy sheet of paper tainted with something teal. Some kinds of materials are listed here', stype: 4 });
+item.scrlw = new Item({ id: 9013, name: '"Ragged Parchment"', desc: 'Scummy sheet of paper tainted with something teal. Some kinds of materials are listed here', stype: 4,
+  use: function () {
+    if (canRead()) {
+      if (this.data.timep >= this.cmax) {
+        let dt = 0;
+        dt += giveRcp(rcp.hptn1);
+        this.data.finished = true;
+        if (dt === 0) msg('You already know how to make lesser potions', 'lightgrey')
+        this.data.read = false;
+        this.amount--;
+      } else chss.trd.sl(this);
+    }
+  }
+});
 item.scrlw.data.time = HOUR * 3;
-item.scrlw.use = function () {
-  if (canRead()) {
-    if (this.data.timep >= this.cmax) {
-      let dt = 0;
-      dt += giveRcp(rcp.hptn1);
-      this.data.finished = true;
-      if (dt === 0) msg('You already know how to make lesser potions', 'lightgrey')
-      this.data.read = false;
-      this.amount--;
-    } else chss.trd.sl(this);
-  }
-}
 
 // @ts-ignore: constructor function
-item.wp2s = new Item({ id: 9014, name: '"Rotten Illustration"', desc: 'Found this within old bushery, it looks like a drawing of something in charcoal', stype: 4 });
+item.wp2s = new Item({ id: 9014, name: '"Rotten Illustration"', desc: 'Found this within old bushery, it looks like a drawing of something in charcoal', stype: 4,
+  onGet: function () { global.flags.wp2sgt = true },
+  use: function () {
+    if (canRead()) {
+      if (this.data.timep >= this.cmax) {
+        let dt = 0;
+        dt += giveRcp(rcp.wp2);
+        this.data.finished = true;
+        if (dt === 0) msg('You already know how to sharpen sticks', 'lightgrey')
+        this.data.read = false;
+        this.amount--;
+      } else chss.trd.sl(this);
+    }
+  }
+});
 item.wp2s.data.time = HOUR * 2;
-item.wp2s.onGet = function () { global.flags.wp2sgt = true }
-item.wp2s.use = function () {
-  if (canRead()) {
-    if (this.data.timep >= this.cmax) {
-      let dt = 0;
-      dt += giveRcp(rcp.wp2);
-      this.data.finished = true;
-      if (dt === 0) msg('You already know how to sharpen sticks', 'lightgrey')
-      this.data.read = false;
-      this.amount--;
-    } else chss.trd.sl(this);
-  }
-}
 
 // @ts-ignore: constructor function
-item.shppmf = new Item({ id: 9015, name: '"Pamphlet"', desc: 'This was shoved onto you by someone on the streets. Store names, discount prices, hot items... An entire wall of advertisements in tiny letters, to fit as much of it as possible on this piece of paper. It is a good idea to memorize the addresses', stype: 4 });
+item.shppmf = new Item({ id: 9015, name: '"Pamphlet"', desc: 'This was shoved onto you by someone on the streets. Store names, discount prices, hot items... An entire wall of advertisements in tiny letters, to fit as much of it as possible on this piece of paper. It is a good idea to memorize the addresses', stype: 4,
+  onGet: function () { global.flags.pmfspmkm1 = true },
+  use: function () {
+    if (canRead()) {
+      if (this.data.timep >= this.cmax) {
+        global.flags.mkplc1u = true;
+        this.data.finished = true;
+        msg('Right, you could go to the marketplace', 'lime');
+        if (global.current_l.id === chss.lsmain1.id) smove(chss.lsmain1, false);
+        this.data.read = false;
+        this.amount--;
+      } else chss.trd.sl(this);
+    }
+  }
+});
 item.shppmf.data.time = HOUR * 3;
-item.shppmf.onGet = function () { global.flags.pmfspmkm1 = true }
-item.shppmf.use = function () {
-  if (canRead()) {
-    if (this.data.timep >= this.cmax) {
-      global.flags.mkplc1u = true;
-      this.data.finished = true;
-      msg('Right, you could go to the marketplace', 'lime');
-      if (global.current_l.id === chss.lsmain1.id) smove(chss.lsmain1, false);
-      this.data.read = false;
-      this.amount--;
-    } else chss.trd.sl(this);
-  }
-}
 
 // @ts-ignore: constructor function
-item.amrthsck = new Item({ id: 9016, name: '"Guide To Living By Yourself"', desc: 'Looks like a page from someone\'s notebook, marked "H", poorly written in bad handwriting. It lists several simple things you can cook and make from widely available cheap materials', stype: 4 });
+item.amrthsck = new Item({ id: 9016, name: '"Guide To Living By Yourself"', desc: 'Looks like a page from someone\'s notebook, marked "H", poorly written in bad handwriting. It lists several simple things you can cook and make from widely available cheap materials', stype: 4,
+  use: function () {
+    if (canRead()) {
+      if (this.data.timep >= this.cmax) {
+        giveItem(item.bookgen)
+        let dt = 0;
+        dt += giveRcp(rcp.bcrrt);
+        dt += giveRcp(rcp.bcrc);
+        dt += giveRcp(rcp.hlstw);
+        dt += giveRcp(rcp.rsmt);
+        dt += giveRcp(rcp.segg);
+        dt += giveRcp(rcp.jsdch);
+        dt += giveRcp(rcp.appljc);
+        dt += giveRcp(rcp.bblkt);
+        dt += giveRcp(rcp.spillw);
+        this.data.finished = true;
+        if (dt === 0) msg('You haven\'t learned anything new...', 'lightgrey')
+        this.data.read = false;
+        this.amount--;
+      } else chss.trd.sl(this);
+    }
+  }
+});
 item.amrthsck.data.time = HOUR * 12;
-item.amrthsck.use = function () {
-  if (canRead()) {
-    if (this.data.timep >= this.cmax) {
-      giveItem(item.bookgen)
-      let dt = 0;
-      dt += giveRcp(rcp.bcrrt);
-      dt += giveRcp(rcp.bcrc);
-      dt += giveRcp(rcp.hlstw);
-      dt += giveRcp(rcp.rsmt);
-      dt += giveRcp(rcp.segg);
-      dt += giveRcp(rcp.jsdch);
-      dt += giveRcp(rcp.appljc);
-      dt += giveRcp(rcp.bblkt);
-      dt += giveRcp(rcp.spillw);
-      this.data.finished = true;
-      if (dt === 0) msg('You haven\'t learned anything new...', 'lightgrey')
-      this.data.read = false;
-      this.amount--;
-    } else chss.trd.sl(this);
-  }
-}
 
 // @ts-ignore: constructor function
-item.skl1a = new Item({ id: 9017, name: '"Bladesman Manual"', rar: 2, desc: 'Technique book full of fundamental knowledge about swordfighting' + dom.dseparator + '<span style="color:deeppink">Sword Mastery EXP gain +15%</span>', stype: 4 });
+item.skl1a = new Item({ id: 9017, name: '"Bladesman Manual"', rar: 2, desc: 'Technique book full of fundamental knowledge about swordfighting' + dom.dseparator + '<span style="color:deeppink">Sword Mastery EXP gain +15%</span>', stype: 4,
+  use: function () {
+    if (canRead()) {
+      if (this.data.timep >= this.cmax) {
+        this.amount--;
+        giveSkExp(skl.srdc, 3250);
+        skl.srdc.p += .15;
+        this.data.read = false;
+        this.data.finished = true;
+        giveItem(item.bookgen)
+      } else chss.trd.sl(this);
+    }
+  }
+});
 item.skl1a.data.time = HOUR * 14;
-item.skl1a.use = function () {
-  if (canRead()) {
-    if (this.data.timep >= this.cmax) {
-      this.amount--;
-      giveSkExp(skl.srdc, 3250);
-      skl.srdc.p += .15;
-      this.data.read = false;
-      this.data.finished = true;
-      giveItem(item.bookgen)
-
-    } else chss.trd.sl(this);
-  }
-}
 
 // @ts-ignore: constructor function
-item.skl2a = new Item({ id: 9018, name: '"Assassin Manual"', rar: 2, desc: 'Technique book full of fundamental knowledge about kinfefighting' + dom.dseparator + '<span style="color:deeppink">Knife Mastery EXP gain +15%</span>', stype: 4 });
+item.skl2a = new Item({ id: 9018, name: '"Assassin Manual"', rar: 2, desc: 'Technique book full of fundamental knowledge about kinfefighting' + dom.dseparator + '<span style="color:deeppink">Knife Mastery EXP gain +15%</span>', stype: 4,
+  use: function () {
+    if (canRead()) {
+      if (this.data.timep >= this.cmax) {
+        this.amount--;
+        giveSkExp(skl.knfc, 3250);
+        skl.knfc.p += .15;
+        this.data.read = false;
+        this.data.finished = true;
+        giveItem(item.bookgen)
+      } else chss.trd.sl(this);
+    }
+  }
+});
 item.skl2a.data.time = HOUR * 14;
-item.skl2a.use = function () {
-  if (canRead()) {
-    if (this.data.timep >= this.cmax) {
-      this.amount--;
-      giveSkExp(skl.knfc, 3250);
-      skl.knfc.p += .15;
-      this.data.read = false;
-      this.data.finished = true;
-      giveItem(item.bookgen)
-
-    } else chss.trd.sl(this);
-  }
-}
 
 // @ts-ignore: constructor function
-item.skl3a = new Item({ id: 9019, name: '"Axeman Manual"', rar: 2, desc: 'Technique book full of fundamental knowledge about axefighting' + dom.dseparator + '<span style="color:deeppink">Axe Mastery EXP gain +15%</span>', stype: 4 });
+item.skl3a = new Item({ id: 9019, name: '"Axeman Manual"', rar: 2, desc: 'Technique book full of fundamental knowledge about axefighting' + dom.dseparator + '<span style="color:deeppink">Axe Mastery EXP gain +15%</span>', stype: 4,
+  use: function () {
+    if (canRead()) {
+      if (this.data.timep >= this.cmax) {
+        this.amount--;
+        giveSkExp(skl.axc, 150);
+        skl.axc.p += .05;
+        this.data.read = false;
+        this.data.finished = true;
+        giveItem(item.bookgen)
+      } else chss.trd.sl(this);
+    }
+  }
+});
 item.skl3a.data.time = HOUR * 14;
-item.skl3a.use = function () {
-  if (canRead()) {
-    if (this.data.timep >= this.cmax) {
-      this.amount--;
-      giveSkExp(skl.axc, 150);
-      skl.axc.p += .05;
-      this.data.read = false;
-      this.data.finished = true;
-      giveItem(item.bookgen)
-
-    } else chss.trd.sl(this);
-  }
-}
 
 // @ts-ignore: constructor function
-item.skl4a = new Item({ id: 9020, name: '"Lancer Manual"', rar: 2, desc: 'Technique book full of fundamental knowledge about spearfighting' + dom.dseparator + '<span style="color:deeppink">Polearm Mastery EXP gain +15%</span>', stype: 4 });
+item.skl4a = new Item({ id: 9020, name: '"Lancer Manual"', rar: 2, desc: 'Technique book full of fundamental knowledge about spearfighting' + dom.dseparator + '<span style="color:deeppink">Polearm Mastery EXP gain +15%</span>', stype: 4,
+  use: function () {
+    if (canRead()) {
+      if (this.data.timep >= this.cmax) {
+        this.amount--;
+        giveSkExp(skl.plrmc, 3250);
+        skl.plrmc.p += .15;
+        this.data.read = false;
+        this.data.finished = true;
+        giveItem(item.bookgen)
+      } else chss.trd.sl(this);
+    }
+  }
+});
 item.skl4a.data.time = HOUR * 14;
-item.skl4a.use = function () {
-  if (canRead()) {
-    if (this.data.timep >= this.cmax) {
-      this.amount--;
-      giveSkExp(skl.plrmc, 3250);
-      skl.plrmc.p += .15;
-      this.data.read = false;
-      this.data.finished = true;
-      giveItem(item.bookgen)
-
-    } else chss.trd.sl(this);
-  }
-}
 
 // @ts-ignore: constructor function
-item.skl5a = new Item({ id: 9021, name: '"Clubber Manual"', rar: 2, desc: 'Technique book full of fundamental knowledge about bluntfighting' + dom.dseparator + '<span style="color:deeppink">Hammer Mastery EXP gain +15%</span>', stype: 4 });
+item.skl5a = new Item({ id: 9021, name: '"Clubber Manual"', rar: 2, desc: 'Technique book full of fundamental knowledge about bluntfighting' + dom.dseparator + '<span style="color:deeppink">Hammer Mastery EXP gain +15%</span>', stype: 4,
+  use: function () {
+    if (canRead()) {
+      if (this.data.timep >= this.cmax) {
+        this.amount--;
+        giveSkExp(skl.hmrc, 3250);
+        skl.hmrc.p += .15;
+        this.data.read = false;
+        this.data.finished = true;
+        giveItem(item.bookgen)
+      } else chss.trd.sl(this);
+    }
+  }
+});
 item.skl5a.data.time = HOUR * 14;
-item.skl5a.use = function () {
-  if (canRead()) {
-    if (this.data.timep >= this.cmax) {
-      this.amount--;
-      giveSkExp(skl.hmrc, 3250);
-      skl.hmrc.p += .15;
-      this.data.read = false;
-      this.data.finished = true;
-      giveItem(item.bookgen)
-
-    } else chss.trd.sl(this);
-  }
-}
 
 // @ts-ignore: constructor function
-item.skl6a = new Item({ id: 9022, name: '"Brawler Manual"', rar: 2, desc: 'Technique book full of fundamental knowledge about fistfighting' + dom.dseparator + '<span style="color:deeppink">Martial Mastery EXP gain +15%</span>', stype: 4 });
+item.skl6a = new Item({ id: 9022, name: '"Brawler Manual"', rar: 2, desc: 'Technique book full of fundamental knowledge about fistfighting' + dom.dseparator + '<span style="color:deeppink">Martial Mastery EXP gain +15%</span>', stype: 4,
+  use: function () {
+    if (canRead()) {
+      if (this.data.timep >= this.cmax) {
+        this.amount--;
+        giveSkExp(skl.unc, 3250);
+        skl.unc.p += .15;
+        this.data.read = false;
+        this.data.finished = true;
+        giveItem(item.bookgen)
+      } else chss.trd.sl(this);
+    }
+  }
+});
 item.skl6a.data.time = HOUR * 14;
-item.skl6a.use = function () {
-  if (canRead()) {
-    if (this.data.timep >= this.cmax) {
-      this.amount--;
-      giveSkExp(skl.unc, 3250);
-      skl.unc.p += .15;
-      this.data.read = false;
-      this.data.finished = true;
-      giveItem(item.bookgen)
-
-    } else chss.trd.sl(this);
-  }
-}
 
 // @ts-ignore: constructor function
-item.brdbn = new Item({ id: 9023, name: '"Your First Bread"', desc: 'Very primitive instruction booklet about making simple breads. The way it\'s written, it looks very similar to manuals given to slaves and servants at the beginning of their service, if they are able to read', stype: 4 });
+item.brdbn = new Item({ id: 9023, name: '"Your First Bread"', desc: 'Very primitive instruction booklet about making simple breads. The way it\'s written, it looks very similar to manuals given to slaves and servants at the beginning of their service, if they are able to read', stype: 4,
+  use: function () {
+    if (canRead()) {
+      if (this.data.timep >= this.cmax) {
+        let dt = 0;
+        dt += giveRcp(rcp.flr);
+        dt += giveRcp(rcp.dgh);
+        dt += giveRcp(rcp.brd);
+        this.data.finished = true;
+        giveItem(item.bookgen)
+        if (dt === 0) msg('You haven\'t learned anything new...', 'lightgrey')
+        this.data.read = false;
+        this.amount--;
+      } else chss.trd.sl(this);
+    }
+  }
+});
 item.brdbn.data.time = HOUR * 7;
-item.brdbn.use = function () {
-  if (canRead()) {
-    if (this.data.timep >= this.cmax) {
-      let dt = 0;
-      dt += giveRcp(rcp.flr);
-      dt += giveRcp(rcp.dgh);
-      dt += giveRcp(rcp.brd);
-      this.data.finished = true;
-      giveItem(item.bookgen)
-      if (dt === 0) msg('You haven\'t learned anything new...', 'lightgrey')
-      this.data.read = false;
-      this.amount--;
-    } else chss.trd.sl(this);
-  }
-}
 
 // @ts-ignore: constructor function
-item.bfsnwt = new Item({ id: 9024, name: '"Beggar Fashion"', desc: 'Some nonsence illustration with a name, featuring a group of peasants in rags posing awkwardly. What even is this?', stype: 4 });
+item.bfsnwt = new Item({ id: 9024, name: '"Beggar Fashion"', desc: 'Some nonsence illustration with a name, featuring a group of peasants in rags posing awkwardly. What even is this?', stype: 4,
+  use: function () {
+    if (canRead()) {
+      if (this.data.timep >= this.cmax) {
+        let dt = 0;
+        dt += giveRcp(rcp.ptchpts);
+        dt += giveRcp(rcp.ptchct);
+        if (dt === 0) msg('You haven\'t learned anything new...', 'lightgrey')
+        this.data.read = false;
+        this.amount--;
+      } else chss.trd.sl(this);
+    }
+  }
+});
 item.bfsnwt.data.time = HOUR * 4;
-item.bfsnwt.use = function () {
-  if (canRead()) {
-    if (this.data.timep >= this.cmax) {
-      let dt = 0;
-      dt += giveRcp(rcp.ptchpts);
-      dt += giveRcp(rcp.ptchct);
-      if (dt === 0) msg('You haven\'t learned anything new...', 'lightgrey')
-      this.data.read = false;
-      this.amount--;
-    } else chss.trd.sl(this);
-  }
-}
 
 // @ts-ignore: constructor function
-item.pdeedhs = new Item({ id: 9025, name: '"Property Deed"', rar: 2, desc: 'This old looking legal document indentifies you as a sole owner of this broken down hut you live in. It was passed down to you by your ancestors, you speculate' + dom.dseparator + '<span style="color:lime">Allows you to list and examine your possessions</span>', stype: 4 });
+item.pdeedhs = new Item({ id: 9025, name: '"Property Deed"', rar: 2, desc: 'This old looking legal document indentifies you as a sole owner of this broken down hut you live in. It was passed down to you by your ancestors, you speculate' + dom.dseparator + '<span style="color:lime">Allows you to list and examine your possessions</span>', stype: 4,
+  use: function () {
+    if (canRead()) {
+      if (this.data.timep >= this.cmax) {
+        global.flags.hsedchk = true;
+        if (global.current_l.id === 111) smove(chss.home, false)
+        this.data.read = false;
+        this.amount--;
+      } else chss.trd.sl(this);
+    }
+  }
+});
 item.pdeedhs.data.time = 30;
-item.pdeedhs.use = function () {
-  if (canRead()) {
-    if (this.data.timep >= this.cmax) {
-      global.flags.hsedchk = true;
-      if (global.current_l.id === 111) smove(chss.home, false)
-      this.data.read = false;
-      this.amount--;
-    } else chss.trd.sl(this);
-  }
-}
 
 // @ts-ignore: constructor function
-item.fgtsb1 = new Item({ id: 9026, name: '"Street Fighting"', desc: 'Someone\'s observational notes of street gangs and their violent encounters. There\'s an amusing essay about dirty tricks in the front section' + dom.dseparator + '<span style="color:deeppink">Fighting EXP gain +15%</span>', stype: 4 });
+item.fgtsb1 = new Item({ id: 9026, name: '"Street Fighting"', desc: 'Someone\'s observational notes of street gangs and their violent encounters. There\'s an amusing essay about dirty tricks in the front section' + dom.dseparator + '<span style="color:deeppink">Fighting EXP gain +15%</span>', stype: 4,
+  use: function () {
+    if (canRead()) {
+      if (this.data.timep >= this.cmax) {
+        this.amount--;
+        skl.fgt.p += .15;
+        this.data.read = false;
+        this.data.finished = true;
+        giveItem(item.bookgen)
+      } else chss.trd.sl(this);
+    }
+  }
+});
 item.fgtsb1.data.time = HOUR * 6;
-item.fgtsb1.use = function () {
-  if (canRead()) {
-    if (this.data.timep >= this.cmax) {
-      this.amount--;
-      skl.fgt.p += .15;
-      this.data.read = false;
-      this.data.finished = true;
-      giveItem(item.bookgen)
-
-    } else chss.trd.sl(this);
-  }
-}
 
 // @ts-ignore: constructor function
-item.jnlbk = new Item({ id: 9027, name: '"Empty Journal"', desc: 'Dusty old tome, pure as snow and untainted by ink. Feels like it was purified by magic. When you gaze upon it, you are compelled to record your encounters and anything else that you find important and crucial for your adventures' + dom.dseparator + '<span style="color:lime">Unlocks Journal</span>', stype: 4 });
-item.jnlbk.data.time = HOUR * 4;
-item.jnlbk.use = function () {
-  if (canRead()) {
-    if (this.data.timep >= this.cmax) {
-      msg('Journal Unlocked!', 'cyan');
-      this.data.read = false;
-      this.amount--;
-      global.flags.jnlu = true;
-      this.data.finished = true;
-      dom.ct_bt6.innerHTML = 'journal'
-    } else chss.trd.sl(this);
+item.jnlbk = new Item({ id: 9027, name: '"Empty Journal"', desc: 'Dusty old tome, pure as snow and untainted by ink. Feels like it was purified by magic. When you gaze upon it, you are compelled to record your encounters and anything else that you find important and crucial for your adventures' + dom.dseparator + '<span style="color:lime">Unlocks Journal</span>', stype: 4,
+  use: function () {
+    if (canRead()) {
+      if (this.data.timep >= this.cmax) {
+        msg('Journal Unlocked!', 'cyan');
+        this.data.read = false;
+        this.amount--;
+        global.flags.jnlu = true;
+        this.data.finished = true;
+        dom.ct_bt6.innerHTML = 'journal'
+      } else chss.trd.sl(this);
+    }
   }
-}
+});
+item.jnlbk.data.time = HOUR * 4;
