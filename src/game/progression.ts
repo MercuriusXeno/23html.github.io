@@ -1,7 +1,7 @@
 import { randf, rand } from '../random';
 import { col, scanbyid } from '../utils';
 import { empty } from '../dom-utils';
-import { dom, global, you, acts, data } from '../state';
+import { dom, global, you, acts, data, flags } from '../state';
 const { skl: sklState, ttl } = data;
 import { msg, msg_add } from '../ui/messages';
 import { update_d } from '../ui/stats';
@@ -49,7 +49,7 @@ import { formatw } from './utils-game';
     export function giveExp(exp: any, r?: any, g?: any, b?: any) {
       if (!r) exp = Math.round((exp * you.exp_t * (0.4 + you.efficiency() * 0.6))) - (you.lvl - 1);
       exp = exp <= 0 ? 1 : exp;
-      if (!b) { if (global.flags.m_blh === false) if (!g) { msg('EXP: +' + formatw(exp), 'hotpink'); global.stat.exptotl += exp } } else { msg('EXP: +' + formatw(exp), 'hotpink'); global.stat.exptotl += exp }
+      if (!b) { if (flags.m_blh === false) if (!g) { msg('EXP: +' + formatw(exp), 'hotpink'); global.stat.exptotl += exp } } else { msg('EXP: +' + formatw(exp), 'hotpink'); global.stat.exptotl += exp }
       if (you.exp + exp < you.expnext_t) you.exp += exp;
       else {
         let extra = (you.exp + exp) - you.expnext_t;
@@ -68,7 +68,7 @@ import { formatw } from './utils-game';
         skl.exp = 0;
         skl.lvl++;
         global.stat.slvs++;
-        if (!scanbyid(you.skls, skl.id)) { you.skls.push(skl); msg('<span style="text-shadow:cyan 0px 0px 2px">New Skill Unlocked! <span style="text-shadow:red 0px 0px 2px;color:orange">"' + (!!skl.bname ? skl.bname : skl.name) + '"</span></span>', 'aqua', skl, 6); if (!global.flags.sklu) { dom.ct_bt2.innerHTML = 'skills'; global.flags.sklu = true } }
+        if (!scanbyid(you.skls, skl.id)) { you.skls.push(skl); msg('<span style="text-shadow:cyan 0px 0px 2px">New Skill Unlocked! <span style="text-shadow:red 0px 0px 2px;color:orange">"' + (!!skl.bname ? skl.bname : skl.name) + '"</span></span>', 'aqua', skl, 6); if (!flags.sklu) { dom.ct_bt2.innerHTML = 'skills'; flags.sklu = true } }
         else { msg('Skill <span style="color:tomato">\'' + (!!skl.bname ? skl.bname : skl.name) + '\'</span> Leveled Up: ' + skl.lvl, 'deepskyblue', skl, 6); } skl.onLevel(you);
         skl.expnext_t = skl.expnext();
         if (!!skl.mlstn) for (let ss = 0; ss < skl.mlstn.length; ss++) if (skl.mlstn[ss].lv === skl.lvl && skl.mlstn[ss].g === false) { msg("NEW PERK UNLOCKED " + '<span style="color:tomato">("' + skl.name + '")<span style="color:orange">lvl: ' + skl.mlstn[ss].lv + '</span></span>', 'lime', { x: skl.name, y: 'Perk lvl ' + skl.mlstn[ss].lv + ': <span style="color:yellow">' + skl.mlstn[ss].p + '</span>' }, 7); skl.mlstn[ss].f(you); skl.mlstn[ss].g = true };
@@ -90,7 +90,7 @@ import { formatw } from './utils-game';
     }
 
     export function giveRcp(rcp: any) {
-      if (!global.flags.asbu) { global.flags.asbu = true; dom.ct_bt1.innerHTML = 'assemble' }
+      if (!flags.asbu) { flags.asbu = true; dom.ct_bt1.innerHTML = 'assemble' }
       if (rcp.have === false) {
         global.rec_d.push(rcp);
         rcp.have = true;
@@ -107,7 +107,7 @@ import { formatw } from './utils-game';
 
     export function giveAction(a: any) {
       if (a.have === false) {
-        if (!global.flags.actsu) { global.flags.actsu = true; dom.ct_bt3.innerHTML = 'actions' }
+        if (!flags.actsu) { flags.actsu = true; dom.ct_bt3.innerHTML = 'actions' }
         msg('You learned a new action: <span style="color:tomato">"' + a.name + '"</span>', 'lime', a, 9);
         a.have = true;
         acts.push(a);

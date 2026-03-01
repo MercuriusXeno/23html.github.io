@@ -1,4 +1,4 @@
-import { area, sector, creature, item, wpn, acc, ttl, global, dom, time, furn, furniture, effect, effector, skl, chss, itemgroup, act, gameText } from '../state';
+import { area, sector, creature, item, wpn, acc, ttl, global, dom, time, furn, furniture, effect, effector, skl, chss, itemgroup, act, gameText, flags } from '../state';
 import { findbyid, select, z_bake } from '../utils';
 import { random, rand } from '../random';
 import { smove, inSector } from '../game/movement';
@@ -40,7 +40,7 @@ global.current_z = area.nwh;
 // @ts-ignore: constructor function
 area.trn = new Area({
   id: 102, name: 'Training Grounds', pop: [{ crt: creature.sdummy, lvlmin: 1, lvlmax: 9, c: .3 }, { crt: creature.tdummy, lvlmin: 4, lvlmax: 8, c: .3 }, { crt: creature.wdummy, lvlmin: 3, lvlmax: 5, c: .3 }], size: 10000,
-  onEnd: function (this: any) { this.size = -1; giveTitle(ttl.thr); global.flags.trnex1 = true; smove(chss.t3, false) },
+  onEnd: function (this: any) { this.size = -1; giveTitle(ttl.thr); flags.trnex1 = true; smove(chss.t3, false) },
   drop: [{ item: item.appl, c: .02 }, { item: acc.gpin, c: .00012, cond: () => { return ttl.tqtm.tget } }]
 });
 z_bake(area.trn);
@@ -59,8 +59,8 @@ z_bake(area.trnf);
 // @ts-ignore: constructor function
 area.trn1 = new Area({
   id: 103, name: 'Training Grounds', pop: [{ crt: creature.sdummy, lvlmin: 1, lvlmax: 1, c: .5 }, { crt: creature.tdummy, lvlmin: 1, lvlmax: 1, c: .5 }], size: 10,
-  onEnd: function () { smove(chss.t2, false); global.flags.tr1_win = true; },
-  onDeath: function () { if (!global.flags.dj1end) global.flags.nbtfail = true; },
+  onEnd: function () { smove(chss.t2, false); flags.tr1_win = true; },
+  onDeath: function () { if (!flags.dj1end) flags.nbtfail = true; },
   drop: [{ item: item.appl, c: .28 }]
 });
 z_bake(area.trn1);
@@ -68,8 +68,8 @@ z_bake(area.trn1);
 // @ts-ignore: constructor function
 area.trn2 = new Area({
   id: 104, name: 'Training Grounds', pop: [{ crt: creature.sdummy, lvlmin: 1, lvlmax: 3, c: .4 }, { crt: creature.tdummy, lvlmin: 1, lvlmax: 3, c: .6 }], size: 20,
-  onEnd: function () { smove(chss.t2, false); global.flags.tr2_win = true; },
-  onDeath: function () { if (!global.flags.dj1end) global.flags.nbtfail = true; },
+  onEnd: function () { smove(chss.t2, false); flags.tr2_win = true; },
+  onDeath: function () { if (!flags.dj1end) flags.nbtfail = true; },
   drop: [{ item: item.appl, c: .28 }]
 });
 z_bake(area.trn2);
@@ -77,8 +77,8 @@ z_bake(area.trn2);
 // @ts-ignore: constructor function
 area.trn3 = new Area({
   id: 105, name: 'Training Grounds', pop: [{ crt: creature.sdummy, lvlmin: 3, lvlmax: 5, c: .35 }, { crt: creature.tdummy, lvlmin: 2, lvlmax: 3, c: .45 }, { crt: creature.wdummy, lvlmin: 1, lvlmax: 1, c: .25 }], size: 50,
-  onEnd: function () { smove(chss.t2, false); global.flags.tr3_win = true; },
-  onDeath: function () { if (!global.flags.dj1end) global.flags.nbtfail = true; },
+  onEnd: function () { smove(chss.t2, false); flags.tr3_win = true; },
+  onDeath: function () { if (!flags.dj1end) flags.nbtfail = true; },
   drop: [{ item: item.appl, c: .28 }]
 });
 z_bake(area.trn3);
@@ -86,7 +86,7 @@ z_bake(area.trn3);
 // @ts-ignore: constructor function
 area.clg = new Area({
   id: 106, name: 'Damp cellar', pop: [{ crt: creature.bat, lvlmin: 1, lvlmax: 4 }, { crt: creature.spd1, lvlmin: 2, lvlmax: 4 }], size: 33,
-  onEnd: function () { if (!global.flags.q1lwn) { global.flags.q1lwn = true; smove(chss.q1lwn, false); } else smove(chss.q1l, false) }
+  onEnd: function () { if (!flags.q1lwn) { flags.q1lwn = true; smove(chss.q1lwn, false); } else smove(chss.q1l, false) }
 });
 z_bake(area.clg);
 
@@ -134,7 +134,7 @@ z_bake(area.hmbsmnt);
 area.trne1 = new Area({
   id: 111, name: 'Training Grounds', pop: [{ crt: creature.golem1, lvlmin: 20, lvlmax: 20, c: 1 }], size: 1,
   protected: true,
-  onEnd: function (this: any) { this.size = 1; if (!global.flags.trne1e1) smove(chss.trne1e1, false); else smove(chss.t3, false) }
+  onEnd: function (this: any) { this.size = 1; if (!flags.trne1e1) smove(chss.trne1e1, false); else smove(chss.t3, false) }
 });
 z_bake(area.trne1);
 
@@ -153,9 +153,9 @@ area.frstn2a2 = new Area({
     roll(item.wdc, 1, 5, 17);
     roll(item.spb, .6);
     roll(item.pcn, .3, 1, 3);
-    if (!global.flags.wp2sgt) roll(item.wp2s, .2);
+    if (!flags.wp2sgt) roll(item.wp2s, .2);
     this.size = rand(50) + 40;
-    if (!global.flags.frstn1a3u) { msg('You have discovered a new hunting area', 'lime'); global.flags.frstn1a3u = true; smove(chss.frstn1main) } else smove(chss.frstn1a2);
+    if (!flags.frstn1a3u) { msg('You have discovered a new hunting area', 'lime'); flags.frstn1a3u = true; smove(chss.frstn1main) } else smove(chss.frstn1a2);
   },
   drop: [{ item: item.hrb1, c: .03 }, { item: item.wdc, c: .06 }]
 });
@@ -165,7 +165,7 @@ z_bake(area.frstn2a2);
 area.trne2 = new Area({
   id: 113, name: 'Training Grounds', pop: [{ crt: creature.golem2, lvlmin: 23, lvlmax: 23, c: 1 }], size: 1,
   protected: true,
-  onEnd: function (this: any) { this.size = 1; if (!global.flags.trne2e1) smove(chss.trne2e1, false); else smove(chss.t3, false) }
+  onEnd: function (this: any) { this.size = 1; if (!flags.trne2e1) smove(chss.trne2e1, false); else smove(chss.t3, false) }
 });
 z_bake(area.trne2);
 
@@ -173,7 +173,7 @@ z_bake(area.trne2);
 area.trne3 = new Area({
   id: 114, name: 'Training Grounds', pop: [{ crt: creature.golem3, lvlmin: 25, lvlmax: 25, c: 1 }], size: 1,
   protected: true,
-  onEnd: function (this: any) { this.size = 1; if (!global.flags.trne3e1) smove(chss.trne3e1, false); else smove(chss.t3, false) }
+  onEnd: function (this: any) { this.size = 1; if (!flags.trne3e1) smove(chss.trne3e1, false); else smove(chss.t3, false) }
 });
 z_bake(area.trne3);
 
@@ -200,7 +200,7 @@ z_bake(area.frstn1a4);
 area.trne4 = new Area({
   id: 117, name: 'Training Grounds', pop: [{ crt: creature.golem4, lvlmin: 28, lvlmax: 28, c: 1 }], size: 1,
   protected: true,
-  onEnd: function (this: any) { this.size = 1; if (!global.flags.trne4e1) smove(chss.trne4e1, false); else smove(chss.t3, false); giveTitle(ttl.aptc) }
+  onEnd: function (this: any) { this.size = 1; if (!flags.trne4e1) smove(chss.trne4e1, false); else smove(chss.t3, false); giveTitle(ttl.aptc) }
 });
 z_bake(area.trne4);
 
@@ -275,7 +275,7 @@ sector.home = new Sector({
       else giveEff(player, effect.smoke, 26)
       if (--this.data.smkp <= 0) smove(global.current_l)
     }
-    if (global.flags.catget) giveSkExp(skl.pet, player.mods.petxp);
+    if (flags.catget) giveSkExp(skl.pet, player.mods.petxp);
     global.stat.athme += global.timescale;
     global.stat.athmec += global.timescale;
     for (let x in global.nethmchk) global.nethmchk[x]();
@@ -307,7 +307,7 @@ sector.forest1 = new Sector({
   id: 3, data: { scoutm: 7000, scout: 0, scoutf: false },
   onStay: function (this: any) {
     if (!this.data.scoutf) {
-      if (this.data.scout <= this.data.scoutm) { if (global.flags.btl || act.scout.active === true) { this.data.scout += .1; giveSkExp(skl.tpgrf, .001) } } else {
+      if (this.data.scout <= this.data.scoutm) { if (flags.btl || act.scout.active === true) { this.data.scout += .1; giveSkExp(skl.tpgrf, .001) } } else {
         msg('Area Explored!', 'lime');
         this.data.scoutf = true;
         giveExp(7000, true, true, true);

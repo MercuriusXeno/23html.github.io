@@ -1,7 +1,7 @@
 import { random, rand, randf } from '../random';
 import { select } from '../utils';
 import { addElement } from '../dom-utils';
-import { dom, global, you, timers, time, data } from '../state';
+import { dom, global, you, timers, time, data, flags } from '../state';
 const { abl, skl, effect, creature } = data;
 import { msg, msg_add } from '../ui/messages';
 import { update_d } from '../ui/stats';
@@ -22,18 +22,18 @@ function allbuff(who: any) {
 }
 
 export function fght(att: any, def: any) {
-  /*if(global.flags.btlinterrupt===true){
+  /*if(flags.btlinterrupt===true){
     msg('battle interrupted');
     if(global.current_z.size>0) {area_init(global.current_z);global.current_z.size--;}else if(global.current_z.size===-1)area_init(global.current_z);
-    else {msg('Area cleared','orange');global.current_z.onEnd();global.flags.civil=true;global.flags.btl=false;};
+    else {msg('Area cleared','orange');global.current_z.onEnd();flags.civil=true;flags.btl=false;};
     dom.d7m.update();
-    global.flags.btlinterrupt=false;
+    flags.btlinterrupt=false;
     return;
   }*/
   if (!att.alive || !def.alive) {
     return;
   }
-  if (global.flags.smkactv) { global.flags.smkactv = false; return; }
+  if (flags.smkactv) { flags.smkactv = false; return; }
   att.stat_r();
   def.stat_r();
   for (let g in att.eff) if (att.eff[g].type === 1) att.eff[g].use(you, att.eff[g].y, att.eff[g].z);
@@ -52,20 +52,20 @@ export function fght(att: any, def: any) {
     if (global.s_l / sc.spd >= 2) {
       let acc_dmg = 0;
       let hts = 0;
-      global.flags.multih = true;
+      flags.multih = true;
       for (let ii = 0; ii < Math.ceil(global.s_l / sc.spd); ii++) {
         hts++;
         acc_dmg += inn.battle_ai(inn, sc);
         if (sc.hp <= 0) break;
       }
-      global.flags.multih = false;
+      flags.multih = false;
       if (att.id === you.id && acc_dmg >= sc.hpmax) global.stat.onesht++;
-      if (global.flags.m_blh === false && (hts - global.miss) > 0) {
+      if (flags.m_blh === false && (hts - global.miss) > 0) {
         if (hts === 1) printHitMessage(inn.name, acc_dmg, !isyouinn);
         else
           printMultihitMessage(hts, inn.name, acc_dmg, !isyouinn);
       }
-      else if (global.flags.m_blh === false) msg(inn.name + ' missed', 'grey');
+      else if (flags.m_blh === false) msg(inn.name + ' missed', 'grey');
       if (sc.hp <= 0 && sc.alive === true) { global.atkdfty = [3, global.atkdftydt]; sc.onDeath(inn); sc.onDeathE(inn); }
       global.s_l = global.s_l % sc.spd;
     } else {
@@ -77,7 +77,7 @@ export function fght(att: any, def: any) {
     return;
   }
   timers.btl2 = setTimeout(function () {
-    if (global.flags.btl === true) {
+    if (flags.btl === true) {
       doSingleAttack(sc, inn, !isyouinn);
       you.stat_r();
     }
@@ -85,7 +85,7 @@ export function fght(att: any, def: any) {
 }
 
 export function attack(att: any, def: any, atk?: any, power?: any) {
-  if (!global.flags.btl) return
+  if (!flags.btl) return
   allbuff(att);
   allbuff(def);
   atk = atk || abl.default;
@@ -99,7 +99,7 @@ export function attack(att: any, def: any, atk?: any, power?: any) {
     wpnhitstt();
     hit = hit_calc(1);
     giveSkExp(skl.fgt, def.rnk);
-    dk = global.flags.isdark && !cansee();
+    dk = flags.isdark && !cansee();
     if (dk) hit *= .3 + skl.ntst.lvl * .07;
   } else hit = hit_calc(2);
   global.target = you.eqp[a];
@@ -132,15 +132,15 @@ export function attack(att: any, def: any, atk?: any, power?: any) {
     } else {
       if (you.eqp[1].id !== 10000 && !you.eqp[0].twoh) giveSkExp(skl.shdc, .2);
       you.stat_r();
-      if (you.mods.ddgmod !== 0) if (random() < you.mods.ddgmod) { global.miss++; if (global.flags.m_blh === false && (!global.flags.multih && global.flags.m_blh === false)) msg(att.name + ' missed', 'grey'); global.flags.msd = true; giveSkExp(skl.evas, .5); return 0 }
+      if (you.mods.ddgmod !== 0) if (random() < you.mods.ddgmod) { global.miss++; if (flags.m_blh === false && (!flags.multih && flags.m_blh === false)) msg(att.name + ' missed', 'grey'); flags.msd = true; giveSkExp(skl.evas, .5); return 0 }
     }
     dmg = Math.round(atk.f(att, def, power));
     def.hp -= dmg;
-    global.flags.msd = false;
-    if (global.flags.m_blh === false && (!global.flags.multih && global.flags.m_blh === false)) printHitMessage(att.name, dmg, att.id === you.id ? false : true);
+    flags.msd = false;
+    if (flags.m_blh === false && (!flags.multih && flags.m_blh === false)) printHitMessage(att.name, dmg, att.id === you.id ? false : true);
     if (isyou === true) {
       dom.d8_2.innerHTML = 'Critical chance: ' + (Math.round(you.mods.crflt * 1000 + ((you.crt * (2 - (you.sat / you.satmax + you.mods.sbonus) * 2) + you.crt) * (you.luck / 25 + 1) + skl.seye.use()) * 1000) / 10) + '%'; if (you.eqp[0].id != 10000) you.eqp[0].dp > 0 ? you.eqp[0].dp -= .008 : you.eqp[0].dp = 0; global.stat.dmgdt += dmg;
-      if (global.flags.eshake === true) {
+      if (flags.eshake === true) {
         dom.d1m.style.left = parseInt(global.special_x) + rand(-3, 3) + 'px'; dom.d1m.style.top = parseInt(global.special_y) + rand(-3, 3) + 'px';
         setTimeout(() => { dom.d1m.style.left = parseInt(global.special_x) + 'px'; dom.d1m.style.top = parseInt(global.special_y) + 'px'; }, 60);
       }
@@ -150,12 +150,12 @@ export function attack(att: any, def: any, atk?: any, power?: any) {
     global.miss++;
     global.stat.misst++;
     ;
-    if (global.flags.m_blh === false && (!global.flags.multih && global.flags.m_blh === false)) msg(att.name + ' missed', 'grey');
-    global.flags.msd = true;
+    if (flags.m_blh === false && (!flags.multih && flags.m_blh === false)) msg(att.name + ' missed', 'grey');
+    flags.msd = true;
     if (dk) giveSkExp(skl.ntst, .01);
     if (!isyou) global.stat.dodgt++;
   } update_d();
-  if (!global.flags.multih) { if (isyou && dmg >= def.hpmax) global.stat.onesht++; if (def.hp <= 0 && def.alive === true) { global.atkdfty = [3, global.atkdftydt]; def.onDeath(att); def.onDeathE(att); } }
+  if (!flags.multih) { if (isyou && dmg >= def.hpmax) global.stat.onesht++; if (def.hp <= 0 && def.alive === true) { global.atkdfty = [3, global.atkdftydt]; def.onDeath(att); def.onDeathE(att); } }
   return dmg || 0;
 }
 
@@ -173,15 +173,15 @@ export function tattack(pow: any, type: any, e: any) {
   if (rand(100) < hit) {
     dmg = Math.round(((1 + you.str_r * .05) * (you.efficiency() + 1) * pow * (ddat.a + 1)) / 2);
     global.stat.dmgdt += dmg;
-    if (!global.flags.m_blh) msg('You hit ' + global.current_m.name + ' for <span style="color:hotpink">' + dmg + '</span> damage', 'yellow');
+    if (!flags.m_blh) msg('You hit ' + global.current_m.name + ' for <span style="color:hotpink">' + dmg + '</span> damage', 'yellow');
     global.current_m.hp -= dmg;
     if (m.hp <= 0 && m.alive === true) { m.onDeath(you); m.onDeathE(); } dom.d5_1_1m.update();
-    if (global.flags.eshake === true) {
+    if (flags.eshake === true) {
       dom.d1m.style.left = parseInt(global.special_x) + rand(-3, 3) + 'px'; dom.d1m.style.top = parseInt(global.special_y) + rand(-3, 3) + 'px';
       setTimeout(() => { dom.d1m.style.left = parseInt(global.special_x) + 'px'; dom.d1m.style.top = parseInt(global.special_y) + 'px'; }, 60);
     }
   } else {
-    if (global.flags.m_blh === false) msg(you.name + ' missed', 'grey');
+    if (flags.m_blh === false) msg(you.name + ' missed', 'grey');
   }
 }
 
@@ -255,7 +255,7 @@ export function dmg_calc(att: any, def: any, atk: any) {
     }
     if (dmg <= 0) dmg = 0;
     let cdmg = dmg * randf(1.9 * cpw, 2.1 * cpw) * .5 * dmod * cbst;
-    global.flags.crti = true;
+    flags.crti = true;
     return dmg + cdmg <= 1 ? rand(1, 5) : Math.ceil((dmg + cdmg) * att.dmlt * randf(.9, 1.1)) + rand(1, 5);
   } else return dmg > 0 ? Math.ceil(dmg * att.dmlt * randf(.9, 1.1)) : 0;
 }
@@ -399,7 +399,7 @@ function printBodyPartHit(partNumber: any) {
 }
 
 function printCritIfCrit() {
-  if (global.flags.crti) { msg_add(' CRIT! ', 'yellow'); global.flags.crti = false }
+  if (flags.crti) { msg_add(' CRIT! ', 'yellow'); flags.crti = false }
 }
 
 function printDamageNumber(ddmg: any) {
@@ -444,7 +444,7 @@ function printMultihitMessage(times: any, attackerName: any, acc_dmg: any, targe
 function printHitMessageResult(ddmg: any, targetsPlayer: any) {
   printDamageNumber(ddmg);
   printCritIfCrit();
-  if (targetsPlayer === true && !global.flags.msd) printBodyPartHit(global.t_n)
+  if (targetsPlayer === true && !flags.msd) printBodyPartHit(global.t_n)
 }
 
 function doSingleAttack(attacker: any, defender: any, isPlayerAttacking: any) {

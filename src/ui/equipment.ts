@@ -1,14 +1,14 @@
-import { dom, global, you, planner, data, gameText } from '../state';
+import { dom, global, you, planner, data, gameText, flags } from '../state';
 const { eqp } = data;
 import { giveEff, removeEff } from './effects';
 import { update_d } from './stats';
 import { msg } from './messages';
 import { isort } from './inventory';
 
-    export function equip(w: any, flags?: any) {
+    export function equip(w: any, opts?: any) {
       if (!w.data || !w.data.uid) return;
       if (w.data.uid === you.eqp[w.slot - 1].data.uid) { unequip(w); if (w.twoh === true) { dom.d7_slot_2.innerHTML = 'Shield'; dom.d7_slot_2.style.color = 'grey' }; isort(global.sm) } else {
-        if (w.req && !w.req() && !global.flags.loadstate) { msg("Requirenments not met!", 'red'); return }
+        if (w.req && !w.req() && !flags.loadstate) { msg("Requirenments not met!", 'red'); return }
     /*switch(w.slot){
       case 5 :{
         if(you.eqp[4].id===10000) you.eqp[4]=w;
@@ -56,11 +56,11 @@ import { isort } from './inventory';
         if (w.twoh === true) { dom.d7_slot_2.innerHTML = you.eqp[0].name; dom.d7_slot_2.removeAttribute('style'); dom.d7_slot_2.style.color = 'lightgrey' } else {
           if (you.eqp[1].id === 10000) { dom.d7_slot_2.innerHTML = 'Shield'; dom.d7_slot_2.removeAttribute('style'); dom.d7_slot_2.style.color = 'grey' }
         }
-        if (!flags || !flags.save) { you.stat_r(); update_d(); isort(global.sm) }
+        if (!opts || !opts.save) { you.stat_r(); update_d(); isort(global.sm) }
       }
     }
 
-    export function unequip(w: any, flags?: any) {
+    export function unequip(w: any, opts?: any) {
       if (!w.data || !w.data.uid) return;
       if (w.eff.length > 0) for (let k = 0; k < w.eff.length; k++) { w.eff[k].un(you); removeEff(w.eff[k]) }
       w.onuneq(you);
@@ -78,7 +78,7 @@ import { isort } from './inventory';
         case 8: { dom.d7_slot_9.innerHTML = 'Accessory'; dom.d7_slot_9.removeAttribute('style'); dom.d7_slot_9.style.color = 'grey' } break;
         case 9: { dom.d7_slot_10.innerHTML = 'Accessory'; dom.d7_slot_10.removeAttribute('style'); dom.d7_slot_10.style.color = 'grey' } break;
       }
-      if (!flags || !flags.save) { you.stat_r(); update_d() }
+      if (!opts || !opts.save) { you.stat_r(); update_d() }
     }
 
     export function eqpres() {

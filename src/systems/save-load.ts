@@ -5,8 +5,8 @@ import { scanbyuid, objempty } from '../utils';
 import { addElement, empty, appear, fade } from '../dom-utils';
 import {
   dom, global, you, time, callback, w_manager, timers, chss, home, inv, furn, qsts, dar, acts, sectors,
-  itemgroup, data, gameText,
-  setYou, setTime, setInv, setDar, setFurn, setQsts, setActs, setSectors
+  itemgroup, data, gameText, flags,
+  setYou, setTime, setInv, setDar, setFurn, setQsts, setActs, setSectors, resetFlags
 } from '../state';
 const { effect, creature, wpn, eqp, acc, sld, item, rcp, area, sector, ttl, skl,
   furniture, vendor, quest, act, container, mastery } = data;
@@ -68,7 +68,7 @@ function restoreDiscovery(savedIds: any, namespace: any) {
 
 export function save(lvr?: any) {
   let storage = window.localStorage;
-  global.flags.savestate = true;
+  flags.savestate = true;
   global.stat.gsvs++;
   let str = "";
 
@@ -84,14 +84,14 @@ export function save(lvr?: any) {
     unequip(you.eqp[obj], { save: true });
   }
   you.stat_r();
-  let freezete = global.flags.m_freeze;
+  let freezete = flags.m_freeze;
 
   if (inSector(sector.home)) {
     for (let a in furn) deactivatef(furn[a]);
   }
 
   // Remove type-5 effects before serializing
-  global.flags.m_freeze = true;
+  flags.m_freeze = true;
   for (let a in you.eff) {
     if (you.eff[a].type === 5) you.eff[a].onRemove();
   }
@@ -120,7 +120,7 @@ export function save(lvr?: any) {
     caff: you.caff, cmaff: you.cmaff,
     karma: you.karma, ki: you.ki
   };
-  global.flags.m_freeze = true;
+  flags.m_freeze = true;
   global.current_a.deactivate();
   dom.ct_bt3.style.backgroundColor = 'inherit';
   for (let a in you.eff) {
@@ -138,7 +138,7 @@ export function save(lvr?: any) {
       a4[obj as any] = { a: you.eff[obj].id, b: you.eff[obj].duration, c: pw };
     }
   }
-  global.flags.m_freeze = false;
+  flags.m_freeze = false;
   str += JSON.stringify(a4);
   str += '|';
 
@@ -171,7 +171,7 @@ export function save(lvr?: any) {
   let a1 = {
     uid: global.uid, jj: global.stat,
     x: global.current_z.id, a: global.rm, b: global.sm,
-    e: global.flags, f: global.spirits,
+    e: flags, f: global.spirits,
     g: global.msgs_max, i: global.lst_loc,
     j: time.minute, k: w_manager.duration, l: w_manager.curr.id,
     m: global.lst_sve,
@@ -297,15 +297,15 @@ export function save(lvr?: any) {
   if (inSector(sector.home)) {
     for (let a in furn) activatef(furn[a]);
   }
-  global.flags.m_freeze = true;
+  flags.m_freeze = true;
   global.current_a.activate();
-  global.flags.m_freeze = freezete;
-  if (global.flags.busy === true) dom.ct_bt3.style.backgroundColor = 'darkslategray';
+  flags.m_freeze = freezete;
+  if (flags.busy === true) dom.ct_bt3.style.backgroundColor = 'darkslategray';
 
   // Encode and store
   str = utf8_to_b64(str);
   storage.setItem("v0.3", str);
-  global.flags.savestate = false;
+  flags.savestate = false;
   if (!lvr) msg('Game Saved', 'cyan');
   return str;
 }
@@ -364,8 +364,8 @@ export function load(dt?: any) {
     clearInterval(timers.job1t);
     clearInterval(timers.bstmonupdate);
     clearInterval(timers.rptbncgt);
-    global.flags.rptbncgtf = false;
-    global.flags.rptbncgt = false;
+    flags.rptbncgtf = false;
+    flags.rptbncgt = false;
 
     str = str.split('|');
 
@@ -418,7 +418,7 @@ export function load(dt?: any) {
     you.karma = yu_s.karma || 0;
     you.wealth = yu_s.wealth;
     you.crt = yu_s.crt;
-    global.flags.loadstate = true;
+    flags.loadstate = true;
 
     // Clean up quest callbacks
     for (let a in callback)
@@ -447,7 +447,7 @@ export function load(dt?: any) {
     empty(dom.mscont);
     global.rec_d = [];
     for (let ba in rcp) { rcp[ba].have = false; }
-    global.flags.loadstate = false;
+    flags.loadstate = false;
 
     // --- Segment 2: Skills ---
     let a6 = JSON.parse(str[2]);
@@ -493,7 +493,7 @@ export function load(dt?: any) {
     }
 
     // Restore effects
-    global.flags.loadstate = true;
+    flags.loadstate = true;
     for (let o = 0; o < a4.length; o++) {
       for (let obj in effect) {
         if (effect[obj].id === a4[o].a) {
@@ -503,7 +503,7 @@ export function load(dt?: any) {
         }
       }
     }
-    global.flags.loadstate = false;
+    flags.loadstate = false;
 
     // --- Segment 4: Global state ---
     let a1 = JSON.parse(str[4]);
@@ -513,7 +513,7 @@ export function load(dt?: any) {
     global.lst_loc = a1.i;
     global.uid = a1.uid;
     global.msgs_max = a1.g;
-    global.flags = {};
+    resetFlags();
     global.sinv = [];
     global.bestiary = a1.q;
     global.timehold = a1.r || ((time.minute / DAY) << 0);
@@ -562,7 +562,7 @@ export function load(dt?: any) {
     global.lw_op = 0;
 
     // Restore area if in combat
-    if (global.flags.civil === false && global.flags.btl === true) {
+    if (flags.civil === false && flags.btl === true) {
       for (let obj in area) if (area[obj].id === a1.x) { area_init(area[obj]); break; }
     }
 
@@ -593,7 +593,7 @@ export function load(dt?: any) {
 
     // --- Segment 6: Inventory ---
     let a3 = JSON.parse(str[6]);
-    global.flags.loadstate = true;
+    flags.loadstate = true;
 
     // Load consumable items
     if (a3[0].length != 0) {
@@ -658,16 +658,16 @@ export function load(dt?: any) {
     // --- Segment 10: Vendors ---
     let a10 = JSON.parse(str[10]);
     let a11 = JSON.parse(str[11]);
-    global.flags = a1.e;
-    global.flags.rdng = false;
-    global.flags.civil = true;
-    global.flags.btl = false;
+    resetFlags(a1.e);
+    flags.rdng = false;
+    flags.civil = true;
+    flags.btl = false;
     global.current_z = area.nwh;
     global.current_m = creature.default;
     update_m();
     dom.d7m.update();
-    global.flags.wkdis = false;
-    global.flags.jdgdis = false;
+    flags.wkdis = false;
+    flags.jdgdis = false;
 
     for (let obj in vendor) {
       if (a10[obj] && a10[obj].stock) {
@@ -807,7 +807,7 @@ export function load(dt?: any) {
     you.stat_r();
     global.spbtsr[global.rm].style.color = 'yellow';
 
-    if (global.flags.aw_u) {
+    if (flags.aw_u) {
       dom.d0.style.display = '';
       dom.d1m.style.display = '';
       dom.inv_ctx.style.display = '';
@@ -830,14 +830,14 @@ export function load(dt?: any) {
     dom.d7m.update();
     dom.d5_3_1.update();
 
-    if (global.flags.m_freeze === true) dom.m_b_1_c.innerHTML = 'Ｘ';
-    if (global.flags.m_blh === true) dom.m_b_2_c.innerHTML = 'Ｘ';
-    if (global.flags.jnlu) dom.ct_bt6.innerHTML = 'journal';
-    if (global.flags.asbu) dom.ct_bt1.innerHTML = 'assemble';
-    if (global.flags.actsu) dom.ct_bt3.innerHTML = 'actions';
-    if (global.flags.sklu) dom.ct_bt2.innerHTML = 'skills';
+    if (flags.m_freeze === true) dom.m_b_1_c.innerHTML = 'Ｘ';
+    if (flags.m_blh === true) dom.m_b_2_c.innerHTML = 'Ｘ';
+    if (flags.jnlu) dom.ct_bt6.innerHTML = 'journal';
+    if (flags.asbu) dom.ct_bt1.innerHTML = 'assemble';
+    if (flags.actsu) dom.ct_bt3.innerHTML = 'actions';
+    if (flags.sklu) dom.ct_bt2.innerHTML = 'skills';
 
-    if (global.flags.m_un === true) {
+    if (flags.m_un === true) {
       dom.mn_2.style.display = '';
       dom.mn_4.style.display = '';
       dom.mn_3.style.display = '';
@@ -848,39 +848,39 @@ export function load(dt?: any) {
     wManager();
     dom.d_moon.innerHTML = gameText.lunarp[getLunarPhase()][0];
     addDesc(dom.d_moon, null, 2, 'Lunar Phase', gameText.lunarp[getLunarPhase()][1]);
-    wdrseason(global.flags.ssngaijin);
-    if (global.flags.isday === false) dom.d_moon.style.display = '';
+    wdrseason(flags.ssngaijin);
+    if (flags.isday === false) dom.d_moon.style.display = '';
     else dom.d_moon.style.display = 'none';
 
     dom.sl_extra.innerHTML = 'Last save: ' + global.lst_sve;
     dom.nthngdsp.style.display = 'none';
     dom.ctrwin6.style.display = 'none';
     invbtsrst();
-    dom.d_time.innerHTML = '<small>' + getDay(global.flags.tmmode || 2) + '</small> ' + timeDisp(time);
+    dom.d_time.innerHTML = '<small>' + getDay(flags.tmmode || 2) + '</small> ' + timeDisp(time);
 
-    global.flags.loadstate = false;
-    global.flags.savestate = false;
-    global.flags.ttlscrnopn = false;
-    global.flags.expatv = false;
-    global.flags.impatv = false;
-    global.flags.expatv = false;
+    flags.loadstate = false;
+    flags.savestate = false;
+    flags.ttlscrnopn = false;
+    flags.expatv = false;
+    flags.impatv = false;
+    flags.expatv = false;
   }
-  if (!global.flags.stbxinifld) {
+  if (!flags.stbxinifld) {
     addToContainer(home.trunk, eqp.gnt);
     addToContainer(home.trunk, acc.fmlim);
     addToContainer(home.trunk, wpn.bdsrd);
     addToContainer(home.trunk, item.toolbx);
     addToContainer(home.trunk, sld.tge);
     addToContainer(home.trunk, item.bonig);
-    global.flags.stbxinifld = true;
+    flags.stbxinifld = true;
   }
-  if (global.flags.bgspc) document.body.style.background = 'linear-gradient(180deg,#000,#123)'; else document.body.style.backgroundColor = 'rgb(' + global.bg_r + ',' + global.bg_g + ',' + global.bg_b + ')';
-  if (dom.bkssttbd) { empty(dom.bkssttbd); document.body.removeChild(dom.bkssttbd); global.flags.bksstt = false; kill(dom.bkssttbd) }
-  if (global.flags.expatv) { empty(dom.ct_bt4_5a_nc); document.body.removeChild(dom.ct_bt4_5a_nc); kill(dom.ct_bt4_5a_nc) }
-  if (global.flags.impatv) { empty(dom.ct_bt4_5b_nc); document.body.removeChild(dom.ct_bt4_5b_nc); kill(dom.ct_bt4_5b_nc) }
+  if (flags.bgspc) document.body.style.background = 'linear-gradient(180deg,#000,#123)'; else document.body.style.backgroundColor = 'rgb(' + global.bg_r + ',' + global.bg_g + ',' + global.bg_b + ')';
+  if (dom.bkssttbd) { empty(dom.bkssttbd); document.body.removeChild(dom.bkssttbd); flags.bksstt = false; kill(dom.bkssttbd) }
+  if (flags.expatv) { empty(dom.ct_bt4_5a_nc); document.body.removeChild(dom.ct_bt4_5a_nc); kill(dom.ct_bt4_5a_nc) }
+  if (flags.impatv) { empty(dom.ct_bt4_5b_nc); document.body.removeChild(dom.ct_bt4_5b_nc); kill(dom.ct_bt4_5b_nc) }
   if (dom.error) { empty(dom.error); document.body.removeChild(dom.error); kill(dom.error) }
-  if (global.flags.autosave === true) { dom.autosves.checked = true; timers.autos = setInterval(function () { save(true); }, 30000) }
-  //if(global.flags.msgtm===true)dom.ct_bt4_61b.checked=true;
+  if (flags.autosave === true) { dom.autosves.checked = true; timers.autos = setInterval(function () { save(true); }, 30000) }
+  //if(flags.msgtm===true)dom.ct_bt4_61b.checked=true;
   ////patch things
   if (skl.pet.lvl >= 10) giveTitle(ttl.pet3);
   if (item.amrthsck.data.finished) giveRcp(rcp.appljc)

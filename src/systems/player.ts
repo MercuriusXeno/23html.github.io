@@ -1,4 +1,4 @@
-import { you, callback, global, dom, timers, chss, setYou, data } from '../state';
+import { you, callback, global, dom, timers, chss, setYou, data, flags } from '../state';
 const { ttl, eqp, item, skl, creature, act, sector, area } = data;
 import { random } from '../random';
 import { smove } from '../game/movement';
@@ -63,7 +63,7 @@ export function You(this: any) {
       this.hp = 1;
       if (!killer) killer = creature.default;
       if (global.current_a.id !== act.default.id) deactivateAct(global.current_a);
-      global.flags.work = false
+      flags.work = false
       you.sat / you.satmax > .3 ? giveSkExp(skl.dth, killer.rnk * 10 + 1) : giveSkExp(skl.dth, killer.rnk + 1);
       if (this.sat > 0) this.sat *= (.55 * (1 - skl.dth.use()));
       giveItem(item.death_b);
@@ -73,12 +73,12 @@ export function You(this: any) {
       for (let x in global.achchk[0]) global.achchk[0][x](killer);
       clearInterval(timers.rdng);
       clearInterval(timers.rdngdots);
-      global.flags.rdng = false;
+      flags.rdng = false;
       clearInterval(timers.job1t);
       clearInterval(timers.bstmonupdate)
       for (let o in this.eff) removeEff(this.eff[o])
-      global.flags.btl = false;
-      global.flags.civil = true;
+      flags.btl = false;
+      flags.civil = true;
       global.current_z.onDeath();
       if (sector.home.data.smkp > 0) { smove(chss.lsmain1, false); msg('You ran out of your smoked up house', 'grey') } else smove(chss.hbed, false);
       global.current_z = area.nwh;

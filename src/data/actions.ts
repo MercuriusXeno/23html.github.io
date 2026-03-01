@@ -1,4 +1,4 @@
-import { act, global, dom, effect, skl, timers } from '../state';
+import { act, global, dom, effect, skl, timers, flags } from '../state';
 import { findbyid, select } from '../utils';
 import { canScout } from '../game/exploration';
 import { giveExp, giveSkExp } from '../game/progression';
@@ -38,7 +38,7 @@ act.demo = new Action({
   id: 1, name: 'Run',
   desc: function () { return 'Run within this area to improve your physique' + dom.dseparator + '<span style="color:pink">Exp +0.5/s</span><br><span style="color:skyblue">Trains Walking</span><br><span style="color:crimson">Energy Consumption +0.1\/s</span>'; },
   cond: function (l: any) {
-    if (!global.flags.btl && global.flags.civil && !global.flags.inside && !global.flags.sleepmode && !global.flags.rdng && !global.flags.isshop && !global.flags.work) return true;
+    if (!flags.btl && flags.civil && !flags.inside && !flags.sleepmode && !flags.rdng && !flags.isshop && !flags.work) return true;
     else { if (l !== false) msg('This isn\'t the best place to run around', 'red'); return false }
   },
   use: function (player: any) {
@@ -66,8 +66,8 @@ act.scout = new Action({
   id: 2, name: 'Investigate',
   desc: function () { return 'Thoroughly examine current area in search for hidden passages, treasure, secrets or anything of interest' },
   cond: function (l: any) {
-    if (global.flags.isdark && !cansee()) { return false }
-    if (!global.flags.btl && global.flags.civil && !global.flags.sleepmode && !global.flags.rdng) return true;
+    if (flags.isdark && !cansee()) { return false }
+    if (!flags.btl && flags.civil && !flags.sleepmode && !flags.rdng) return true;
     else { if (l !== false) msg('You\'re too occupied with something else', 'red'); return false }
   },
   activate: function (this: any, player: any) {
@@ -83,7 +83,7 @@ act.scout = new Action({
     }, 1000);
   },
   use: function (this: any) {
-    if (global.flags.isdark && !cansee()) { deactivateAct(this); msg('You can\'t see anything', 'grey'); return }
+    if (flags.isdark && !cansee()) { deactivateAct(this); msg('You can\'t see anything', 'grey'); return }
     let a1 = canScout(global.current_l);
     let a2c = []
     for (let a in global.current_l.sector) a2c.push(canScout(global.current_l.sector[a]));

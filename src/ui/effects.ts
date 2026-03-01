@@ -1,6 +1,6 @@
 import { addElement, empty } from '../dom-utils';
 import { findbyid } from '../utils';
-import { dom, global, you, timers } from '../state';
+import { dom, global, you, timers, flags } from '../state';
 import { addDesc } from './descriptions';
 
     let node: any;
@@ -9,7 +9,7 @@ import { addDesc } from './descriptions';
       if (target.id !== 0) {
         let ef = e;
         if (target.id !== you.id) { ef = new Object(); for (let g in e) ef[g] = e[g]; }
-        if (target.id === you.id || global.flags.btl) {
+        if (target.id === you.id || flags.btl) {
           let p = findbyid(target.eff, e.id);
           if (!p || !p.active) {
             if (d) ef.duration = d; ef.y = y; ef.z = z; if (ef.x) eff_d(ef, ef.x, ef.c, ef.b, target);

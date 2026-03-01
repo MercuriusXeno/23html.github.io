@@ -1,7 +1,7 @@
 import { random, rand } from '../random';
 import { copy, deepCopy, scan, scanbyid } from '../utils';
 import { addElement, empty } from '../dom-utils';
-import { dom, global, you, inv, dar, planner, timers, furn, data } from '../state';
+import { dom, global, you, inv, dar, planner, timers, furn, data, flags } from '../state';
 const { skl, creature } = data;
 import { msg, msg_add } from '../ui/messages';
 import { renderItem, updateInv, isort, rsort } from '../ui/inventory';
@@ -32,12 +32,12 @@ import { kill } from './utils-game';
           if (!scan(dar[g], obj.id)) dar[g].push(obj.id);
           if (flag && flag.fl) iftrunkopen(1);
           else iftrunkopenc(1);
-          if (!global.flags.loadstate && !ignore) global.stat.igtttl += am;
+          if (!flags.loadstate && !ignore) global.stat.igtttl += am;
         }
         return nitm;
       }
       if (!obj.have) {
-        obj.new = true; if (global.flags.blken === true) {
+        obj.new = true; if (flags.blken === true) {
           global.spnew++; clearInterval(timers.nsblk); timers.nsblk = setInterval(function () {
             let a = document.querySelectorAll('.blinks');
             let g = a.length;
@@ -70,7 +70,7 @@ import { kill } from './utils-game';
       }
       if (flag && !flag.fi && flag.fl) iftrunkopen(1);
       else iftrunkopenc(1);
-      if (!global.flags.loadstate && !ignore) global.stat.igtttl += am;
+      if (!flags.loadstate && !ignore) global.stat.igtttl += am;
       return obj;
     }
 
@@ -150,9 +150,9 @@ import { kill } from './utils-game';
       dom.invp1_con.addEventListener('mouseenter', function (this: any) {
         dom.invp1_op2 = addElement(this, 'small', null, ni.right ? 'track-move-left' : 'track-move-right');
         dom.invp1_op2.innerHTML = ni.right ? '<<' : '>>';
-        dom.invp1_op2.addEventListener('mouseenter', function () { global.flags.rtcrutch = true });
+        dom.invp1_op2.addEventListener('mouseenter', function () { flags.rtcrutch = true });
         //ugly hack
-        dom.invp1_op2.addEventListener('mouseleave', function () { global.flags.rtcrutch = false });
+        dom.invp1_op2.addEventListener('mouseleave', function () { flags.rtcrutch = false });
         //self to self: revisit later V:
         dom.invp1_op2.addEventListener('click', function () {
           let scann = false; let titem;
@@ -200,7 +200,7 @@ import { kill } from './utils-game';
         this.removeChild(this.children[2]);
       });
       dom.invp1_con.addEventListener('click', function (this: any) {
-        if (global.flags.rtcrutch === true) { this.children[0].click(); return } else {
+        if (flags.rtcrutch === true) { this.children[0].click(); return } else {
           let scann = false; let titem;
           if (ni.right === false) {
             for (let a in trunk.c) { if (trunk.c[a].item.id === item.id && !item.slot) { scann = true; titem = trunk.c[a]; break } }

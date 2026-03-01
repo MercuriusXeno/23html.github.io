@@ -1,12 +1,12 @@
 import { addElement } from '../dom-utils';
-import { dom, global } from '../state';
+import { dom, global, flags } from '../state';
 import { addDesc } from './descriptions';
 
     export function msg(txt: string, c?: string, dsc?: any, type?: any, bc?: string, chck?: any): void {
-      if (global.flags.m_freeze === false && global.flags.loadstate === false) {
+      if (flags.m_freeze === false && flags.loadstate === false) {
         while (dom.gmsgs.children[1].children.length > global.msgs_max - 1) dom.gmsgs.children[1].removeChild(dom.gmsgs.children[1].children[0]);
         let msg = addElement(dom.mscont, 'div', null, 'msg');
-        if (global.flags.msgtm) {
+        if (flags.msgtm) {
           let now = new Date();
           let g = addElement(msg, 'small');
           g.innerHTML = '[' + (now.getHours() < 10 ? ('0' + now.getHours()) : now.getHours()) + ':' + (now.getMinutes() < 10 ? ('0' + now.getMinutes()) : now.getMinutes()) + ':' + (now.getSeconds() < 10 ? ('0' + now.getSeconds()) : now.getSeconds()) + ']'
@@ -36,7 +36,7 @@ import { addDesc } from './descriptions';
 
 
     export function msg_add(txt: string, c?: string, bc?: string, shd?: any): void {
-      if (global.flags.m_freeze === false && global.flags.loadstate === false) {
+      if (flags.m_freeze === false && flags.loadstate === false) {
         let bac = '';
         let b = '';
         if (bc) bac = 'background-color:' + bc;

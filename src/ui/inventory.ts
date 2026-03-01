@@ -1,6 +1,6 @@
 import { addElement, empty } from '../dom-utils';
 import { scanbyuid } from '../utils';
-import { dom, global, you, inv, timers, data } from '../state';
+import { dom, global, you, inv, timers, data, flags } from '../state';
 const { item, skl } = data;
 import { addDesc } from './descriptions';
 import { equip, unequip } from './equipment';
@@ -33,7 +33,7 @@ import { renderRcp } from './panels';
         inv_slot.tabIndex = 0;
         inv_slot.focus();
         inv_slot.addEventListener('keydown', listen_k);
-        global.flags.kfocus = true;
+        flags.kfocus = true;
         if (obj.important === false && obj.slot) {
           dom.inv_del = addElement(inv_slot_c, 'span', null, 'delete-btn');
           dom.inv_del.innerHTML = 'x';
@@ -173,7 +173,7 @@ import { renderRcp } from './panels';
         inv_slot.tabIndex = -1;
         inv_slot.removeEventListener('keydown', listen_k);
         global.keyobj = 0;
-        global.flags.kfocus = false;
+        flags.kfocus = false;
         if (obj.important === false && obj.slot) inv_slot_c.removeChild(dom.inv_del);
         if (obj.dss && item.toolbx.have) inv_slot_c.removeChild(dom.inv_dss);
         if (obj.slot === 5 || obj.slot === 6) { inv_slot_c.removeChild(dom.eq_r); inv_slot_c.removeChild(dom.eq_l); }
@@ -185,8 +185,8 @@ import { renderRcp } from './panels';
       if (!obj.slot) {
         let s_am = addElement(inv_slot, 'small', null, 'stack-amount');
         s_am.innerHTML = ' x' + (obj.amount);
-        inv_slot.addEventListener('mouseenter', function (this: any) { global.flags.kfocus = true; this.tabIndex = 0; this.focus(); global.keyobj = obj; this.addEventListener('keydown', listen_k) })
-        inv_slot.addEventListener('mouseleave', function (this: any) { global.flags.kfocus = false; this.tabIndex = -1; global.keyobj = 0; this.removeEventListener('keydown', listen_k); })
+        inv_slot.addEventListener('mouseenter', function (this: any) { flags.kfocus = true; this.tabIndex = 0; this.focus(); global.keyobj = obj; this.addEventListener('keydown', listen_k) })
+        inv_slot.addEventListener('mouseleave', function (this: any) { flags.kfocus = false; this.tabIndex = -1; global.keyobj = 0; this.removeEventListener('keydown', listen_k); })
       }
       if (!!obj.c || !!obj.bc) {
         if (!!obj.c) inv_name.style.color = obj.c;

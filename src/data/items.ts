@@ -1,4 +1,4 @@
-import { item, dom, global, effect, skl, inv, wpn, eqp, sld, acc, furniture, home, furn, sector, ttl, chss, rcp, timers, area, creature, time, gameText } from '../state';
+import { item, dom, global, effect, skl, inv, wpn, eqp, sld, acc, furniture, home, furn, sector, ttl, chss, rcp, timers, area, creature, time, gameText, flags } from '../state';
 import { HOUR } from '../constants';
 import { random, rand, randf } from '../random';
 import { select, findbyid, z_bake } from '../utils';
@@ -280,10 +280,10 @@ item.sp0a = new Item({ id: 3018, name: 'Spirit Opening Powder', desc: 'Powder re
 // @ts-ignore: constructor function
 item.smkbmb = new Item({ id: 3019, name: 'Smoke Bomb', desc: 'Pellets that release thick smog when crushed. Can create a smokescreen to help you escape from danger' + dom.dseparator + '<span style=\'color:springgreen\'>Bypasses current enemy</span>', stype: 4,
   use: function () {
-    if (global.flags.civil === true && global.flags.btl === false) { msg('You\'re not in combat!', 'red'); return }
+    if (flags.civil === true && flags.btl === false) { msg('You\'re not in combat!', 'red'); return }
     if (global.current_z.size === 1 || global.current_z.size === 0 || global.current_z.isboss) { msg('You can\'t pass this enemy!', 'red'); return }
     else {
-      clearInterval(timers.btl); clearInterval(timers.btl2); msg('*Puff*', 'black', null, null, 'lightgrey'); global.flags.smkactv = true;
+      clearInterval(timers.btl); clearInterval(timers.btl2); msg('*Puff*', 'black', null, null, 'lightgrey'); flags.smkactv = true;
       global.current_z.size--;
       area_init(global.current_z);
       dom.d7m.update();
@@ -295,16 +295,16 @@ item.smkbmb = new Item({ id: 3019, name: 'Smoke Bomb', desc: 'Pellets that relea
 // @ts-ignore: constructor function
 item.svial1 = new Item({ id: 3020, name: 'Skeleton Vial', desc: 'Summons a lvl 10 Skeleton', stype: 4,
   use: function () {
-    if (global.flags.civil === true && global.flags.btl === false) {
-      if (global.flags.sleepmode || global.flags.rdng || global.flags.isshop || global.flags.busy || global.flags.work) { msg('Unable to summon!', 'red'); return }
+    if (flags.civil === true && flags.btl === false) {
+      if (flags.sleepmode || flags.rdng || flags.isshop || flags.busy || flags.work) { msg('Unable to summon!', 'red'); return }
       let ta = new area._ctor();
       ta.id = -1
       ta.name = 'Somewhere';
       ta.pop = [{ crt: creature.skl, lvlmin: 10, lvlmax: 10, c: 1 }];
       ta.protected = true;
-      ta.onEnd = function () { area_init(area.nwh); global.flags.civil = true; global.flags.btl = false; };
-      global.flags.civil = false;
-      global.flags.btl = true;
+      ta.onEnd = function () { area_init(area.nwh); flags.civil = true; flags.btl = false; };
+      flags.civil = false;
+      flags.btl = true;
       ta.size = 1;
       z_bake(ta);
       area_init(ta);
@@ -329,9 +329,9 @@ item.mpwdr = new Item({ id: 3021, name: 'Monster Powder', desc: 'Dried and groun
 // @ts-ignore: constructor function
 item.smbpll = new Item({ id: 3022, name: 'Slumber Pill', desc: 'Pill with a strong sedative effect. Normally used by sick and old people to treat insomnia, if they can afford it. Has other uses if you are creative enough' + dom.dseparator + '<span style=\'color:lightgrey\'>Makes you sleep through 18 hours in an instant</span>', stype: 4,
   use: function (player: any, x: any) {
-    if (global.flags.btl || global.flags.rdng || global.flags.isshop || global.flags.busy || global.flags.work) { msg('You can\'t sleep now!', 'red'); return } else {
-      let b = .1; let s = HOUR * 18; if (!global.flags.sleepmode) giveEff(player, effect.slep); else if (global.current_l.id === 112) b += home.bed.sq; global.stat.plst++
-      for (let a = 0; a < s; a++) { giveSkExp(skl.sleep, .1); ontick() } if (!global.flags.sleepmode) removeEff(effect.slep);
+    if (flags.btl || flags.rdng || flags.isshop || flags.busy || flags.work) { msg('You can\'t sleep now!', 'red'); return } else {
+      let b = .1; let s = HOUR * 18; if (!flags.sleepmode) giveEff(player, effect.slep); else if (global.current_l.id === 112) b += home.bed.sq; global.stat.plst++
+      for (let a = 0; a < s; a++) { giveSkExp(skl.sleep, .1); ontick() } if (!flags.sleepmode) removeEff(effect.slep);
     }
     this.amount--;
   }
@@ -1098,9 +1098,9 @@ item.key7 = new Item({ id: 5022, name: 'Crimson Key', desc: '', stype: 5,
 
 // @ts-ignore: constructor function
 item.key0 = new Item({ id: 5023, name: 'Rusty Key', stype: 5,
-  desc: function () { return ('Scummy old key. ' + (global.flags.hbs1 ? 'You can open your basement with it' : 'What could it be for?')) },
+  desc: function () { return ('Scummy old key. ' + (flags.hbs1 ? 'You can open your basement with it' : 'What could it be for?')) },
   use: function () {
-    msg(global.flags.hbs1 ? 'Thankfully it didn\'t break apart when you used it' : 'It looks familiar...', 'lightgrey');
+    msg(flags.hbs1 ? 'Thankfully it didn\'t break apart when you used it' : 'It looks familiar...', 'lightgrey');
   }
 });
 
@@ -1112,7 +1112,7 @@ item.ywlt = new Item({ id: 5024, name: 'Woven Wallet', desc: 'This is your perso
     giveItem(item.cn, 1);
     giveItem(item.cp, rand(2, 10));
     this.amount--;
-    global.flags.m_un = true;
+    flags.m_un = true;
     appear(dom.mn_2);
     appear(dom.mn_4);
     appear(dom.mn_3);
@@ -1138,7 +1138,7 @@ item.pbl = new Item({ id: 5027, name: 'Pebble', desc: 'A tiny useless stone, fou
   use: function () {
     if (this.disabled !== true) {
       this.disabled = true;
-      if (global.flags.civil === true || global.flags.btl === false) { msg("You threw " + this.name + " into the distance", "grey"); giveSkExp(skl.thr, 1) } else tattack(5, 1, 1);
+      if (flags.civil === true || flags.btl === false) { msg("You threw " + this.name + " into the distance", "grey"); giveSkExp(skl.thr, 1) } else tattack(5, 1, 1);
       this.amount--;
       setTimeout(() => { this.disabled = false }, (500 / (skl.thr.lvl || 1)))
     }
@@ -1198,7 +1198,7 @@ item.mcps = new Item({ id: 5035, name: 'Clay Milk Cap', desc: 'Milk caps made fr
   use: function () {
     if (this.disabled !== true) {
       this.disabled = true;
-      if (global.flags.civil === true || global.flags.btl === false) { msg("You threw " + this.name + " into the distance", "grey"); giveSkExp(skl.thr, 1) } else tattack(9, 1, 1);
+      if (flags.civil === true || flags.btl === false) { msg("You threw " + this.name + " into the distance", "grey"); giveSkExp(skl.thr, 1) } else tattack(9, 1, 1);
       this.amount--;
       setTimeout(() => { this.disabled = false }, (500 / (skl.thr.lvl || 1)))
     }
@@ -1540,7 +1540,7 @@ item.bstr = new Item({ id: 9007, name: '"Animalis Vicipaedia"', rar: 2, desc: 'H
         msg('Bestiary Unlocked!', 'cyan');
         this.data.read = false;
         this.amount--;
-        global.flags.bstu = true;
+        flags.bstu = true;
         this.data.finished = true;
         if (dom.jlbrw1s2) dom.jlbrw1s2.innerHTML = 'B E S T I A R Y'
       } else chss.trd.sl(this);
@@ -1678,7 +1678,7 @@ item.scrlw.data.time = HOUR * 3;
 
 // @ts-ignore: constructor function
 item.wp2s = new Item({ id: 9014, name: '"Rotten Illustration"', desc: 'Found this within old bushery, it looks like a drawing of something in charcoal', stype: 4,
-  onGet: function () { global.flags.wp2sgt = true },
+  onGet: function () { flags.wp2sgt = true },
   use: function () {
     if (canRead()) {
       if (this.data.timep >= this.cmax) {
@@ -1696,11 +1696,11 @@ item.wp2s.data.time = HOUR * 2;
 
 // @ts-ignore: constructor function
 item.shppmf = new Item({ id: 9015, name: '"Pamphlet"', desc: 'This was shoved onto you by someone on the streets. Store names, discount prices, hot items... An entire wall of advertisements in tiny letters, to fit as much of it as possible on this piece of paper. It is a good idea to memorize the addresses', stype: 4,
-  onGet: function () { global.flags.pmfspmkm1 = true },
+  onGet: function () { flags.pmfspmkm1 = true },
   use: function () {
     if (canRead()) {
       if (this.data.timep >= this.cmax) {
-        global.flags.mkplc1u = true;
+        flags.mkplc1u = true;
         this.data.finished = true;
         msg('Right, you could go to the marketplace', 'lime');
         if (global.current_l.id === chss.lsmain1.id) smove(chss.lsmain1, false);
@@ -1882,7 +1882,7 @@ item.pdeedhs = new Item({ id: 9025, name: '"Property Deed"', rar: 2, desc: 'This
   use: function () {
     if (canRead()) {
       if (this.data.timep >= this.cmax) {
-        global.flags.hsedchk = true;
+        flags.hsedchk = true;
         if (global.current_l.id === 111) smove(chss.home, false)
         this.data.read = false;
         this.amount--;
@@ -1916,7 +1916,7 @@ item.jnlbk = new Item({ id: 9027, name: '"Empty Journal"', desc: 'Dusty old tome
         msg('Journal Unlocked!', 'cyan');
         this.data.read = false;
         this.amount--;
-        global.flags.jnlu = true;
+        flags.jnlu = true;
         this.data.finished = true;
         dom.ct_bt6.innerHTML = 'journal'
       } else chss.trd.sl(this);

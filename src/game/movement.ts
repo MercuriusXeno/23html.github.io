@@ -5,7 +5,7 @@
 import { random, rand } from '../random';
 import { copy, scanbyid } from '../utils';
 import { empty } from '../dom-utils';
-import { dom, global, you, sectors, effector, data } from '../state';
+import { dom, global, you, sectors, effector, data, flags } from '../state';
 const { creature, area, effect, act, skl } = data;
 import { msg } from '../ui/messages';
 import { clr_chs } from '../ui/choices';
@@ -25,15 +25,15 @@ export function Effector(this: any) {
 
 // @ts-ignore: constructor function
 effector.dark = new Effector();
-effector.dark.activate = function () { global.flags.isdark = true }
-effector.dark.deactivate = function () { global.flags.isdark = false }
+effector.dark.activate = function () { flags.isdark = true }
+effector.dark.deactivate = function () { flags.isdark = false }
 effector.dark.x = '闇';
 effector.dark.c = 'darkgrey';
 
 // @ts-ignore: constructor function
 effector.shop = new Effector();
-effector.shop.activate = function () { global.flags.isshop = true }
-effector.shop.deactivate = function () { global.flags.isshop = false }
+effector.shop.activate = function () { flags.isshop = true }
+effector.shop.deactivate = function () { flags.isshop = false }
 effector.shop.x = '$';
 effector.shop.c = 'gold';
 
@@ -67,9 +67,9 @@ function mon_gen(crt: any) {
   empty(dom.d101m);
   let newobj = copy(crt);
   newobj.drop = crt.drop;
-  if (!global.flags.inside) {
-    if (global.flags.israin) giveEff(newobj, effect.wet, 5)
-    if (global.flags.iscold) giveEff(newobj, effect.cold, 25)
+  if (!flags.inside) {
+    if (flags.israin) giveEff(newobj, effect.wet, 5)
+    if (flags.iscold) giveEff(newobj, effect.cold, 25)
   }
   newobj.sex = random() < .5;
   return newobj;
@@ -80,8 +80,8 @@ export function area_init(area: any) {
     if (area.id !== 101) {
       let rnd = random();
       for (let obj in area.pop) if (rnd >= area.popc[obj][0] && rnd <= area.popc[obj][1]) if (!area.pop[obj].cond || area.pop[obj].cond() === true) {
-        global.flags.civil = false;
-        global.flags.btl = true;
+        flags.civil = false;
+        flags.btl = true;
         global.current_z = area;
         let temp = area.pop[obj];
         let newobj = temp.crt.id === creature.default.id ? creature.default : mon_gen(temp.crt);
@@ -110,9 +110,9 @@ function rfeff(what: any) {
 }
 
 export function smove(where: any, lv?: any) {
-  global.flags.busy = false; global.flags.work = false; global.wdwidx = 0;
-  if (global.flags.loadstate) return;
-  if (!global.flags.wkdis) { global.flags.wkdis = true; if (lv !== false) giveSkExp(skl.walk, .25); setTimeout(() => { global.flags.wkdis = false }, 500) }
+  flags.busy = false; flags.work = false; global.wdwidx = 0;
+  if (flags.loadstate) return;
+  if (!flags.wkdis) { flags.wkdis = true; if (lv !== false) giveSkExp(skl.walk, .25); setTimeout(() => { flags.wkdis = false }, 500) }
   you.eqp[6].dp = you.eqp[6].dp - .08 < 0 ? 0 : you.eqp[6].dp - .08;
   let flg = false;
   let und = []
@@ -128,13 +128,13 @@ export function smove(where: any, lv?: any) {
   }
   global.current_l.onLeave();
   deactivateEffectors(global.current_l.effectors);
-  global.flags.civil = true;
-  global.flags.btl = false;
+  flags.civil = true;
+  flags.btl = false;
   global.current_z = area.nwh;
   dom.d7m.update();
   global.stat.smovet++
-  global.flags.inside = false;
-  for (let a in where.sector) { if (where.sector[a].inside || where.inside) global.flags.inside = true }
+  flags.inside = false;
+  for (let a in where.sector) { if (where.sector[a].inside || where.inside) flags.inside = true }
   clr_chs();
   activateEffectors(where.effectors);
   where.sl();
@@ -146,7 +146,7 @@ export function smove(where: any, lv?: any) {
   for (let a in global.current_l.sector) if (!scanbyid(sectors, global.current_l.sector[a].id)) { sectors.push(global.current_l.sector[a]); global.current_l.sector[a].onEnter(); activateEffectors(global.current_l.sector[a].effectors) }
   global.current_l.onEnter();
   rfeff(global.current_l)
-  if (global.flags.btl === false) {
+  if (flags.btl === false) {
     global.current_m = creature.default;
     global.current_m.eff = [];
     empty(dom.d101m);

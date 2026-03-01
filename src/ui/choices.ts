@@ -1,5 +1,5 @@
 import { addElement, empty } from '../dom-utils';
-import { dom, global, you, timers, data } from '../state';
+import { dom, global, you, timers, data, flags } from '../state';
 const { skl } = data;
 import { giveSkExp } from '../game/progression';
 
@@ -12,7 +12,7 @@ import { giveSkExp } from '../game/progression';
       if (size) dom.ch_1.style.fontSize = size;
       if (slimsize) dom.ch_1.style.height = slimsize;
       if (!ignore) global.menuo = 0;
-      dom.ch_1.addEventListener('click', () => { clearInterval(timers.rptbncgt); global.flags.rptbncgtf = false; if (!global.flags.jdgdis) { global.flags.jdgdis = true; giveSkExp(skl.jdg, .1); setTimeout(() => { global.flags.jdgdis = false }, 500) } })
+      dom.ch_1.addEventListener('click', () => { clearInterval(timers.rptbncgt); flags.rptbncgtf = false; if (!flags.jdgdis) { flags.jdgdis = true; giveSkExp(skl.jdg, .1); setTimeout(() => { flags.jdgdis = false }, 500) } })
       return dom.ch_1;
     }
 

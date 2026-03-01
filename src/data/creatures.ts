@@ -1,4 +1,4 @@
-import { creature, eqp, global, you, dom, callback, checksd, item, wpn, acc, abl, effect, skl } from '../state';
+import { creature, eqp, global, you, dom, callback, checksd, item, wpn, acc, abl, effect, skl, flags } from '../state';
 import { random, rand } from '../random';
 import { giveSkExp } from '../game/progression';
 import { area_init } from '../game/movement';
@@ -75,9 +75,9 @@ function Creature(this: any, cfg?: any) {
     if (killer.eqp[0].id !== 10000) killer.eqp[0].data.kills ? killer.eqp[0].data.kills++ : (killer.eqp[0].data.kills = 1);
     if (this.type !== 2 && this.type !== 4) global.spirits++;
     else if (this.type === 4) global.spirits--;
-    if (global.flags.m_blh === false) msg(this.name + ' died ', 'burlywood');
-    global.flags.civil = true;
-    global.flags.btl = false;
+    if (flags.m_blh === false) msg(this.name + ' died ', 'burlywood');
+    flags.civil = true;
+    flags.btl = false;
     let df = 1;
     let ld = this.lvl - killer.lvl;
     if (ld < 0) df = Math.sqrt(Math.abs(ld)) + Math.abs(ld) * .1 * Math.abs(ld);
@@ -86,8 +86,8 @@ function Creature(this: any, cfg?: any) {
     global.s_l = 0;
     if (killer.mods.enmondren > 0) if (random() < killer.mods.enmondren) { let aam = 1 + rand(this.lvl << 0, (this.lvl / 4) << 0) ** (1 + (this.rnk / 5) << 0) * killer.mods.enmondrts; giveWealth(rand(aam * .5 << 0 || 1, aam * 1.5 << 0 || 1)); }
     if (--global.current_z.size > 0) area_init(global.current_z);
-    else { if (global.current_z.size <= -1) area_init(global.current_z); else { msg('Area cleared', 'orange'); global.current_z.onEnd(); global.flags.civil = true; global.flags.btl = false; } };
-    if (global.flags.to_pause === true) global.flags.btl = false;
+    else { if (global.current_z.size <= -1) area_init(global.current_z); else { msg('Area cleared', 'orange'); global.current_z.onEnd(); flags.civil = true; flags.btl = false; } };
+    if (flags.to_pause === true) flags.btl = false;
     wpndiestt(killer, this);
     if (this.blood) global.stat.bloodt += this.blood;
     for (let a in checksd) checksd[a].f(this, checksd[a].o);
@@ -106,7 +106,7 @@ me.cdmg = me.lasthp-this.hp;
 me.avgdmg = (me.cdmg+me.lstdmg)/2;
 me.lasthp=this.hp;
 me.lstdmg=me.cdmg;
-if(this.hp-me.avgdmg<=0) {msg('too scary, running away'); global.flags.btlinterrupt=true;}
+if(this.hp-me.avgdmg<=0) {msg('too scary, running away'); flags.btlinterrupt=true;}
 */return attack(x, y)
   }
   if (cfg) for (let k in cfg) this[k] = cfg[k];

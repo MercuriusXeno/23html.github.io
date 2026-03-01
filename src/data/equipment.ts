@@ -1,4 +1,4 @@
-import { wpn, eqp, acc, sld, item, dom, global, inv, rcp, skl, callback, checksd } from '../state';
+import { wpn, eqp, acc, sld, item, dom, global, inv, rcp, skl, callback, checksd, flags } from '../state';
 import { recshop } from '../ui/shop';
 import { giveSkExp, giveRcp } from '../game/progression';
 import { equip } from '../ui/equipment';
@@ -429,14 +429,14 @@ acc.strawp = new Eqp({ id: 40001, name: 'Straw Pendant', desc: 'You made this yo
 // @ts-ignore: constructor function
 acc.snch = new Eqp({ id: 40002, name: 'Sun Charm', desc: 'Little charm with a piece of power of the Sun imbued into it. It absorbs Sun energy' + dom.dseparator + '<span style=\'color:gold\'>Raises stats during day</span>', slot: 8, stype: 3, rar: 2,
   oneq: function () {
-    if (global.flags.savestate === false) msg('You feel closer to the Sun..', 'gold')
+    if (flags.savestate === false) msg('You feel closer to the Sun..', 'gold')
   }
 });
 
 // @ts-ignore: constructor function
 acc.mnch = new Eqp({ id: 40003, name: 'Moon Charm', desc: 'Little charm with a piece of power of the Moon imbued into it. It absorbs Moon energy' + dom.dseparator + '<span style=\'color:cyan\'>Raises stats during night</span>', slot: 8, stype: 3, rar: 2,
   oneq: function () {
-    if (global.flags.savestate === false) msg('You feel closer to the Moon..', 'gold')
+    if (flags.savestate === false) msg('You feel closer to the Moon..', 'gold')
   }
 });
 

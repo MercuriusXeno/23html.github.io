@@ -1,4 +1,4 @@
-import { w_manager, global, you, dom, callback, time, setTime, data, gameText } from '../state';
+import { w_manager, global, you, dom, callback, time, setTime, data, gameText, flags } from '../state';
 const { effect, skl } = data;
 import { random, rand } from '../random';
 import { findbyid, copy } from '../utils';
@@ -88,7 +88,7 @@ weather.sstorm.bc = '#88a';
 weather.sstorm.fsnow = true;
 
 weather.storm.ontick = weather.rain.ontick = weather.heavyrain.ontick = weather.drizzle.ontick = function () {
-  if (global.flags.inside === false) {
+  if (flags.inside === false) {
     if (effect.wet.active === false && !you.mods.rnprtk) giveEff(you, effect.wet, 5);
     let f = findbyid(global.current_m.eff, effect.wet.id);
     if (!f || f.active === false) giveEff(global.current_m, effect.wet, 5)
@@ -96,7 +96,7 @@ weather.storm.ontick = weather.rain.ontick = weather.heavyrain.ontick = weather.
 }
 
 weather.thunder.ontick = function () {
-  if (global.flags.inside === false) {
+  if (flags.inside === false) {
     if (effect.wet.active === false && !you.mods.rnprtk) giveEff(you, effect.wet, 5);
     let f = findbyid(global.current_m.eff, effect.wet.id);
     if (!f || f.active === false) giveEff(global.current_m, effect.wet, 5)
@@ -191,7 +191,7 @@ export function setWeather(w: any, d: any) {
   w_manager.duration = d;
   dom.d_weathert.style.backgroundColor = dom.d_weathert.style.color = 'inherit';
   dom.d_weathert.innerHTML = w_manager.curr.name;
-  if (w.frain === true) { global.flags.israin = true; global.flags.issnow = false; dom.d_anomaly.innerHTML = '🌧' } else if (w.fsnow === true) { global.flags.issnow = true; global.flags.israin = false; dom.d_anomaly.innerHTML = '❄️' } else { global.flags.israin = false; dom.d_anomaly.innerHTML = ''; global.flags.issnow = false }
+  if (w.frain === true) { flags.israin = true; flags.issnow = false; dom.d_anomaly.innerHTML = '🌧' } else if (w.fsnow === true) { flags.issnow = true; flags.israin = false; dom.d_anomaly.innerHTML = '❄️' } else { flags.israin = false; dom.d_anomaly.innerHTML = ''; flags.issnow = false }
   if (w.c) dom.d_weathert.style.color = w.c;
   if (w.bc) dom.d_weathert.style.backgroundColor = w.bc;
 }
@@ -204,7 +204,7 @@ function onSeasonTick(season: any) {
   switch (season) {
     case 4:
       if (global.stat.wsnrest > 0) { global.stat.wsnrest--; return }
-      if (!global.flags.inside) {
+      if (!flags.inside) {
         if (!effect.cold.active) giveEff(you, effect.cold, 5);
         else {
           if (w_manager.curr.id === weather.snow.id || w_manager.curr.id === weather.sstorm.id) { effect.cold.duration += rand(3, 7); giveSkExp(skl.coldr, .02) } else effect.cold.duration += rand(1, 3)

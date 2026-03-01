@@ -1,4 +1,4 @@
-import { effect, global, dom, skl, timers, furn, furniture, item } from '../state';
+import { effect, global, dom, skl, timers, furn, furniture, item, flags } from '../state';
 import { select } from '../utils';
 import { random, rand, randf } from '../random';
 import { findbyid } from '../utils';
@@ -151,7 +151,7 @@ effect.imm = new Effect({ id: 5, name: 'Immortality', desc: 'Eternal life', type
 // @ts-ignore: constructor function
 effect.snch = new Effect({ id: 6, name: 'Sun blessing', desc: 'You are blessed by Sun', type: 2, eq: true, duration: -1, x: '☼', c: 'gold', b: 'blue',
   onGive: function (player: any) {
-    if (global.flags.loadstate) {
+    if (flags.loadstate) {
       player.str += 5;
       player.sat += 100;
       player.spd += 1;
@@ -162,12 +162,12 @@ effect.snch = new Effect({ id: 6, name: 'Sun blessing', desc: 'You are blessed b
       player.agl_d += 5;
       player.agl += 5;
       player.int_d += 5;
-      global.flags.snch = true;
+      flags.snch = true;
     }
   },
   use: function (player: any) {
-    if (global.flags.isday === true) {
-      if (!global.flags.snch) {
+    if (flags.isday === true) {
+      if (!flags.snch) {
         player.str += 5;
         player.sat += 100;
         player.spd += 1;
@@ -178,12 +178,12 @@ effect.snch = new Effect({ id: 6, name: 'Sun blessing', desc: 'You are blessed b
         player.agl_d += 5;
         player.agl += 5;
         player.int_d += 5;
-        global.flags.snch = true;
+        flags.snch = true;
       }
     }
     timers.snch = setInterval(function () {
-      if (global.flags.isday === true) {
-        if (!global.flags.snch) {
+      if (flags.isday === true) {
+        if (!flags.snch) {
           player.str += 5;
           player.sat += 100;
           player.spd += 1;
@@ -194,11 +194,11 @@ effect.snch = new Effect({ id: 6, name: 'Sun blessing', desc: 'You are blessed b
           player.agl_d += 5;
           player.agl += 5;
           player.int_d += 5;
-          global.flags.snch = true;
+          flags.snch = true;
           update_d();
         }
       } else {
-        if (global.flags.snch === true) {
+        if (flags.snch === true) {
           effect.snch.un(player);
           player.stat_r();
           update_d();
@@ -208,7 +208,7 @@ effect.snch = new Effect({ id: 6, name: 'Sun blessing', desc: 'You are blessed b
   },
   un: function (player: any) {
     clearInterval(timers.snch);
-    if (global.flags.snch === true) { player.sat -= 100; global.flags.snch = false; }
+    if (flags.snch === true) { player.sat -= 100; flags.snch = false; }
   }
 });
 
@@ -216,7 +216,7 @@ effect.snch = new Effect({ id: 6, name: 'Sun blessing', desc: 'You are blessed b
 // @ts-ignore: constructor function
 effect.mnch = new Effect({ id: 7, name: 'Moon blessing', desc: 'You are blessed by Moon', type: 2, eq: true, duration: -1, x: '☽', c: 'gold', b: 'purple',
   onGive: function (player: any) {
-    if (global.flags.loadstate) {
+    if (flags.loadstate) {
       player.str += 5;
       player.sat += 100;
       player.spd += 1;
@@ -227,12 +227,12 @@ effect.mnch = new Effect({ id: 7, name: 'Moon blessing', desc: 'You are blessed 
       player.agl_d += 5;
       player.agl += 5;
       player.int_d += 5;
-      global.flags.mnch = true;
+      flags.mnch = true;
     }
   },
   use: function (player: any) {
-    if (global.flags.isday === false) {
-      if (!global.flags.mnch) {
+    if (flags.isday === false) {
+      if (!flags.mnch) {
         player.str += 5;
         player.sat += 100;
         player.spd += 1;
@@ -243,12 +243,12 @@ effect.mnch = new Effect({ id: 7, name: 'Moon blessing', desc: 'You are blessed 
         player.agl_d += 5;
         player.agl += 5;
         player.int_d += 5;
-        global.flags.mnch = true;
+        flags.mnch = true;
       }
     }
     timers.mnch = setInterval(function () {
-      if (global.flags.isday === false) {
-        if (!global.flags.mnch) {
+      if (flags.isday === false) {
+        if (!flags.mnch) {
           player.str += 5;
           player.sat += 100;
           player.spd += 1;
@@ -259,11 +259,11 @@ effect.mnch = new Effect({ id: 7, name: 'Moon blessing', desc: 'You are blessed 
           player.agl_d += 5;
           player.agl += 5;
           player.int_d += 5;
-          global.flags.mnch = true;
+          flags.mnch = true;
           update_d();
         }
       } else {
-        if (global.flags.mnch === true) {
+        if (flags.mnch === true) {
           effect.mnch.un(player);
           player.stat_r();
           update_d();
@@ -273,7 +273,7 @@ effect.mnch = new Effect({ id: 7, name: 'Moon blessing', desc: 'You are blessed 
   },
   un: function (player: any) {
     clearInterval(timers.mnch);
-    if (global.flags.mnch === true) { player.sat -= 100; global.flags.mnch = false; }
+    if (flags.mnch === true) { player.sat -= 100; flags.mnch = false; }
   }
 });
 
@@ -292,10 +292,10 @@ effect.fpn = new Effect({ id: 8, name: 'Food poisoning', desc: 'From eating some
 
 // @ts-ignore: constructor function
 effect.wet = new Effect({ id: 9, name: 'Wet', desc: 'You\'re drenched in water', type: 3, duration: 5, x: '雨', c: 'cyan', b: 'blue',
-  onGive: function (player: any) { if (this.target.id === player.id) { msg('Your clothes get soaked', 'cyan', null, null, 'blue'); global.flags.iswet = true } },
-  onRemove: function (player: any) { msg('You dry up', 'orange'); global.flags.iswet = false },
+  onGive: function (player: any) { if (this.target.id === player.id) { msg('Your clothes get soaked', 'cyan', null, null, 'blue'); flags.iswet = true } },
+  onRemove: function (player: any) { msg('You dry up', 'orange'); flags.iswet = false },
   use: function (player: any) {
-    if (global.flags.inside === false && global.flags.israin === true && !player.mods.rnprtk) this.duration += 6;
+    if (flags.inside === false && flags.israin === true && !player.mods.rnprtk) this.duration += 6;
     if (this.target.id === player.id) {
       if (player.sat > 0) giveSkExp(skl.abw, .05);
       effect.fplc.active === true ? this.duration -= 15 : this.duration--;

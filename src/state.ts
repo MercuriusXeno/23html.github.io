@@ -70,6 +70,7 @@ export function setFurn(v: any) { furn = v; }
 export function setQsts(v: any) { qsts = v; }
 export function setActs(v: any) { acts = v; }
 export function setSectors(v: any) { sectors = v; }
+export function resetFlags(v?: any) { for (let k in flags) delete flags[k]; if (v) Object.assign(flags, v); }
 
 // ==========================================================================
 // Global state initialization
@@ -175,8 +176,8 @@ global.stat = {
   lastver: global.ver
 };
 
-// Flags
-global.flags = {
+// Flags (top-level export, formerly global.flags)
+export var flags: any = {
   btl: false,
   m_freeze: false,
   msd: false,

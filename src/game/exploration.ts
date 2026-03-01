@@ -4,7 +4,7 @@
 
 import { random } from '../random';
 import { select } from '../utils';
-import { dom, global, you, inv, data } from '../state';
+import { dom, global, you, inv, data, flags } from '../state';
 const { skl, act } = data;
 import { msg } from '../ui/messages';
 import { updateInv } from '../ui/inventory';
@@ -21,7 +21,7 @@ export function canScout(what: any): number {
 }
 
 export function scoutGeneric(chs: any): void {
-  if (global.flags.isdark && !cansee()) return msg('You can\'t see anything', 'grey')
+  if (flags.isdark && !cansee()) return msg('You can\'t see anything', 'grey')
   let sct = select(chs.scout);
   let idx = chs.scout.indexOf(sct);
   giveSkExp(skl.scout, .3);

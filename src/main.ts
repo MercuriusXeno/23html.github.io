@@ -7,7 +7,7 @@ import { addElement, empty, appear, fade } from './dom-utils';
 import { dom, global, listen, w_manager, offline, callback, effector,
   timers, chss, test, planner, check, home,
   itemgroup, sectors, inv, furn, qsts, dar, acts, plans, checksd,
-  you, time, data, gameText, setYou, setTime,
+  you, time, data, gameText, flags, setYou, setTime,
   setInv, setDar, setFurn, setQsts, setActs, setSectors } from './state';
 const { creature, effect, wpn, eqp, acc, sld, item, rcp, area, sector, ttl, skl, abl,
   furniture, vendor, quest, act, container, mastery } = data;
@@ -131,7 +131,7 @@ declare var InstallTrigger: any;
     //DOM
     ///////////////////////////////////////////
     dom.d0 = addElement(document.body, 'div', 'd1', 'd');
-    if (!global.flags.aw_u) dom.d0.style.display = 'none';
+    if (!flags.aw_u) dom.d0.style.display = 'none';
     dom.d1 = addElement(dom.d0, 'div');
     dom.d101 = addElement(dom.d0, 'div', 'se_i');
     dom.d2c = addElement(dom.d1, 'div', null, 'd2');
@@ -144,8 +144,8 @@ declare var InstallTrigger: any;
     dom.d3 = addElement(dom.d1, 'div', null, 'd3');
     dom.d3.innerHTML = ' lvl:' + you.lvl + ' \'' + you.title.name + '\'';
     dom.d3.addEventListener('click', function (this: any) {
-      if (!global.flags.ttlscrnopn) {
-        global.flags.ttlscrnopn = true;
+      if (!flags.ttlscrnopn) {
+        flags.ttlscrnopn = true;
         dom.ttlcont = addElement(document.body, 'div', 'youttlc');
         dom.ttlhead = addElement(dom.ttlcont, 'div', 'youttlh');
         dom.ttlhead.innerHTML = 'SELECT YOUR TITLE';
@@ -166,7 +166,7 @@ declare var InstallTrigger: any;
             dom.d3.innerHTML = ' lvl:' + you.lvl + ' \'' + you.title.name + '\'';
             empty(global.dscr);
             global.dscr.style.display = 'none';
-            global.flags.ttlscrnopn = false;
+            flags.ttlscrnopn = false;
           });
         }
       }
@@ -180,8 +180,8 @@ declare var InstallTrigger: any;
     addDesc(dom.d5_2, null, 2, 'Experience', function (this: any) { return ('Physical and combat experience. You\'ll have to work hard to achieve new heights<div style="  border-bottom: 1px solid grey;width:100%;height:8px">　</div><br><small>EXP Gain Potential: <span style="color:gold">' + (you.exp_t * 100 << 0) + '%</span><br>Current EXP Gain: <span style="color:yellow">' + (you.exp_t * 100 * you.efficiency() << 0) + '%</span></small>') }, true);
     addDesc(dom.d5_3, null, 2, 'Energy meter', function (this: any) {
       let lose = you.mods.sdrate;
-      if (global.flags.iswet === true) lose *= (3 / (1 + (skl.abw.lvl * .03)))
-      if (global.flags.iscold === true) lose += effect.cold.duration / 1000 / (1 + skl.coldr.lvl * .05);
+      if (flags.iswet === true) lose *= (3 / (1 + (skl.abw.lvl * .03)))
+      if (flags.iscold === true) lose += effect.cold.duration / 1000 / (1 + skl.coldr.lvl * .05);
       lose = (lose * 100 << 0) / 100
       return ('Influences the effectiveness of your actions, eat a lot to keep it full<div style="  border-bottom: 1px solid grey;width:100%;height:8px">　</div><br><small>Energy Effectiveness: <span style="color:deeppink">' + ((you.mods.sbonus + 1) * 100 << 0) + '%</span><br>Energy Consumption Rate: <span style="color:gold">' + lose + '/s</span></small>')
     }, true)
@@ -254,7 +254,7 @@ declare var InstallTrigger: any;
     dom.d7_slot_7.addEventListener('mouseenter', function (this: any) { global._tad = this.innerHTML; this.innerHTML = 'DEF: ' + Math.round(you.eqp[6].str * (you.eqp[6].dp / you.eqp[6].dpmax) + you.str_r + you.eqp[1].str * (you.eqp[1].dp / you.eqp[1].dpmax)) });
     dom.d7_slot_7.addEventListener('mouseleave', function (this: any) { this.innerHTML = global._tad; });
     dom.d1m = addElement(document.body, 'div', 'd1', 'd');
-    if (!global.flags.aw_u) dom.d1m.style.display = 'none';
+    if (!flags.aw_u) dom.d1m.style.display = 'none';
     dom.d101m = addElement(dom.d1m, 'div', 'se_i');
     dom.d1m.style.top = 8;
     dom.d1m.style.left = 457;
@@ -288,20 +288,20 @@ declare var InstallTrigger: any;
     dom.d8m1 = addElement(dom.d8m_c, 'div', null, 'bbts');
     dom.d8m1.innerHTML = 'Pause next battle: <span style=\'color:green\'>&nbspOFF';
     dom.d8m1.addEventListener('click', function (this: any) {
-      if (global.flags.to_pause === true) { if (!global.flags.civil) global.flags.btl = true; global.flags.to_pause = false; this.innerHTML = 'Pause next battle: <span style=\'color:green\'>&nbspOFF'; }
-      else { global.flags.to_pause = true; this.innerHTML = 'Pause next battle: <span style=\'color:crimson\'>&nbspON'; }
+      if (flags.to_pause === true) { if (!flags.civil) flags.btl = true; flags.to_pause = false; this.innerHTML = 'Pause next battle: <span style=\'color:green\'>&nbspOFF'; }
+      else { flags.to_pause = true; this.innerHTML = 'Pause next battle: <span style=\'color:crimson\'>&nbspON'; }
     });
     dom.d8m2 = addElement(dom.d8m_c, 'div', null, 'bbts');
     dom.d8m2.innerHTML = 'Resume the fight';
     dom.d8m2.style.right = '0px';
     dom.d8m2.style.position = 'absolute';
-    dom.d8m2.addEventListener('click', function (this: any) { if (!global.flags.civil) global.flags.btl = true; });
+    dom.d8m2.addEventListener('click', function (this: any) { if (!flags.civil) flags.btl = true; });
     dom.d7m_c = addElement(dom.d1m, 'div', 'ainfo');
     dom.d7m = addElement(dom.d7m_c, 'small');
     dom.d7m.update = function (this: any) { global.current_z.size >= 0 ? this.innerHTML = 'Area: ' + global.current_z.name + ' / ' + global.current_z.size : this.innerHTML = 'Area: ' + global.current_z.name + ' / ' + '∞'; };
     dom.d7m.update();
     dom.inv_ctx = addElement(document.body, 'div', 'inv');
-    if (!global.flags.aw_u) dom.inv_ctx.style.display = 'none';
+    if (!flags.aw_u) dom.inv_ctx.style.display = 'none';
     dom.inventory = addElement(dom.inv_ctx, 'div');
     dom.inv_control = addElement(dom.inventory, 'div', 'inv_control');
     dom.inv_btn_1 = addElement(dom.inv_control, 'div', null, 'bts');
@@ -361,13 +361,13 @@ declare var InstallTrigger: any;
     dom.nthngdsp.innerHTML = 'Nothing here yet';
     dom.nthngdsp.style.display = 'none'
     dom.ctr_1 = addElement(dom.ctrmg_ca, 'div', 'ctrm_1');
-    if (!global.flags.aw_u) dom.ctr_1.style.display = 'none';
+    if (!flags.aw_u) dom.ctr_1.style.display = 'none';
     dom.ctr_1a = addElement(dom.ctr_1, 'div');
     dom.d_weather = addElement(dom.ctr_1a, 'div', 'ctr_w');
     dom.d_weathers = addElement(dom.d_weather, 'small');
     dom.d_weathert = addElement(dom.d_weather, 'span');
     dom.d_weathers.style.marginRight = 5
-    dom.d_weathers.addEventListener('click', () => { global.flags.ssngaijin = !global.flags.ssngaijin; wdrseason(global.flags.ssngaijin) })
+    dom.d_weathers.addEventListener('click', () => { flags.ssngaijin = !flags.ssngaijin; wdrseason(flags.ssngaijin) })
     dom.d_moon = addElement(dom.d_weather, 'span');
     dom.d_anomaly = addElement(dom.d_weather, 'span');
     dom.d_anomaly.innerHTML = '';
@@ -380,10 +380,10 @@ declare var InstallTrigger: any;
       dom.d_moon.style.position = 'relative';
     }
     dom.d_time = addElement(dom.ctr_1a, 'div', 'ctr_t');
-    dom.d_time.addEventListener('click', function (this: any) { if (global.flags.tmmode >= 3) global.flags.tmmode = 1; else global.flags.tmmode++; this.innerHTML = '<small>' + getDay(global.flags.tmmode) + '</small> ' + timeDisp(time) });
+    dom.d_time.addEventListener('click', function (this: any) { if (flags.tmmode >= 3) flags.tmmode = 1; else flags.tmmode++; this.innerHTML = '<small>' + getDay(flags.tmmode) + '</small> ' + timeDisp(time) });
     // Weather/time init (after DOM elements exist)
     setWeather(weather.clear, 600);
-    wManager(); dom.d_time.innerHTML = '<small>' + getDay(global.flags.tmmode) + '</small> ' + timeDisp(time);
+    wManager(); dom.d_time.innerHTML = '<small>' + getDay(flags.tmmode) + '</small> ' + timeDisp(time);
     dom.d_lct = addElement(dom.ctr_1a, 'div', 'ctr_l');
     dom.d_lct.style.display = 'none';
     dom.d_lct.innerHTML = 'Location: '
@@ -396,15 +396,15 @@ declare var InstallTrigger: any;
     dom.d_lctte = addElement(dom.d_lctc, 'span')
     dom.ctr_2 = addElement(dom.ctrwin1, 'div', 'ctrm_2');
     dom.ct_ctrl = addElement(dom.ctrmg, 'div', 'ct_ctrl');
-    if (!global.flags.aw_u) dom.ct_ctrl.style.display = 'none';
+    if (!flags.aw_u) dom.ct_ctrl.style.display = 'none';
     dom.ct_bt1 = addElement(dom.ct_ctrl, 'div', null, 'control-tab');
-    dom.ct_bt1.innerHTML = global.flags.asbu ? 'assemble' : '???????';
+    dom.ct_bt1.innerHTML = flags.asbu ? 'assemble' : '???????';
     dom.ct_bt2 = addElement(dom.ct_ctrl, 'div', null, 'control-tab');
-    dom.ct_bt2.innerHTML = global.flags.sklu ? 'skills' : '???????';
+    dom.ct_bt2.innerHTML = flags.sklu ? 'skills' : '???????';
     dom.ct_bt3 = addElement(dom.ct_ctrl, 'div', null, 'control-tab');
-    dom.ct_bt3.innerHTML = global.flags.actsu ? 'actions' : '???????';
+    dom.ct_bt3.innerHTML = flags.actsu ? 'actions' : '???????';
     dom.ct_bt6 = addElement(dom.ct_ctrl, 'div', null, 'control-tab');
-    dom.ct_bt6.innerHTML = global.flags.jnlu ? 'journal' : '???????';
+    dom.ct_bt6.innerHTML = flags.jnlu ? 'journal' : '???????';
     dom.ct_bt7 = addElement(dom.ct_ctrl, 'div', null, 'control-tab');
     dom.ct_bt7.innerHTML = 'settings';
     dom.ct_bt1.style.borderLeft = 'none';
@@ -482,32 +482,32 @@ declare var InstallTrigger: any;
           this.skwm_e_btn_3_b.innerHTML = 'LVL';
           this.skwm_e_btn_3_b.style.border = '1px solid #46a';
           this.skwm_e_btn_1_b.addEventListener('click', function (this: any) {
-            if (global.flags.ssort_a === true) {
+            if (flags.ssort_a === true) {
               you.skls.sort(function (a: any, b: any) { if (a.name < b.name) return -1; if (a.name > b.name) return 1; return 0 });
-              global.flags.ssort_a = false;
+              flags.ssort_a = false;
             } else {
               you.skls.sort(function (a: any, b: any) { if (a.name > b.name) return -1; if (a.name < b.name) return 1; return 0 });
-              global.flags.ssort_a = true;
+              flags.ssort_a = true;
             } empty(dom.skcon)
             for (let m = 0; m < you.skls.length; m++) { renderSkl(you.skls[m]); if (m === you.skls.length - 1) dom.skcon.children[m].style.borderBottom = '1px solid #46a'; }
           });
           this.skwm_e_btn_2_b.addEventListener('click', function (this: any) {
-            if (global.flags.ssort_b === true) {
+            if (flags.ssort_b === true) {
               you.skls.sort(function (a: any, b: any) { if (a.type < b.type) return -1; if (a.type > b.type) return 1; if (a.id < b.id) return -1; if (a.id > b.id) return 1; return 0 });
-              global.flags.ssort_b = false;
+              flags.ssort_b = false;
             } else {
               you.skls.sort(function (a: any, b: any) { if (a.type > b.type) return -1; if (a.type < b.type) return 1; if (a.id > b.id) return -1; if (a.id < b.id) return 1; return 0 });
-              global.flags.ssort_b = true;
+              flags.ssort_b = true;
             } empty(dom.skcon)
             for (let m = 0; m < you.skls.length; m++) { renderSkl(you.skls[m]); if (m === you.skls.length - 1) dom.skcon.children[m].style.borderBottom = '1px solid #46a'; }
           });
           this.skwm_e_btn_3_b.addEventListener('click', function (this: any) {
-            if (global.flags.ssort_b === true) {
+            if (flags.ssort_b === true) {
               you.skls.sort(function (a: any, b: any) { if (a.lvl < b.lvl) return -1; if (a.lvl > b.lvl) return 1; if (a.exp < b.exp) return -1; if (a.exp > b.exp) return 1; return 0 });
-              global.flags.ssort_b = false;
+              flags.ssort_b = false;
             } else {
               you.skls.sort(function (a: any, b: any) { if (a.lvl > b.lvl) return -1; if (a.lvl < b.lvl) return 1; if (a.exp > b.exp) return -1; if (a.exp < b.exp) return 1; return 0 });
-              global.flags.ssort_b = true;
+              flags.ssort_b = true;
             } empty(dom.skcon)
             for (let m = 0; m < you.skls.length; m++) { renderSkl(you.skls[m]); if (m === you.skls.length - 1) dom.skcon.children[m].style.borderBottom = '1px solid #46a'; }
           });
@@ -537,7 +537,7 @@ declare var InstallTrigger: any;
       }
     });
     dom.ct_bt6.addEventListener('click', function (this: any) {
-      if (!global.flags.jnlu) return; dom.nthngdsp.style.display = 'none';
+      if (!flags.jnlu) return; dom.nthngdsp.style.display = 'none';
       if (global.lw_op === 6) { dom.ctrwin6.style.display = 'none'; dom.ctrwin5.style.display = 'none'; dom.ctrwin4.style.display = 'none'; dom.ctrwin3.style.display = 'none'; dom.ctrwin2.style.display = 'none'; dom.ctrwin1.style.display = ''; global.lw_op = 0; clearInterval(timers.sklupdate); clearInterval(timers.bstmonupdate) }
       else {
         dom.ctrwin6.style.display = ''; dom.ctrwin5.style.display = 'none'; dom.ctrwin4.style.display = 'none'; dom.ctrwin3.style.display = 'none'; dom.ctrwin2.style.display = 'none'; dom.ctrwin1.style.display = 'none'; global.lw_op = 6;
@@ -561,7 +561,7 @@ declare var InstallTrigger: any;
         this.jlbod.style.height = 100;
         this.jlbod.style.width = '100%';
         dom.jlbrw1s1.innerHTML = 'Q U E S T S';
-        dom.jlbrw1s2.innerHTML = global.flags.bstu === true ? 'B E S T I A R Y' : '????????????'
+        dom.jlbrw1s2.innerHTML = flags.bstu === true ? 'B E S T I A R Y' : '????????????'
         this.jlbrw2s1.innerHTML = '????????????';
         this.jlbrw2s2.innerHTML = 'S T A T I S T I C S';
         dom.jlbrw1s1.addEventListener('click', () => {
@@ -641,7 +641,7 @@ declare var InstallTrigger: any;
           }
         });
         dom.jlbrw1s2.addEventListener('click', function (this: any) {
-          if (!global.flags.bstu) return; empty(dom.ctrwin6); global.lw_op = -1;
+          if (!flags.bstu) return; empty(dom.ctrwin6); global.lw_op = -1;
           let bst_entr_case = addElement(dom.ctrwin6, 'div');
           bst_entr_case.style.height = '84%';
           bst_entr_case.style.backgroundColor = 'rgb(0,20,44)';
@@ -971,10 +971,10 @@ declare var InstallTrigger: any;
             dom.tcright.innerHTML = global.stat.rdttl;
             addDesc(dom.tccon, null, 2, 'Info', '<span style="color:lie">Click to list known books</span>');
             dom.tccon.addEventListener('click', function (this: any) {
-              if (!global.flags.bksstt) {
-                global.flags.bksstt = true;
+              if (!flags.bksstt) {
+                flags.bksstt = true;
                 dom.bkssttbd = addElement(document.body, 'div', null, 'popup-list');
-                dom.bkssttbd.addEventListener('click', function (this: any) { empty(dom.bkssttbd); document.body.removeChild(dom.bkssttbd); global.flags.bksstt = false; global.dscr.style.display = 'none' });
+                dom.bkssttbd.addEventListener('click', function (this: any) { empty(dom.bkssttbd); document.body.removeChild(dom.bkssttbd); flags.bksstt = false; global.dscr.style.display = 'none' });
                 let bks = [];
                 for (let a in item) if (item[a].data.finished) bks.push(item[a]);
                 for (let a in bks) {
@@ -1274,7 +1274,7 @@ declare var InstallTrigger: any;
     dom.ct_bt4_21b.max = 255;
     dom.ct_bt4_21b.style.width = '85px';
     dom.ct_bt4_21b.style.height = '16px';
-    dom.ct_bt4_21b.addEventListener('input', function (this: any) { document.body.removeAttribute('style'); global.flags.bgspc = false; global.bg_r = this.value; document.body.style.backgroundColor = 'rgb(' + global.bg_r + ',' + global.bg_g + ',' + global.bg_b + ')'; dom.ct_bt4_31b.innerHTML = global.bg_r });
+    dom.ct_bt4_21b.addEventListener('input', function (this: any) { document.body.removeAttribute('style'); flags.bgspc = false; global.bg_r = this.value; document.body.style.backgroundColor = 'rgb(' + global.bg_r + ',' + global.bg_g + ',' + global.bg_b + ')'; dom.ct_bt4_31b.innerHTML = global.bg_r });
     dom.ct_bt4_22b = addElement(dom.ct_bt4_2, 'input', null, 'option-input');
     dom.ct_bt4_22b.value = global.bg_g;
     dom.ct_bt4_22b.type = 'range';
@@ -1284,7 +1284,7 @@ declare var InstallTrigger: any;
     dom.ct_bt4_22b.max = 255;
     dom.ct_bt4_22b.style.width = '85px';
     dom.ct_bt4_22b.style.left = '367px';
-    dom.ct_bt4_22b.addEventListener('input', function (this: any) { document.body.removeAttribute('style'); global.flags.bgspc = false; global.bg_g = this.value; document.body.style.backgroundColor = 'rgb(' + global.bg_r + ',' + global.bg_g + ',' + global.bg_b + ')'; dom.ct_bt4_32b.innerHTML = global.bg_g });
+    dom.ct_bt4_22b.addEventListener('input', function (this: any) { document.body.removeAttribute('style'); flags.bgspc = false; global.bg_g = this.value; document.body.style.backgroundColor = 'rgb(' + global.bg_r + ',' + global.bg_g + ',' + global.bg_b + ')'; dom.ct_bt4_32b.innerHTML = global.bg_g });
     dom.ct_bt4_23b = addElement(dom.ct_bt4_2, 'input', null, 'option-input');
     dom.ct_bt4_23b.value = global.bg_b;
     dom.ct_bt4_23b.type = 'range';
@@ -1294,7 +1294,7 @@ declare var InstallTrigger: any;
     dom.ct_bt4_23b.max = 255;
     dom.ct_bt4_23b.style.width = '85px';
     dom.ct_bt4_23b.style.left = '459px';
-    dom.ct_bt4_23b.addEventListener('input', function (this: any) { document.body.removeAttribute('style'); global.flags.bgspc = false; global.bg_b = this.value; document.body.style.backgroundColor = 'rgb(' + global.bg_r + ',' + global.bg_g + ',' + global.bg_b + ')'; dom.ct_bt4_33b.innerHTML = global.bg_b });
+    dom.ct_bt4_23b.addEventListener('input', function (this: any) { document.body.removeAttribute('style'); flags.bgspc = false; global.bg_b = this.value; document.body.style.backgroundColor = 'rgb(' + global.bg_r + ',' + global.bg_g + ',' + global.bg_b + ')'; dom.ct_bt4_33b.innerHTML = global.bg_b });
 
     dom.ct_bt4_3 = addElement(dom.ctrwin4, 'div', null, 'option-row');
     dom.ct_bt4_3a = addElement(dom.ct_bt4_3, 'div', null, 'option-label');
@@ -1340,7 +1340,7 @@ declare var InstallTrigger: any;
     dom.ct_bt4_03b3.style.backgroundColor = 'rgb(18,18,46)';
     dom.ct_bt4_03b4.style.background = 'linear-gradient(180deg,#000,#123)';
     dom.ct_bt4_03b1.addEventListener('click', function (this: any) {
-      global.flags.bgspc = false
+      flags.bgspc = false
       global.bg_r = 255;
       global.bg_g = 255;
       global.bg_b = 255;
@@ -1354,7 +1354,7 @@ declare var InstallTrigger: any;
       document.body.style.backgroundColor = 'rgb(' + global.bg_r + ',' + global.bg_g + ',' + global.bg_b + ')';
     });
     dom.ct_bt4_03b2.addEventListener('click', function (this: any) {
-      global.flags.bgspc = false
+      flags.bgspc = false
       global.bg_r = 188;
       global.bg_g = 188;
       global.bg_b = 188;
@@ -1368,7 +1368,7 @@ declare var InstallTrigger: any;
       document.body.style.backgroundColor = 'rgb(' + global.bg_r + ',' + global.bg_g + ',' + global.bg_b + ')';
     });
     dom.ct_bt4_03b3.addEventListener('click', function (this: any) {
-      global.flags.bgspc = false
+      flags.bgspc = false
       global.bg_r = 18;
       global.bg_g = 18;
       global.bg_b = 46;
@@ -1382,7 +1382,7 @@ declare var InstallTrigger: any;
       document.body.style.backgroundColor = 'rgb(' + global.bg_r + ',' + global.bg_g + ',' + global.bg_b + ')';
     });
     dom.ct_bt4_03b4.addEventListener('click', function (this: any) {
-      global.flags.bgspc = true
+      flags.bgspc = true
       dom.ct_bt4_31b.innerHTML = 'SPCL';
       dom.ct_bt4_32b.innerHTML = 'SPCL';
       dom.ct_bt4_33b.innerHTML = 'SPCL';
@@ -1394,16 +1394,16 @@ declare var InstallTrigger: any;
     dom.ct_bt4_4a.innerHTML = 'Destroy gradients';
     dom.ct_bt4_41b = addElement(dom.ct_bt4_4, 'input', null, 'option-input');
     dom.ct_bt4_41b.type = 'checkbox';
-    dom.ct_bt4_41b.addEventListener('click', () => { nograd(global.flags.grd_s) });
+    dom.ct_bt4_41b.addEventListener('click', () => { nograd(flags.grd_s) });
     dom.ct_bt4_5 = addElement(dom.ctrwin4, 'div', null, 'option-row');
     dom.ct_bt4_5a = addElement(dom.ct_bt4_5, 'div', null, 'option-label-alt');
     dom.ct_bt4_5b = addElement(dom.ct_bt4_5, 'div', null, 'option-value-alt');
     dom.ct_bt4_5a.innerHTML = 'Export';
     dom.ct_bt4_5a.style.border = '1px lightgrey solid';
     dom.ct_bt4_5a.addEventListener('click', function (this: any) {
-      if (!global.flags.expatv) {
+      if (!flags.expatv) {
         let t = save(true);
-        global.flags.expatv = true;
+        flags.expatv = true;
         dom.ct_bt4_5a_nc = addElement(document.body, 'div');
         dom.ct_bt4_5a_nc.style.position = 'absolute';
         dom.ct_bt4_5a_nc.style.padding = 2;
@@ -1440,7 +1440,7 @@ declare var InstallTrigger: any;
         dom.ct_bt4_5a_nhx.innerHTML = '✖';
         dom.ct_bt4_5a_nhx.style.float = 'right';
         dom.ct_bt4_5a_nhx.style.backgroundColor = 'red';
-        dom.ct_bt4_5a_nhx.addEventListener('click', function (this: any) { global.flags.expatv = false; empty(dom.ct_bt4_5a_nc); document.body.removeChild(dom.ct_bt4_5a_nc); kill(dom.ct_bt4_5a_nc) });
+        dom.ct_bt4_5a_nhx.addEventListener('click', function (this: any) { flags.expatv = false; empty(dom.ct_bt4_5a_nc); document.body.removeChild(dom.ct_bt4_5a_nc); kill(dom.ct_bt4_5a_nc) });
         dom.ct_bt4_5a_nb = addElement(dom.ct_bt4_5a_nc, 'div');
         dom.ct_bt4_5a_nbc = addElement(dom.ct_bt4_5a_nb, 'textArea');
         dom.ct_bt4_5a_nbc.style.fontFamily = 'MS Gothic';
@@ -1453,8 +1453,8 @@ declare var InstallTrigger: any;
     dom.ct_bt4_5b.innerHTML = 'Import';
     dom.ct_bt4_5b.style.border = '1px lightgrey solid';
     dom.ct_bt4_5b.addEventListener('click', function (this: any) {
-      if (!global.flags.impatv) {
-        global.flags.impatv = true;
+      if (!flags.impatv) {
+        flags.impatv = true;
         dom.ct_bt4_5b_nc = addElement(document.body, 'div');
         dom.ct_bt4_5b_nc.style.position = 'absolute';
         dom.ct_bt4_5b_nc.style.padding = 2;
@@ -1481,7 +1481,7 @@ declare var InstallTrigger: any;
           if (/savevalid/g.test(bt)) {
             storage.setItem("v0.2a", t);
             load(t);
-            global.flags.impatv = false;
+            flags.impatv = false;
             empty(dom.ct_bt4_5b_nc);
             document.body.removeChild(dom.ct_bt4_5b_nc);
             kill(dom.ct_bt4_5b_nc)
@@ -1492,7 +1492,7 @@ declare var InstallTrigger: any;
         dom.ct_bt4_5b_nhx.innerHTML = '✖';
         dom.ct_bt4_5b_nhx.style.float = 'right';
         dom.ct_bt4_5b_nhx.style.backgroundColor = 'red';
-        dom.ct_bt4_5b_nhx.addEventListener('click', function (this: any) { global.flags.impatv = false; empty(dom.ct_bt4_5b_nc); document.body.removeChild(dom.ct_bt4_5b_nc) });
+        dom.ct_bt4_5b_nhx.addEventListener('click', function (this: any) { flags.impatv = false; empty(dom.ct_bt4_5b_nc); document.body.removeChild(dom.ct_bt4_5b_nc) });
         dom.ct_bt4_5b_nhz = addElement(dom.ct_bt4_5b_nh, 'div');
         dom.ct_bt4_5b_nhz.style.float = 'left';
         dom.ct_bt4_5b_nhz.style.backgroundColor = 'grey';
@@ -1518,7 +1518,7 @@ declare var InstallTrigger: any;
               dom.ct_bt4_5b_nbc.value = 'Load Successful';
               storage.setItem("v0.2a", r.result as string);
               load(r.result);
-              global.flags.impatv = false;
+              flags.impatv = false;
               empty(dom.ct_bt4_5b_nc);
               document.body.removeChild(dom.ct_bt4_5b_nc);
               kill(dom.ct_bt4_5b_nc)
@@ -1540,13 +1540,13 @@ declare var InstallTrigger: any;
     dom.ct_bt4_6a.innerHTML = 'Attach timestamp to messages';
     dom.ct_bt4_61b = addElement(dom.ct_bt4_6,'input',null,'option-input');
     dom.ct_bt4_61b.type='checkbox';
-    dom.ct_bt4_61b.addEventListener('click',()=>{global.flags.msgtm=!global.flags.msgtm});
+    dom.ct_bt4_61b.addEventListener('click',()=>{flags.msgtm=!flags.msgtm});
     */
 
 
     dom.gmsgs = addElement(document.body, 'div', 'gmsgs');
     dom.mstt = addElement(dom.gmsgs, 'div', 'mstt');
-    if (!global.flags.aw_u) dom.gmsgs.style.display = 'none';
+    if (!flags.aw_u) dom.gmsgs.style.display = 'none';
     dom.mstt.style.textAlign = 'center';
     dom.mstt.innerHTML = 'm e s s a g e　　　l o g';
     dom.mstt.style.fontSize = '1.1em';
@@ -1557,8 +1557,8 @@ declare var InstallTrigger: any;
     dom.m_b_1.innerHTML = 'freeze messagelog　';
     dom.m_b_1_c = addElement(dom.m_b_1, 'span', null, 'msg-badge');
     dom.m_b_1.addEventListener('click', () => {
-      if (global.flags.m_freeze === false) { global.flags.m_freeze = true; dom.m_b_1_c.innerHTML = 'Ｘ' }
-      else { global.flags.m_freeze = false; dom.m_b_1_c.innerHTML = '' }
+      if (flags.m_freeze === false) { flags.m_freeze = true; dom.m_b_1_c.innerHTML = 'Ｘ' }
+      else { flags.m_freeze = false; dom.m_b_1_c.innerHTML = '' }
     });
 
     dom.m_b_2 = addElement(dom.m_control, 'small', null, 'msg-ctrl-btn');
@@ -1566,8 +1566,8 @@ declare var InstallTrigger: any;
     dom.m_b_2.style.left = '19px';
     dom.m_b_2_c = addElement(dom.m_b_2, 'span', null, 'msg-badge');
     dom.m_b_2.addEventListener('click', () => {
-      if (global.flags.m_blh === false) { global.flags.m_blh = true; dom.m_b_2_c.innerHTML = 'Ｘ' }
-      else { global.flags.m_blh = false; dom.m_b_2_c.innerHTML = '' }
+      if (flags.m_blh === false) { flags.m_blh = true; dom.m_b_2_c.innerHTML = 'Ｘ' }
+      else { flags.m_blh = false; dom.m_b_2_c.innerHTML = '' }
     });
     dom.m_b_3 = addElement(dom.m_control, 'small', null, 'msg-ctrl-btn');
     dom.m_b_3.innerHTML = 'CLR';
@@ -1608,32 +1608,32 @@ declare var InstallTrigger: any;
     dom.inv_btn_4.addEventListener('click', function (this: any) { isort(4); invbtsrst() });
     dom.inv_btn_5.addEventListener('click', function (this: any) { isort(5); invbtsrst() });
     dom.inv_btn_1_b.addEventListener('click', function (this: any) {
-      if (global.flags.sort_a === true) {
+      if (flags.sort_a === true) {
         inv.sort(function (a: any, b: any) { if (a.name < b.name) return -1; if (a.name > b.name) return 1; return 0 });
-        global.flags.sort_a = false;
+        flags.sort_a = false;
       } else {
         inv.sort(function (a: any, b: any) { if (a.name > b.name) return -1; if (a.name < b.name) return 1; return 0 });
-        global.flags.sort_a = true;
+        flags.sort_a = true;
       } iftrunkopenc(1);
       isort(global.sm)
     });
     dom.inv_btn_2_b.addEventListener('click', function (this: any) {
-      if (global.flags.sort_b === true) {
+      if (flags.sort_b === true) {
         inv.sort(function (a: any, b: any) { if (a.amount < b.amount) return -1; if (a.amount > b.amount) return 1; if (a.name < b.name) return -1; if (a.name > b.name) return 1; return 0 });
-        global.flags.sort_b = false;
+        flags.sort_b = false;
       } else {
         inv.sort(function (a: any, b: any) { if (a.amount > b.amount) return -1; if (a.amount < b.amount) return 1; if (a.name > b.name) return -1; if (a.name < b.name) return 1; return 0 });
-        global.flags.sort_b = true;
+        flags.sort_b = true;
       } iftrunkopenc(1);
       isort(global.sm)
     });
     dom.inv_btn_3_b.addEventListener('click', function (this: any) {
-      if (global.flags.sort_c === true) {
+      if (flags.sort_c === true) {
         inv.sort(function (a: any, b: any) { if (a.id < b.id) return -1; if (a.id > b.id) return 1; if (a.name < b.name) return -1; if (a.name > b.name) return 1; return 0 });
-        global.flags.sort_c = false;
+        flags.sort_c = false;
       } else {
         inv.sort(function (a: any, b: any) { if (a.id > b.id) return -1; if (a.id < b.id) return 1; if (a.name > b.name) return -1; if (a.name < b.name) return 1; return 0 });
-        global.flags.sort_c = true;
+        flags.sort_c = true;
       } iftrunkopenc(1);
       isort(global.sm)
     });
@@ -1647,7 +1647,7 @@ declare var InstallTrigger: any;
     dom.hit_c = function (this: any) {
       let hit_a = hit_calc(1)!;
       let hit_b = hit_calc(2)!;
-      let drk = (global.flags.isdark && !cansee());
+      let drk = (flags.isdark && !cansee());
       if (hit_a > 100) hit_a = 100;
       else if (hit_a < 0) hit_a = 0;
       if (hit_b > 100) hit_b = 100;
@@ -1679,8 +1679,8 @@ declare var InstallTrigger: any;
     dom.autosves.style.position = 'fixed';
     if (typeof InstallTrigger === 'undefined') dom.autosves.style.bottom = 'inherit';
     dom.autosves.addEventListener('click', function (this: any) {
-      global.flags.autosave = !global.flags.autosave;
-      if (global.flags.autosave === true) timers.autos = setInterval(function (this: any) { save(true); }, 30000);
+      flags.autosave = !flags.autosave;
+      if (flags.autosave === true) timers.autos = setInterval(function (this: any) { save(true); }, 30000);
       else clearInterval(timers.autos)
     });
     dom.sl_h = addElement(dom.sl, 'span', null, 'sl');
@@ -1761,7 +1761,7 @@ declare var InstallTrigger: any;
     // mf — moved to ui/shop.ts
 
     document.body.addEventListener('keydown', function (e) {
-      if (global.flags.kfocus !== true) {
+      if (flags.kfocus !== true) {
         for (let obj in global.shortcuts) if (e.which === global.shortcuts[obj][0]) {
           let g = global.shortcuts[obj][2];
           if (g.amount > 0 || !!g.slot) {
@@ -1770,8 +1770,8 @@ declare var InstallTrigger: any;
           }
         }
       }
-      if (!global.flags.shifton && (e.which === 69 || e.which === 16)) {
-        global.flags.shifton = true;
+      if (!flags.shifton && (e.which === 69 || e.which === 16)) {
+        flags.shifton = true;
         global.kkey = 1;
         descsinfo(global.shiftid)
       }
@@ -1779,7 +1779,7 @@ declare var InstallTrigger: any;
 
     document.body.addEventListener('keyup', function (e) {
       if (e.which === 69 || e.which === 16) {
-        global.flags.shifton = false;
+        flags.shifton = false;
         if (dom.dscshe) dom.dscshe.innerHTML = '';
         global.kkey = -1
       }
@@ -1900,7 +1900,7 @@ declare var InstallTrigger: any;
     chss.t1 = new Chs();
     chss.t1.id = 101;
     chss.t1.sl = function (this: any) {
-      global.lst_loc = 101; global.flags.inside = true; d_loc('Dojo, training area');
+      global.lst_loc = 101; flags.inside = true; d_loc('Dojo, training area');
       chs('???: Kid', true);
       chs('"..."', false).addEventListener('click', function (this: any) {
         global.time += DAY;
@@ -1913,12 +1913,12 @@ declare var InstallTrigger: any;
             appear(dom.inv_ctx);
             appear(dom.d_lct);
             chs('???: Grab your stuff and get to it', true);
-            chs('"..."', false).addEventListener('click', function (this: any) { appear(dom.ct_ctrl); smove(chss.tdf, false); giveItem(wpn.stk1); giveItem(item.hrb1, 15); global.flags.aw_u = true; });
+            chs('"..."', false).addEventListener('click', function (this: any) { appear(dom.ct_ctrl); smove(chss.tdf, false); giveItem(wpn.stk1); giveItem(item.hrb1, 15); flags.aw_u = true; });
           });
         });
       });
     };
-    if (global.flags.gameone === false) {
+    if (flags.gameone === false) {
       global.current_l = chss.t1;
       smove(chss.t1);
       giveFurniture(furniture.frplc, null, false);
@@ -1930,23 +1930,23 @@ declare var InstallTrigger: any;
     chss.tdf = new Chs();
     chss.tdf.id = 102;
     chss.tdf.sl = function (this: any) {
-      global.lst_loc = 102; global.flags.inside = true;
+      global.lst_loc = 102; flags.inside = true;
       clr_chs();
-      if (!global.flags.dmap) { appear(dom.gmsgs); global.flags.dmap = true }
+      if (!flags.dmap) { appear(dom.gmsgs); flags.dmap = true }
       chs('"Select the difficulty"', true);
-      if (!global.flags.tr1_win) chs('"Easiest"', false).addEventListener('click', function (this: any) {
+      if (!flags.tr1_win) chs('"Easiest"', false).addEventListener('click', function (this: any) {
         chs('"You are fighting training dummies"', true);
-        if (!global.flags.dm1ap) { appear(dom.d1m); global.flags.dm1ap = true };
+        if (!flags.dm1ap) { appear(dom.d1m); flags.dm1ap = true };
         area_init(area.trn1);
       });
-      if (!global.flags.tr2_win) chs('"Easy"', false).addEventListener('click', function (this: any) {
+      if (!flags.tr2_win) chs('"Easy"', false).addEventListener('click', function (this: any) {
         chs('"You are fighting training dummies"', true);
-        if (!global.flags.dm1ap) { appear(dom.d1m); global.flags.dm1ap = true }
+        if (!flags.dm1ap) { appear(dom.d1m); flags.dm1ap = true }
         area_init(area.trn2);
       });
-      if (!global.flags.tr3_win) chs('"Normal"', false).addEventListener('click', function (this: any) {
+      if (!flags.tr3_win) chs('"Normal"', false).addEventListener('click', function (this: any) {
         chs('"You are fighting training dummies"', true);
-        if (!global.flags.dm1ap) { appear(dom.d1m); global.flags.dm1ap = true };
+        if (!flags.dm1ap) { appear(dom.d1m); flags.dm1ap = true };
         area_init(area.trn3);
       });
     }
@@ -1958,13 +1958,13 @@ declare var InstallTrigger: any;
     chss.t2 = new Chs();
     chss.t2.id = 103;
     chss.t2.sl = function (this: any) {
-      global.lst_loc = 103; global.flags.inside = true;
+      global.lst_loc = 103; flags.inside = true;
       chs('"Instructor: ' + select(['Good', 'Nice', 'Great', 'Excellent']) + ' ' + select(['job', 'work']) + ' kid! Here\'s the reward for completing the course"', true, 'lime');
       chs('"->"', false).addEventListener('click', function (this: any) {
-        if (global.flags.tr1_win === true && !global.flags.rwd1) { global.flags.rwd1 = true; giveItem(item.appl, 4); giveItem(item.hrb1, 5); smove(chss.tdf); }
-        else if (global.flags.tr2_win === true && !global.flags.rwd2) { global.flags.rwd2 = true; giveItem(item.brd, 2); giveItem(item.hrb1, 5); giveItem(eqp.sndl); smove(chss.tdf); }
-        else if (global.flags.tr3_win === true && !global.flags.rwd3) { global.flags.rwd3 = true; let itm = giveItem(eqp.vst); itm.dp *= .7; if (global.flags.m_un === true) giveItem(item.cp, 10); }
-        if (!global.flags.tr3_win || !global.flags.tr2_win || !global.flags.tr1_win) smove(chss.tdf);
+        if (flags.tr1_win === true && !flags.rwd1) { flags.rwd1 = true; giveItem(item.appl, 4); giveItem(item.hrb1, 5); smove(chss.tdf); }
+        else if (flags.tr2_win === true && !flags.rwd2) { flags.rwd2 = true; giveItem(item.brd, 2); giveItem(item.hrb1, 5); giveItem(eqp.sndl); smove(chss.tdf); }
+        else if (flags.tr3_win === true && !flags.rwd3) { flags.rwd3 = true; let itm = giveItem(eqp.vst); itm.dp *= .7; if (flags.m_un === true) giveItem(item.cp, 10); }
+        if (!flags.tr3_win || !flags.tr2_win || !flags.tr1_win) smove(chss.tdf);
         else { ; smove(chss.t3); giveTitle(ttl.inn); }
       });
     }
@@ -1973,32 +1973,32 @@ declare var InstallTrigger: any;
     chss.t3 = new Chs();
     chss.t3.id = 104;
     chss.t3.sl = () => {
-      global.flags.inside = true; d_loc('Dojo, lobby'); global.lst_loc = 104; global.flags.inside = true;
-      if (global.flags.nbtfail) {
+      flags.inside = true; d_loc('Dojo, lobby'); global.lst_loc = 104; flags.inside = true;
+      if (flags.nbtfail) {
         chs('"Instructor: You got beaten up by an inanimated dummy?! Pay attention to your condition!"', true);
         chs('"..."', false).addEventListener('click', () => {
-          global.flags.nbtfail = false;
+          flags.nbtfail = false;
           clr_chs();
           smove(chss.tdf, false);
           giveItem(item.hrb1, 4);
         });
       }
       else {
-        if (!global.flags.dj1end) {
+        if (!flags.dj1end) {
           chs('"Instructor: Your training is over for today, you did well. As a reward, select one of these skill manuals to practice. The better your understanding, the stronger you will be in battle"', true);
-          chs('"Practitioner Skillbook (Swords)"', false).addEventListener('click', () => { giveItem(item.skl1); global.flags.dj1end = true; smove(chss.lsmain1); });
-          chs('"Practitioner Skillbook (Knives)"', false).addEventListener('click', () => { giveItem(item.skl2); global.flags.dj1end = true; smove(chss.lsmain1); });
-          chs('"Practitioner Skillbook (Axes)"', false).addEventListener('click', () => { giveItem(item.skl3); global.flags.dj1end = true; smove(chss.lsmain1); });
-          chs('"Practitioner Skillbook (Spears)"', false).addEventListener('click', () => { giveItem(item.skl4); global.flags.dj1end = true; smove(chss.lsmain1); });
-          chs('"Practitioner Skillbook (Hammers)"', false).addEventListener('click', () => { giveItem(item.skl5); global.flags.dj1end = true; smove(chss.lsmain1); });
-          chs('"Practitioner Skillbook (Martial)"', false).addEventListener('click', () => { giveItem(item.skl6); global.flags.dj1end = true; smove(chss.lsmain1); });
+          chs('"Practitioner Skillbook (Swords)"', false).addEventListener('click', () => { giveItem(item.skl1); flags.dj1end = true; smove(chss.lsmain1); });
+          chs('"Practitioner Skillbook (Knives)"', false).addEventListener('click', () => { giveItem(item.skl2); flags.dj1end = true; smove(chss.lsmain1); });
+          chs('"Practitioner Skillbook (Axes)"', false).addEventListener('click', () => { giveItem(item.skl3); flags.dj1end = true; smove(chss.lsmain1); });
+          chs('"Practitioner Skillbook (Spears)"', false).addEventListener('click', () => { giveItem(item.skl4); flags.dj1end = true; smove(chss.lsmain1); });
+          chs('"Practitioner Skillbook (Hammers)"', false).addEventListener('click', () => { giveItem(item.skl5); flags.dj1end = true; smove(chss.lsmain1); });
+          chs('"Practitioner Skillbook (Martial)"', false).addEventListener('click', () => { giveItem(item.skl6); flags.dj1end = true; smove(chss.lsmain1); });
         }
-        else if (global.flags.trnex1 === true && !global.flags.trnex2) {
+        else if (flags.trnex1 === true && !flags.trnex2) {
           chs('"Instructor: Hahahhha! What a great disciple! That\'s not the dedication most of the other disciples have! Take this, it\'ll help you in your future endeavours"', true, 'yellow');
           chs('"Thanks teacher!"', false).addEventListener('click', () => {
             giveItem(acc.snch);
             smove(chss.lsmain1);
-            global.flags.trnex2 = true;
+            flags.trnex2 = true;
           });
         }
         else {
@@ -2009,35 +2009,35 @@ declare var InstallTrigger: any;
           chs('"Destroy more dummies"', false).addEventListener('click', () => {
             smove(chss.return1, false);
           });
-          if (global.flags.dj1end === true && you.lvl >= 10 && !global.flags.trne1e1) chs('"Challenge a stronger opponent"', false).addEventListener('click', () => {
+          if (flags.dj1end === true && you.lvl >= 10 && !flags.trne1e1) chs('"Challenge a stronger opponent"', false).addEventListener('click', () => {
             chs('"You are facing a golem"', true);
             area_init(area.trne1);
             chs('"<= Escape"', false).addEventListener('click', () => {
               smove(chss.t3, false);
             });
           });
-          if (global.flags.trne1e1 && !global.flags.trne2e1) chs('"Challenge an even stronger opponent"', false, 'cornflowerblue').addEventListener('click', () => {
+          if (flags.trne1e1 && !flags.trne2e1) chs('"Challenge an even stronger opponent"', false, 'cornflowerblue').addEventListener('click', () => {
             chs('"You are facing a golem"', true);
             area_init(area.trne2);
             chs('"<= Escape"', false).addEventListener('click', () => {
               smove(chss.t3, false);
             });
           });
-          if (global.flags.trne2e1 && !global.flags.trne3e1) chs('"Challenge a dangerous opponent"', false, 'crimson').addEventListener('click', () => {
+          if (flags.trne2e1 && !flags.trne3e1) chs('"Challenge a dangerous opponent"', false, 'crimson').addEventListener('click', () => {
             chs('"You are facing a golem"', true);
             area_init(area.trne3);
             chs('"<= Escape"', false).addEventListener('click', () => {
               smove(chss.t3, false);
             });
           });
-          if (global.flags.trne3e1 && !global.flags.trne4e1) chs('"Challenge a powerful opponent"', false, 'red').addEventListener('click', () => {
+          if (flags.trne3e1 && !flags.trne4e1) chs('"Challenge a powerful opponent"', false, 'red').addEventListener('click', () => {
             chs('"You are facing a golem"', true);
             area_init(area.trne4);
             chs('"<= Escape"', false).addEventListener('click', () => {
               smove(chss.t3, false);
             });
           });
-          if (global.flags.dj1end) chs('"Turn in dojo gear"', false).addEventListener('click', () => {
+          if (flags.dj1end) chs('"Turn in dojo gear"', false).addEventListener('click', () => {
             chs('"Instructor: You can return whatever you punched off of dummies and get coin for it, it\'s dojo\'s equipment after all. Or you can keep and use for it yourself, the choice is yours"', true);
             chs('"Return the rags"', false).addEventListener('click', () => {
               let dlr = 0;
@@ -2069,7 +2069,7 @@ declare var InstallTrigger: any;
               smove(chss.t3, false);
             });
           });
-          if (global.flags.djmlet && getDay(1) == 'Sunday') {
+          if (flags.djmlet && getDay(1) == 'Sunday') {
             chs('"Grab a serving of free food"', false, 'lime').addEventListener('click', () => {
               if (getDay(1) == 'Sunday') {
                 msg(select(['*Chow*', '*Munch*', '*Crunch*', '*Gulp*']), 'lime');
@@ -2077,46 +2077,46 @@ declare var InstallTrigger: any;
                 you.sat = you.satmax;
                 giveSkExp(skl.glt, 42);
                 dom.d5_3_1.update();
-                global.flags.djmlet = false;
+                flags.djmlet = false;
                 smove(chss.t3, false);
                 return
               } else {
                 msg('Too late for that', 'yellow');
-                global.flags.djmlet = false;
+                flags.djmlet = false;
                 smove(chss.t3, false);
                 return
               }
             });
           }
-          if (global.flags.dj1end === true) chs('"Level Advancement"', false, 'orange').addEventListener('click', () => {
+          if (flags.dj1end === true) chs('"Level Advancement"', false, 'orange').addEventListener('click', () => {
             chs('"Instructor: If you put effort into training you will get rewards as long as you are still a disciple of this hall. After every 5 levels you reach, come here and recieve your share! You might get something really useful if you continue to improve your skills"', true);
-            if (!global.flags.dj1rw1 && you.lvl >= 5) {
+            if (!flags.dj1rw1 && you.lvl >= 5) {
               chs('"Level 5 reward"', false).addEventListener('click', () => {
                 chs('"Instructor: This is a good start, congratulations! Keep working hard!"', true);
                 chs('"Accept"', false, 'lime').addEventListener('click', () => {
-                  global.flags.dj1rw1 = true;
+                  flags.dj1rw1 = true;
                   giveWealth(25);
                   giveItem(item.sp1, 5);
                   smove(chss.t3, false);
                 });
               });
             }
-            if (!global.flags.dj1rw2 && global.flags.dj1rw1 === true && you.lvl >= 10) {
+            if (!flags.dj1rw2 && flags.dj1rw1 === true && you.lvl >= 10) {
               chs('"Level 10 reward"', false, 'royalblue').addEventListener('click', () => {
                 chs('"Instructor: You seem to not neglect your training, good job! Keep working hard!"', true);
                 chs('"Accept"', false, 'lime').addEventListener('click', () => {
-                  global.flags.dj1rw2 = true;
+                  flags.dj1rw2 = true;
                   giveWealth(100);
                   giveItem(item.sp2, 2);
                   smove(chss.t3, false);
                 });
               });
             }
-            if (!global.flags.dj1rw3 && global.flags.dj1rw2 === true && you.lvl >= 15) {
+            if (!flags.dj1rw3 && flags.dj1rw2 === true && you.lvl >= 15) {
               chs('"Level 15 reward"', false, 'lime').addEventListener('click', () => {
                 chs('"Instructor: You\'re slowly growing into a fine young warrior! Keep working hard!"', true);
                 chs('"Accept"', false, 'lime').addEventListener('click', () => {
-                  global.flags.dj1rw3 = true;
+                  flags.dj1rw3 = true;
                   giveWealth(200);
                   giveItem(item.sp3, 1);
                   giveItem(eqp.tnc);
@@ -2127,33 +2127,33 @@ declare var InstallTrigger: any;
                 });
               });
             }
-            if (!global.flags.dj1rw4 && global.flags.dj1rw3 === true && you.lvl >= 20) {
+            if (!flags.dj1rw4 && flags.dj1rw3 === true && you.lvl >= 20) {
               chs('"Level 20 reward"', false, 'gold').addEventListener('click', () => {
                 chs('"Instructor: Time to start getting serious! Keep working hard!"', true);
                 chs('"Accept"', false, 'lime').addEventListener('click', () => {
-                  global.flags.dj1rw4 = true;
+                  flags.dj1rw4 = true;
                   giveWealth(300);
                   giveItem(wpn.tkmts);
                   smove(chss.t3, false);
                 });
               });
             }
-            if (!global.flags.dj1rw5 && global.flags.dj1rw4 === true && you.lvl >= 25) {
+            if (!flags.dj1rw5 && flags.dj1rw4 === true && you.lvl >= 25) {
               chs('"Level 25 reward"', false, 'orange').addEventListener('click', () => {
                 chs('"Instructor: You\'re almost ready to face real dangers of the outside world! Keep working hard!"', true);
                 chs('"Accept"', false, 'lime').addEventListener('click', () => {
-                  global.flags.dj1rw5 = true;
+                  flags.dj1rw5 = true;
                   giveWealth(350);
                   giveItem(acc.mnch);
                   smove(chss.t3, false);
                 });
               });
             }
-            if (!global.flags.dj1rw6 && global.flags.dj1rw5 === true && you.lvl >= 30) {
+            if (!flags.dj1rw6 && flags.dj1rw5 === true && you.lvl >= 30) {
               chs('"Level 30 reward"', false, 'crimson').addEventListener('click', () => {
                 chs('"Instructor: You are almost as strong as an average adult! Good job kid and Keep working hard! Maybe you can defend this village one day"', true);
                 chs('"Accept"', false, 'lime').addEventListener('click', () => {
-                  global.flags.dj1rw6 = true;
+                  flags.dj1rw6 = true;
                   giveWealth(400);
                   giveItem(item.stthbm1);
                   giveItem(item.stthbm4);
@@ -2182,14 +2182,14 @@ declare var InstallTrigger: any;
           chs('"<= Go outside"', false).addEventListener('click', () => {
             smove(chss.lsmain1);
           });
-          if (global.flags.trne4e1 && !global.flags.trne4e1b) {
+          if (flags.trne4e1 && !flags.trne4e1b) {
             chs('"Instructor: Once again, choose the skillbook of specialization you are interested in. Doesn\'t mean you have to stick with it to the bitter end, but it will help you train"', true);
-            chs('"Bladesman Manual"', false).addEventListener('click', () => { giveItem(item.skl1a); global.flags.trne4e1b = true; smove(chss.lsmain1); });
-            chs('"Assassin Manual"', false).addEventListener('click', () => { giveItem(item.skl2a); global.flags.trne4e1b = true; smove(chss.lsmain1); });
-            chs('"Axeman Manual"', false).addEventListener('click', () => { giveItem(item.skl3a); global.flags.trne4e1b = true; smove(chss.lsmain1); });
-            chs('"Lancer Manual"', false).addEventListener('click', () => { giveItem(item.skl4a); global.flags.trne4e1b = true; smove(chss.lsmain1); });
-            chs('"Clubber Manual"', false).addEventListener('click', () => { giveItem(item.skl5a); global.flags.trne4e1b = true; smove(chss.lsmain1); });
-            chs('"Brawler Manual"', false).addEventListener('click', () => { giveItem(item.skl6a); global.flags.trne4e1b = true; smove(chss.lsmain1); });
+            chs('"Bladesman Manual"', false).addEventListener('click', () => { giveItem(item.skl1a); flags.trne4e1b = true; smove(chss.lsmain1); });
+            chs('"Assassin Manual"', false).addEventListener('click', () => { giveItem(item.skl2a); flags.trne4e1b = true; smove(chss.lsmain1); });
+            chs('"Axeman Manual"', false).addEventListener('click', () => { giveItem(item.skl3a); flags.trne4e1b = true; smove(chss.lsmain1); });
+            chs('"Lancer Manual"', false).addEventListener('click', () => { giveItem(item.skl4a); flags.trne4e1b = true; smove(chss.lsmain1); });
+            chs('"Clubber Manual"', false).addEventListener('click', () => { giveItem(item.skl5a); flags.trne4e1b = true; smove(chss.lsmain1); });
+            chs('"Brawler Manual"', false).addEventListener('click', () => { giveItem(item.skl6a); flags.trne4e1b = true; smove(chss.lsmain1); });
           }
         }
       }
@@ -2202,7 +2202,7 @@ declare var InstallTrigger: any;
     chss.djinf = new Chs();
     chss.djinf.id = 160;
     chss.djinf.sl = () => {
-      global.flags.inside = true; d_loc('Dojo, Infoboard'); global.lst_loc = 160;
+      flags.inside = true; d_loc('Dojo, Infoboard'); global.lst_loc = 160;
       chs('Useful information regarding dojo is written here. What will you read?', true);
       chs('"Get stronger!"', false).addEventListener('click', () => {
         chs('Fight dummies provided by dojo to improve your physique and weapon skills! Destroy them and grab their stuff, or vanquish thousands for a special reward! The doors of our dojo is open for everyone willing to lead the path of a warrior', true);
@@ -2249,11 +2249,11 @@ declare var InstallTrigger: any;
     chss.trne1e1 = new Chs();
     chss.trne1e1.id = 124;
     chss.trne1e1.sl = () => {
-      global.flags.inside = true; d_loc('Dojo, training area'); global.lst_loc = 124;
+      flags.inside = true; d_loc('Dojo, training area'); global.lst_loc = 124;
       chs('Instructor: Great job smashing that golem! This golem is one of the weakest types around, but even he can become a huge trouble if you\'re not giving it your best. Now, grab this and proceed with your training', true);
       chs('"Proceed with your training"', false).addEventListener('click', () => {
         giveItem(item.hptn1, 10);
-        global.flags.trne1e1 = true;
+        flags.trne1e1 = true;
         smove(chss.t3);
       });
     }
@@ -2262,12 +2262,12 @@ declare var InstallTrigger: any;
     chss.trne2e1 = new Chs();
     chss.trne2e1.id = 125;
     chss.trne2e1.sl = () => {
-      global.flags.inside = true; d_loc('Dojo, training area'); global.lst_loc = 125;
+      flags.inside = true; d_loc('Dojo, training area'); global.lst_loc = 125;
       chs('Instructor: Just like that, keep it up. You are starting to stand much longer in fights, such an improvement from when you just arrived here! You deserver your praise, but don\'t get complacent', true);
       chs('"Proceed with your training"', false).addEventListener('click', () => {
         giveItem(wpn.fksrd);
         giveItem(acc.otpin);
-        global.flags.trne2e1 = true;
+        flags.trne2e1 = true;
         smove(chss.t3);
       });
     }
@@ -2276,11 +2276,11 @@ declare var InstallTrigger: any;
     chss.trne3e1 = new Chs();
     chss.trne3e1.id = 126;
     chss.trne3e1.sl = () => {
-      global.flags.inside = true; d_loc('Dojo, training area'); global.lst_loc = 126;
+      flags.inside = true; d_loc('Dojo, training area'); global.lst_loc = 126;
       chs('Instructor: That was a tough one, but you still managed to crush it! You are getting close to finishing a second course. Don\'t give up!', true);
       chs('"Proceed with your training"', false).addEventListener('click', () => {
         giveItem(item.scrlw);
-        global.flags.trne3e1 = true;
+        flags.trne3e1 = true;
         smove(chss.t3);
       });
     }
@@ -2289,10 +2289,10 @@ declare var InstallTrigger: any;
     chss.trne4e1 = new Chs();
     chss.trne4e1.id = 162;
     chss.trne4e1.sl = () => {
-      global.flags.inside = true; d_loc('Dojo, training area'); global.lst_loc = 162;
+      flags.inside = true; d_loc('Dojo, training area'); global.lst_loc = 162;
       chs('Instructor: <span style="color:lime">As expected, you have what it takes to protect yourself! And with that, you have finished the second entry course of this dojo, job well done! Soon, you will be able to step out of the village and take on serious jobs that will let you explore the land. You better prepare yourself well before that happens!</span>', true);
       chs('"Finish training"', false, 'lime').addEventListener('click', () => {
-        global.flags.trne4e1 = true;
+        flags.trne4e1 = true;
         smove(chss.t3);
       });
     }
@@ -2301,9 +2301,9 @@ declare var InstallTrigger: any;
     chss.return1 = new Chs();
     chss.return1.id = 105;
     chss.return1.sl = () => {
-      global.flags.inside = true; d_loc('Dojo, training area'); global.lst_loc = 105;
+      flags.inside = true; d_loc('Dojo, training area'); global.lst_loc = 105;
       chs('Punch as many as you want', true);
-      if (!global.flags.trnex2) area_init(area.trn);
+      if (!flags.trnex2) area_init(area.trn);
       else area_init(area.trnf);
       chs('"<= Return back into lobby"', false).addEventListener('click', () => {
         smove(chss.t3);
@@ -2314,7 +2314,7 @@ declare var InstallTrigger: any;
     chss.frstn1main = new Chs();
     chss.frstn1main.id = 113;
     chss.frstn1main.sl = () => {
-      global.flags.inside = false; d_loc('Western Woods, The Wooden Gate'); global.lst_loc = 113;
+      flags.inside = false; d_loc('Western Woods, The Wooden Gate'); global.lst_loc = 113;
       chs('You\'re out in the forest. You can hunt here', true);
       chs('"=> Enter the Hunter\'s lodge"', false).addEventListener('click', () => {
         smove(chss.frstn1b1);
@@ -2322,7 +2322,7 @@ declare var InstallTrigger: any;
       chs('"=> Delve inside the forest"', false).addEventListener('click', () => {
         smove(chss.frstn1a1);
       });
-      if (global.flags.frstn1a3u) chs('"=> Hunt indefinitely"', false).addEventListener('click', () => {
+      if (flags.frstn1a3u) chs('"=> Hunt indefinitely"', false).addEventListener('click', () => {
         smove(chss.frstn1a3);
       });
       chs('"<= Return back"', false).addEventListener('click', () => {
@@ -2335,7 +2335,7 @@ declare var InstallTrigger: any;
     chss.frstn1a3.id = 130;
     addtosector(sector.forest1, chss.frstn1a3)
     chss.frstn1a3.sl = () => {
-      global.flags.inside = false; d_loc('Western Woods, They\'re Nearby'); global.lst_loc = 130;
+      flags.inside = false; d_loc('Western Woods, They\'re Nearby'); global.lst_loc = 130;
       chs('The woods are silent', true);
       chs('"<= Return back"', false).addEventListener('click', () => {
         smove(chss.frstn1main);
@@ -2350,7 +2350,7 @@ declare var InstallTrigger: any;
     chss.frstn1a4.id = 161;
     addtosector(sector.forest1, chss.frstn1a4)
     chss.frstn1a4.sl = () => {
-      global.flags.inside = false; d_loc('Western Woods, Round Branches');
+      flags.inside = false; d_loc('Western Woods, Round Branches');
       if (area.frstn1a4.size > 0) {
         chs('Something ambushes you!', true, 'red');
         chs('"<= Escape"', false).addEventListener('click', () => {
@@ -2358,14 +2358,14 @@ declare var InstallTrigger: any;
         });
       } else {
         chs('You never knew this secluded area was here', true);
-        if (!global.flags.frstnskltg) chs('"Look around"', false).addEventListener('click', () => {
+        if (!flags.frstnskltg) chs('"Look around"', false).addEventListener('click', () => {
           chs('You see something sticking out from the ground in the grass over there. Bones?', true);
           chs('"Examine whatever that might be"', false).addEventListener('click', () => {
             chs('Indeed, bones. Skeletal remains of a person to be exact. Looks like he died long time ago, much of everything rotted off, even metallic bits of whatever armor he was wearing have fallen apart.', true);
             chs('"See if you can salvage anything"', false).addEventListener('click', () => {
               chs('There isn\'t much you can take with you, except for the sword on the skeleton\'\s hip, still inside its half-desintegrated sheath. What was the cause of his death? He wasn\'t in a fight judging by the state of the sword. Was he poisoned? Or caught by surprise? Couldn\'t leave this place for whatever reason? You are not sure. The least you can do is honor the deceased by burying his remains', true);
               chs('"Make a grave"', false).addEventListener('click', () => {
-                global.flags.frstnskltg = true;
+                flags.frstnskltg = true;
                 giveItem(wpn.mkrdwk);
                 you.karma += 3;
                 you.luck++;
@@ -2399,8 +2399,8 @@ declare var InstallTrigger: any;
     chss.frstn1b1 = new Chs();
     chss.frstn1b1.id = 118;
     chss.frstn1b1.sl = () => {
-      global.flags.inside = true; d_loc('Western Woods, Hunter\'s Lodge');
-      if (wearingany(wpn.mkrdwk) && !global.flags.wkrtndrt) {
+      flags.inside = true; d_loc('Western Woods, Hunter\'s Lodge');
+      if (wearingany(wpn.mkrdwk) && !flags.wkrtndrt) {
         chs('<span style="color:limegreen">Head Hunter Yamato</span>: You! Why do you have that?', true);
         chs('"?"', false).addEventListener('click', () => {
           chs('<span style="color:limegreen">Head Hunter Yamato</span>: The sword! Where did you get it!?', true);
@@ -2415,7 +2415,7 @@ declare var InstallTrigger: any;
                   chs('Accept', false, 'lime').addEventListener('click', () => {
                     removeItem(findbyid(inv, wpn.mkrdwk.id));
                     giveWealth(300);
-                    global.flags.wkrtndrt = true;
+                    flags.wkrtndrt = true;
                     smove(chss.frstn1b1, false)
                   });
                 });
@@ -2425,7 +2425,7 @@ declare var InstallTrigger: any;
         });
         return;
       }
-      if (!global.flags.frstn1b1int) { chs('<span style="color:limegreen">Head Hunter Yamato</span>: Hm? Your face is unfamiliar. Might be your first time around here I take it? These are the Western Woods, or simply the western part of the forest. Spots here are very meek and mild on danger and resources, it is perfect for newbies like you. You are free to come and hunt as much as you like. Consider doing some of the available jobs while you\'re at it. Won\'t pay much, but you can be of help to the people.', true, 'orange', undefined, undefined, undefined, '.9em'); global.flags.frstn1b1int = true } else global.flags.wkrtndrt && random() > .5 ? chs(select(['You sight the hunter thinking deeply about something', 'You hear mumbling']), true) : chs(select(['You see a variety of bows and other hunting tools arranged on the table and hanging from the walls', 'You notice head hunter maintaining his hunting gear', 'The smell of beef jerky assaults your nose']), true);
+      if (!flags.frstn1b1int) { chs('<span style="color:limegreen">Head Hunter Yamato</span>: Hm? Your face is unfamiliar. Might be your first time around here I take it? These are the Western Woods, or simply the western part of the forest. Spots here are very meek and mild on danger and resources, it is perfect for newbies like you. You are free to come and hunt as much as you like. Consider doing some of the available jobs while you\'re at it. Won\'t pay much, but you can be of help to the people.', true, 'orange', undefined, undefined, undefined, '.9em'); flags.frstn1b1int = true } else flags.wkrtndrt && random() > .5 ? chs(select(['You sight the hunter thinking deeply about something', 'You hear mumbling']), true) : chs(select(['You see a variety of bows and other hunting tools arranged on the table and hanging from the walls', 'You notice head hunter maintaining his hunting gear', 'The smell of beef jerky assaults your nose']), true);
       chs('"!Ask about the jobs"', false, 'yellow').addEventListener('click', () => {
         smove(chss.frstn1b1j, false);
       });
@@ -2448,16 +2448,16 @@ declare var InstallTrigger: any;
       chs('"<= Exit"', false).addEventListener('click', () => {
         smove(chss.frstn1main);
       });
-      if (quest.fwd1.data.done === true && quest.hnt1.data.done === true && !global.flags.frstn1b1g1) {
+      if (quest.fwd1.data.done === true && quest.hnt1.data.done === true && !flags.frstn1b1g1) {
         chs('<span style="color:limegreen">Head Hunter Yamato</span>: You\'re still going around without a proper weapon? That won\'t do, catch this. It isn\'t much, but a bit better than you being nearly emptyhanded. Once you return back you should check the ' + col('Notice Board', 'lime') + ' by the village center, you never know if something important is happening in the ouskirts that you aren\'t aware of, but it will almost certainly be written there. You may find a job offer or two, or see pleads of fellow villagers asking for help with mundane things, consider those as well', true);
         chs('"Thanks!"', false).addEventListener('click', () => {
           chs('<span style="color:limegreen">Head Hunter Yamato</span>: One more thing. I\'ll ask you to do this very easy, little job. Grab this bag and get it to the village\'s herbalist. You know where the herbalist is? Here are the directions, listen well: head to the marketplace and look for a very unremarkable little building with a sign that looks like a vial. Like those vials they use in alchemy, those ones. The building is located a little further back from the road, in the shade, so you may simply forget it exists if you aren\'t specifically looking for it, you keep your eyes peeled. Now go, you should have no problem getting there', true);
           chs('"Got it"', false).addEventListener('click', () => {
-            global.flags.frstn1b1g1 = true;
+            flags.frstn1b1g1 = true;
             giveItem(wpn.dgknf);
             giveItem(item.htrsvr);
             smove(chss.frstn1b1, false);
-            global.flags.phai1udt = true;
+            flags.phai1udt = true;
           });
         });
       }
@@ -2467,7 +2467,7 @@ declare var InstallTrigger: any;
     chss.htrtch0 = new Chs();
     chss.htrtch0.id = 164;
     chss.htrtch0.sl = () => {
-      global.flags.inside = true;
+      flags.inside = true;
       chs('<span style="color:limegreen">Head Hunter Yamato</span>: What do you want to ask, kid? Want to know how to butcher a carcass? Khahhahhah! *cough*', true);
       chs('"About monsters"', false).addEventListener('click', () => { smove(chss.htrtch1, false) });
       chs('"What are monster ranks?"', false).addEventListener('click', () => {
@@ -2481,7 +2481,7 @@ declare var InstallTrigger: any;
     chss.htrtch1 = new Chs();
     chss.htrtch1.id = 163;
     chss.htrtch1.sl = () => {
-      global.flags.inside = true;
+      flags.inside = true;
       chs('<div style="line-height:14px"><span style="color:limegreen">Head Hunter Yamato</span>: Monsters, you say? There are many and they are around, terrorizing peaceful folk in the outside world. Our remote parts don\'t see much of that, these lands are tame. Not without dangers, of course, you meet a wild boar in the forest - a single wrong move and its tusks are in your guts and that is it, end of the fool. Or those pesky slimes, while don\'t look menacing and pose little danger, they sometimes gather and destroy the fields by melting crops and soil. We have it good but starvation is worse than any monster, at times. *cough* anyway, anything living and non-living you meet can be separated into 6 categories:<br>Human, Beast, Undead, Evil, Phantom, Dragon</div>', true, 0, 0, 0, 0, '.8em');
       chs('"About Humans"', false, 0, 0, 0, 0, '.8em', 0, '15px').addEventListener('click', () => {
         chs('<span style="color:limegreen">Head Hunter Yamato</span>: Humans and Demihumans fall into the same class. People like you and me, beastmen, orcs, goblins... Mostly creatures intelligent enough to walk on their two, use tools, form societies, make settlements, trade and speak on their own violition. You will encounter and perhaps fight them as bandits, criminals, members of the opposing factions and armies, whoever you disagree with. Always be on your guard, humanoids are cunning and skilled, versatile and very adaptive. Yet, they have mushy bodies. One correct strike and you get an advantage', true);
@@ -2515,7 +2515,7 @@ declare var InstallTrigger: any;
     chss.frstn1b1s = new Chs();
     chss.frstn1b1s.id = 121;
     chss.frstn1b1s.sl = () => {
-      global.flags.inside = true;
+      flags.inside = true;
       chs('<span style="color:limegreen">Head Hunter Yamato</span>: I\'ll fetch you 15 copper per bundle! How many do you want to sell?', true);
       let fwd = item.fwd1.have ? item.fwd1.amount : 0;
       if (fwd >= 1) chs('"Sell 1 piece"', false, 'lightgrey').addEventListener('click', () => {
@@ -2551,17 +2551,17 @@ declare var InstallTrigger: any;
     chss.frstn1b1j = new Chs();
     chss.frstn1b1j.id = 119;
     chss.frstn1b1j.sl = () => {
-      global.flags.inside = true;
+      flags.inside = true;
       chs('<span style="color:limegreen">Head Hunter Yamato</span>: Here is what\'s available, take a look', true);
       if (quest.fwd1.data.done && quest.hnt1.data.done) {
         if (!quest.lmfstkil1.data.started && !quest.lmfstkil1.data.done) {
           chs('"Monster eradication"', false).addEventListener('click', () => {
-            if (you.lvl < 20 || !global.flags.trne4e1) { msg('<span style="color:limegreen">Head Hunter Yamato</span>: Don\'t even think about it, you will not be sent to your death. Go back and train, dojo has everything you need'); return }
+            if (you.lvl < 20 || !flags.trne4e1) { msg('<span style="color:limegreen">Head Hunter Yamato</span>: Don\'t even think about it, you will not be sent to your death. Go back and train, dojo has everything you need'); return }
             if (!quest.lmfstkil1.data.started) {
               chs('<span style="color:limegreen">Head Hunter Yamato</span>: What\'s this? Your aura has changed since we last met! All the martial training you went through certainly hasn\'t gone to waste, this kid is definitely isn\'t a pushover anymore, hah! If you have the guts to take on the next task, listen well - southern forest is becoming more and more dangerous, lethal beasts keep crawling in from the farther plains, making it very difficult to do any sort of work in the south. Looks like wolves this time. Some fear, at this rate, they might reach and assault the village, and that will have need to be dealth with. This is a dangerous issue, and you will have to have courage to take it on, but in turn it will serve you as great real battle experience. Other lads have already signed up, as well. Are you willing?', true, 'yellow', 0, 0, 0, '.9em');
               chs('"Accept"', false, 'lime').addEventListener('click', () => {
                 giveQst(quest.lmfstkil1);
-                global.flags.frst1u = true;
+                flags.frst1u = true;
                 giveItem(item.bstr)
                 chs('<span style="color:limegreen">Head Hunter Yamato</span>: Hunt down all the wolves you find and return once you destroy at least 35 of them. You will also want this, every hunter should keep his personal notes close. And prepare medicinal bandages, just in case. Be careful, and good luck', true);
                 chs('"<= Return"', false).addEventListener('click', () => {
@@ -2669,7 +2669,7 @@ declare var InstallTrigger: any;
     chss.frstn1a1.id = 114;
     addtosector(sector.forest1, chss.frstn1a1)
     chss.frstn1a1.sl = () => {
-      global.flags.inside = false; d_loc('Western Woods, The Yellow Path');
+      flags.inside = false; d_loc('Western Woods, The Yellow Path');
       chs('The woods are silent', true);
       chs('"<= Return back"', false).addEventListener('click', () => {
         smove(chss.frstn1main);
@@ -2684,12 +2684,12 @@ declare var InstallTrigger: any;
     chss.frstn1a2.id = 115;
     addtosector(sector.forest1, chss.frstn1a2)
     chss.frstn1a2.sl = () => {
-      global.lst_loc = 115; global.flags.inside = false; d_loc('Western Woods, The Underbushes');
+      global.lst_loc = 115; flags.inside = false; d_loc('Western Woods, The Underbushes');
       chs('You scavenged some goods from this forest area', true);
       chs('"=> Go further into the forest"', false).addEventListener('click', () => {
         smove(chss.frstn2a1);
       });
-      if (global.flags.frstnscgr) chs('"\-\-> Enter the hidden path"', false, 'grey').addEventListener('click', () => {
+      if (flags.frstnscgr) chs('"\-\-> Enter the hidden path"', false, 'grey').addEventListener('click', () => {
         smove(chss.frstn1a4);
       });
       chs('"<= Return back"', false).addEventListener('click', () => {
@@ -2698,7 +2698,7 @@ declare var InstallTrigger: any;
     }
     chss.frstn1a2.data = { scoutm: 320, scout: 0, scoutf: false, gets: [false], gotmod: 0 }
     chss.frstn1a2.scout = [
-      { c: .008, f: () => { msg('You uncover a hidden passage!', 'lime'); global.flags.frstnscgr = true; smove(chss.frstn1a4); chss.frstn1a2.data.gets[0] = true }, exp: 66 },
+      { c: .008, f: () => { msg('You uncover a hidden passage!', 'lime'); flags.frstnscgr = true; smove(chss.frstn1a4); chss.frstn1a2.data.gets[0] = true }, exp: 66 },
     ]
     chss.frstn1a2.onScout = function (this: any) { scoutGeneric(this) }
 
@@ -2708,7 +2708,7 @@ declare var InstallTrigger: any;
     chss.frstn2a1.id = 120;
     addtosector(sector.forest1, chss.frstn2a1)
     chss.frstn2a1.sl = () => {
-      global.flags.inside = false; d_loc('Western Woods, The Shaded Path');
+      flags.inside = false; d_loc('Western Woods, The Shaded Path');
       chs('The woods are silent', true);
       chs('"<= Return back"', false).addEventListener('click', () => {
         smove(chss.frstn1main);
@@ -2722,7 +2722,7 @@ declare var InstallTrigger: any;
     chss.frstn3main = new Chs();
     chss.frstn3main.id = 168;
     chss.frstn3main.sl = () => {
-      global.flags.inside = false; d_loc('Southern Forest, The Oaken Gate'); global.lst_loc = 168;
+      flags.inside = false; d_loc('Southern Forest, The Oaken Gate'); global.lst_loc = 168;
       chs('The air here feels intimidating', true);
       chs('"=> Explore the depths"', false).addEventListener('click', () => {
         smove(chss.frstn9a1m);
@@ -2736,7 +2736,7 @@ declare var InstallTrigger: any;
     chss.frstn9a1m = new Chs();
     chss.frstn9a1m.id = 169;
     chss.frstn9a1m.sl = () => {
-      global.flags.inside = false; d_loc('Southern Forest, The Foliage'); global.lst_loc = 169;
+      flags.inside = false; d_loc('Southern Forest, The Foliage'); global.lst_loc = 169;
       chs('This place looks dark', true);
       chs('"<= Return back"', false).addEventListener('click', () => {
         smove(chss.frstn3main);
@@ -2753,7 +2753,7 @@ declare var InstallTrigger: any;
     addtosector(sector.vcent, chss.lsmain1);
     addtosector(sector.vmain1, chss.lsmain1)
     chss.lsmain1.sl = () => {
-      global.flags.inside = false; d_loc('Village Center'); global.lst_loc = 106;
+      flags.inside = false; d_loc('Village Center'); global.lst_loc = 106;
       if (isWeather(weather.sunny) || isWeather(weather.clear)) chs('The surroundings are flourishing with life, nothing bad can happen', true);
       else if (isWeather(weather.cloudy) || isWeather(weather.overcast) || isWeather(weather.stormy)) chs('You have a feeling it might rain soon', true);
       else if (isWeather(weather.storm) || isWeather(weather.rain) || isWeather(weather.drizzle)) chs('The rain feels surprisingly refreshing', true);
@@ -2766,9 +2766,9 @@ declare var InstallTrigger: any;
         smove(chss.t3);
       });
       chs('"=> Enter Southern forest"', false).addEventListener('click', () => {
-        if (!global.flags.frst1u) msg('Gate Guard: "Nothing for you to do there. Scram!"', 'yellow');
+        if (!flags.frst1u) msg('Gate Guard: "Nothing for you to do there. Scram!"', 'yellow');
         else {
-          if (!global.flags.frst1um) { msg('Gate Guard: "You were given permission to proceed. Go on"', 'yellow'); global.flags.frst1um = true } smove(chss.frstn3main)
+          if (!flags.frst1um) { msg('Gate Guard: "You were given permission to proceed. Go on"', 'yellow'); flags.frst1um = true } smove(chss.frstn3main)
         }
       })
       chs('"=> Enter Western Woods"', false).addEventListener('click', () => {
@@ -2778,20 +2778,20 @@ declare var InstallTrigger: any;
       //  chs('"=> Visit Pill Tower"',false).addEventListener('click',()=>{
       //    smove(chss.pltwr1);
       //  });
-      if (global.flags.mkplc1u === true) chs('"=> Visit Marketplace"', false).addEventListener('click', () => {
+      if (flags.mkplc1u === true) chs('"=> Visit Marketplace"', false).addEventListener('click', () => {
         smove(chss.mrktvg1);
       });
       chs('"=> Go home"', false, 'green').addEventListener('click', () => {
         smove(chss.home);
       });
-      if (!global.flags.scrtgltt) chs('"=> Food stand"', false).addEventListener('click', () => {
-        if (skl.trad.lvl >= 2 && random() < .2) global.flags.scrtglti = true;
-        if (global.flags.scrtglti === true) {
+      if (!flags.scrtgltt) chs('"=> Food stand"', false).addEventListener('click', () => {
+        if (skl.trad.lvl >= 2 && random() < .2) flags.scrtglti = true;
+        if (flags.scrtglti === true) {
           chs('...', true);
           chs('?', false).addEventListener('click', () => {
             chs('"Passerby: Looking for the foodstand guy? He took his stuff and went South. That one supposedly travels from place to place to sell the food he makes, doubt we\'ll see him back any time soon"', true);
             chs('Well then..', false).addEventListener('click', () => {
-              global.flags.scrtgltt = true;
+              flags.scrtgltt = true;
               smove(chss.lsmain1, false);
             });
           });
@@ -2804,12 +2804,12 @@ declare var InstallTrigger: any;
       // chs('"test"',false,'red').addEventListener('click',()=>{
       //   chss.tst.sl();
       // });
-      if (!global.flags.catget) chs('"=> Approach the cat"', false).addEventListener('click', () => {
+      if (!flags.catget) chs('"=> Approach the cat"', false).addEventListener('click', () => {
         smove(chss.cat1);
         if (!global.stat.cat_c) global.stat.cat_c = 0;
       });
-      if (!global.flags.mkplc1u) {
-        if (global.flags.dj1end === true && global.flags.pmfspmkm1 !== true && random() < .4) {
+      if (!flags.mkplc1u) {
+        if (flags.dj1end === true && flags.pmfspmkm1 !== true && random() < .4) {
           chs('Paper Boy: Hey, this is for you!', true);
           chs('?', false).addEventListener('click', () => { giveItem(item.shppmf); smove(chss.lsmain1, false) });
         }
@@ -2821,7 +2821,7 @@ declare var InstallTrigger: any;
     chss.mrktvg1.id = 127;
     addtosector(sector.vmain1, chss.mrktvg1)
     chss.mrktvg1.sl = () => {
-      global.flags.inside = false; d_loc('Village Center, Marketplace'); global.lst_loc = 127;
+      flags.inside = false; d_loc('Village Center, Marketplace'); global.lst_loc = 127;
       chs('The marketplace feels busy', true);
       chs('"Grocery Shop =>"', false, 'gold').addEventListener('click', () => {
         smove(chss.grc1);
@@ -2829,14 +2829,14 @@ declare var InstallTrigger: any;
       chs('"General Store =>"', false, 'gold').addEventListener('click', () => {
         smove(chss.gens1);
       });
-      if (global.flags.phai1udt) chs('"Herbalist =>"', false, 'gold').addEventListener('click', () => {
+      if (flags.phai1udt) chs('"Herbalist =>"', false, 'gold').addEventListener('click', () => {
         smove(chss.pha1);
       });
       chs('"Nervous Guy =>"', false).addEventListener('click', () => {
         smove(chss.fdwrg1qt);
       });
 
-      if (global.flags.grddtjb) chs('"Checkpoint"', false, 'hotpink').addEventListener('click', () => {
+      if (flags.grddtjb) chs('"Checkpoint"', false, 'hotpink').addEventListener('click', () => {
         if (getHour() >= 7 && getHour() <= 10) {
           chs('Lookout Guard: Here for work? You won\'t have to do much, just stand there near the gate and look intimidating. You\'re not doing any fighting if someone dangerous comes around, that would be dealth by Us, your militia. Your shift ends at 8PM, sign up now and go', true);
           chs('"Alright..."', false).addEventListener('click', () => {
@@ -2876,9 +2876,9 @@ declare var InstallTrigger: any;
     chss.jbgd1 = new Chs();
     chss.jbgd1.id = 159;
     chss.jbgd1.sl = () => {
-      global.flags.inside = false; d_loc('Village Center, Marketplace Entry Gate'); global.lst_loc = 159;
+      flags.inside = false; d_loc('Village Center, Marketplace Entry Gate'); global.lst_loc = 159;
       let c = chs('You are standing on guard duty. This isn\'t very fun', true);
-      global.flags.work = true;
+      flags.work = true;
       dom.trddots = addElement(c, 'span');
       dom.trddots.frames = ['', '.', '..', '...'];
       dom.trddots.frame = 0;
@@ -2894,10 +2894,10 @@ declare var InstallTrigger: any;
         if (getHour() >= 20) {
           msg('Lookout Guard: Work\'s done for today, you have performed your duty just well and earned your salary, take it. You are advised to go straight home after you check out');
           finishQst(quest.grds1);
-          global.flags.work = false;
+          flags.work = false;
           clearInterval(this);
           smove(chss.home);
-          global.flags.jcom++;
+          flags.jcom++;
         } else {
           giveSkExp(skl.ptnc, .08);
           if (random() <= .01) msg(select(['Right...', 'This is boring', '*whistle*', 'Ah...', '...', 'Yeah...', 'Mhm...', 'Yawn...']), 'lightgrey')
@@ -2911,7 +2911,7 @@ declare var InstallTrigger: any;
     }
     chss.jbgd1.onLeave = function (this: any) {
       clearInterval(timers.job1t);
-      global.flags.work = false;
+      flags.work = false;
     }
 
 // @ts-ignore: constructor function
@@ -2931,7 +2931,7 @@ declare var InstallTrigger: any;
     chss.grc1.id = 128;
     chss.grc1.effectors = [{ e: effector.shop }];
     chss.grc1.sl = () => {
-      global.flags.inside = true; d_loc('Marketplace, Grocery Shop'); global.lst_loc = 128;
+      flags.inside = true; d_loc('Marketplace, Grocery Shop'); global.lst_loc = 128;
       chs('Old Lady: ' + (select(['These are very fresh, buy some!', 'Freshest vegetables for the lowest price!', 'Try a few and you\'ll want even more!'])), true);
       chs('"Purchase"', false, 'orange').addEventListener('click', () => {
         chs_spec(4, vendor.grc1)
@@ -2959,7 +2959,7 @@ declare var InstallTrigger: any;
     chss.gens1.id = 129;
     chss.gens1.effectors = [{ e: effector.shop }];
     chss.gens1.sl = () => {
-      global.flags.inside = true; d_loc('Marketplace, Shabby General Store'); global.lst_loc = 129;
+      flags.inside = true; d_loc('Marketplace, Shabby General Store'); global.lst_loc = 129;
       chs('Sleeping Old Man: ' + (select(['...Welcome', '...', 'zzz...', 'A customer? Pick what you want', 'Take your time'])), true);
       chs('"Purchase"', false, 'orange').addEventListener('click', () => {
         chs_spec(4, vendor.gens1)
@@ -2988,13 +2988,13 @@ declare var InstallTrigger: any;
           smove(chss.gens1, false);
         });
       });
-      if (area.hmbsmnt.size >= 1000 && global.flags.hbs1 && !global.flags.bmntsmkgt) chs('Infestation problem', false, 'grey').addEventListener('click', () => {
+      if (area.hmbsmnt.size >= 1000 && flags.hbs1 && !flags.bmntsmkgt) chs('Infestation problem', false, 'grey').addEventListener('click', () => {
         chs('Sleeping Old Man: Your basement is in bad shape? Same been happening to the other folks lately, it\'s not just you. Something is drilling through the underground right into people\'s homes! And then you get a cellar full of rats. A complete travesty! Some speculate there\'s a monster cave nearby, but nothing was found yet. But don\'t fret, there is a solution for you - you smoke the pests out. Light this bag and toss it in, the deeper the better. Your entire place will be filled with smog, so you will have to leave and stay out for a few hours, then you\'ll have a clean and monster free basement at your disposal. 5 ' + dom.coinsilver + ' silver the price', true);
         if (you.wealth >= SILVER * 5) chs('"Sounds good"', false, 'lime').addEventListener('click', () => {
           if (you.wealth < SILVER * 5) return;
           spend(SILVER * 5);
           giveItem(item.bmsmktt);
-          global.flags.bmntsmkgt = true;
+          flags.bmntsmkgt = true;
           smove(chss.gens1, false)
         });
         chs('"<= Too expensive"', false).addEventListener('click', () => {
@@ -3016,7 +3016,7 @@ declare var InstallTrigger: any;
     chss.pha1.id = 166;
     chss.pha1.effectors = [{ e: effector.shop }];
     chss.pha1.sl = () => {
-      global.flags.inside = true; d_loc('Marketplace, Herbalist'); global.lst_loc = 166;
+      flags.inside = true; d_loc('Marketplace, Herbalist'); global.lst_loc = 166;
       chs('Herbalist: ' + (select(['Injured? Come in, I\'ll give you a check up', 'Yes yes..', 'Don\'t neglect your well being, stack on anything you will need'])), true);
       chs('"Purchase"', false, 'orange').addEventListener('click', () => {
         chs_spec(4, vendor.pha1)
@@ -3036,14 +3036,14 @@ declare var InstallTrigger: any;
             giveWealth(15);
             item.hrb1.amount -= 50;
             reduce(item.hrb1);
-            if (global.stat.hbhbsld >= 7 && !global.flags.hbhbgft) {
+            if (global.stat.hbhbsld >= 7 && !flags.hbhbgft) {
               chs('Herbalist: You were such a great help bringing all this cure grass to me! Take this, as a bonus', true);
               chs('"Accept"', false, 'lime').addEventListener('click', () => {
                 giveItem(item.hptn1, 15);
                 giveItem(item.hptn2, 3);
                 vendor.pha1.data.rep = vendor.pha1.data.rep + 10 > 100 ? 100 : vendor.pha1.data.rep + 10;
                 msg('The Herbalist likes you a bit more', 'lime');
-                global.flags.hbhbgft = true;
+                flags.hbhbgft = true;
                 smove(chss.pha1, false);
                 return;
               });
@@ -3120,12 +3120,12 @@ declare var InstallTrigger: any;
         });
         addDesc(dom.vndrs, itm[0]);
       }
-      if (skl.fgt.lvl >= 5 && !global.flags.vndrkd1sp1) chs('"Show me something better"', false, 'darkgrey').addEventListener('click', () => {
+      if (skl.fgt.lvl >= 5 && !flags.vndrkd1sp1) chs('"Show me something better"', false, 'darkgrey').addEventListener('click', () => {
         chs('So you want something from the hidden stash, huh? Good eye! You are one of the dojo runts, I\'ve got just what someone like you needs. One book, 3 silver' + dom.coinsilver + '. So, watcha say?', true);
         chs('"Give me"', false, 'lime').addEventListener('click', () => {
           if (you.wealth >= 300) {
             chs('"There ya go, enjoy"', true)
-            global.flags.vndrkd1sp1 = true;
+            flags.vndrkd1sp1 = true;
             giveItem(item.fgtsb1);
             spend(300)
             chs('"Sweet purchase!"', false).addEventListener('click', () => {
@@ -3145,12 +3145,12 @@ declare var InstallTrigger: any;
           });
         });
       });
-      else if (global.stat.moneyg >= 1000 && !global.flags.vndrkd1sp2 && global.flags.vndrkd1sp1) chs('"Show me something better"', false, 'darkgrey').addEventListener('click', () => {
+      else if (global.stat.moneyg >= 1000 && !flags.vndrkd1sp2 && flags.vndrkd1sp1) chs('"Show me something better"', false, 'darkgrey').addEventListener('click', () => {
         chs('Alright, there\'s something else for you, snatched from some sleeping guy and I bet would be useful for you. Similar deal, 5 silver' + dom.coinsilver, true);
         chs('"Yes please"', false, 'lime').addEventListener('click', () => {
           if (you.wealth >= 500) {
             chs('"Deal successfully made"', true)
-            global.flags.vndrkd1sp2 = true;
+            flags.vndrkd1sp2 = true;
             giveItem(item.bfsnwt);
             spend(500)
             chs('"Score!"', false).addEventListener('click', () => {
@@ -3182,12 +3182,12 @@ declare var InstallTrigger: any;
     chss.tstauto.sl = () => {
       d_loc('Test auto'); global.lst_loc = -1;
       dom.testauto = chs('TEST', true);
-      if (!global.flags.testauto_1 || global.flags.testauto_1 === false) chs('Run', false).addEventListener('click', () => {
-        global.flags.testauto_1 = true;
+      if (!flags.testauto_1 || flags.testauto_1 === false) chs('Run', false).addEventListener('click', () => {
+        flags.testauto_1 = true;
         timers.testauto1 = setInterval(() => { dom.testauto.innerHTML = rand(9999999) }, 1000);
         chss.tstauto.sl();
       }); else chs('Stop', false).addEventListener('click', () => {
-        global.flags.testauto_1 = false;
+        flags.testauto_1 = false;
         chss.tstauto.sl();
         clearInterval(timers.testauto1);
       });
@@ -3202,8 +3202,8 @@ declare var InstallTrigger: any;
     chss.tst.sl = () => {
       d_loc('Test'); global.lst_loc = -1;
       dom.tst = chs('TEST', true);
-      global.flags.btl = true;
-      global.flags.civil = false;
+      flags.btl = true;
+      flags.civil = false;
       area_init(area.tst);
       chs('"<= Go back"', false).addEventListener('click', () => {
         chss.lsmain1.sl();
@@ -3246,8 +3246,8 @@ declare var InstallTrigger: any;
         if (global.stat.cat_c < 333) skl.pet.use();
         w.innerHTML = 'There is a cat. Pets: ' + global.stat.cat_c;
         if (global.stat.cat_c >= 100) {
-          if (!global.flags.cat_g) {
-            clr_chs(2); global.flags.cat_g = true;
+          if (!flags.cat_g) {
+            clr_chs(2); flags.cat_g = true;
             chs('"???"', false).addEventListener('click', () => {
               chs('Cat wants to tag along', true);
               chs('"Take it with you"', false).addEventListener('click', () => {
@@ -3259,7 +3259,7 @@ declare var InstallTrigger: any;
                 let tg = rand(gameText.cln.length - 1);
                 do { tg = rand(gameText.cln.length - 1) } while (tg === cat.data.l1);
                 cat.data.l2 = rand(gameText.cln.length - 1);
-                global.flags.catget = true;
+                flags.catget = true;
                 msg('The cat decided to move into your house!', 'lime');
                 smove(chss.lsmain1);
               });
@@ -3285,7 +3285,7 @@ declare var InstallTrigger: any;
             let tg = rand(gameText.cln.length - 1);
             do { tg = rand(gameText.cln.length - 1) } while (tg === cat.data.l1);
             cat.data.l2 = rand(gameText.cln.length - 1);
-            global.flags.catget = true;
+            flags.catget = true;
             msg('The cat decided to move into your house!', 'lime');
             smove(chss.lsmain1);
           });
@@ -3309,13 +3309,13 @@ declare var InstallTrigger: any;
     chss.mbrd.sl = () => {
       d_loc('Village Center, Message Board'); global.lst_loc = 108;
       for (let a in inv) if (inv[a].id === acc.wdl1.id || inv[a].id === acc.sdl1.id || inv[a].id === acc.bdl1.id || inv[a].id === acc.gdl1.id) {
-        if (!global.flags.glqtdltn && (getHour() < 20 && getHour() > 8) && random() < .15) {
+        if (!flags.glqtdltn && (getHour() < 20 && getHour() > 8) && random() < .15) {
           {
             chs('You notice a little girl with emerald green hair approach you', true);
             chs('"?"', false).addEventListener('click', () => {
               chs('<span style="color:lime">Xiao Xiao</span>: "Hey, hey, what are those dolls you carry? Make one for me!!"', true);
               chs('"Alright..."', false).addEventListener('click', () => {
-                global.flags.glqtdltn = true;
+                flags.glqtdltn = true;
                 smove(chss.mbrd, false)
               });
             });
@@ -3330,11 +3330,11 @@ declare var InstallTrigger: any;
           smove(chss.mbrd, false);
         });
       });
-      if (global.flags.frstn1b1g1) {
+      if (flags.frstn1b1g1) {
         chs('"Notice #4"', false).addEventListener('click', () => {
           chs('It says here:<br><span style="color:orange">Looking for a anyone with free time to assist local militia with guarding duty. Apply at the checkpoint near marketplace area between 7AM and 10AM"</span>', true);
           chs('"Huh.."', false).addEventListener('click', () => {
-            global.flags.grddtjb = true;
+            flags.grddtjb = true;
             smove(chss.mbrd);
           });
         });
@@ -3343,7 +3343,7 @@ declare var InstallTrigger: any;
           chs('"I see"', false).addEventListener('click', () => { smove(chss.mbrd); });
         });
       }
-      if (global.flags.glqtdltn && !global.flags.glqtdldn && (getHour() < 20 && getHour() > 8)) {
+      if (flags.glqtdltn && !flags.glqtdldn && (getHour() < 20 && getHour() > 8)) {
         chs('"Xiao Xiao =>"', false).addEventListener('click', () => { smove(chss.xpgdqt1, false) });
       }
       chs('"<= Go back"', false).addEventListener('click', () => {
@@ -3384,7 +3384,7 @@ declare var InstallTrigger: any;
       if (dl4) {
         chs('"Show Xiao Xiao a soul doll"', false).addEventListener('click', () => {
           chs('<span style="color:lime">Xiao Xiao</span>: "Waai thank you! I love it! I\'ll give you this! Here, take!"<br><br><span style="color:lightgrey">The girl happily runs away with her new toy</span>', true);
-          chs('"Claim your hardearned reward"', false).addEventListener('click', () => { removeItem(dl4); global.flags.glqtdldn = true; global.offline_evil_index -= .002; msg('You feel more peaceful', 'gold'); giveItem(acc.ubrlc); smove(chss.mbrd, false) })
+          chs('"Claim your hardearned reward"', false).addEventListener('click', () => { removeItem(dl4); flags.glqtdldn = true; global.offline_evil_index -= .002; msg('You feel more peaceful', 'gold'); giveItem(acc.ubrlc); smove(chss.mbrd, false) })
         });
       }
       chs('"<= Return"', false).addEventListener('click', () => {
@@ -3396,7 +3396,7 @@ declare var InstallTrigger: any;
     chss.trd = new Chs();
     chss.trd.id = 109;
     chss.trd.sl = function (b: any, x: any) {
-      global.flags.rdng = true; let rd = skl.rdg.use(); b.data.timep = b.data.timep || 0;
+      flags.rdng = true; let rd = skl.rdg.use(); b.data.timep = b.data.timep || 0;
       b.cmax = (b.data.time * (1 / (1 + (rd) / 10)) / you.mods.rdgrt) - (1 / (1 + (rd) / 10) - 1) / you.mods.rdgrt;
       let c = b.cmax - b.data.timep;
       if (c < 0) c = 0;
@@ -3420,12 +3420,12 @@ declare var InstallTrigger: any;
         if (c > HOUR) ttxt = (c / HOUR << 0) + '</span> hours to finish';
         else ttxt = (c << 0) + '</span> minutes to finish';
         dom.trd.innerHTML = 'You are reading <span style="color:orange">' + b.name + '</span><br>It will take you about <span style="color:lime">' + ttxt;
-        if (++b.data.timep >= b.cmax) { clearInterval(timers.rdng); clearInterval(timers.rdngdots); global.stat.rdttl++; global.flags.rdng = false; for (let gg in chss) if (chss[gg].id === global.lst_loc) chss[gg].sl(); b.use(you); reduce(b); b.data.timep = 0; }
+        if (++b.data.timep >= b.cmax) { clearInterval(timers.rdng); clearInterval(timers.rdngdots); global.stat.rdttl++; flags.rdng = false; for (let gg in chss) if (chss[gg].id === global.lst_loc) chss[gg].sl(); b.use(you); reduce(b); b.data.timep = 0; }
       }, 1000);
       chs('"Stop reading"', false).addEventListener('click', () => {
         clearInterval(timers.rdng);
         clearInterval(timers.rdngdots);
-        global.flags.rdng = false;
+        flags.rdng = false;
         for (let gg in chss) if (chss[gg].id === global.lst_loc) chss[gg].sl();
       });
     }
@@ -3436,12 +3436,12 @@ declare var InstallTrigger: any;
     addtosector(sector.home, chss.home);
     chss.home.sl = () => {
       d_loc('Your Home'); global.lst_loc = 111;
-      if (!global.flags.catget || sector.home.data.smkp > 0) chs('Your humble abode. You can rest here. ', true);
+      if (!flags.catget || sector.home.data.smkp > 0) chs('Your humble abode. You can rest here. ', true);
       else { if (!gameText.hmcttt) gameText.hmcttt = ['Your cat comes out to greet you!', '', 'You hear rustling', 'Meow']; chs('You feel safe. You can rest here. ' + select(gameText.hmcttt), true); }
-      if (!global.flags.hbgget) chs('"Examine your bag"', false).addEventListener('click', () => {
+      if (!flags.hbgget) chs('"Examine your bag"', false).addEventListener('click', () => {
         chs('Something you\'ve forgotten to grab before. There\'s a pack of food and some junk idea paper.', true)
         chs('Better take this with you', false).addEventListener('click', () => {
-          global.flags.hbgget = true;
+          flags.hbgget = true;
           giveItem(eqp.bnd);
           giveItem(item.ip1);
           giveItem(item.watr, 10);
@@ -3457,21 +3457,21 @@ declare var InstallTrigger: any;
         if (sector.home.data.smkp > 0) { msg('This isn\'t time for sleep', 'red'); return }
         smove(chss.hbed, false);
       });
-      if (!global.flags.chbdfst) chs('"Examine your hidden stash"', false).addEventListener('click', () => {
+      if (!flags.chbdfst) chs('"Examine your hidden stash"', false).addEventListener('click', () => {
         chs('You reach for a small red box which you keep your valuables in, it is time to take it out', true)
         chs('Grab the contents', false).addEventListener('click', () => {
           giveItem(item.ywlt);
           giveItem(item.pdeedhs);
-          global.flags.chbdfst = true;
+          flags.chbdfst = true;
           smove(chss.home, false);
         });
       });
-      chs(global.flags.hbs1 === true ? '"Enter the basement"' : '"Examine basement door"', false).addEventListener('click', () => {
-        if (!global.flags.hbs1) {
-          if (item.key0.have) { msg('*click...* ', 'lightgrey'); msg_add('The door has opened', 'lime'); global.flags.hbs1 = true; smove(chss.home, false) } else msg("It's locked");
+      chs(flags.hbs1 === true ? '"Enter the basement"' : '"Examine basement door"', false).addEventListener('click', () => {
+        if (!flags.hbs1) {
+          if (item.key0.have) { msg('*click...* ', 'lightgrey'); msg_add('The door has opened', 'lime'); flags.hbs1 = true; smove(chss.home, false) } else msg("It's locked");
         } else smove(chss.bsmnthm1, false)
       });
-      if (global.flags.hsedchk) chs(' "Furniture list"', false, 'orange', '', 1, 8).addEventListener('click', () => {
+      if (flags.hsedchk) chs(' "Furniture list"', false, 'orange', '', 1, 8).addEventListener('click', () => {
         chs_spec(2);
         global.wdwidx = 1;
         chs('"<= Return"', false).addEventListener('click', () => {
@@ -3488,7 +3488,7 @@ declare var InstallTrigger: any;
           smove(chss.sboxhm, false);
         });
       }
-      if (global.flags.catget) {
+      if (flags.catget) {
         let tcat = findbyid(furn, furniture.cat.id);
         tcat.data.mood = tcat.data.mood || 1;
         chs('"Check on Cat"', false).addEventListener('click', () => {
@@ -3573,18 +3573,18 @@ declare var InstallTrigger: any;
         if (!cansee()) chs(select(gameText.bsseldark) + '. You can\'t see anything in this darkness, it\'ll be better if you find a lightsource', true, 'darkgrey');
         else {
           chs(select(gameText.bssel), true);
-          if (!global.flags.bsmntchck) chs('"Examine your surroundings"', false).addEventListener('click', () => {
+          if (!flags.bsmntchck) chs('"Examine your surroundings"', false).addEventListener('click', () => {
             if (!cansee()) {
               chs('Your light went off..', true, 'darkgrey');
               chs('"<= Return"', false).addEventListener('click', () => {
                 smove(chss.home, false);
               });
             } else {
-              chs("You glance around and find mountains of broken crates, shelves, boxes, furniture and other decaying goods. Don't expect to find anything of great value amongst this trash. Perhaps you can salvage at least something if you look careful enough" + (!global.flags.bsmntchstgt ? ', like that giant chest over there' : ''), true, 'orange');
-              if (!global.flags.bsmntchstgt) chs('"Seek significance of a massive container"', false).addEventListener('click', () => {
+              chs("You glance around and find mountains of broken crates, shelves, boxes, furniture and other decaying goods. Don't expect to find anything of great value amongst this trash. Perhaps you can salvage at least something if you look careful enough" + (!flags.bsmntchstgt ? ', like that giant chest over there' : ''), true, 'orange');
+              if (!flags.bsmntchstgt) chs('"Seek significance of a massive container"', false).addEventListener('click', () => {
                 chs("It looks like an ordinary coffer, except it's unusually big and has a padlock, which thankfully isn't locked. You get a brilliant idea to carry this hunk-a-junk upstairs", true);
                 chs('"Do exactly that"', false, 'lime').addEventListener('click', () => {
-                  global.flags.bsmntchstgt = true;
+                  flags.bsmntchstgt = true;
                   giveFurniture(furniture.strgbx);
                   smove(chss.home, false);
                   msg('Phew! That felt like a workout! You won\'t need to descend into that awful basement anymore if you wish to access the Big Box', 'orange');
@@ -3595,10 +3595,10 @@ declare var InstallTrigger: any;
                   you.stat_r();
                 });
               });
-              if (!global.flags.bsmntsctgt) chs('"Rummage through rubble"', false).addEventListener('click', () => {
+              if (!flags.bsmntsctgt) chs('"Rummage through rubble"', false).addEventListener('click', () => {
                 chs("Indeed, simply glancing over the rubble won\'t reveal you any hidden secrets, you think you better investigate everything carefully", true);
                 chs('"Prepare for further examination"', false).addEventListener('click', () => {
-                  global.flags.bsmntsctgt = true;
+                  flags.bsmntsctgt = true;
                   giveAction(act.scout);
                   global.current_a.deactivate();
                   global.current_a = act.default;
@@ -3636,29 +3636,29 @@ declare var InstallTrigger: any;
     chss.hbed.sl = () => {
       d_loc('Your Home, Bed'); global.lst_loc = 112; let extra = '';
       if (you.alive === false) { chs(select(['You lost consciousness...', 'You have been knocked out...', 'You passed out...']), true); you.alive = true }
-      else { if (global.flags.catget) extra = select(['. Your cat is resting next to you', '. You feel warm']); chs('Great way to pass time' + extra, true); }
+      else { if (flags.catget) extra = select(['. Your cat is resting next to you', '. You feel warm']); chs('Great way to pass time' + extra, true); }
       chs('"<= Get up"', false).addEventListener('click', () => {
         for (let i in chss) if (chss[i].id === global.home_loc) smove(chss[i]);
       });
     }
     chss.hbed.onStay = function (this: any) {
-      let hpr = (skl.sleep.use(home.bed) + (global.flags.catget ? 5 : 1) + 1) << 0;
+      let hpr = (skl.sleep.use(home.bed) + (flags.catget ? 5 : 1) + 1) << 0;
       if (!effect.fei1.active && you.hp < you.hpmax) { you.hp + hpr <= you.hpmax ? you.hp += hpr : you.hp = you.hpmax; dom.d5_1_1.update() }
       // if(global.current_z.id!==-666&&random()<.00001){
       //   let ta = new Area(); ta.id=-666;
       //   ta.name = 'Nightmare';
       //   ta.pop = [{crt:creature.ngtmr1,lvlmin:you.lvl,lvlmax:you.lvl,c:1}]; ta.protected=true;
-      //   ta.onEnd=function(){area_init(area.nwh);global.flags.civil=true; global.flags.btl=false;}; global.flags.civil=false; global.flags.btl=true;
+      //   ta.onEnd=function(){area_init(area.nwh);flags.civil=true; flags.btl=false;}; flags.civil=false; flags.btl=true;
       //   ta.size = 1; z_bake(ta); area_init(ta); dom.d7m.update(); msg('Your sins are crawling up on you','red')
       //}
     }
     chss.hbed.onEnter = function (this: any) {
-      global.flags.sleepmode = true;
+      flags.sleepmode = true;
       if (effect.slep.active === false) giveEff(you, effect.slep);
       global.timescale = 5;
     }
     chss.hbed.onLeave = function (this: any) {
-      global.flags.sleepmode = false;
+      flags.sleepmode = false;
       global.timescale = 1;
       removeEff(effect.slep);
     }
@@ -3684,9 +3684,9 @@ declare var InstallTrigger: any;
       else if (fire.data.fuel >= 300 && fire.data.fuel <= 540) textra0 = gameText.frplcfrextra[2];
       else if (fire.data.fuel >= 540) textra0 = gameText.frplcfrextra[3];
       dom.frpls = chs('Comfy fireplace. ' + (select(gameText.fplcextra) + '<br>' + textra0), true);
-      if (!global.flags.fplcgtwd) chs('"Retrieve spare firewood. You have a feeling you\'ll need it"', false).addEventListener('click', function (this: any) {
+      if (!flags.fplcgtwd) chs('"Retrieve spare firewood. You have a feeling you\'ll need it"', false).addEventListener('click', function (this: any) {
         msg("You have some lying around nearby", 'orange');
-        global.flags.fplcgtwd = true;
+        flags.fplcgtwd = true;
         giveItem(item.fwd1, 3);
         smove(chss.ofrplc, false);
       });
@@ -4133,7 +4133,7 @@ declare var InstallTrigger: any;
 
     function d_loc(text: any) {
       let txt;
-      if (global.flags.inside === true) txt = '|' + text + '|';
+      if (flags.inside === true) txt = '|' + text + '|';
       else txt = text
       dom.d_lctt.innerHTML = txt;
       global.current_l.locn = text;
@@ -4168,7 +4168,7 @@ declare var InstallTrigger: any;
         dom.inv_ctx.style.background = dom.inv_control_b.style.background = dom.ctrmg.style.background = '#00224e';
         dom.d7m_c.style.background = '#392c72';
         for (let i = 0; i < document.styleSheets[0].rules.length; i++) if ((document.styleSheets[0].rules[i] as any).selectorText == ".opt_c:hover, .ct_bts:hover, .chs:hover, .bts:hover, .bbts:hover, .bts_b:hover, .inv_slot:hover, .bts_m:hover") (document.styleSheets[0].rules[i] as any).style.background = '#0e574b';
-        global.flags.grd_s = false;
+        flags.grd_s = false;
       }
       else {
         for (let i = 0; i < document.getElementsByClassName('d2').length; i++) (document.getElementsByClassName('d2')[i] as HTMLElement).style.background = 'linear-gradient(90deg,rgb(25,129,108),rgb(1,41,39))';
@@ -4179,7 +4179,7 @@ declare var InstallTrigger: any;
         dom.inv_ctx.style.background = dom.inv_control_b.style.background = dom.ctrmg.style.background = 'linear-gradient(90deg,rgb(0,5,51),rgb(0,65,107))';
         dom.d7m_c.style.background = 'linear-gradient(270deg,rgb(84,28,112),rgb(29,62,116))';
         for (let i = 0; i < document.styleSheets[0].rules.length; i++) if ((document.styleSheets[0].rules[i] as any).selectorText == ".opt_c:hover, .ct_bts:hover, .chs:hover, .bts:hover, .bbts:hover, .bts_b:hover, .inv_slot:hover, .bts_m:hover") (document.styleSheets[0].rules[i] as any).style.background = 'linear-gradient(90deg,rgb(25,129,108),rgb(1,41,39))';
-        global.flags.grd_s = true;
+        flags.grd_s = true;
       }
     }
 
@@ -4418,7 +4418,7 @@ declare var InstallTrigger: any;
     planner.djfood = new Plan();
     planner.djfood.id = 1;
     planner.djfood.f = function (this: any) {
-      if (getDay(1) === "Sunday") global.flags.djmlet = true;
+      if (getDay(1) === "Sunday") flags.djmlet = true;
     }; addPlan(planner.djfood)
 
 // @ts-ignore: constructor function
@@ -4432,7 +4432,7 @@ declare var InstallTrigger: any;
     planner.zrespawn = new Plan();
     planner.zrespawn.id = 1;
     planner.zrespawn.f = function (this: any) {
-      if (random() <= .03 && global.flags.catget) {
+      if (random() <= .03 && flags.catget) {
         let things = [{ t: item.dmice1, c: .25 }, { t: item.dbdc1, c: .25 }, { t: item.d6, c: .05 }, { t: item.mcps, c: .2 }, { t: item.pcn, c: .2 }, { t: item.cp, c: .4 }]
         for (let a in things) if (random() <= things[a].c) sector.home.data.ctlt.push(things[a].t.id)
       }
