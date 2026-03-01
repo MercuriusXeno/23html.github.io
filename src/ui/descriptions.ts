@@ -1,6 +1,6 @@
 import { addElement, empty } from '../dom-utils';
 import { col } from '../utils';
-import { dom, global, you, timers, furn, data, stats, } from '../state';
+import { dom, global, you, timers, furn, data, stats, combat, } from '../state';
 const { skl } = data;
 import { giveSkExp } from '../game/progression';
 
@@ -197,9 +197,9 @@ import { giveSkExp } from '../game/progression';
       }
       else if (type === 3) {
         self.label = addElement(global.dscr, 'div', 'd_l');
-        self.label.innerHTML = global.current_m.name;
+        self.label.innerHTML = combat.current_m.name;
         self.text = addElement(global.dscr, 'div', 'd_t');
-        self.text.innerHTML = global.current_m.desc;
+        self.text.innerHTML = combat.current_m.desc;
       }
       else if (type === 4) {
         self.label = addElement(global.dscr, 'div', 'd_l');

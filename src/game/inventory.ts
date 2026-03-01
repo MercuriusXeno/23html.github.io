@@ -1,7 +1,7 @@
 import { random, rand } from '../random';
 import { copy, deepCopy, scan, scanbyid } from '../utils';
 import { addElement, empty } from '../dom-utils';
-import { dom, global, you, inv, dar, planner, timers, furn, data, flags, stats, } from '../state';
+import { dom, global, you, inv, dar, planner, timers, furn, data, flags, stats, combat, } from '../state';
 const { skl, creature } = data;
 import { msg, msg_add } from '../ui/messages';
 import { renderItem, updateInv, isort, rsort } from '../ui/inventory';
@@ -75,14 +75,14 @@ import { kill } from './utils-game';
     }
 
     export function listen_k(e: any) {
-      global.keytarget = e.target;
+      combat.keytarget = e.target;
       if (e.which === 46) {
         for (let obj in global.shortcuts) if (global.shortcuts[obj][0] === global.keyobj.data.skey) global.shortcuts.splice(global.shortcuts.indexOf(global.shortcuts[obj]), 1)
-        global.keytarget.children[0].innerHTML = global.keyobj.name;
+        combat.keytarget.children[0].innerHTML = global.keyobj.name;
         global.keyobj.data.skey = null;
       }
       else if ((e.which >= 47 && e.which <= 90) || (e.which >= 96 && e.which <= 105)) {
-        global.keytarget.children[0].innerHTML = global.keyobj.name + '<small> {' + String.fromCharCode(global.keyobj.data.skey) + '}</small>';
+        combat.keytarget.children[0].innerHTML = global.keyobj.name + '<small> {' + String.fromCharCode(global.keyobj.data.skey) + '}</small>';
         if (global.keyobj.data.skey > 0 && e.which !== global.keyobj.data.skey) { for (let obje in global.shortcuts) { if (global.shortcuts[obje][2].data.skey === global.keyobj.data.skey) { global.shortcuts[obje][2].data.skey = null; global.shortcuts.splice(global.shortcuts.indexOf(global.shortcuts[obje]), 1); } } }
         let tg;
         for (let obj in global.shortcuts) {
@@ -303,7 +303,7 @@ import { kill } from './utils-game';
         if (!d) { d = global.drdata["d" + crt.id] = []; d[j] = 1 } else d[j] = 1;
       }
       for (let jj in global.wdrop) if (random() < global.wdrop[jj].c + (global.wdrop[jj].c / 100 * you.luck)) giveItem(global.wdrop[jj].item, t);
-      for (let obj in global.current_z.drop) if (!global.current_z.drop[obj].cond || (!!global.current_z.drop[obj].cond && global.current_z.drop[obj].cond() === true)) if (random() < global.current_z.drop[obj].c + (global.current_z.drop[obj].c / 100 * you.luck) + (global.current_z.drop[obj].c / 75 * skl.hst.lvl)) { giveItem(global.current_z.drop[obj].item, t); giveSkExp(skl.hst, .2) }
+      for (let obj in combat.current_z.drop) if (!combat.current_z.drop[obj].cond || (!!combat.current_z.drop[obj].cond && combat.current_z.drop[obj].cond() === true)) if (random() < combat.current_z.drop[obj].c + (combat.current_z.drop[obj].c / 100 * you.luck) + (combat.current_z.drop[obj].c / 75 * skl.hst.lvl)) { giveItem(combat.current_z.drop[obj].item, t); giveSkExp(skl.hst, .2) }
       if (crt.rnk < 22) { let ar = (crt.rnk - 1) / 3 << 0; for (let a in global.rdrop[ar]) if (random() < global.rdrop[ar][a].c + (global.rdrop[ar][a].c / 100 * you.luck)) giveItem(global.rdrop[ar][a].item, t) }
     }
 

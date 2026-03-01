@@ -8,7 +8,7 @@ import { dom, global, listen, w_manager, offline, callback, effector,
   timers, chss, test, planner, check, home,
   itemgroup, sectors, inv, furn, qsts, dar, acts, plans, checksd,
   you, time, data, gameText, flags, setYou, setTime,
-  setInv, setDar, setFurn, setQsts, setActs, setSectors, stats, } from './state';
+  setInv, setDar, setFurn, setQsts, setActs, setSectors, stats, combat, } from './state';
 const { creature, effect, wpn, eqp, acc, sld, item, rcp, area, sector, ttl, skl, abl,
   furniture, vendor, quest, act, container, mastery } = data;
 import { weather, Weather, Time, setWeather, isWeather, wManager, getSeason,
@@ -264,7 +264,7 @@ declare var InstallTrigger: any;
     global.special_y = dom.d1m.style.top;
 
     dom._d23m = addElement(dom.d1m, 'div');
-    addDesc(dom._d23m, null, 3, global.current_m.name, global.current_m.desc);
+    addDesc(dom._d23m, null, 3, combat.current_m.name, combat.current_m.desc);
     dom.d2m = addElement(dom._d23m, 'div', null, 'd2');
     dom.d3m = addElement(dom._d23m, 'div', null, 'd3m');
     dom.d5_1m = addElement(dom.d1m, 'div', null, 'hp');
@@ -272,8 +272,8 @@ declare var InstallTrigger: any;
     dom.d5_1_1m = addElement(dom.d5_1m, 'div', 'hpp');
     dom.d5_2_1m = addElement(dom.d5_2m, 'div');
     dom.d5_1_1m.update = function (this: any) {
-      this.innerHTML = 'hp: ' + format3(global.current_m.hp.toString()) + '/' + format3(global.current_m.hpmax.toString());
-      dom.d5_1m.style.width = 100 * global.current_m.hp / global.current_m.hpmax + '%';
+      this.innerHTML = 'hp: ' + format3(combat.current_m.hp.toString()) + '/' + format3(combat.current_m.hpmax.toString());
+      dom.d5_1m.style.width = 100 * combat.current_m.hp / combat.current_m.hpmax + '%';
     }
     dom.d4m = addElement(dom.d1m, 'div', 'd4');
     dom.d4_1m = addElement(dom.d4m, 'span', null, 'dd');
@@ -281,7 +281,7 @@ declare var InstallTrigger: any;
     dom.d4_3m = addElement(dom.d4m, 'span', null, 'dd');
     dom.d4_4m = addElement(dom.d4m, 'span', null, 'dd');
     dom.d9m = addElement(dom.d1m, 'div');
-    dom.d9m.update = function (this: any) { this.innerHTML = 'rank: ' + gameText.eranks[global.current_m.rnk]; if (global.current_m.rnk <= 4) this.style.color = 'lightgrey'; else if (global.current_m.rnk > 4 && global.current_m.rnk <= 7) this.style.color = 'white'; else if (global.current_m.rnk > 7 && global.current_m.rnk <= 10) this.style.color = 'lightblue'; else if (global.current_m.rnk > 10 && global.current_m.rnk <= 13) this.style.color = 'lightgreen'; else if (global.current_m.rnk > 13 && global.current_m.rnk <= 16) this.style.color = 'lime'; else if (global.current_m.rnk > 16 && global.current_m.rnk <= 19) this.style.color = 'yellow' }
+    dom.d9m.update = function (this: any) { this.innerHTML = 'rank: ' + gameText.eranks[combat.current_m.rnk]; if (combat.current_m.rnk <= 4) this.style.color = 'lightgrey'; else if (combat.current_m.rnk > 4 && combat.current_m.rnk <= 7) this.style.color = 'white'; else if (combat.current_m.rnk > 7 && combat.current_m.rnk <= 10) this.style.color = 'lightblue'; else if (combat.current_m.rnk > 10 && combat.current_m.rnk <= 13) this.style.color = 'lightgreen'; else if (combat.current_m.rnk > 13 && combat.current_m.rnk <= 16) this.style.color = 'lime'; else if (combat.current_m.rnk > 16 && combat.current_m.rnk <= 19) this.style.color = 'yellow' }
     dom.d9m.style.borderBottom = '#545299 dotted 2px';
     dom.d9m.style.backgroundColor = '#272744';
     dom.d8m_c = addElement(dom.d1m, 'small', 'bbts');
@@ -298,7 +298,7 @@ declare var InstallTrigger: any;
     dom.d8m2.addEventListener('click', function (this: any) { if (!flags.civil) flags.btl = true; });
     dom.d7m_c = addElement(dom.d1m, 'div', 'ainfo');
     dom.d7m = addElement(dom.d7m_c, 'small');
-    dom.d7m.update = function (this: any) { global.current_z.size >= 0 ? this.innerHTML = 'Area: ' + global.current_z.name + ' / ' + global.current_z.size : this.innerHTML = 'Area: ' + global.current_z.name + ' / ' + '∞'; };
+    dom.d7m.update = function (this: any) { combat.current_z.size >= 0 ? this.innerHTML = 'Area: ' + combat.current_z.name + ' / ' + combat.current_z.size : this.innerHTML = 'Area: ' + combat.current_z.name + ' / ' + '∞'; };
     dom.d7m.update();
     dom.inv_ctx = addElement(document.body, 'div', 'inv');
     if (!flags.aw_u) dom.inv_ctx.style.display = 'none';
@@ -1919,7 +1919,7 @@ declare var InstallTrigger: any;
       });
     };
     if (flags.gameone === false) {
-      global.current_l = chss.t1;
+      combat.current_l = chss.t1;
       smove(chss.t1);
       giveFurniture(furniture.frplc, null, false);
       let _b = giveFurniture(furniture.bed1, null, false);
@@ -3644,7 +3644,7 @@ declare var InstallTrigger: any;
     chss.hbed.onStay = function (this: any) {
       let hpr = (skl.sleep.use(home.bed) + (flags.catget ? 5 : 1) + 1) << 0;
       if (!effect.fei1.active && you.hp < you.hpmax) { you.hp + hpr <= you.hpmax ? you.hp += hpr : you.hp = you.hpmax; dom.d5_1_1.update() }
-      // if(global.current_z.id!==-666&&random()<.00001){
+      // if(combat.current_z.id!==-666&&random()<.00001){
       //   let ta = new Area(); ta.id=-666;
       //   ta.name = 'Nightmare';
       //   ta.pop = [{crt:creature.ngtmr1,lvlmin:you.lvl,lvlmax:you.lvl,c:1}]; ta.protected=true;
@@ -4136,7 +4136,7 @@ declare var InstallTrigger: any;
       if (flags.inside === true) txt = '|' + text + '|';
       else txt = text
       dom.d_lctt.innerHTML = txt;
-      global.current_l.locn = text;
+      combat.current_l.locn = text;
     }
 
     // objempty() imported from ./utils
@@ -4186,10 +4186,10 @@ declare var InstallTrigger: any;
     // col() imported from ./utils
 
     function getlastd() {
-      switch (global.atkdfty[0]) {
+      switch (combat.atkdfty[0]) {
         case 1: return '<span style="color:black;background-color:yellow">Struck by lightning</span>';
           break;
-        case 2: switch (global.atkdfty[1]) {
+        case 2: switch (combat.atkdfty[1]) {
           case 1: return '<span style="color:red;background-color:darkmagenta">Suffocated from poison</span>';
             break;
           case 2: return '<span style="color:darkmagenta;">Suffocated from venom</span>';
@@ -4201,7 +4201,7 @@ declare var InstallTrigger: any;
         }; break;
         case 3: let txt = '';
           let fc = ['', '', '']
-          switch (global.atkdftydt.a) {
+          switch (combat.atkdftydt.a) {
             case 0: fc[0] = 'pink';
               break;
             case 1: fc[0] = 'lime';
@@ -4221,7 +4221,7 @@ declare var InstallTrigger: any;
               fc[2] = 'blueviolet 0px 0px 5px';
               break;
           }
-          switch (global.atkdftydt.c) {
+          switch (combat.atkdftydt.c) {
             case 0: txt += '<span style="color:' + fc[0] + ';background-color:' + fc[1] + ';text-shadow:' + fc[2] + '">' + select(['Slashed', 'Lacerated', 'Cut down', 'Hacked']) + '</span>';
               break;
             case 1: txt += '<span style="color:' + fc[0] + ';background-color:' + fc[1] + ';text-shadow:' + fc[2] + '">' + select(['Pierced', 'Impaled', 'Gored']) + '</span>';
@@ -4229,7 +4229,7 @@ declare var InstallTrigger: any;
             case 2: txt += '<span style="color:' + fc[0] + ';background-color:' + fc[1] + ';text-shadow:' + fc[2] + '">' + select(['Smashed', 'Crushed', 'Destroyed']) + '</span>';
               break;
           } txt += ' by ';
-          for (let a in creature) if (creature[a].id === global.atkdftydt.id) { txt += creature[a].name; break } return txt;
+          for (let a in creature) if (creature[a].id === combat.atkdftydt.id) { txt += creature[a].name; break } return txt;
           break;
         default: return 'what casualty?';
           break;

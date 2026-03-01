@@ -1,4 +1,4 @@
-import { you, callback, global, dom, timers, chss, setYou, data, flags, stats, } from '../state';
+import { you, callback, global, dom, timers, chss, setYou, data, flags, stats, combat, } from '../state';
 const { ttl, eqp, item, skl, creature, act, sector, area } = data;
 import { random } from '../random';
 import { smove } from '../game/movement';
@@ -79,9 +79,9 @@ export function You(this: any) {
       for (let o in this.eff) removeEff(this.eff[o])
       flags.btl = false;
       flags.civil = true;
-      global.current_z.onDeath();
+      combat.current_z.onDeath();
       if (sector.home.data.smkp > 0) { smove(chss.lsmain1, false); msg('You ran out of your smoked up house', 'grey') } else smove(chss.hbed, false);
-      global.current_z = area.nwh;
+      combat.current_z = area.nwh;
       dom.hit_c();
       dom.d7m.update()
     }

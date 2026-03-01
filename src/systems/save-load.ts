@@ -7,7 +7,7 @@ import {
   dom, global, you, time, callback, w_manager, timers, chss, home, inv, furn, qsts, dar, acts, sectors,
   itemgroup, data, gameText, flags,
   setYou, setTime, setInv, setDar, setFurn, setQsts, setActs, setSectors, resetFlags,
-stats, } from '../state';
+stats, combat, } from '../state';
 const { effect, creature, wpn, eqp, acc, sld, item, rcp, area, sector, ttl, skl,
   furniture, vendor, quest, act, container, mastery } = data;
 import { wdrseason } from './weather';
@@ -170,7 +170,7 @@ export function save(lvr?: any) {
   }
   let a1 = {
     uid: global.uid, jj: stats,
-    x: global.current_z.id, a: global.rm, b: global.sm,
+    x: combat.current_z.id, a: global.rm, b: global.sm,
     e: flags, f: global.spirits,
     g: global.msgs_max, i: global.lst_loc,
     j: time.minute, k: w_manager.duration, l: w_manager.curr.id,
@@ -439,7 +439,7 @@ export function load(dt?: any) {
     global.e_e = [];
     global.e_em = [];
     empty(dom.d101m);
-    global.current_m.eff = [];
+    combat.current_m.eff = [];
 
     // --- Segment 1: Effects ---
     let a4 = JSON.parse(str[1]);
@@ -662,8 +662,8 @@ export function load(dt?: any) {
     flags.rdng = false;
     flags.civil = true;
     flags.btl = false;
-    global.current_z = area.nwh;
-    global.current_m = creature.default;
+    combat.current_z = area.nwh;
+    combat.current_m = creature.default;
     update_m();
     dom.d7m.update();
     flags.wkdis = false;
@@ -750,7 +750,7 @@ export function load(dt?: any) {
     clearInterval(timers.vndrstkchk);
     for (let obj in chss) {
       if (chss[obj].id === a1.i) {
-        global.current_l = chss[obj];
+        combat.current_l = chss[obj];
         smove(chss[obj], false);
       }
     }

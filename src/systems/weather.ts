@@ -1,4 +1,4 @@
-import { w_manager, global, you, dom, callback, time, setTime, data, gameText, flags, stats, } from '../state';
+import { w_manager, global, you, dom, callback, time, setTime, data, gameText, flags, stats, combat, } from '../state';
 const { effect, skl } = data;
 import { random, rand } from '../random';
 import { findbyid, copy } from '../utils';
@@ -90,21 +90,21 @@ weather.sstorm.fsnow = true;
 weather.storm.ontick = weather.rain.ontick = weather.heavyrain.ontick = weather.drizzle.ontick = function () {
   if (flags.inside === false) {
     if (effect.wet.active === false && !you.mods.rnprtk) giveEff(you, effect.wet, 5);
-    let f = findbyid(global.current_m.eff, effect.wet.id);
-    if (!f || f.active === false) giveEff(global.current_m, effect.wet, 5)
+    let f = findbyid(combat.current_m.eff, effect.wet.id);
+    if (!f || f.active === false) giveEff(combat.current_m, effect.wet, 5)
   }
 }
 
 weather.thunder.ontick = function () {
   if (flags.inside === false) {
     if (effect.wet.active === false && !you.mods.rnprtk) giveEff(you, effect.wet, 5);
-    let f = findbyid(global.current_m.eff, effect.wet.id);
-    if (!f || f.active === false) giveEff(global.current_m, effect.wet, 5)
+    let f = findbyid(combat.current_m.eff, effect.wet.id);
+    if (!f || f.active === false) giveEff(combat.current_m, effect.wet, 5)
     if (random() < .0009) {
       stats.lgtstk++;
       msg("You were struck by lightning!", 'black', null, null, 'yellow');
       let d = (200 / (1 + skl.aba.lvl * .05)) << 0;
-      if (you.hp - d < 0) { global.atkdfty[0] = 1; you.hp = 0; you.onDeath();; giveSkExp(skl.painr, 300); giveSkExp(skl.dth, 100) } else { you.hp -= d; giveSkExp(skl.painr, 170) } giveSkExp(skl.aba, 30);
+      if (you.hp - d < 0) { combat.atkdfty[0] = 1; you.hp = 0; you.onDeath();; giveSkExp(skl.painr, 300); giveSkExp(skl.dth, 100) } else { you.hp -= d; giveSkExp(skl.painr, 170) } giveSkExp(skl.aba, 30);
       dom.d5_1_1.update();
     }
   }

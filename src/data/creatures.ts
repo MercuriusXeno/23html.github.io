@@ -1,4 +1,4 @@
-import { creature, eqp, global, you, dom, callback, checksd, item, wpn, acc, abl, effect, skl, flags, stats, } from '../state';
+import { creature, eqp, global, you, dom, callback, checksd, item, wpn, acc, abl, effect, skl, flags, stats, combat, } from '../state';
 import { random, rand } from '../random';
 import { giveSkExp } from '../game/progression';
 import { area_init } from '../game/movement';
@@ -85,8 +85,8 @@ function Creature(this: any, cfg?: any) {
     dropC(this);
     global.s_l = 0;
     if (killer.mods.enmondren > 0) if (random() < killer.mods.enmondren) { let aam = 1 + rand(this.lvl << 0, (this.lvl / 4) << 0) ** (1 + (this.rnk / 5) << 0) * killer.mods.enmondrts; giveWealth(rand(aam * .5 << 0 || 1, aam * 1.5 << 0 || 1)); }
-    if (--global.current_z.size > 0) area_init(global.current_z);
-    else { if (global.current_z.size <= -1) area_init(global.current_z); else { msg('Area cleared', 'orange'); global.current_z.onEnd(); flags.civil = true; flags.btl = false; } };
+    if (--combat.current_z.size > 0) area_init(combat.current_z);
+    else { if (combat.current_z.size <= -1) area_init(combat.current_z); else { msg('Area cleared', 'orange'); combat.current_z.onEnd(); flags.civil = true; flags.btl = false; } };
     if (flags.to_pause === true) flags.btl = false;
     wpndiestt(killer, this);
     if (this.blood) stats.bloodt += this.blood;
@@ -112,7 +112,7 @@ if(this.hp-me.avgdmg<=0) {msg('too scary, running away'); flags.btlinterrupt=tru
   if (cfg) for (let k in cfg) this[k] = cfg[k];
 }
 // @ts-ignore: constructor function
-creature.default = new Creature(); global.current_m = creature.default;
+creature.default = new Creature(); combat.current_m = creature.default;
 
 // @ts-ignore: constructor function
 creature.bat = new Creature({ name: 'Bat', id: 101, desc: 'Aggressive little bats living in the dark', type: 1, exp: 8, hp_r: 39, blood: .0852, stat_p: [.5, 1, 1.5, .5], aff: [-5, 25, -5, -5, 10, -5, 5], cls: [-4, -7, -3], atype: 1, ctype: 1, str_r: 2, agl_r: 10, spd_r: 2, drop: [{ item: item.sbone, chance: .1 }, { item: item.appl, chance: .06 }], rnk: 3, pts: 6 });

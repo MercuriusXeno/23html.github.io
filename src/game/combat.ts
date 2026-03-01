@@ -1,7 +1,7 @@
 import { random, rand, randf } from '../random';
 import { select } from '../utils';
 import { addElement } from '../dom-utils';
-import { dom, global, you, timers, time, data, flags, stats, } from '../state';
+import { dom, global, you, timers, time, data, flags, stats, combat, } from '../state';
 const { abl, skl, effect, creature } = data;
 import { msg, msg_add } from '../ui/messages';
 import { update_d } from '../ui/stats';
@@ -24,8 +24,8 @@ function allbuff(who: any) {
 export function fght(att: any, def: any) {
   /*if(flags.btlinterrupt===true){
     msg('battle interrupted');
-    if(global.current_z.size>0) {area_init(global.current_z);global.current_z.size--;}else if(global.current_z.size===-1)area_init(global.current_z);
-    else {msg('Area cleared','orange');global.current_z.onEnd();flags.civil=true;flags.btl=false;};
+    if(combat.current_z.size>0) {area_init(combat.current_z);combat.current_z.size--;}else if(combat.current_z.size===-1)area_init(combat.current_z);
+    else {msg('Area cleared','orange');combat.current_z.onEnd();flags.civil=true;flags.btl=false;};
     dom.d7m.update();
     flags.btlinterrupt=false;
     return;
@@ -66,7 +66,7 @@ export function fght(att: any, def: any) {
           printMultihitMessage(hts, inn.name, acc_dmg, !isyouinn);
       }
       else if (flags.m_blh === false) msg(inn.name + ' missed', 'grey');
-      if (sc.hp <= 0 && sc.alive === true) { global.atkdfty = [3, global.atkdftydt]; sc.onDeath(inn); sc.onDeathE(inn); }
+      if (sc.hp <= 0 && sc.alive === true) { combat.atkdfty = [3, combat.atkdftydt]; sc.onDeath(inn); sc.onDeathE(inn); }
       global.s_l = global.s_l % sc.spd;
     } else {
       doSingleAttack(inn, sc, isyouinn);
@@ -155,15 +155,15 @@ export function attack(att: any, def: any, atk?: any, power?: any) {
     if (dk) giveSkExp(skl.ntst, .01);
     if (!isyou) stats.dodgt++;
   } update_d();
-  if (!flags.multih) { if (isyou && dmg >= def.hpmax) stats.onesht++; if (def.hp <= 0 && def.alive === true) { global.atkdfty = [3, global.atkdftydt]; def.onDeath(att); def.onDeathE(att); } }
+  if (!flags.multih) { if (isyou && dmg >= def.hpmax) stats.onesht++; if (def.hp <= 0 && def.alive === true) { combat.atkdfty = [3, combat.atkdftydt]; def.onDeath(att); def.onDeathE(att); } }
   return dmg || 0;
 }
 
 export function tattack(pow: any, type: any, e: any) {
   let dmg;
   let ddat = skl.thr.use();
-  let m = global.current_m;
-  global.atkdftm[0] = type;
+  let m = combat.current_m;
+  combat.atkdftm[0] = type;
   let agl_bonus = 0;
   let spd = m.spd > 0 ? m.spd : 0;
   for (let i = 0; i < you.eqp.length; i++) agl_bonus += you.eqp[i].agl;
@@ -173,8 +173,8 @@ export function tattack(pow: any, type: any, e: any) {
   if (rand(100) < hit) {
     dmg = Math.round(((1 + you.str_r * .05) * (you.efficiency() + 1) * pow * (ddat.a + 1)) / 2);
     stats.dmgdt += dmg;
-    if (!flags.m_blh) msg('You hit ' + global.current_m.name + ' for <span style="color:hotpink">' + dmg + '</span> damage', 'yellow');
-    global.current_m.hp -= dmg;
+    if (!flags.m_blh) msg('You hit ' + combat.current_m.name + ' for <span style="color:hotpink">' + dmg + '</span> damage', 'yellow');
+    combat.current_m.hp -= dmg;
     if (m.hp <= 0 && m.alive === true) { m.onDeath(you); m.onDeathE(); } dom.d5_1_1m.update();
     if (flags.eshake === true) {
       dom.d1m.style.left = parseInt(global.special_x) + rand(-3, 3) + 'px'; dom.d1m.style.top = parseInt(global.special_y) + rand(-3, 3) + 'px';
@@ -196,13 +196,13 @@ export function dmg_calc(att: any, def: any, atk: any) {
   let b = 1;
   if (atk.stt === 1) {
     if (isyou === true) {
-      global.atype_d = atk.aff || you.eqp[0].atype; global.atkdftm = [atea, atcs, 0];
+      global.atype_d = atk.aff || you.eqp[0].atype; combat.atkdftm = [atea, atcs, 0];
       let b = you.luck / 25 + 1;
       let undc = 0;
       if (you.eqp[0].id === 10000) undc = you.mods.undc;
-      dmg = (att.str * eff + (((att.eqp[0].str + undc) * (att.eqp[0].dp / att.eqp[0].dpmax) * .9 + .1) * (att.eqp[0].id === 10000 ? 1 : ta))) * (100 + (att.eqp[0].aff[atea] * 10 + atk.affp * 10 + att.eqp[0].cls[atcs] * 10 + att.maff[global.current_m.type] * 10 + att.aff[atea] * 10) * (att.eqp[0].id === 10000 ? 1 : ta)) / 100 - (def.str * (100 + def.aff[atea] * 5 + def.cls[atcs] * 5) / 100) + 1;
+      dmg = (att.str * eff + (((att.eqp[0].str + undc) * (att.eqp[0].dp / att.eqp[0].dpmax) * .9 + .1) * (att.eqp[0].id === 10000 ? 1 : ta))) * (100 + (att.eqp[0].aff[atea] * 10 + atk.affp * 10 + att.eqp[0].cls[atcs] * 10 + att.maff[combat.current_m.type] * 10 + att.aff[atea] * 10) * (att.eqp[0].id === 10000 ? 1 : ta)) / 100 - (def.str * (100 + def.aff[atea] * 5 + def.cls[atcs] * 5) / 100) + 1;
     } else {
-      dmg = (att.str * (100 + att.eqp[0].aff[att.atype] * 10 + atk.affp * 10 + att.eqp[0].cls[att.ctype] * 10) / 100 - ((def.str * eff + (global.target.str * ((global.target.dp / global.target.dpmax) * .85 + .15) * ta)) * (100 + global.target.aff[att.atype] * 5 * ta + global.target.cls[att.ctype] * 5 * ta + you.caff[att.atype] * 10 + you.cmaff[global.current_m.type] * 10 + you.ccls[att.ctype] * 10) / 100 + ((you.eqp[1].str * (1 + skl.shdc.lvl / 20) * (you.eqp[1].dp / you.eqp[1].dpmax) * .6 + .4) * ta) / 2) * (100 - (you.eqp[1].aff[att.atype] * 5 * (1 + skl.shdc.lvl / 20) + global.target.cls[att.ctype] * 5 * (1 + skl.shdc.lvl / 20) * ta)) / 100);
+      dmg = (att.str * (100 + att.eqp[0].aff[att.atype] * 10 + atk.affp * 10 + att.eqp[0].cls[att.ctype] * 10) / 100 - ((def.str * eff + (global.target.str * ((global.target.dp / global.target.dpmax) * .85 + .15) * ta)) * (100 + global.target.aff[att.atype] * 5 * ta + global.target.cls[att.ctype] * 5 * ta + you.caff[att.atype] * 10 + you.cmaff[combat.current_m.type] * 10 + you.ccls[att.ctype] * 10) / 100 + ((you.eqp[1].str * (1 + skl.shdc.lvl / 20) * (you.eqp[1].dp / you.eqp[1].dpmax) * .6 + .4) * ta) / 2) * (100 - (you.eqp[1].aff[att.atype] * 5 * (1 + skl.shdc.lvl / 20) + global.target.cls[att.ctype] * 5 * (1 + skl.shdc.lvl / 20) * ta)) / 100);
       b = 1;
     }
   }
@@ -210,9 +210,9 @@ export function dmg_calc(att: any, def: any, atk: any) {
     if (isyou === true) {
       global.atype_d = atk.aff || you.eqp[0].atype;
       let b = you.luck / 20 + 1;
-      dmg = (att.int * eff + ((att.eqp[0].int * (att.eqp[0].dp / att.eqp[0].dpmax) * .9 + .1) * (att.eqp[0].id === 10000 ? 1 : ta))) * (100 + (att.eqp[0].aff[atea] * 10 + atk.affp * 10 + att.eqp[0].cls[atcs] * 10 + att.maff[global.current_m.type] * 10 + att.aff[atea] * 10) * (att.eqp[0].id === 10000 ? 1 : ta)) / 100 - (def.int * (100 + def.aff[atea] * 5 + def.cls[atcs] * 5) / 100) + 1;
+      dmg = (att.int * eff + ((att.eqp[0].int * (att.eqp[0].dp / att.eqp[0].dpmax) * .9 + .1) * (att.eqp[0].id === 10000 ? 1 : ta))) * (100 + (att.eqp[0].aff[atea] * 10 + atk.affp * 10 + att.eqp[0].cls[atcs] * 10 + att.maff[combat.current_m.type] * 10 + att.aff[atea] * 10) * (att.eqp[0].id === 10000 ? 1 : ta)) / 100 - (def.int * (100 + def.aff[atea] * 5 + def.cls[atcs] * 5) / 100) + 1;
     } else {
-      dmg = (att.int * (100 + att.eqp[0].aff[att.atype] * 15 + atk.affp * 15 + att.eqp[0].cls[att.ctype] * 5) / 100 - ((def.int * eff + (global.target.int * ((global.target.dp / global.target.dpmax) * .85 + .15) * ta)) * (100 + global.target.aff[att.atype] * 5 * ta + global.target.cls[att.ctype] * 5 * ta + you.caff[att.atype] * 10 + you.cmaff[global.current_m.type] * 10 + you.ccls[att.ctype] * 10) / 100 + ((you.eqp[1].int * (1 + skl.shdc.lvl / 20) * (you.eqp[1].dp / you.eqp[1].dpmax) * .6 + .4) * ta) / 2) * (100 - (you.eqp[1].aff[att.atype] * 5 * (1 + skl.shdc.lvl / 20) + global.target.cls[att.ctype] * 5 * (1 + skl.shdc.lvl / 20) * ta)) / 100);
+      dmg = (att.int * (100 + att.eqp[0].aff[att.atype] * 15 + atk.affp * 15 + att.eqp[0].cls[att.ctype] * 5) / 100 - ((def.int * eff + (global.target.int * ((global.target.dp / global.target.dpmax) * .85 + .15) * ta)) * (100 + global.target.aff[att.atype] * 5 * ta + global.target.cls[att.ctype] * 5 * ta + you.caff[att.atype] * 10 + you.cmaff[combat.current_m.type] * 10 + you.ccls[att.ctype] * 10) / 100 + ((you.eqp[1].int * (1 + skl.shdc.lvl / 20) * (you.eqp[1].dp / you.eqp[1].dpmax) * .6 + .4) * ta) / 2) * (100 - (you.eqp[1].aff[att.atype] * 5 * (1 + skl.shdc.lvl / 20) + global.target.cls[att.ctype] * 5 * (1 + skl.shdc.lvl / 20) * ta)) / 100);
       b = 1;
     }
   }
@@ -235,9 +235,9 @@ export function dmg_calc(att: any, def: any, atk: any) {
       case 6: giveSkExp(skl.abd, dmg * .01);
         break;
     }
-    global.atkdftydt.a = atea;
-    global.atkdftydt.c = atcs;
-    global.atkdftydt.id = att.id
+    combat.atkdftydt.a = atea;
+    combat.atkdftydt.c = atcs;
+    combat.atkdftydt.id = att.id
   }
   let pn = isyou === true ? 1 : 1 - skl.painr.use();
   dmg = dmg * def.res.ph * pn;
@@ -294,17 +294,17 @@ export function dumb(x: any) {
 export function hit_calc(tp: any) {
   if (tp === 1) {
     let agl_bonus = 0;
-    let spd = global.current_m.spd > 0 ? global.current_m.spd : 0;
+    let spd = combat.current_m.spd > 0 ? combat.current_m.spd : 0;
     for (let i = 0; i < you.eqp.length; i++) agl_bonus += you.eqp[i].agl;
-    //return (200 + ((you.agl+agl_bonus)*you.efficiency()) - (global.current_m.spd+global.current_m.agl+100/(100*you.efficiency())*100));
-    return ((you.agl + agl_bonus / 2) * you.efficiency()) / ((spd + global.current_m.agl + global.current_m.eva)) * 130 + 5;
+    //return (200 + ((you.agl+agl_bonus)*you.efficiency()) - (combat.current_m.spd+combat.current_m.agl+100/(100*you.efficiency())*100));
+    return ((you.agl + agl_bonus / 2) * you.efficiency()) / ((spd + combat.current_m.agl + combat.current_m.eva)) * 130 + 5;
   }
   else if (tp === 2) {
     let agl_bonus = 0;
     let spd = you.spd > 0 ? you.spd : 0;
     for (let i = 0; i < you.eqp.length; i++) agl_bonus += you.eqp[i].agl;
-    return global.current_m.agl / ((spd + you.agl + agl_bonus / 2) * you.efficiency()) * 100 + 10 - skl.evas.lvl
-    //return (210 + global.current_m.agl - (you.spd+you.agl+100*(100*you.efficiency())/100));
+    return combat.current_m.agl / ((spd + you.agl + agl_bonus / 2) * you.efficiency()) * 100 + 10 - skl.evas.lvl
+    //return (210 + combat.current_m.agl - (you.spd+you.agl+100*(100*you.efficiency())/100));
   }
 }
 

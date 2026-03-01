@@ -105,17 +105,19 @@ global.titles = [];
 global.titlese = [];
 global.tstcr = [];
 
-// Combat state
-global.atkdftm = [-1, -1, -1];
-global.atkdfty = [-1, -1];
-global.atkdftydt = {};
-global.current_m;
-global.current_z;
-global.current_l;
-global.hit_a = 0;
-global.hit_b = 0;
+// Combat state (ephemeral, not serialized)
+export var combat: any = {
+  atkdftm: [-1, -1, -1],
+  atkdfty: [-1, -1],
+  atkdftydt: {},
+  current_m: undefined,
+  current_z: undefined,
+  current_l: undefined,
+  hit_a: 0,
+  hit_b: 0,
+  keytarget: undefined,
+};
 global.timescale = 1;
-global.keytarget;
 global.offline_evil_index = 1;
 
 // Statistics (top-level export, formerly global.stat)

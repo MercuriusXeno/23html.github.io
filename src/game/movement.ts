@@ -5,7 +5,7 @@
 import { random, rand } from '../random';
 import { copy, scanbyid } from '../utils';
 import { empty } from '../dom-utils';
-import { dom, global, you, sectors, effector, data, flags, stats, } from '../state';
+import { dom, global, you, sectors, effector, data, flags, stats, combat, } from '../state';
 const { creature, area, effect, act, skl } = data;
 import { msg } from '../ui/messages';
 import { clr_chs } from '../ui/choices';
@@ -53,7 +53,7 @@ export function runEffectors(e: any) {
 }
 
 export function inSector(sector: any) {
-  for (let a in global.current_l.sector) if (global.current_l.sector[a].id === sector.id) return true
+  for (let a in combat.current_l.sector) if (combat.current_l.sector[a].id === sector.id) return true
 }
 
 export function addtosector(sector: any, loc: any) {
@@ -82,12 +82,12 @@ export function area_init(area: any) {
       for (let obj in area.pop) if (rnd >= area.popc[obj][0] && rnd <= area.popc[obj][1]) if (!area.pop[obj].cond || area.pop[obj].cond() === true) {
         flags.civil = false;
         flags.btl = true;
-        global.current_z = area;
+        combat.current_z = area;
         let temp = area.pop[obj];
         let newobj = temp.crt.id === creature.default.id ? creature.default : mon_gen(temp.crt);
         lvlup(newobj, rand(temp.lvlmin - 1, temp.lvlmax - 1));
         //newobj.data.lasthp=newobj.hp;
-        global.current_m = newobj;
+        combat.current_m = newobj;
         update_m();
         dom.d5_1_1m.update();
         if (!!dom.d7m) dom.d7m.update();
@@ -116,21 +116,21 @@ export function smove(where: any, lv?: any) {
   you.eqp[6].dp = you.eqp[6].dp - .08 < 0 ? 0 : you.eqp[6].dp - .08;
   let flg = false;
   let und = []
-  for (let c in global.current_l.sector) {
+  for (let c in combat.current_l.sector) {
     for (let a in where.sector) {
       for (let b in where.sector[a].group)
-        if (where.sector[a].group[b] === global.current_l.id && where.sector[a].id === global.current_l.sector[c].id) flg = true
+        if (where.sector[a].group[b] === combat.current_l.id && where.sector[a].id === combat.current_l.sector[c].id) flg = true
     } if (flg === false) {
-      global.current_l.sector[c].onLeave();
-      deactivateEffectors(global.current_l.sector[c].effectors);
-      sectors.splice(sectors.indexOf(global.current_l.sector[c]))
+      combat.current_l.sector[c].onLeave();
+      deactivateEffectors(combat.current_l.sector[c].effectors);
+      sectors.splice(sectors.indexOf(combat.current_l.sector[c]))
     } else flg = false
   }
-  global.current_l.onLeave();
-  deactivateEffectors(global.current_l.effectors);
+  combat.current_l.onLeave();
+  deactivateEffectors(combat.current_l.effectors);
   flags.civil = true;
   flags.btl = false;
-  global.current_z = area.nwh;
+  combat.current_z = area.nwh;
   dom.d7m.update();
   stats.smovet++
   flags.inside = false;
@@ -138,17 +138,17 @@ export function smove(where: any, lv?: any) {
   clr_chs();
   activateEffectors(where.effectors);
   where.sl();
-  global.current_l = where;
+  combat.current_l = where;
   for (let a in sectors) sectors[a].onMove();
   global.current_a.deactivate();
   global.current_a = act.default;
   dom.ct_bt3.style.backgroundColor = 'inherit';
-  for (let a in global.current_l.sector) if (!scanbyid(sectors, global.current_l.sector[a].id)) { sectors.push(global.current_l.sector[a]); global.current_l.sector[a].onEnter(); activateEffectors(global.current_l.sector[a].effectors) }
-  global.current_l.onEnter();
-  rfeff(global.current_l)
+  for (let a in combat.current_l.sector) if (!scanbyid(sectors, combat.current_l.sector[a].id)) { sectors.push(combat.current_l.sector[a]); combat.current_l.sector[a].onEnter(); activateEffectors(combat.current_l.sector[a].effectors) }
+  combat.current_l.onEnter();
+  rfeff(combat.current_l)
   if (flags.btl === false) {
-    global.current_m = creature.default;
-    global.current_m.eff = [];
+    combat.current_m = creature.default;
+    combat.current_m.eff = [];
     empty(dom.d101m);
     dom.d5_1_1m.update();
     update_m();

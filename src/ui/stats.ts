@@ -1,5 +1,5 @@
 import { format3 } from '../utils';
-import { dom, global, you, gameText } from '../state';
+import { dom, global, you, gameText, combat, } from '../state';
 
     export function update_db() {
       dom.d4_1.innerHTML = 'STR: ' + Math.round(you.str_d);
@@ -9,22 +9,22 @@ import { dom, global, you, gameText } from '../state';
     }
 
     export function update_d() {
-      dom.d5_1_1m.innerHTML = 'hp: ' + format3(global.current_m.hp.toString()) + '/' + format3(global.current_m.hpmax.toString());
-      dom.d5_1m.style.width = 100 * global.current_m.hp / global.current_m.hpmax + '%';
+      dom.d5_1_1m.innerHTML = 'hp: ' + format3(combat.current_m.hp.toString()) + '/' + format3(combat.current_m.hpmax.toString());
+      dom.d5_1m.style.width = 100 * combat.current_m.hp / combat.current_m.hpmax + '%';
       dom.hit_c();
       dom.d5_3_1.update();
       dom.d5_1_1.update();
     }
 
     export function update_m() {
-      dom.d2m.innerHTML = global.current_m.name;
-      let mtp = gameText.mtp[global.current_m.type];
-      if (global.current_m.id >= 1) mtp += global.current_m.sex === true ? ' ♂' : ' ♀';
-      dom.d3m.innerHTML = ' lvl:' + global.current_m.lvl + ' \'' + mtp + '\'';
-      dom.d4_1m.innerHTML = 'STR: ' + Math.round(global.current_m.str);
-      dom.d4_2m.innerHTML = 'AGL: ' + Math.round(global.current_m.agl);
-      dom.d4_3m.innerHTML = 'INT: ' + Math.round(global.current_m.int);
-      dom.d4_4m.innerHTML = 'SPD: ' + global.current_m.spd;
+      dom.d2m.innerHTML = combat.current_m.name;
+      let mtp = gameText.mtp[combat.current_m.type];
+      if (combat.current_m.id >= 1) mtp += combat.current_m.sex === true ? ' ♂' : ' ♀';
+      dom.d3m.innerHTML = ' lvl:' + combat.current_m.lvl + ' \'' + mtp + '\'';
+      dom.d4_1m.innerHTML = 'STR: ' + Math.round(combat.current_m.str);
+      dom.d4_2m.innerHTML = 'AGL: ' + Math.round(combat.current_m.agl);
+      dom.d4_3m.innerHTML = 'INT: ' + Math.round(combat.current_m.int);
+      dom.d4_4m.innerHTML = 'SPD: ' + combat.current_m.spd;
       dom.d9m.update();
     }
 

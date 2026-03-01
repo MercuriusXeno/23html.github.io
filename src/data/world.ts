@@ -1,4 +1,4 @@
-import { area, sector, creature, item, wpn, acc, ttl, global, dom, time, furn, furniture, effect, effector, skl, chss, itemgroup, act, gameText, flags, stats, } from '../state';
+import { area, sector, creature, item, wpn, acc, ttl, global, dom, time, furn, furniture, effect, effector, skl, chss, itemgroup, act, gameText, flags, stats, combat, } from '../state';
 import { findbyid, select, z_bake } from '../utils';
 import { random, rand } from '../random';
 import { smove, inSector } from '../game/movement';
@@ -35,7 +35,7 @@ area._ctor = Area;
 // @ts-ignore: constructor function
 area.nwh = new Area({ id: 101, name: 'Somewhere', pop: [{ crt: creature.default, lvlmin: 1, lvlmax: 1, c: 1 }], size: 1 });
 z_bake(area.nwh);
-global.current_z = area.nwh;
+combat.current_z = area.nwh;
 
 // @ts-ignore: constructor function
 area.trn = new Area({
@@ -273,7 +273,7 @@ sector.home = new Sector({
     if (this.data.smkp > 0) {
       if (effect.smoke.active) effect.smoke.duration = 26;
       else giveEff(player, effect.smoke, 26)
-      if (--this.data.smkp <= 0) smove(global.current_l)
+      if (--this.data.smkp <= 0) smove(combat.current_l)
     }
     if (flags.catget) giveSkExp(skl.pet, player.mods.petxp);
     stats.athme += global.timescale;

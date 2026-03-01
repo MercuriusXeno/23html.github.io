@@ -1,4 +1,4 @@
-import { effect, global, dom, skl, timers, furn, furniture, item, flags, stats, } from '../state';
+import { effect, global, dom, skl, timers, furn, furniture, item, flags, stats, combat, } from '../state';
 import { select } from '../utils';
 import { random, rand, randf } from '../random';
 import { findbyid } from '../utils';
@@ -38,14 +38,14 @@ function Effect(this: any, cfg: any) {
 // @ts-ignore: constructor function
 effect.test1 = new Effect({ name: 'Beast killer', desc: 'Attacks against beast type creatures are 30% more effective', type: 1,
   use: function (player: any) {
-    if (global.current_m.type === 1) { player.str = Math.round(player.str * 1.3); }
+    if (combat.current_m.type === 1) { player.str = Math.round(player.str * 1.3); }
   }
 });
 
 // @ts-ignore: constructor function
 effect.bk1 = new Effect({ type: 1,
   use: function (player: any) {
-    if (global.current_m.type === 1) { player.dmlt += .2 }
+    if (combat.current_m.type === 1) { player.dmlt += .2 }
   }
 });
 
@@ -76,13 +76,13 @@ effect.psn = new Effect({ id: 1, name: 'Poison', desc: 'Depletes health each sec
         giveSkExp(skl.painr, this.power * .05);
         stats.dmgrt += dmg;
         if (player.hp - dmg > 0) player.hp -= dmg;
-        else { player.hp = 0; removeEff(this); this.duration = 5; player.onDeath(); global.atkdfty = [2, 1] }
+        else { player.hp = 0; removeEff(this); this.duration = 5; player.onDeath(); combat.atkdfty = [2, 1] }
         dom.d5_1_1.update();
       }
     }
     else {
       if (this.target.hp - dmg > 0) this.target.hp -= dmg;
-      else { this.target.hp = 0; removeEff(this, this.target); this.duration = 5; global.atkdftm = [-1, -1, 1]; this.target.onDeath(player); stats.indkill++ }
+      else { this.target.hp = 0; removeEff(this, this.target); this.duration = 5; combat.atkdftm = [-1, -1, 1]; this.target.onDeath(player); stats.indkill++ }
       dom.d5_1_1m.update();
     }
     if (this.duration === 0) {
@@ -111,13 +111,13 @@ effect.vnm = new Effect({ id: 2, name: 'Venom', desc: 'Depletes health each seco
         giveSkExp(skl.painr, this.power * .2);
         stats.dmgrt += dmg;
         if (player.hp - dmg > 0) player.hp -= dmg;
-        else { player.hp = 0; removeEff(this); this.duration = 5; player.onDeath(); global.atkdfty = [2, 2] }
+        else { player.hp = 0; removeEff(this); this.duration = 5; player.onDeath(); combat.atkdfty = [2, 2] }
         dom.d5_1_1.update();
       }
     }
     else {
       if (this.target.hp - dmg > 0) this.target.hp -= dmg;
-      else { this.target.hp = 0; removeEff(this, this.target); this.duration = 5; global.atkdftm = [-1, -1, 1]; this.target.onDeath(player); stats.indkill++ }
+      else { this.target.hp = 0; removeEff(this, this.target); this.duration = 5; combat.atkdftm = [-1, -1, 1]; this.target.onDeath(player); stats.indkill++ }
       dom.d5_1_1m.update();
     }
     if (this.duration === 0) {
@@ -364,7 +364,7 @@ effect.bled = new Effect({ id: 14, name: 'Bleeding', desc: 'Depletes health each
       dmg *= Math.ceil(1 - skl.bledr.use());
       stats.dmgrt += dmg;
       if (player.hp - dmg > 0) player.hp -= dmg;
-      else { player.hp = 0; removeEff(this); this.duration = 5; player.onDeath(); global.atkdfty = [2, 3] }
+      else { player.hp = 0; removeEff(this); this.duration = 5; player.onDeath(); combat.atkdfty = [2, 3] }
       dom.d5_1_1.update();
     }
     else { if (this.target.hp - dmg > 0) this.target.hp -= dmg; else { this.target.hp = 0; removeEff(this, this.target); this.duration = 5; this.target.onDeath(player); stats.indkill++ } }
@@ -447,7 +447,7 @@ effect.fei1 = new Effect({ id: 23, name: 'Fei poisoning', desc: 'Fei impurities 
     let dmg = (this.power * 5 * (1 - skl.crptr.lvl * .05)) << 0;
     stats.dmgrt += dmg;
     if (player.hp - dmg > 0) player.hp -= dmg;
-    else { player.hp = 0; removeEff(this); player.onDeath(); global.atkdfty = [2, 4]; msg("You fail to purify the pill", 'darkgrey') }
+    else { player.hp = 0; removeEff(this); player.onDeath(); combat.atkdfty = [2, 4]; msg("You fail to purify the pill", 'darkgrey') }
     dom.d5_1_1.update();
     if (this.duration === 0) { removeEff(this, this.target); this.duration = 5; msg("You have successfully purified the pill!", 'lime'); giveExp(this.power * 5000 + (this.power > 1 ? (this.power * .15 * 5000) : 0), true, true, true) }
   }

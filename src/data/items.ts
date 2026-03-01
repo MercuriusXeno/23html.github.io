@@ -1,4 +1,4 @@
-import { item, dom, global, effect, skl, inv, wpn, eqp, sld, acc, furniture, home, furn, sector, ttl, chss, rcp, timers, area, creature, time, gameText, flags, stats, } from '../state';
+import { item, dom, global, effect, skl, inv, wpn, eqp, sld, acc, furniture, home, furn, sector, ttl, chss, rcp, timers, area, creature, time, gameText, flags, stats, combat, } from '../state';
 import { HOUR } from '../constants';
 import { random, rand, randf } from '../random';
 import { select, findbyid, z_bake } from '../utils';
@@ -281,11 +281,11 @@ item.sp0a = new Item({ id: 3018, name: 'Spirit Opening Powder', desc: 'Powder re
 item.smkbmb = new Item({ id: 3019, name: 'Smoke Bomb', desc: 'Pellets that release thick smog when crushed. Can create a smokescreen to help you escape from danger' + dom.dseparator + '<span style=\'color:springgreen\'>Bypasses current enemy</span>', stype: 4,
   use: function () {
     if (flags.civil === true && flags.btl === false) { msg('You\'re not in combat!', 'red'); return }
-    if (global.current_z.size === 1 || global.current_z.size === 0 || global.current_z.isboss) { msg('You can\'t pass this enemy!', 'red'); return }
+    if (combat.current_z.size === 1 || combat.current_z.size === 0 || combat.current_z.isboss) { msg('You can\'t pass this enemy!', 'red'); return }
     else {
       clearInterval(timers.btl); clearInterval(timers.btl2); msg('*Puff*', 'black', null, null, 'lightgrey'); flags.smkactv = true;
-      global.current_z.size--;
-      area_init(global.current_z);
+      combat.current_z.size--;
+      area_init(combat.current_z);
       dom.d7m.update();
       this.amount--;
     }
@@ -318,9 +318,9 @@ item.svial1 = new Item({ id: 3020, name: 'Skeleton Vial', desc: 'Summons a lvl 1
 // @ts-ignore: constructor function
 item.mpwdr = new Item({ id: 3021, name: 'Monster Powder', desc: 'Dried and grounded sunbloom mixed with red salts, it emits aura often mistaken for soul energy that attracts nearby creatures<br>' + dom.dseparator + '<span style=\'color:seagreen\'>Increases area size by 5</span>', stype: 4,
   use: function () {
-    if (global.current_z.protected || global.current_z.id <= 101 || global.current_z.size <= 1) { msg('Unable to use it here!', 'red'); return }
+    if (combat.current_z.protected || combat.current_z.id <= 101 || combat.current_z.size <= 1) { msg('Unable to use it here!', 'red'); return }
     msg('You spread some powder on the ground', 'lime', null, null, 'brown')
-    global.current_z.size += 5;
+    combat.current_z.size += 5;
     dom.d7m.update();
     this.amount--;
   }
@@ -330,7 +330,7 @@ item.mpwdr = new Item({ id: 3021, name: 'Monster Powder', desc: 'Dried and groun
 item.smbpll = new Item({ id: 3022, name: 'Slumber Pill', desc: 'Pill with a strong sedative effect. Normally used by sick and old people to treat insomnia, if they can afford it. Has other uses if you are creative enough' + dom.dseparator + '<span style=\'color:lightgrey\'>Makes you sleep through 18 hours in an instant</span>', stype: 4,
   use: function (player: any, x: any) {
     if (flags.btl || flags.rdng || flags.isshop || flags.busy || flags.work) { msg('You can\'t sleep now!', 'red'); return } else {
-      let b = .1; let s = HOUR * 18; if (!flags.sleepmode) giveEff(player, effect.slep); else if (global.current_l.id === 112) b += home.bed.sq; stats.plst++
+      let b = .1; let s = HOUR * 18; if (!flags.sleepmode) giveEff(player, effect.slep); else if (combat.current_l.id === 112) b += home.bed.sq; stats.plst++
       for (let a = 0; a < s; a++) { giveSkExp(skl.sleep, .1); ontick() } if (!flags.sleepmode) removeEff(effect.slep);
     }
     this.amount--;
@@ -451,7 +451,7 @@ item.stthbm4 = new Item({ id: 3034, name: 'Drakevine', desc: 'Herb of flexibilit
 // @ts-ignore: constructor function
 item.bmsmktt = new Item({ id: 3035, name: 'Smoke Pellet Cluster', desc: 'Repurposed smoke bomb, made by concentrating multiple volatile components together, making the moke several times more hazardous, but not enough to cause real damage to a living person. Since the ignition period from such a modification is much longer, it has fewer uses than a regular smoke bomb', stype: 4,
   use: function () {
-    if (global.current_l.id !== 111) { msg('This isn\'t the best place to use this', 'red'); return }
+    if (combat.current_l.id !== 111) { msg('This isn\'t the best place to use this', 'red'); return }
     area.hmbsmnt.size = 0;
     msg('You toss a cluster down your basement and hear a distant shrill', 'yellow')
     dom.d_lctt.innerHTML += '<span style="color:grey;font-size:1.2em">&nbsp煙<span>'
@@ -1703,7 +1703,7 @@ item.shppmf = new Item({ id: 9015, name: '"Pamphlet"', desc: 'This was shoved on
         flags.mkplc1u = true;
         this.data.finished = true;
         msg('Right, you could go to the marketplace', 'lime');
-        if (global.current_l.id === chss.lsmain1.id) smove(chss.lsmain1, false);
+        if (combat.current_l.id === chss.lsmain1.id) smove(chss.lsmain1, false);
         this.data.read = false;
         this.amount--;
       } else chss.trd.sl(this);
@@ -1883,7 +1883,7 @@ item.pdeedhs = new Item({ id: 9025, name: '"Property Deed"', rar: 2, desc: 'This
     if (canRead()) {
       if (this.data.timep >= this.cmax) {
         flags.hsedchk = true;
-        if (global.current_l.id === 111) smove(chss.home, false)
+        if (combat.current_l.id === 111) smove(chss.home, false)
         this.data.read = false;
         this.amount--;
       } else chss.trd.sl(this);

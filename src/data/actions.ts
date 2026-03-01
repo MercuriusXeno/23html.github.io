@@ -1,4 +1,4 @@
-import { act, global, dom, effect, skl, timers, flags } from '../state';
+import { act, global, dom, effect, skl, timers, flags, combat, } from '../state';
 import { findbyid, select } from '../utils';
 import { canScout } from '../game/exploration';
 import { giveExp, giveSkExp } from '../game/progression';
@@ -76,21 +76,21 @@ act.scout = new Action({
     clearInterval(timers.actm);
     giveEff(player, effect.scout);
     let t = 2;
-    for (let a in global.current_l.sector) { let m = canScout(global.current_l.sector[a]); if (m === 1) t = m; }
-    if (canScout(global.current_l) === 1 || t === 1) msg('You sense something', 'white')
+    for (let a in combat.current_l.sector) { let m = canScout(combat.current_l.sector[a]); if (m === 1) t = m; }
+    if (canScout(combat.current_l) === 1 || t === 1) msg('You sense something', 'white')
     timers.actm = setInterval(() => {
       this.use(player);
     }, 1000);
   },
   use: function (this: any) {
     if (flags.isdark && !cansee()) { deactivateAct(this); msg('You can\'t see anything', 'grey'); return }
-    let a1 = canScout(global.current_l);
+    let a1 = canScout(combat.current_l);
     let a2c = []
-    for (let a in global.current_l.sector) a2c.push(canScout(global.current_l.sector[a]));
+    for (let a in combat.current_l.sector) a2c.push(canScout(combat.current_l.sector[a]));
     let a2 = 3;
     for (let a in a2c) if (a2c[a] !== 3) { if (a2c[a] === 1) { a2 = 1; break } else a2 = 2 }
-    if (a1 === 1) global.current_l.onScout();
-    if (a2 === 1) { for (let a in global.current_l.sector) if (canScout(global.current_l.sector[a]) === 1) global.current_l.sector[a].onScout(); }
+    if (a1 === 1) combat.current_l.onScout();
+    if (a2 === 1) { for (let a in combat.current_l.sector) if (canScout(combat.current_l.sector[a]) === 1) combat.current_l.sector[a].onScout(); }
     if (a1 === 3 && a2 === 3) {
       msg('There doesn\'t seem to be anything of interest around..', 'lightgrey');
       deactivateAct(this)

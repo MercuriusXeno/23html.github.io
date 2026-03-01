@@ -4,7 +4,7 @@
 
 import { random } from '../random';
 import { select } from '../utils';
-import { dom, global, you, inv, data, flags, stats, } from '../state';
+import { dom, global, you, inv, data, flags, stats, combat, } from '../state';
 const { skl, act } = data;
 import { msg } from '../ui/messages';
 import { updateInv } from '../ui/inventory';
@@ -30,8 +30,8 @@ export function scoutGeneric(chs: any): void {
   if (chs.data.scout >= chs.data.scoutm) { m = 5; chs.data.scout = 0 }
   if ((!sct.cond || sct.cond() === true) && !chs.data.gets[idx] && random() <= sct.c * m * (1 + skl.scout.lvl * .15) * (1 + chs.data.gotmod * .2)) { stats.dsct++; chs.data.gotmod++; sct.f(); giveSkExp(skl.scout, (sct.exp ? sct.exp : .5 / sct.c)) }
   let t = 2;
-  for (let a in global.current_l.sector) { let m = canScout(global.current_l.sector[a]); if (m === 1) t = m }
-  if (canScout(global.current_l) >= 2 && t >= 2) { deactivateAct(act.scout); msg('There doesn\'t seem to be anything of interest left in this area') }
+  for (let a in combat.current_l.sector) { let m = canScout(combat.current_l.sector[a]); if (m === 1) t = m }
+  if (canScout(combat.current_l) >= 2 && t >= 2) { deactivateAct(act.scout); msg('There doesn\'t seem to be anything of interest left in this area') }
 }
 
 export function disassembleGeneric(obj: any): void {
