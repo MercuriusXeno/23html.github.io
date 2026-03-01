@@ -1,4 +1,4 @@
-import { dom, global, you, planner, data } from '../state';
+import { dom, global, you, planner, data, gameText } from '../state';
 const { eqp } = data;
 import { giveEff, removeEff } from './effects';
 import { update_d } from './stats';
@@ -26,8 +26,8 @@ import { isort } from './inventory';
         w.oneq(you);
         if (w.degrade) planner.itmwear.data.items.push(w)
         if (w.slot === 1) you.atkmode = w.atkmode;
-        w.wc = global.text.wecs[w.rar][0];
-        //w.wbc=global.text.wecs[w.rar][1];
+        w.wc = gameText.wecs[w.rar][0];
+        //w.wbc=gameText.wecs[w.rar][1];
         let spst;
         switch (w.rar) {
           case 2: spst = '0px 0px 2px blue';

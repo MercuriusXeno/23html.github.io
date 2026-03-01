@@ -1,4 +1,4 @@
-import { w_manager, global, you, dom, callback, time, setTime, data } from '../state';
+import { w_manager, global, you, dom, callback, time, setTime, data, gameText } from '../state';
 const { effect, skl } = data;
 import { random, rand } from '../random';
 import { findbyid, copy } from '../utils';
@@ -149,14 +149,14 @@ export function Time(this: any) {
 // @ts-ignore: constructor function
 setTime(new Time());
 time.minute = 338144100;
-global.text.d_l = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-global.text.d_s = ["Mon.", "Tue.", "Wed.", "Thu.", "Fri.", "Sat.", "Sun."];
-global.text.d_j = ["月", "火", "水", "木", "金", "土", "日"];
+gameText.d_l = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+gameText.d_s = ["Mon.", "Tue.", "Wed.", "Thu.", "Fri.", "Sat.", "Sun."];
+gameText.d_j = ["月", "火", "水", "木", "金", "土", "日"];
 
 // --- Time accessor functions ---
 export function getMinute() { return time.minute % 60 }
 export function getHour() { return time.hour % 24; }
-export function getDay(n: any) { return n === 1 ? global.text.d_l[time.day % 7] : (n === 2 ? global.text.d_s[time.day % 7] : global.text.d_j[time.day % 7]) }
+export function getDay(n: any) { return n === 1 ? gameText.d_l[time.day % 7] : (n === 2 ? gameText.d_s[time.day % 7] : gameText.d_j[time.day % 7]) }
 export function getMonth() { return time.month % 12 + 1; }
 export function getYear() { return time.year; }
 export function getLunarPhase() { return (time.day % 62.64 / 7.83) << 0 }
@@ -622,7 +622,7 @@ export function wManager() {
 
     export function wdrseason(flag: any) {
       let s;
-      s = !flag ? getSeason(true) : global.text.ssns[(getSeason() as number) - 1];
+      s = !flag ? getSeason(true) : gameText.ssns[(getSeason() as number) - 1];
       dom.d_weathers.innerHTML = '[' + s + ']';
       switch (getSeason()) {
         case 1: dom.d_weathers.style.color = 'springgreen';

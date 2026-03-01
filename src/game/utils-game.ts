@@ -1,5 +1,5 @@
 import { random, rand } from '../random';
-import { global, you, data } from '../state';
+import { global, you, data, gameText } from '../state';
 const { skl } = data;
 import { msg } from '../ui/messages';
 import { giveItem } from './inventory';
@@ -12,7 +12,7 @@ import { giveItem } from './inventory';
 
     export function formatw(a: number): any {
       let b = (Math.log(Math.abs(a + 1)) * 0.43429448190325178 | 0) + 1;
-      if (b > 3) { let n = a / 1000 ** ((b - 1) / 3 << 0) * 10; return ((n - ~~n >= 0.5 ? 1 : 0) + ~~n) / 10 + global.text.nt[((b - 4) / 3 << 0)] } return a;
+      if (b > 3) { let n = a / 1000 ** ((b - 1) / 3 << 0) * 10; return ((n - ~~n >= 0.5 ? 1 : 0) + ~~n) / 10 + gameText.nt[((b - 4) / 3 << 0)] } return a;
     }
 
     export function kill(obj: any): void { obj = null; }

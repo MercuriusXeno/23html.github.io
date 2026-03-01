@@ -7,7 +7,7 @@ import { addElement, empty, appear, fade } from './dom-utils';
 import { dom, global, listen, w_manager, offline, callback, effector,
   timers, chss, test, planner, check, home,
   itemgroup, sectors, inv, furn, qsts, dar, acts, plans, checksd,
-  you, time, data, setYou, setTime,
+  you, time, data, gameText, setYou, setTime,
   setInv, setDar, setFurn, setQsts, setActs, setSectors } from './state';
 const { creature, effect, wpn, eqp, acc, sld, item, rcp, area, sector, ttl, skl, abl,
   furniture, vendor, quest, act, container, mastery } = data;
@@ -67,7 +67,7 @@ declare var InstallTrigger: any;
       if (q.data.started) { q.data.done = true; q.data.started = false; q.data.pending = false; msg('Quest completed: ', 'lime'); msg_add('"' + q.name + '"', 'orange'); q.rwd(you); global.stat.qstc++ }
     }
 
-    global.text.alcohol_d = ["You drank some alcohol. You feel warm inside.", "You drank alcohol. Party on!", "You drank lots of alcohol. Are those white mice?", "You drank unholy amounts of alcohol. But what do you care?", "You embalmed yourself alive with so much alcohol, that even undead will leave your dead body alone."];
+    gameText.alcohol_d = ["You drank some alcohol. You feel warm inside.", "You drank alcohol. Party on!", "You drank lots of alcohol. Are those white mice?", "You drank unholy amounts of alcohol. But what do you care?", "You embalmed yourself alive with so much alcohol, that even undead will leave your dead body alone."];
 
     ////misc////
     global.wdrop = [{ item: item.lckl, c: .0000048 }];
@@ -281,7 +281,7 @@ declare var InstallTrigger: any;
     dom.d4_3m = addElement(dom.d4m, 'span', null, 'dd');
     dom.d4_4m = addElement(dom.d4m, 'span', null, 'dd');
     dom.d9m = addElement(dom.d1m, 'div');
-    dom.d9m.update = function (this: any) { this.innerHTML = 'rank: ' + global.text.eranks[global.current_m.rnk]; if (global.current_m.rnk <= 4) this.style.color = 'lightgrey'; else if (global.current_m.rnk > 4 && global.current_m.rnk <= 7) this.style.color = 'white'; else if (global.current_m.rnk > 7 && global.current_m.rnk <= 10) this.style.color = 'lightblue'; else if (global.current_m.rnk > 10 && global.current_m.rnk <= 13) this.style.color = 'lightgreen'; else if (global.current_m.rnk > 13 && global.current_m.rnk <= 16) this.style.color = 'lime'; else if (global.current_m.rnk > 16 && global.current_m.rnk <= 19) this.style.color = 'yellow' }
+    dom.d9m.update = function (this: any) { this.innerHTML = 'rank: ' + gameText.eranks[global.current_m.rnk]; if (global.current_m.rnk <= 4) this.style.color = 'lightgrey'; else if (global.current_m.rnk > 4 && global.current_m.rnk <= 7) this.style.color = 'white'; else if (global.current_m.rnk > 7 && global.current_m.rnk <= 10) this.style.color = 'lightblue'; else if (global.current_m.rnk > 10 && global.current_m.rnk <= 13) this.style.color = 'lightgreen'; else if (global.current_m.rnk > 13 && global.current_m.rnk <= 16) this.style.color = 'lime'; else if (global.current_m.rnk > 16 && global.current_m.rnk <= 19) this.style.color = 'yellow' }
     dom.d9m.style.borderBottom = '#545299 dotted 2px';
     dom.d9m.style.backgroundColor = '#272744';
     dom.d8m_c = addElement(dom.d1m, 'small', 'bbts');
@@ -664,7 +664,7 @@ declare var InstallTrigger: any;
             this.bst_entr_m_e1 = addElement(this.bst_entr_m_case, 'div', null, 'list-col-name');
             this.bst_entr_m_e1.innerHTML = mon.name;
             this.bst_entr_m_e2 = addElement(this.bst_entr_m_case, 'div', null, 'list-col-rank');
-            this.bst_entr_m_e2.innerHTML = global.text.eranks[mon.rnk];
+            this.bst_entr_m_e2.innerHTML = gameText.eranks[mon.rnk];
             if (mon.rnk <= 4) this.bst_entr_m_e2.style.color = 'lightgrey';
             else if (mon.rnk > 4 && mon.rnk <= 7) this.bst_entr_m_e2.style.color = 'white';
             else if (mon.rnk > 7 && mon.rnk <= 10) this.bst_entr_m_e2.style.color = 'lightblue';
@@ -685,7 +685,7 @@ declare var InstallTrigger: any;
                 this.bst_entr_m_e1 = addElement(this.bst_entr_m_case, 'div', null, 'list-col-name');
                 this.bst_entr_m_e1.innerHTML = mon.name;
                 this.bst_entr_m_e2 = addElement(this.bst_entr_m_case, 'div', null, 'list-col-rank');
-                this.bst_entr_m_e2.innerHTML = global.text.eranks[mon.rnk];
+                this.bst_entr_m_e2.innerHTML = gameText.eranks[mon.rnk];
                 if (mon.rnk <= 4) this.bst_entr_m_e2.style.color = 'lightgrey';
                 else if (mon.rnk > 4 && mon.rnk <= 7) this.bst_entr_m_e2.style.color = 'white';
                 else if (mon.rnk > 7 && mon.rnk <= 10) this.bst_entr_m_e2.style.color = 'lightblue';
@@ -1727,7 +1727,7 @@ declare var InstallTrigger: any;
     update_db()
     update_d()
 
-    global.text.mtp = ['Human', 'Beast', 'Undead', 'Evil', 'Phantom', 'Dragon'];
+    gameText.mtp = ['Human', 'Beast', 'Undead', 'Evil', 'Phantom', 'Dragon'];
 
     let testz = new (area._ctor)();
     testz.apop = 4000;
@@ -1785,9 +1785,9 @@ declare var InstallTrigger: any;
       }
     });
 
-    global.text.cfc = ['White', 'Black', 'Orange', 'Grey', 'Black&White', 'Brown', 'Ginger', 'Cinnamon', 'Fawn', 'Amber', 'Cream', 'Chocolate'];
-    global.text.cfp = ['Spotted', 'Plain', 'Solid', 'Bicolored', 'Tabby', 'Tricolored', 'Calico', 'Tortoiseshell', 'Wavy', 'Fluffy', 'Siamese', 'Striped'];
-    global.text.cln = ['Sleeping', 'Playing', 'Catching fireflies', 'Eating', 'Fish', 'People', 'Running outside', 'Warm places', 'Water', 'Fighting', 'Meowing', 'Singing', 'Catching mice', 'Its Master', 'Climbing trees', 'Toppling objects', 'Hiding', 'Safe places', 'Rooftops', 'Sitting by the window', 'Watching others', 'Master\'s bed', 'Being petted', 'Being brushed', 'Sitting on laps', 'Other cats', 'Dogs', 'Warm weather', 'Watching stars', 'Toys', 'Meat', 'Rain', 'Snow'];
+    gameText.cfc = ['White', 'Black', 'Orange', 'Grey', 'Black&White', 'Brown', 'Ginger', 'Cinnamon', 'Fawn', 'Amber', 'Cream', 'Chocolate'];
+    gameText.cfp = ['Spotted', 'Plain', 'Solid', 'Bicolored', 'Tabby', 'Tricolored', 'Calico', 'Tortoiseshell', 'Wavy', 'Fluffy', 'Siamese', 'Striped'];
+    gameText.cln = ['Sleeping', 'Playing', 'Catching fireflies', 'Eating', 'Fish', 'People', 'Running outside', 'Warm places', 'Water', 'Fighting', 'Meowing', 'Singing', 'Catching mice', 'Its Master', 'Climbing trees', 'Toppling objects', 'Hiding', 'Safe places', 'Rooftops', 'Sitting by the window', 'Watching others', 'Master\'s bed', 'Being petted', 'Being brushed', 'Sitting on laps', 'Other cats', 'Dogs', 'Warm weather', 'Watching stars', 'Toys', 'Meat', 'Rain', 'Snow'];
 
 
     function chs_spec(type: any, x?: any) {
@@ -1804,9 +1804,9 @@ declare var InstallTrigger: any;
           dom.ch_1_2 = addElement(dom.ch_1, 'div', null, 'choice-detail');
           dom.ch_1_2.innerHTML = 'Age: ' + (c.data.age >= YEAR ? '<span style="color:orange">' + (c.data.age / YEAR << 0) + '</span> Years ' : '') + (c.data.age >= MONTH ? '<span style="color:yellow">' + (c.data.age / MONTH << 0) % 12 + '</span> Months ' : '') + (c.data.age >= DAY ? '<span style="color:lime">' + (c.data.age / DAY << 0) % 30 + '</span> Days ' : '');
           dom.ch_1_3 = addElement(dom.ch_1, 'div', null, 'choice-detail');
-          dom.ch_1_3.innerHTML = 'Pattern: <span style="color:cyan">' + global.text.cfp[c.data.p] + '</span> | Color: <span style="color:cyan">' + global.text.cfc[c.data.c] + '</span>';
+          dom.ch_1_3.innerHTML = 'Pattern: <span style="color:cyan">' + gameText.cfp[c.data.p] + '</span> | Color: <span style="color:cyan">' + gameText.cfc[c.data.c] + '</span>';
           dom.ch_1_4 = addElement(dom.ch_1, 'div', null, 'choice-detail');
-          dom.ch_1_4.innerHTML = 'Likes: <span style="color:lime">' + global.text.cln[c.data.l1] + '</span> And <span style="color:lime">' + global.text.cln[c.data.l2] + '</span>';
+          dom.ch_1_4.innerHTML = 'Likes: <span style="color:lime">' + gameText.cln[c.data.l1] + '</span> And <span style="color:lime">' + gameText.cln[c.data.l2] + '</span>';
           timers.caupd = setInterval(() => { dom.ch_1_2.innerHTML = 'Age: ' + (c.data.age >= YEAR ? '<span style="color:orange">' + (c.data.age / YEAR << 0) + '</span> Years ' : '') + (c.data.age >= MONTH ? '<span style="color:yellow">' + (c.data.age / MONTH << 0) % 12 + '</span> Months ' : '') + (c.data.age >= DAY ? '<span style="color:lime">' + (c.data.age / DAY << 0) % 30 + '</span> Days ' : ''); }, 1000);
         }; break
         case 2: {
@@ -2864,7 +2864,7 @@ declare var InstallTrigger: any;
     }
     chss.mrktvg1.onEnter = function (this: any) {
       if (!timers.mktwawa1) timers.mktwawa1 = setInterval(function (this: any) {
-        if (random() < .1) { if (!global.text.mktwawa1) global.text.mktwawa1 = ['<small>"...for that price? Are you cr..."</small>', '<small>"...no, go by yourself..."</small>', '<small>"...right, I\'ll take ' + rand(15) + ', put them in..."</small>', '<small>"...is this really?..."</small>', '<small>"...never seen this thing..."</small>', '<small>"...is this real?..."</small>', '<small>"...yeah, he said it\'s there..."</small>', '<small>"...mama!!..."</small>', '<small>"...right, coming next evening. You should probably p..."</small>', '<small>"...stop pushing!..."</small>', '<small>"...what a scam..."</small>', '<small>"...this isn\'t even fresh!..."</small>', '<small>"...why is this so expensive?..."</small>', '<small>"...I won\'t lower it further!..."</small>', '<small>"...I\'ll come back, just wait for a minute..."</small>', '<small>"...break time!..."</small>', '<small>"...who said so? Gotta be a lie..."</small>', '<small>"...whatever, I\'m not buying..."</small>', '<small>"...turn right and then..."</small>', '<small>"...check for yourself then..."</small>', '<small>"...she\'ll return shortly. As for you..."</small>', '<small>"...deal!..."</small>', '<small>"...try a different one..."</small>', '<small>"...buy it! You won\'t regret it!..."</small>', '<small>"Oh no! I dropped it in the forest!..."</small>']; msg(select(global.text.mktwawa1), 'rgb(' + rand(255) + ',' + rand(255) + ',' + rand(255) + ')') }
+        if (random() < .1) { if (!gameText.mktwawa1) gameText.mktwawa1 = ['<small>"...for that price? Are you cr..."</small>', '<small>"...no, go by yourself..."</small>', '<small>"...right, I\'ll take ' + rand(15) + ', put them in..."</small>', '<small>"...is this really?..."</small>', '<small>"...never seen this thing..."</small>', '<small>"...is this real?..."</small>', '<small>"...yeah, he said it\'s there..."</small>', '<small>"...mama!!..."</small>', '<small>"...right, coming next evening. You should probably p..."</small>', '<small>"...stop pushing!..."</small>', '<small>"...what a scam..."</small>', '<small>"...this isn\'t even fresh!..."</small>', '<small>"...why is this so expensive?..."</small>', '<small>"...I won\'t lower it further!..."</small>', '<small>"...I\'ll come back, just wait for a minute..."</small>', '<small>"...break time!..."</small>', '<small>"...who said so? Gotta be a lie..."</small>', '<small>"...whatever, I\'m not buying..."</small>', '<small>"...turn right and then..."</small>', '<small>"...check for yourself then..."</small>', '<small>"...she\'ll return shortly. As for you..."</small>', '<small>"...deal!..."</small>', '<small>"...try a different one..."</small>', '<small>"...buy it! You won\'t regret it!..."</small>', '<small>"Oh no! I dropped it in the forest!..."</small>']; msg(select(gameText.mktwawa1), 'rgb(' + rand(255) + ',' + rand(255) + ',' + rand(255) + ')') }
       }, 1000);
     }
     chss.mrktvg1.onLeave = function (this: any) {
@@ -3253,12 +3253,12 @@ declare var InstallTrigger: any;
               chs('"Take it with you"', false).addEventListener('click', () => {
                 let cat = giveFurniture(furniture.cat, true, false);
                 cat.data.sex = rand(1);
-                cat.data.c = rand(global.text.cfc.length - 1);
-                cat.data.p = rand(global.text.cfp.length - 1);
-                cat.data.l1 = rand(global.text.cln.length - 1);
-                let tg = rand(global.text.cln.length - 1);
-                do { tg = rand(global.text.cln.length - 1) } while (tg === cat.data.l1);
-                cat.data.l2 = rand(global.text.cln.length - 1);
+                cat.data.c = rand(gameText.cfc.length - 1);
+                cat.data.p = rand(gameText.cfp.length - 1);
+                cat.data.l1 = rand(gameText.cln.length - 1);
+                let tg = rand(gameText.cln.length - 1);
+                do { tg = rand(gameText.cln.length - 1) } while (tg === cat.data.l1);
+                cat.data.l2 = rand(gameText.cln.length - 1);
                 global.flags.catget = true;
                 msg('The cat decided to move into your house!', 'lime');
                 smove(chss.lsmain1);
@@ -3279,12 +3279,12 @@ declare var InstallTrigger: any;
           chs('"Take it with you"', false).addEventListener('click', () => {
             let cat = giveFurniture(furniture.cat, true, false);
             cat.data.sex = rand(1);
-            cat.data.c = rand(global.text.cfc.length - 1);
-            cat.data.p = rand(global.text.cfp.length - 1);
-            cat.data.l1 = rand(global.text.cln.length - 1);
-            let tg = rand(global.text.cln.length - 1);
-            do { tg = rand(global.text.cln.length - 1) } while (tg === cat.data.l1);
-            cat.data.l2 = rand(global.text.cln.length - 1);
+            cat.data.c = rand(gameText.cfc.length - 1);
+            cat.data.p = rand(gameText.cfp.length - 1);
+            cat.data.l1 = rand(gameText.cln.length - 1);
+            let tg = rand(gameText.cln.length - 1);
+            do { tg = rand(gameText.cln.length - 1) } while (tg === cat.data.l1);
+            cat.data.l2 = rand(gameText.cln.length - 1);
             global.flags.catget = true;
             msg('The cat decided to move into your house!', 'lime');
             smove(chss.lsmain1);
@@ -3299,7 +3299,7 @@ declare var InstallTrigger: any;
       });
     }
 
-    global.text.mbrdtt = ['"If you do not work your hours daily, you will not get any dessert"', '"Do your job well and you will be rewarded"', 'There is a report of a missing cat', 'There is a section of useless gossip', 'This is an  advertisement for fresh vegetables', 'This is an advertisement for dojo membership', 'This is an advertisement for wooden furniture', 'This is an advertisement for dried meat', 'This is an advertisement for joining the militia', '"The Hunter Association offers you a large variety of boxes full of smoked meat and furs"', 'This is an advertisement for herbal medicine', 'This is an advertisement for wine kegs', 'This is an advertisement for farming equipment', 'This is an advertisement for carpentery supplies', '"All the children must return home by 8PM!"', 'This is an advertisement for smithing orders', 'This is an advertisement for cooking courses', 'This is an advertisement for bottled water', 'This is an advertisement for knitting advices', 'This is an advertisement for cleaning services', 'This is a warning to stay away from fortune tellers', 'This is an advertisement for woven straw baskets', 'This is an advertisement for hemp clothing']
+    gameText.mbrdtt = ['"If you do not work your hours daily, you will not get any dessert"', '"Do your job well and you will be rewarded"', 'There is a report of a missing cat', 'There is a section of useless gossip', 'This is an  advertisement for fresh vegetables', 'This is an advertisement for dojo membership', 'This is an advertisement for wooden furniture', 'This is an advertisement for dried meat', 'This is an advertisement for joining the militia', '"The Hunter Association offers you a large variety of boxes full of smoked meat and furs"', 'This is an advertisement for herbal medicine', 'This is an advertisement for wine kegs', 'This is an advertisement for farming equipment', 'This is an advertisement for carpentery supplies', '"All the children must return home by 8PM!"', 'This is an advertisement for smithing orders', 'This is an advertisement for cooking courses', 'This is an advertisement for bottled water', 'This is an advertisement for knitting advices', 'This is an advertisement for cleaning services', 'This is a warning to stay away from fortune tellers', 'This is an advertisement for woven straw baskets', 'This is an advertisement for hemp clothing']
 
 // @ts-ignore: constructor function
     chss.mbrd = new Chs();
@@ -3325,7 +3325,7 @@ declare var InstallTrigger: any;
       }
       chs('Message Board<br>You can find jobs or other stuff here', true);
       chs('"Explore the posts"', false).addEventListener('click', () => {
-        chs(select(global.text.mbrdtt), true);
+        chs(select(gameText.mbrdtt), true);
         chs('"<= Return"', false).addEventListener('click', () => {
           smove(chss.mbrd, false);
         });
@@ -3437,7 +3437,7 @@ declare var InstallTrigger: any;
     chss.home.sl = () => {
       d_loc('Your Home'); global.lst_loc = 111;
       if (!global.flags.catget || sector.home.data.smkp > 0) chs('Your humble abode. You can rest here. ', true);
-      else { if (!global.text.hmcttt) global.text.hmcttt = ['Your cat comes out to greet you!', '', 'You hear rustling', 'Meow']; chs('You feel safe. You can rest here. ' + select(global.text.hmcttt), true); }
+      else { if (!gameText.hmcttt) gameText.hmcttt = ['Your cat comes out to greet you!', '', 'You hear rustling', 'Meow']; chs('You feel safe. You can rest here. ' + select(gameText.hmcttt), true); }
       if (!global.flags.hbgget) chs('"Examine your bag"', false).addEventListener('click', () => {
         chs('Something you\'ve forgotten to grab before. There\'s a pack of food and some junk idea paper.', true)
         chs('Better take this with you', false).addEventListener('click', () => {
@@ -3556,8 +3556,8 @@ declare var InstallTrigger: any;
     ]
     chss.home.onScout = function (this: any) { scoutGeneric(this) }
 
-    global.text.bssel = ['Ack! There\'s dust and cobweb everywhere in this place', 'Spiderweb lands on your face as you enter', 'Various broken garbage is littered around', 'You step on some glass shards and crush them']
-    global.text.bsseldark = ['Ack! Something touches you from the darkness', 'You step in and something crunches underneath', 'You feel like something moved in front of you', 'You touched cobweb and felt gross']
+    gameText.bssel = ['Ack! There\'s dust and cobweb everywhere in this place', 'Spiderweb lands on your face as you enter', 'Various broken garbage is littered around', 'You step on some glass shards and crush them']
+    gameText.bsseldark = ['Ack! Something touches you from the darkness', 'You step in and something crunches underneath', 'You feel like something moved in front of you', 'You touched cobweb and felt gross']
 
 // @ts-ignore: constructor function
     chss.bsmnthm1 = new Chs();
@@ -3570,9 +3570,9 @@ declare var InstallTrigger: any;
         chs('Argh! This place is infested!', true, 'red');
         area_init(area.hmbsmnt);
       } else {
-        if (!cansee()) chs(select(global.text.bsseldark) + '. You can\'t see anything in this darkness, it\'ll be better if you find a lightsource', true, 'darkgrey');
+        if (!cansee()) chs(select(gameText.bsseldark) + '. You can\'t see anything in this darkness, it\'ll be better if you find a lightsource', true, 'darkgrey');
         else {
-          chs(select(global.text.bssel), true);
+          chs(select(gameText.bssel), true);
           if (!global.flags.bsmntchck) chs('"Examine your surroundings"', false).addEventListener('click', () => {
             if (!cansee()) {
               chs('Your light went off..', true, 'darkgrey');
@@ -3675,15 +3675,15 @@ declare var InstallTrigger: any;
       if (findbyid(inv, item.coal1.id)) its.push([findbyid(inv, item.coal1.id), 'some coal', 300])
       if (findbyid(inv, item.coal2.id)) its.push([findbyid(inv, item.coal2.id), 'some charcoal', 300])
       if (findbyid(inv, wpn.stk1.id)) its.push([findbyid(inv, wpn.stk1.id), 'a stick', 15])
-      if (!global.text.fplcextra) global.text.fplcextra = ['You\'ll need fire if you want to get some cooking done', 'You can warm up here if you light it up'];
-      if (!global.text.frplcfrextra) global.text.frplcfrextra = ["You notice the fire flickering slightly", "Tiny fire is warming up the room", "Comfy fire lights up the surroundings", "Bright flame is roaring inside the Fireplace"];
+      if (!gameText.fplcextra) gameText.fplcextra = ['You\'ll need fire if you want to get some cooking done', 'You can warm up here if you light it up'];
+      if (!gameText.frplcfrextra) gameText.frplcfrextra = ["You notice the fire flickering slightly", "Tiny fire is warming up the room", "Comfy fire lights up the surroundings", "Bright flame is roaring inside the Fireplace"];
       let textra0;
       if (fire.data.fuel === 0) textra0 = '';
-      else if (fire.data.fuel <= 60) textra0 = global.text.frplcfrextra[0]
-      else if (fire.data.fuel >= 130 && fire.data.fuel <= 300) textra0 = global.text.frplcfrextra[1];
-      else if (fire.data.fuel >= 300 && fire.data.fuel <= 540) textra0 = global.text.frplcfrextra[2];
-      else if (fire.data.fuel >= 540) textra0 = global.text.frplcfrextra[3];
-      dom.frpls = chs('Comfy fireplace. ' + (select(global.text.fplcextra) + '<br>' + textra0), true);
+      else if (fire.data.fuel <= 60) textra0 = gameText.frplcfrextra[0]
+      else if (fire.data.fuel >= 130 && fire.data.fuel <= 300) textra0 = gameText.frplcfrextra[1];
+      else if (fire.data.fuel >= 300 && fire.data.fuel <= 540) textra0 = gameText.frplcfrextra[2];
+      else if (fire.data.fuel >= 540) textra0 = gameText.frplcfrextra[3];
+      dom.frpls = chs('Comfy fireplace. ' + (select(gameText.fplcextra) + '<br>' + textra0), true);
       if (!global.flags.fplcgtwd) chs('"Retrieve spare firewood. You have a feeling you\'ll need it"', false).addEventListener('click', function (this: any) {
         msg("You have some lying around nearby", 'orange');
         global.flags.fplcgtwd = true;
@@ -3694,10 +3694,10 @@ declare var InstallTrigger: any;
         chs('"' + (select(["Toss ", "Throw "])) + its[a][1] + ' into the fireplace"', false).addEventListener('click', function (this: any) {
           its[a][0].amount--;
           fire.data.fuel = fire.data.fuel + its[a][2] > its[a][2] ? its[a][2] : fire.data.fuel + its[a][2];
-          if (fire.data.fuel <= its[a][2]) dom.frpls.innerHTML = global.text.frplcfrextra[0]
-          else if (fire.data.fuel >= 130 && fire.data.fuel <= 300) dom.frpls.innerHTML = global.text.frplcfrextra[1];
-          else if (fire.data.fuel >= 300 && fire.data.fuel <= 540) dom.frpls.innerHTML = global.text.frplcfrextra[2];
-          else if (fire.data.fuel >= 540) dom.frpls.innerHTML = global.text.frplcfrextra[3];
+          if (fire.data.fuel <= its[a][2]) dom.frpls.innerHTML = gameText.frplcfrextra[0]
+          else if (fire.data.fuel >= 130 && fire.data.fuel <= 300) dom.frpls.innerHTML = gameText.frplcfrextra[1];
+          else if (fire.data.fuel >= 300 && fire.data.fuel <= 540) dom.frpls.innerHTML = gameText.frplcfrextra[2];
+          else if (fire.data.fuel >= 540) dom.frpls.innerHTML = gameText.frplcfrextra[3];
           if (its[a][0].amount <= 0) { removeItem(its[a][0]); dom.ctr_2.removeChild(this) } else if (global.sm === 1) updateInv(inv.indexOf(its[a][0]));
           else if (global.sm === its[a][0]) updateInv(global.sinv.indexOf(its[a][0]));
         });
@@ -3727,7 +3727,7 @@ declare var InstallTrigger: any;
       });
     }
 
-    global.text.catasound = ['You are hearing weird sounds', 'Crunching sound echoes', 'Your feet sink into the muddy ground', 'You hear wailing',
+    gameText.catasound = ['You are hearing weird sounds', 'Crunching sound echoes', 'Your feet sink into the muddy ground', 'You hear wailing',
       'Something growls in the distance', 'Damp stagnant air of the underground makes it difficult to breathe', 'You hear bones', 'You notice something move in the darkness',
       'You feel sinister aura', 'Aged walls have something written on them, but you are unable to decipher what it is', 'Bone bits are littered on the ground', 'Old rotting cloth is hanging from the walls', 'Something rusty sparkes from below', 'old stale air fills your lungs'];
 
@@ -3752,7 +3752,7 @@ declare var InstallTrigger: any;
     addtosector(sector.cata1, chss.cata1)
     chss.cata1.sl = () => {
       d_loc('Catacombs, The Casket Service'); global.lst_loc = 133;
-      chs(select(global.text.catasound), true, 'lightgrey', 'black');
+      chs(select(gameText.catasound), true, 'lightgrey', 'black');
       chs('"← Move West"', false).addEventListener('click', () => {
         smove(chss.cata13);
       });
@@ -3770,7 +3770,7 @@ declare var InstallTrigger: any;
     addtosector(sector.cata1, chss.cata2)
     chss.cata2.sl = () => {
       d_loc('Catacombs, The Mourning Hall'); global.lst_loc = 134;
-      chs(select(global.text.catasound), true, 'lightgrey', 'black');
+      chs(select(gameText.catasound), true, 'lightgrey', 'black');
       chs('"← Move West"', false).addEventListener('click', () => {
         smove(chss.cata1);
       });
@@ -3785,7 +3785,7 @@ declare var InstallTrigger: any;
     addtosector(sector.cata1, chss.cata3)
     chss.cata3.sl = () => {
       d_loc('Catacombs, The Last Breath'); global.lst_loc = 135;
-      chs(select(global.text.catasound), true, 'lightgrey', 'black');
+      chs(select(gameText.catasound), true, 'lightgrey', 'black');
       chs('"↑ Move North"', false).addEventListener('click', () => {
         smove(chss.cata4);
       });
@@ -3800,7 +3800,7 @@ declare var InstallTrigger: any;
     addtosector(sector.cata1, chss.cata4)
     chss.cata4.sl = () => {
       d_loc('Catacombs, Tunnel of the Dead'); global.lst_loc = 136;
-      chs(select(global.text.catasound), true, 'lightgrey', 'black');
+      chs(select(gameText.catasound), true, 'lightgrey', 'black');
       chs('"↑ Move North"', false).addEventListener('click', () => {
         smove(chss.cata5);
       });
@@ -3815,7 +3815,7 @@ declare var InstallTrigger: any;
     addtosector(sector.cata1, chss.cata5)
     chss.cata5.sl = () => {
       d_loc('Catacombs, Movement Below'); global.lst_loc = 137;
-      chs(select(global.text.catasound), true, 'lightgrey', 'black');
+      chs(select(gameText.catasound), true, 'lightgrey', 'black');
       chs('"↑ Move North"', false).addEventListener('click', () => {
         smove(chss.cata6, false);
       });
@@ -3833,7 +3833,7 @@ declare var InstallTrigger: any;
     addtosector(sector.cata1, chss.cata6)
     chss.cata6.sl = () => {
       d_loc('Catacombs, The Web Corridor'); global.lst_loc = 138;
-      chs(select(global.text.catasound), true, 'lightgrey', 'black');
+      chs(select(gameText.catasound), true, 'lightgrey', 'black');
       chs('"↑ Move North"', false).addEventListener('click', () => {
         smove(chss.cata7);
       });
@@ -3848,7 +3848,7 @@ declare var InstallTrigger: any;
     addtosector(sector.cata1, chss.cata7)
     chss.cata7.sl = () => {
       d_loc('Catacombs, Grievance'); global.lst_loc = 139;
-      chs(select(global.text.catasound), true, 'lightgrey', 'black');
+      chs(select(gameText.catasound), true, 'lightgrey', 'black');
       chs('"← Move West"', false).addEventListener('click', () => {
         smove(chss.cata8);
       });
@@ -3863,7 +3863,7 @@ declare var InstallTrigger: any;
     addtosector(sector.cata1, chss.cata8)
     chss.cata8.sl = () => {
       d_loc('Catacombs, Forgotten Post'); global.lst_loc = 140;
-      chs(select(global.text.catasound), true, 'lightgrey', 'black');
+      chs(select(gameText.catasound), true, 'lightgrey', 'black');
       chs('"← Move West"', false).addEventListener('click', () => {
         smove(chss.cata9);
       });
@@ -3878,7 +3878,7 @@ declare var InstallTrigger: any;
     addtosector(sector.cata1, chss.cata9)
     chss.cata9.sl = () => {
       d_loc('Catacombs, Withered Hand'); global.lst_loc = 141;
-      chs(select(global.text.catasound), true, 'lightgrey', 'black');
+      chs(select(gameText.catasound), true, 'lightgrey', 'black');
       chs('"→ Move East"', false).addEventListener('click', () => {
         smove(chss.cata8);
       });
@@ -3893,7 +3893,7 @@ declare var InstallTrigger: any;
     addtosector(sector.cata1, chss.cata10)
     chss.cata10.sl = () => {
       d_loc('Catacombs, The Rusted Arc'); global.lst_loc = 142;
-      chs(select(global.text.catasound), true, 'lightgrey', 'black');
+      chs(select(gameText.catasound), true, 'lightgrey', 'black');
       chs('"↑ Move North"', false).addEventListener('click', () => {
         smove(chss.cata9);
       });
@@ -3908,7 +3908,7 @@ declare var InstallTrigger: any;
     addtosector(sector.cata1, chss.cata11)
     chss.cata11.sl = () => {
       d_loc('Catacombs, Old One\'s Destination'); global.lst_loc = 143;
-      chs(select(global.text.catasound), true, 'lightgrey', 'black');
+      chs(select(gameText.catasound), true, 'lightgrey', 'black');
       chs('"↑ Move North"', false).addEventListener('click', () => {
         smove(chss.cata10);
       });
@@ -3923,7 +3923,7 @@ declare var InstallTrigger: any;
     addtosector(sector.cata1, chss.cata12)
     chss.cata12.sl = () => {
       d_loc('Catacombs, Thawing Candles'); global.lst_loc = 144;
-      chs(select(global.text.catasound), true, 'lightgrey', 'black');
+      chs(select(gameText.catasound), true, 'lightgrey', 'black');
       chs('"← Move West"', false).addEventListener('click', () => {
         smove(chss.cata11);
       });
@@ -3938,7 +3938,7 @@ declare var InstallTrigger: any;
     addtosector(sector.cata1, chss.cata13)
     chss.cata13.sl = () => {
       d_loc('Catacombs, The Endless Echoes'); global.lst_loc = 145;
-      chs(select(global.text.catasound), true, 'lightgrey', 'black');
+      chs(select(gameText.catasound), true, 'lightgrey', 'black');
       chs('"← Move West"', false).addEventListener('click', () => {
         smove(chss.cata14);
       });
@@ -3953,7 +3953,7 @@ declare var InstallTrigger: any;
     addtosector(sector.cata1, chss.cata14)
     chss.cata14.sl = () => {
       d_loc('Catacombs, The Dusty Underpass'); global.lst_loc = 146;
-      chs(select(global.text.catasound), true, 'lightgrey', 'black');
+      chs(select(gameText.catasound), true, 'lightgrey', 'black');
       chs('"↑ Move North"', false).addEventListener('click', () => {
         smove(chss.cata15);
       });
@@ -3968,7 +3968,7 @@ declare var InstallTrigger: any;
     addtosector(sector.cata1, chss.cata15)
     chss.cata15.sl = () => {
       d_loc('Catacombs, Light\'s Corner'); global.lst_loc = 147;
-      chs(select(global.text.catasound), true, 'lightgrey', 'black');
+      chs(select(gameText.catasound), true, 'lightgrey', 'black');
       chs('"↑ Move North"', false).addEventListener('click', () => {
         smove(chss.cata16);
       });
@@ -3983,7 +3983,7 @@ declare var InstallTrigger: any;
     addtosector(sector.cata1, chss.cata16)
     chss.cata16.sl = () => {
       d_loc('Catacombs, Son\'s Last Visit'); global.lst_loc = 148;
-      chs(select(global.text.catasound), true, 'lightgrey', 'black');
+      chs(select(gameText.catasound), true, 'lightgrey', 'black');
       chs('"↑ Move North"', false).addEventListener('click', () => {
         smove(chss.cata17);
       });
@@ -3998,7 +3998,7 @@ declare var InstallTrigger: any;
     addtosector(sector.cata1, chss.cata17)
     chss.cata17.sl = () => {
       d_loc('Catacombs, The Stone Plate'); global.lst_loc = 149;
-      chs(select(global.text.catasound), true, 'lightgrey', 'black');
+      chs(select(gameText.catasound), true, 'lightgrey', 'black');
       chs('"↑ Move North"', false).addEventListener('click', () => {
         smove(chss.cata18);
       });
@@ -4013,7 +4013,7 @@ declare var InstallTrigger: any;
     addtosector(sector.cata1, chss.cata18)
     chss.cata18.sl = () => {
       d_loc('Catacombs, Cracked Passageway'); global.lst_loc = 150;
-      chs(select(global.text.catasound), true, 'lightgrey', 'black');
+      chs(select(gameText.catasound), true, 'lightgrey', 'black');
       chs('"← Move West"', false).addEventListener('click', () => {
         smove(chss.cata19);
       });
@@ -4028,7 +4028,7 @@ declare var InstallTrigger: any;
     addtosector(sector.cata1, chss.cata19)
     chss.cata19.sl = () => {
       d_loc('Catacombs, The Limited Leeway'); global.lst_loc = 151;
-      chs(select(global.text.catasound), true, 'lightgrey', 'black');
+      chs(select(gameText.catasound), true, 'lightgrey', 'black');
       chs('"← Move West"', false).addEventListener('click', () => {
         smove(chss.cata20);
       });
@@ -4043,7 +4043,7 @@ declare var InstallTrigger: any;
     addtosector(sector.cata1, chss.cata20)
     chss.cata20.sl = () => {
       d_loc('Catacombs, The Brittle Turn'); global.lst_loc = 152;
-      chs(select(global.text.catasound), true, 'lightgrey', 'black');
+      chs(select(gameText.catasound), true, 'lightgrey', 'black');
       chs('"→ Move East"', false).addEventListener('click', () => {
         smove(chss.cata19);
       });
@@ -4058,7 +4058,7 @@ declare var InstallTrigger: any;
     addtosector(sector.cata1, chss.cata21)
     chss.cata21.sl = () => {
       d_loc('Catacombs, Bright Ray Above'); global.lst_loc = 153;
-      chs(select(global.text.catasound), true, 'lightgrey', 'black');
+      chs(select(gameText.catasound), true, 'lightgrey', 'black');
       chs('"↑ Move North"', false).addEventListener('click', () => {
         smove(chss.cata20);
       });
@@ -4073,7 +4073,7 @@ declare var InstallTrigger: any;
     addtosector(sector.cata1, chss.cata22)
     chss.cata22.sl = () => {
       d_loc('Catacombs, Nowhere To Run'); global.lst_loc = 154;
-      chs(select(global.text.catasound), true, 'lightgrey', 'black');
+      chs(select(gameText.catasound), true, 'lightgrey', 'black');
       chs('"↑ Move North"', false).addEventListener('click', () => {
         smove(chss.cata21);
       });
@@ -4088,7 +4088,7 @@ declare var InstallTrigger: any;
     addtosector(sector.cata1, chss.cata23)
     chss.cata23.sl = () => {
       d_loc('Catacombs, The Aging Room'); global.lst_loc = 155;
-      chs(select(global.text.catasound), true, 'lightgrey', 'black');
+      chs(select(gameText.catasound), true, 'lightgrey', 'black');
       chs('"↑ Move North"', false).addEventListener('click', () => {
         smove(chss.cata22);
       });
@@ -4103,7 +4103,7 @@ declare var InstallTrigger: any;
     addtosector(sector.cata1, chss.cata24)
     chss.cata24.sl = () => {
       d_loc('Catacombs, Eleven Wisemen'); global.lst_loc = 156;
-      chs(select(global.text.catasound), true, 'lightgrey', 'black');
+      chs(select(gameText.catasound), true, 'lightgrey', 'black');
       chs('"↑ Move North"', false).addEventListener('click', () => {
         smove(chss.cata23);
       });
@@ -4118,7 +4118,7 @@ declare var InstallTrigger: any;
     addtosector(sector.cata1, chss.cata25)
     chss.cata25.sl = () => {
       d_loc('Catacombs, The End Of Journey'); global.lst_loc = 157;
-      chs(select(global.text.catasound), true, 'lightgrey', 'black');
+      chs(select(gameText.catasound), true, 'lightgrey', 'black');
       chs('"→ Move East"', false).addEventListener('click', () => {
         smove(chss.cata24);
       });
@@ -4147,7 +4147,7 @@ declare var InstallTrigger: any;
 
     // canRead — moved to game/utils-game.ts
 
-    global.text.ssns = ['春', '夏', '秋', '冬'];
+    gameText.ssns = ['春', '夏', '秋', '冬'];
 
     // wdrseason — moved to systems/weather.ts
     // ontick — moved to systems/loop.ts

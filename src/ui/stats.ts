@@ -1,5 +1,5 @@
 import { format3 } from '../utils';
-import { dom, global, you } from '../state';
+import { dom, global, you, gameText } from '../state';
 
     export function update_db() {
       dom.d4_1.innerHTML = 'STR: ' + Math.round(you.str_d);
@@ -18,7 +18,7 @@ import { dom, global, you } from '../state';
 
     export function update_m() {
       dom.d2m.innerHTML = global.current_m.name;
-      let mtp = global.text.mtp[global.current_m.type];
+      let mtp = gameText.mtp[global.current_m.type];
       if (global.current_m.id >= 1) mtp += global.current_m.sex === true ? ' ♂' : ' ♀';
       dom.d3m.innerHTML = ' lvl:' + global.current_m.lvl + ' \'' + mtp + '\'';
       dom.d4_1m.innerHTML = 'STR: ' + Math.round(global.current_m.str);

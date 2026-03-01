@@ -5,7 +5,7 @@ import { scanbyuid, objempty } from '../utils';
 import { addElement, empty, appear, fade } from '../dom-utils';
 import {
   dom, global, you, time, callback, w_manager, timers, chss, home, inv, furn, qsts, dar, acts, sectors,
-  itemgroup, data,
+  itemgroup, data, gameText,
   setYou, setTime, setInv, setDar, setFurn, setQsts, setActs, setSectors
 } from '../state';
 const { effect, creature, wpn, eqp, acc, sld, item, rcp, area, sector, ttl, skl,
@@ -846,8 +846,8 @@ export function load(dt?: any) {
     }
 
     wManager();
-    dom.d_moon.innerHTML = global.text.lunarp[getLunarPhase()][0];
-    addDesc(dom.d_moon, null, 2, 'Lunar Phase', global.text.lunarp[getLunarPhase()][1]);
+    dom.d_moon.innerHTML = gameText.lunarp[getLunarPhase()][0];
+    addDesc(dom.d_moon, null, 2, 'Lunar Phase', gameText.lunarp[getLunarPhase()][1]);
     wdrseason(global.flags.ssngaijin);
     if (global.flags.isday === false) dom.d_moon.style.display = '';
     else dom.d_moon.style.display = 'none';

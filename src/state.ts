@@ -214,23 +214,24 @@ global.fps = 1;
 // ==========================================================================
 // Text / display constants
 // ==========================================================================
-global.text = new Object();
-global.text.nt = ['K', 'M', 'B', 'T', 'Qa', 'Qi', 'Sx', 'Sp', 'Oc', 'No', 'De', 'Un', 'DDe', 'TDe', 'QaDe', 'QiDe', 'Lc'];
-global.text.wecs = [
-  ['grey', 'inherit'], ['white', 'inherit'], ['cyan', 'cyan'], ['lime', 'green'],
-  ['yellow', 'red'], ['orange', 'orange'], ['purple', 'white']
-];
-global.text.lunarp = [
-  ['🌑', 'New Moon'], ['🌒', 'Waxing Crescent Moon'], ['🌓', 'First Quarter Moon'],
-  ['🌔', 'Waxing Gibbous Moon'], ['🌕', 'Full Moon'], ['🌖', 'Waning Gibbous Moon'],
-  ['🌗', 'Last Quarter Moon'], ['🌘', 'Waning Crescent Moon']
-];
-global.text.eranks = [
-  '???', '--G', '-G', 'G', 'G+', '-F', 'F', 'F+', '-E', 'E', 'E+',
-  '-D', 'D', 'D+', '-C', 'C', 'C+', '-B', 'B', 'B+',
-  '--A', '-A', 'A', 'A+', 'A++', '--S', '-S', 'S', 'S+', 'S++',
-  '--SS', '-SS', 'SS', 'SS+', 'SS++', '--SSS', '-SSS', 'SSS', 'SSS+', 'SSS++'
-];
+export var gameText: any = {
+  nt: ['K', 'M', 'B', 'T', 'Qa', 'Qi', 'Sx', 'Sp', 'Oc', 'No', 'De', 'Un', 'DDe', 'TDe', 'QaDe', 'QiDe', 'Lc'],
+  wecs: [
+    ['grey', 'inherit'], ['white', 'inherit'], ['cyan', 'cyan'], ['lime', 'green'],
+    ['yellow', 'red'], ['orange', 'orange'], ['purple', 'white']
+  ],
+  lunarp: [
+    ['🌑', 'New Moon'], ['🌒', 'Waxing Crescent Moon'], ['🌓', 'First Quarter Moon'],
+    ['🌔', 'Waxing Gibbous Moon'], ['🌕', 'Full Moon'], ['🌖', 'Waning Gibbous Moon'],
+    ['🌗', 'Last Quarter Moon'], ['🌘', 'Waning Crescent Moon']
+  ],
+  eranks: [
+    '???', '--G', '-G', 'G', 'G+', '-F', 'F', 'F+', '-E', 'E', 'E+',
+    '-D', 'D', 'D+', '-C', 'C', 'C+', '-B', 'B', 'B+',
+    '--A', '-A', 'A', 'A+', 'A++', '--S', '-S', 'S', 'S+', 'S++',
+    '--SS', '-SS', 'SS', 'SS+', 'SS++', '--SSS', '-SSS', 'SSS', 'SSS+', 'SSS++'
+  ]
+};
 
 // ==========================================================================
 // DOM templates

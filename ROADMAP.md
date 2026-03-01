@@ -64,8 +64,8 @@
 
 ## Known Bugs
 
-- [ ] **"Pause next battle" not persisted:** The toggle effect doesn't survive save/load — possibly a vanilla bug predating refactoring
-- [ ] **Area clearing progress not saved:** Monster kill progress for area clearing resets on save/load
+- [x] **"Pause next battle" skips first battle after load:** Persists correctly, but doesn't engage until the first fight completes — confirmed vanilla behavior, not a regression
+- [x] **Area clearing progress:** Confirmed saved correctly between runs — was never a bug
 - [x] **Inventory crash on load:** `giveItem` return value wasn't captured in `save-load.ts`, causing `inv[o].data` to be undefined — fixed by using returned item reference
 - [x] **Bare variable assignments crash in strict mode:** 8 implicit globals (`testz`, `tcat`, `t`, `bt`, `g`, `stash`/`verify`, `lr`, `scann`) caused `ReferenceError` in esbuild's strict IIFE — added `let` declarations
 

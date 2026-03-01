@@ -1,4 +1,4 @@
-import { area, sector, creature, item, wpn, acc, ttl, global, dom, time, furn, furniture, effect, effector, skl, chss, itemgroup, act } from '../state';
+import { area, sector, creature, item, wpn, acc, ttl, global, dom, time, furn, furniture, effect, effector, skl, chss, itemgroup, act, gameText } from '../state';
 import { findbyid, select, z_bake } from '../utils';
 import { random, rand } from '../random';
 import { smove, inSector } from '../game/movement';
@@ -295,9 +295,9 @@ sector.vcent = new Sector({
   id: 2,
   onStay: function () {
     if (random() < .03 && !isWeather(weather.sstorm) && !isWeather(weather.heavyrain) && !isWeather(weather.thunder) && (getHour() > 8 && getHour() < 20)) {
-      ; if (!global.text.vlg1) global.text.vlg1 = ['\"♪La, laaaah, la, la-la. Lah, la-la,la la....♪\"', '\"Eat flowers evil-doer!♪\"', '\"Oh my! Such pretty flowers♪\"', '\"Can I tag along? I won\'t be a bother♪\"'];
-      if (!global.text.vlg1s) global.text.vlg1s = ['\"Let\'s build a snowman!♪\"', '\"Yey, snow!♪\"', '\"Everything is so white and beautiful♪\"', 'A snowball lands on you. Hey!'];
-      msg(getSeason() === 4 ? select(global.text.vlg1s) : select(global.text.vlg1), 'yellow');
+      ; if (!gameText.vlg1) gameText.vlg1 = ['\"♪La, laaaah, la, la-la. Lah, la-la,la la....♪\"', '\"Eat flowers evil-doer!♪\"', '\"Oh my! Such pretty flowers♪\"', '\"Can I tag along? I won\'t be a bother♪\"'];
+      if (!gameText.vlg1s) gameText.vlg1s = ['\"Let\'s build a snowman!♪\"', '\"Yey, snow!♪\"', '\"Everything is so white and beautiful♪\"', 'A snowball lands on you. Hey!'];
+      msg(getSeason() === 4 ? select(gameText.vlg1s) : select(gameText.vlg1), 'yellow');
     }
   }
 });

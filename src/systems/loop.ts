@@ -1,7 +1,7 @@
 import { DAY, WEEK } from '../constants';
 import { random } from '../random';
 import { empty } from '../dom-utils';
-import { dom, global, you, time, timers, furn, plans, sectors, data } from '../state';
+import { dom, global, you, time, timers, furn, plans, sectors, data, gameText } from '../state';
 const { skl, vendor, effect, item } = data;
 import { wManager, getDay, timeDisp, getLunarPhase, getHour, getSeason, wdrseason } from './weather';
 import { runEffectors } from '../game/movement';
@@ -28,8 +28,8 @@ import { addDesc } from '../ui/descriptions';
         for (let a in plans[1]) plans[1][a].f();
         for (let vnd in vendor) vendor[vnd].onDayPass();
         empty(dom.d_moon);
-        dom.d_moon.innerHTML = global.text.lunarp[getLunarPhase()][0];
-        addDesc(dom.d_moon, null, 2, 'Lunar Phase', global.text.lunarp[getLunarPhase()][1])
+        dom.d_moon.innerHTML = gameText.lunarp[getLunarPhase()][0];
+        addDesc(dom.d_moon, null, 2, 'Lunar Phase', gameText.lunarp[getLunarPhase()][1])
         wdrseason(global.flags.ssngaijin);
         if (getSeason() === 4) global.flags.iscold = true;
         else global.flags.iscold = false;

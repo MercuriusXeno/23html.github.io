@@ -1,4 +1,4 @@
-import { item, dom, global, effect, skl, inv, wpn, eqp, sld, acc, furniture, home, furn, sector, ttl, chss, rcp, timers, area, creature, time } from '../state';
+import { item, dom, global, effect, skl, inv, wpn, eqp, sld, acc, furniture, home, furn, sector, ttl, chss, rcp, timers, area, creature, time, gameText } from '../state';
 import { HOUR } from '../constants';
 import { random, rand, randf } from '../random';
 import { select, findbyid, z_bake } from '../utils';
@@ -1184,12 +1184,12 @@ item.skl = new Item({ id: 5033, name: 'Skull', desc: 'Mostly undamaged human sku
   }
 });
 
-global.text.kntsct = ['Adjustable bend', 'Adjustable grip hitch', 'Albright special', 'Alpine Butterfly', 'Anchor bend', 'Angle\'s loop ', 'Arbor knot', 'Artillery loop', 'Ashley\'s bend', 'Axle hitch', 'Bachmann knot', 'Bag knot', 'Bait loop', 'Barrel knot', 'Basket weave knot', 'Becket hitch ', 'Beer knot', 'Bimini twist', 'Blackwall hitch', 'Blake\'s hitch', 'Blood knot', 'Boa knot', 'Boling knot', 'Boom hitch', 'Bourchier knot', 'Heraldic knot', 'Bumper knot', 'Bunny ears', 'Butterfly loop', 'Carrick bend', 'Cat\'s paw', 'Catshank', 'Celtic button knot', 'Chain sinnet', 'Chair knot', 'Clove hitch', 'Constrictor knot', 'Cow hitch', 'Crown knot', 'Double loop', 'Dogshank', 'Diamond knot', 'Dropper loop', 'Death knot', 'Eye splice', 'Falconer\'s knot', 'Farmer\'s loop', 'Fiador knot', 'Figure-eight knot', 'Fisherman\'s bend', 'Friendship knot', 'Hackamore', 'Garda hitch', 'Grief knot', 'Gordian knot', 'Grantchester knot', 'Ground-line hitch', 'Gripping sailor\'s hitch', 'Halter hitch', 'Handcuff knot', 'Hangman\'s noose', 'Highpoint hitch', 'Highwayman\'s hitch', 'Hitching tie', 'Hunter\'s bend', 'Icicle hitch', 'Jamming knot', 'Killick hitch', 'Klemheist knot', 'Knot of isis', 'Lariat loop', 'Lighterman\'s hitch', 'Lineman\s loop', 'Lissajous knot', 'Lobster buoy hitch', 'Magnus hitch', 'Marlinespike hitch', 'Midshipman\'s hitch', 'Miller\'s knot', 'Monkey\'s fist', 'Mountaineer\'s coil', 'Munter hitch', 'Nail knot', 'Ossel hitch', 'Overhand bend', 'Palomar knot', 'Pile hitch', 'Pipe hitch', 'Pretzel link knot', 'Power cinch', 'Racking bend', 'Reef knot', 'Reever Knot', 'Rolling hitch', 'Round turn', 'Running bowline', 'Sailor\'s hitch', 'Sheepshank', 'Shoelace knot', 'Simple knot', 'Slip knot', 'Snell knot', 'Snuggle hitch', 'Span loop', 'Square knot', 'Strangle knot', 'Surgeon\'s loop', 'Tape knot', 'Thief knot', 'Transom knot', 'Thumb knot', 'Threefoil knot', 'Trident loop', 'Trilene knot', 'Triple crown knot', 'True lover\'s knot', 'Turle knot', 'Versatackle knot', 'Underhand knot', 'Underwriter\'s knot', 'Uni knot', 'Wall and crown knot', 'Water knot', 'Windsor knot', 'Yosemite bowlin', 'Zeppelin bend']
+gameText.kntsct = ['Adjustable bend', 'Adjustable grip hitch', 'Albright special', 'Alpine Butterfly', 'Anchor bend', 'Angle\'s loop ', 'Arbor knot', 'Artillery loop', 'Ashley\'s bend', 'Axle hitch', 'Bachmann knot', 'Bag knot', 'Bait loop', 'Barrel knot', 'Basket weave knot', 'Becket hitch ', 'Beer knot', 'Bimini twist', 'Blackwall hitch', 'Blake\'s hitch', 'Blood knot', 'Boa knot', 'Boling knot', 'Boom hitch', 'Bourchier knot', 'Heraldic knot', 'Bumper knot', 'Bunny ears', 'Butterfly loop', 'Carrick bend', 'Cat\'s paw', 'Catshank', 'Celtic button knot', 'Chain sinnet', 'Chair knot', 'Clove hitch', 'Constrictor knot', 'Cow hitch', 'Crown knot', 'Double loop', 'Dogshank', 'Diamond knot', 'Dropper loop', 'Death knot', 'Eye splice', 'Falconer\'s knot', 'Farmer\'s loop', 'Fiador knot', 'Figure-eight knot', 'Fisherman\'s bend', 'Friendship knot', 'Hackamore', 'Garda hitch', 'Grief knot', 'Gordian knot', 'Grantchester knot', 'Ground-line hitch', 'Gripping sailor\'s hitch', 'Halter hitch', 'Handcuff knot', 'Hangman\'s noose', 'Highpoint hitch', 'Highwayman\'s hitch', 'Hitching tie', 'Hunter\'s bend', 'Icicle hitch', 'Jamming knot', 'Killick hitch', 'Klemheist knot', 'Knot of isis', 'Lariat loop', 'Lighterman\'s hitch', 'Lineman\s loop', 'Lissajous knot', 'Lobster buoy hitch', 'Magnus hitch', 'Marlinespike hitch', 'Midshipman\'s hitch', 'Miller\'s knot', 'Monkey\'s fist', 'Mountaineer\'s coil', 'Munter hitch', 'Nail knot', 'Ossel hitch', 'Overhand bend', 'Palomar knot', 'Pile hitch', 'Pipe hitch', 'Pretzel link knot', 'Power cinch', 'Racking bend', 'Reef knot', 'Reever Knot', 'Rolling hitch', 'Round turn', 'Running bowline', 'Sailor\'s hitch', 'Sheepshank', 'Shoelace knot', 'Simple knot', 'Slip knot', 'Snell knot', 'Snuggle hitch', 'Span loop', 'Square knot', 'Strangle knot', 'Surgeon\'s loop', 'Tape knot', 'Thief knot', 'Transom knot', 'Thumb knot', 'Threefoil knot', 'Trident loop', 'Trilene knot', 'Triple crown knot', 'True lover\'s knot', 'Turle knot', 'Versatackle knot', 'Underhand knot', 'Underwriter\'s knot', 'Uni knot', 'Wall and crown knot', 'Water knot', 'Windsor knot', 'Yosemite bowlin', 'Zeppelin bend']
 
 // @ts-ignore: constructor function
 item.rope = new Item({ id: 5034, name: 'Rope', desc: 'A length of sturdy rope, for tying things up', stype: 5,
   use: function () {
-    msg('You practiced knot tying for a short while and made <span style="color:orange">"' + select(global.text.kntsct) + '"</span>!', 'springgreen');
+    msg('You practiced knot tying for a short while and made <span style="color:orange">"' + select(gameText.kntsct) + '"</span>!', 'springgreen');
   }
 });
 
@@ -1565,7 +1565,7 @@ item.tbrwdb = new Item({ id: 9008, name: '"The Art of Teabrewing"', rar: 2, desc
 });
 item.tbrwdb.data.time = HOUR * 26;
 
-global.text.mscbkatxt = ["This fairy tale is about a wolf who eats so much salted meat she becomes trapped in the butcher's cellar.",
+gameText.mscbkatxt = ["This fairy tale is about a wolf who eats so much salted meat she becomes trapped in the butcher's cellar.",
   "In this traditional story of beastly intrigue a clever fox convinces an elderly lion to kill a derogatory wolf.",
   "This is an illustrated fairy tale book about a conversation between a mouse and a cat.",
   "An amusing collection of stories featuring a Thunder God on the cover.",
@@ -1586,12 +1586,12 @@ global.text.mscbkatxt = ["This fairy tale is about a wolf who eats so much salte
 
 // @ts-ignore: constructor function
 item.msc1 = new Item({ id: 9009, name: '"Book of Fairy Tales"', save: true, stype: 4,
-  desc: function () { return 'An amusing collection of folklore featuring the usual cast of fairies and demons' + dom.dseparator + '<span style="color:limegreen">' + global.text.mscbkatxt[this.data.bid] + '</span>' },
+  desc: function () { return 'An amusing collection of folklore featuring the usual cast of fairies and demons' + dom.dseparator + '<span style="color:limegreen">' + gameText.mscbkatxt[this.data.bid] + '</span>' },
   use: function () {
     if (canRead()) {
       if (this.data.timep >= this.cmax) {
-        giveExp(this.data.exp || 500, true, true, true); this.data.bid = rand(global.text.mscbkatxt.length - 1); this.data.exp = rand(500, 5000); this.desc = 'An amusing collection of folklore featuring the usual cast of fairies and demons' + dom.dseparator + '<span style="color:limegreen">' + global.text.mscbkatxt[item.msc1.data.bid] + '</span>'; this.data.time = this.data.timep = rand(2, 10) * HOUR;
-        this.data.bid = rand(global.text.mscbkatxt.length - 1);
+        giveExp(this.data.exp || 500, true, true, true); this.data.bid = rand(gameText.mscbkatxt.length - 1); this.data.exp = rand(500, 5000); this.desc = 'An amusing collection of folklore featuring the usual cast of fairies and demons' + dom.dseparator + '<span style="color:limegreen">' + gameText.mscbkatxt[item.msc1.data.bid] + '</span>'; this.data.time = this.data.timep = rand(2, 10) * HOUR;
+        this.data.bid = rand(gameText.mscbkatxt.length - 1);
         this.data.finished = true;
         this.data.read = false;
         this.amount--;
