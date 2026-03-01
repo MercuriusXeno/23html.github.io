@@ -1,4 +1,5 @@
-import { w_manager, global, effect, you, skl, dom, callback, time, setTime } from '../state';
+import { w_manager, global, you, dom, callback, time, setTime, data } from '../state';
+const { effect, skl } = data;
 import { random, rand } from '../random';
 import { findbyid, copy } from '../utils';
 import { giveSkExp } from '../game/progression';

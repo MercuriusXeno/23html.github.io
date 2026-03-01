@@ -4,12 +4,13 @@ import { Base64, utf8_to_b64, b64_to_utf8 } from './base64';
 import { random, rand, randf, _rand, xmur3 } from './random';
 import { select, shuffle, deepCopy, copy, objempty, format3, col, scan, scanbyid, scanbyuid, find, findbyid, findbest, findworst } from './utils';
 import { addElement, empty, appear, fade } from './dom-utils';
-import { dom, global, listen, w_manager, creature, offline, effect, callback, effector,
-  wpn, eqp, acc, sld, item, rcp, area, sector, timers, chss, ttl, skl, abl,
-  furniture, vendor, quest, act, test, planner, check, container, mastery, home,
+import { dom, global, listen, w_manager, offline, callback, effector,
+  timers, chss, test, planner, check, home,
   itemgroup, sectors, inv, furn, qsts, dar, acts, plans, checksd,
-  you, time, setYou, setTime,
+  you, time, data, setYou, setTime,
   setInv, setDar, setFurn, setQsts, setActs, setSectors } from './state';
+const { creature, effect, wpn, eqp, acc, sld, item, rcp, area, sector, ttl, skl, abl,
+  furniture, vendor, quest, act, container, mastery } = data;
 import { weather, Weather, Time, setWeather, isWeather, wManager, getSeason,
   getMinute, getHour, getDay, getMonth, getYear, getLunarPhase,
   timeConv, timeDisp, attachCallback, detachCallback, wdrseason } from './systems/weather';

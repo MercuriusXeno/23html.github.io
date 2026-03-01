@@ -1,7 +1,8 @@
 import { DAY, WEEK } from '../constants';
 import { random } from '../random';
 import { empty } from '../dom-utils';
-import { dom, global, you, time, skl, vendor, effect, timers, furn, item, plans, sectors } from '../state';
+import { dom, global, you, time, timers, furn, plans, sectors, data } from '../state';
+const { skl, vendor, effect, item } = data;
 import { wManager, getDay, timeDisp, getLunarPhase, getHour, getSeason, wdrseason } from './weather';
 import { runEffectors } from '../game/movement';
 import { giveSkExp } from '../game/progression';

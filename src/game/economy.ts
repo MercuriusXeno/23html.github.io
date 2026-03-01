@@ -1,7 +1,8 @@
 import { random, rand } from '../random';
 import { shuffle } from '../utils';
 import { appear } from '../dom-utils';
-import { dom, global, you, skl, vendor } from '../state';
+import { dom, global, you, data } from '../state';
+const { skl, vendor } = data;
 import { SILVER, GOLD } from '../constants';
 import { msg, msg_add } from '../ui/messages';
 import { m_update } from '../ui/stats';

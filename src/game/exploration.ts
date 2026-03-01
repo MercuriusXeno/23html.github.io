@@ -4,7 +4,8 @@
 
 import { random } from '../random';
 import { select } from '../utils';
-import { dom, global, skl, act, you, inv } from '../state';
+import { dom, global, you, inv, data } from '../state';
+const { skl, act } = data;
 import { msg } from '../ui/messages';
 import { updateInv } from '../ui/inventory';
 import { deactivateAct } from '../ui/panels';

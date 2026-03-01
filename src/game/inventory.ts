@@ -1,7 +1,8 @@
 import { random, rand } from '../random';
 import { copy, deepCopy, scan, scanbyid } from '../utils';
 import { addElement, empty } from '../dom-utils';
-import { dom, global, you, inv, dar, planner, timers, skl, creature, furn } from '../state';
+import { dom, global, you, inv, dar, planner, timers, furn, data } from '../state';
+const { skl, creature } = data;
 import { msg, msg_add } from '../ui/messages';
 import { renderItem, updateInv, isort, rsort } from '../ui/inventory';
 import { unequip } from '../ui/equipment';

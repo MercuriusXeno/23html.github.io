@@ -1,6 +1,7 @@
 import { addElement, empty } from '../dom-utils';
 import { col } from '../utils';
-import { dom, global, you, timers, furn, skl } from '../state';
+import { dom, global, you, timers, furn, data } from '../state';
+const { skl } = data;
 import { giveSkExp } from '../game/progression';
 
     export function dscr(c: any, what: any, type?: any, ttl?: any, dsc?: any, id?: any) {

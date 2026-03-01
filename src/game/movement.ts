@@ -5,7 +5,8 @@
 import { random, rand } from '../random';
 import { copy, scanbyid } from '../utils';
 import { empty } from '../dom-utils';
-import { dom, global, you, creature, area, sectors, effector, effect, act, skl } from '../state';
+import { dom, global, you, sectors, effector, data } from '../state';
+const { creature, area, effect, act, skl } = data;
 import { msg } from '../ui/messages';
 import { clr_chs } from '../ui/choices';
 import { update_m } from '../ui/stats';

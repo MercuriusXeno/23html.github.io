@@ -1,4 +1,5 @@
-import { ttl, eqp, item, you, skl, callback, creature, global, act, dom, sector, area, timers, setYou } from '../state';
+import { you, callback, global, dom, timers, chss, setYou, data } from '../state';
+const { ttl, eqp, item, skl, creature, act, sector, area } = data;
 import { random } from '../random';
 import { smove } from '../game/movement';
 import { attack } from '../game/combat';
@@ -8,7 +9,6 @@ import { msg } from '../ui/messages';
 import { removeEff } from '../ui/effects';
 import { deactivateAct } from '../ui/panels';
 import { update_db } from '../ui/stats';
-import { chss } from '../state';
 
 // ==========================================================================
 // Player Constructor

@@ -43,6 +43,13 @@ export var checksd: any[] = [];
 export var container: any = new Object();
 export var mastery: any = new Object();
 
+// Grouped data registry export (consumers import this instead of individual vars)
+export const data = {
+  creature, item, wpn, eqp, acc, sld, rcp, skl, effect,
+  area, sector, furniture, vendor, quest, act, abl,
+  container, ttl, mastery
+};
+
 // Player and game state
 export var inv: any[] = [];
 export var furn: any[] = [];

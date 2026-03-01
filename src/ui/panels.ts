@@ -1,6 +1,7 @@
 import { addElement, empty } from '../dom-utils';
 declare var InstallTrigger: any;
-import { dom, global, you, skl, timers, acts, act, home, furn, chss } from '../state';
+import { dom, global, you, timers, acts, home, furn, chss, data } from '../state';
+const { skl, act } = data;
 import { addDesc } from './descriptions';
 import { chs, clr_chs, deactivatef } from './choices';
 import { msg } from './messages';

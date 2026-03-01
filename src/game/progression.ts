@@ -1,7 +1,8 @@
 import { randf, rand } from '../random';
 import { col, scanbyid } from '../utils';
 import { empty } from '../dom-utils';
-import { dom, global, you, skl as sklState, ttl, acts } from '../state';
+import { dom, global, you, acts, data } from '../state';
+const { skl: sklState, ttl } = data;
 import { msg, msg_add } from '../ui/messages';
 import { update_d } from '../ui/stats';
 import { rsort } from '../ui/inventory';

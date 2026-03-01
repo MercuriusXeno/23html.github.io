@@ -1,7 +1,8 @@
 import { random, rand, randf } from '../random';
 import { select } from '../utils';
 import { addElement } from '../dom-utils';
-import { dom, global, you, abl, skl, effect, creature, timers, time } from '../state';
+import { dom, global, you, timers, time, data } from '../state';
+const { abl, skl, effect, creature } = data;
 import { msg, msg_add } from '../ui/messages';
 import { update_d } from '../ui/stats';
 import { giveSkExp } from './progression';

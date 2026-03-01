@@ -4,12 +4,12 @@ import { random } from '../random';
 import { scanbyuid, objempty } from '../utils';
 import { addElement, empty, appear, fade } from '../dom-utils';
 import {
-  dom, global, you, time, effect, callback, w_manager, creature,
-  wpn, eqp, acc, sld, item, rcp, area, sector, timers, chss, ttl, skl,
-  furniture, vendor, quest, act, container, home, inv, furn, qsts, dar, acts, sectors,
-  itemgroup, mastery,
+  dom, global, you, time, callback, w_manager, timers, chss, home, inv, furn, qsts, dar, acts, sectors,
+  itemgroup, data,
   setYou, setTime, setInv, setDar, setFurn, setQsts, setActs, setSectors
 } from '../state';
+const { effect, creature, wpn, eqp, acc, sld, item, rcp, area, sector, ttl, skl,
+  furniture, vendor, quest, act, container, mastery } = data;
 import { wdrseason } from './weather';
 import { smove, inSector, area_init } from '../game/movement';
 import { kill } from '../game/utils-game';

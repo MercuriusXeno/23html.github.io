@@ -1,4 +1,5 @@
-import { dom, global, you, eqp, planner } from '../state';
+import { dom, global, you, planner, data } from '../state';
+const { eqp } = data;
 import { giveEff, removeEff } from './effects';
 import { update_d } from './stats';
 import { msg } from './messages';

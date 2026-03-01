@@ -1,5 +1,6 @@
 import { addElement, empty } from '../dom-utils';
-import { dom, global, you, timers, skl } from '../state';
+import { dom, global, you, timers, data } from '../state';
+const { skl } = data;
 import { giveSkExp } from '../game/progression';
 
     export function chs(txt: string, f?: any, c?: any, bc?: any, iconx?: number, icony?: number, size?: any, ignore?: any, slimsize?: string) {

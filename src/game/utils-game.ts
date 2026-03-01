@@ -1,5 +1,6 @@
 import { random, rand } from '../random';
-import { global, you, skl } from '../state';
+import { global, you, data } from '../state';
+const { skl } = data;
 import { msg } from '../ui/messages';
 import { giveItem } from './inventory';
 

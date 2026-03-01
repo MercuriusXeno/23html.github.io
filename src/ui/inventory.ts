@@ -1,6 +1,7 @@
 import { addElement, empty } from '../dom-utils';
 import { scanbyuid } from '../utils';
-import { dom, global, you, item, skl, inv, timers } from '../state';
+import { dom, global, you, inv, timers, data } from '../state';
+const { item, skl } = data;
 import { addDesc } from './descriptions';
 import { equip, unequip } from './equipment';
 import { disassembleGeneric } from '../game/exploration';
