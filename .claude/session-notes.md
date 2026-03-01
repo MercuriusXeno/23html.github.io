@@ -2,36 +2,38 @@
 <!-- Written by /wrapup. Read by /catchup at the start of the next session. -->
 <!-- Overwritten each session — history preserved in git log of this file. -->
 
-- **Date:** 2026-02-26
+- **Date:** 2026-03-01
 - **Branch:** main
 
 ## What Was Done
-- Completed Phase 5: Inversion of Control for Data Module Delegates (~385 delegates across 11 data modules)
-- Phase 5.1: Equipment `oneq`/`onuneq`/`onDegrade` (~90 delegates) → `player` param, call sites in `ui/equipment.ts`
-- Phase 5.2: Skill milestones + `onLevel`/`onGive` (~140 delegates) → call sites in `game/progression.ts`, `systems/save-load.ts`
-- Phase 5.3: Effect `use`/`un`/`mods`/`onGive`/`onRemove`/`onClick` (~40 delegates) → call sites in 6 files
-- Phase 5.4: Item `use`/`onGet` (~50+ delegates, including factory functions) → call sites in `main.ts`, `ui/inventory.ts`, `game/inventory.ts`
-- Phase 5.5: Creature `onDeath` — replaced `you.` with existing `killer.` param (no signature change needed)
-- Phase 5.6: world.ts `onStay`, actions.ts use/activate/deactivate, furniture.ts activate/deactivate/rwd, mastery.ts `onlevel`, titles.ts `talent`/`onGet`, abilities.ts `f`
-- Removed `you` from imports in 9 data modules: equipment, effects, items, world, actions, furniture, mastery, titles, abilities
+- Completed Phase 4.3: Unglobal the Globals — restructured flat `global` namespace into purpose-grouped exports
+- Step 4.3.1: Grouped 19 data registries into `data` const export; consuming modules destructure from it
+- Step 4.3.2: Extracted `global.text` → `gameText` (display constants: nt, wecs, lunarp, eranks)
+- Step 4.3.3: Extracted `global.flags` → `flags` (26 game state flags, ~459 references across 24 files)
+- Step 4.3.4: Extracted `global.stat` → `stats` (~50 statistics counters, 251 references across 21 files)
+- Step 4.3.5: Extracted combat state → `combat` (9 ephemeral properties, 16 files)
+- Step 4.3.6: Extracted settings → `settings` (9 config properties, 16 files)
+- Step 4.3.7: Assessed remaining ~62 `global` properties — too heterogeneous for this phase, left as-is
+- Step 4.3.8: Verified all 19 registry vars still need individual exports (data modules populate them)
+- Added Phase 6 (Naming & Types) and Phase 7 (Testable Seams & Event Extraction) to ROADMAP.md
+- Updated CLAUDE.md with new state module documentation
 
 ## Decisions Made
-- Creature `onDeath` uses `killer` param instead of adding new `player` param: killer IS always the player for creature deaths, avoids signature/call-site changes
-- Abilities `abl.rstab.f`: changed `you.res.poison` to `y.res.poison` (defender param): the ability applies poison to the defender, not self
-- Action `use` closures capture `player` from enclosing `activate` scope: setInterval in activate passes `player` to `this.use(player)`
-- Constructor defaults use `_player: any` (underscore prefix) for unused params to avoid TS warnings
-- `you` stays in creatures.ts (effect calls, drop conditions), skills.ts (use functions), crafting.ts (recipe conditions)
+- Parameter shadowing fix: renamed `flags` param to `opts` in `equip()`/`unequip()` to avoid shadowing module-level `flags` import
+- Created `resetFlags(v?)` setter function for save/load (ES module exports can't be reassigned from consumers)
+- ~62 remaining `global` properties left in place — too numerous and heterogeneous for extraction in this phase
+- All 19 data registry vars keep `export` keyword since data modules import them individually
 
 ## Open Items
-- [ ] Phase 4.3: Dependency injection for state (broader than Phase 5 delegate IoC)
+- [ ] ~62 remaining `global` properties (UI state, combat caches, inventory state, discovery tracking, etc.)
 - [ ] Phase 4.4: Externalize game content to JSON data files
-- [ ] Skill `use` functions in `skills.ts` still reference `you` directly (not IoC'd in Phase 5.2)
-- [ ] Drop condition closures in `creatures.ts` (`cond: () => { return you.lvl <= 20 }`) still reference `you`
+- [ ] Phase 6: Rename variables/properties to meaningful names, replace `any` types
+- [ ] Phase 7: Extract event listener closures to named functions, create testable seams
 
 ## Next Steps
-1. Browser playtest Phase 5 changes (equip/unequip, level skills, gain/lose effects, use items, kill creatures, run/scout actions, level mastery, earn titles)
-2. Consider Phase 4.3 dependency injection or Phase 4.4 content externalization
+1. Browser playtest Phase 4.3 changes (ensure save/load works with new flags/stats/settings/combat structure)
+2. Phase 6 or Phase 7 work per user preference
 3. CSS refactoring per `CLASS_MAP.md` and `frontend-refactoring.md`
 
 ## Context for Next Session
-Phase 5 IoC is complete. All data module delegates that referenced `you` now receive it as a parameter (or use an existing param like `killer`). Bundle size stable at ~796kb, typecheck 0 errors. The remaining `you` imports in 3 data modules (creatures, crafting, skills) are for non-delegate code that wasn't in Phase 5 scope.
+Phase 4.3 is complete. The `global` object went from ~60 properties to ~62 misc properties — the major structured groups (flags 26 props, stats ~50 props, combat 9 props, settings 9 props, gameText 4 props, data 19 registries) are now purpose-specific top-level exports. Bundle size 793.8kb (down from 796kb), typecheck 0 errors. Consuming modules use `const { creature, item } = data` pattern. Save/load updated for all new exports.

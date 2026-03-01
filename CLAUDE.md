@@ -36,7 +36,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - `save-load.ts` — Save/load serialization (~880 lines)
   - `player.ts` — Player (`You`) constructor (~110 lines)
   - `loop.ts` — Game tick loop (`ontick`) (~50 lines)
-- `src/state.ts` — shared game state singletons and setter functions
+- `src/state.ts` — shared game state: grouped exports (`data`, `gameText`, `flags`, `stats`, `combat`, `settings`), namespace singletons (`dom`, `global`), setter functions (`setYou`, `resetFlags`, etc.)
 - `src/constants.ts`, `src/base64.ts`, `src/random.ts`, `src/utils.ts`, `src/dom-utils.ts` — utility modules
 - `styles.css` — extracted CSS (previously inline `<style>` block)
 - `build.mjs` — esbuild build script (`src/main.ts` → `dist/bundle.js` as IIFE)
@@ -49,7 +49,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `ctst.png` — sprite sheet, `laugh6.wav` — sound effect, `favicon.ico`
 
 ### Refactoring artifacts
-- `ROADMAP.md` — refactoring plan with checkboxes (Phases 1-3 complete, Phase 4.1-4.2+4.5-4.6 complete, Phase 5 IoC complete, 4.3-4.4 future)
+- `ROADMAP.md` — refactoring plan with checkboxes (Phases 1-3 complete, Phase 4.1-4.3+4.5-4.6 complete, Phase 5 IoC complete, Phase 6-7 future)
 - `CLASS_MAP.md` — CSS class rename mapping (cryptic → semantic, pending application)
 - `frontend-refactoring.md` — CSS design token and component class analysis (future work)
 
@@ -59,7 +59,13 @@ The game uses plain JS objects as namespaces (not modules). Key globals defined 
 | Object | Purpose |
 |--------|---------|
 | `you` | Player character state (stats, equipment, inventory, effects) |
-| `global` | Game-wide state, flags, settings, statistics |
+| `global` | Miscellaneous game-wide state (~62 remaining properties) |
+| `data` | Grouped registry export: `{ creature, item, wpn, eqp, acc, sld, rcp, skl, effect, area, sector, furniture, vendor, quest, act, abl, container, ttl, mastery }` |
+| `gameText` | Read-only display constants: `nt` (number suffixes), `wecs` (rarity colors), `lunarp` (moon phases), `eranks` (ranking labels) |
+| `flags` | Game state flags: `btl`, `m_freeze`, `civil`, `sleepmode`, `loadstate`, etc. (26 boolean/numeric flags) |
+| `stats` | Gameplay statistics: `tick`, `akills`, `fooda`, `moneyg`, `die_p`, etc. (~50 counters) |
+| `combat` | Ephemeral combat state: `current_m`, `current_l`, `current_z`, `atkdftm`, `hit_a`, `keytarget`, etc. (not serialized) |
+| `settings` | User-configurable preferences: `sm`, `rm`, `msgs_max`, `fps`, `timescale`, `home_loc`, `bg_r/g/b` |
 | `dom` | DOM element references |
 | `creature` | Monster/NPC definitions |
 | `area` / `sector` | Map zones and sector groupings |
@@ -90,6 +96,18 @@ Most data module delegates that previously imported and mutated the `you` single
 - **Actions/Furniture/Titles/Mastery/Abilities**: delegates receive `player` as first param
 
 Call sites pass `you` as the argument (e.g., `w.oneq(you)`, `skl.mlstn[ss].f(you)`). Constructor defaults use `_player: any` for unused params. This removes `you` from imports in 8 of 13 data modules (equipment, effects, items, world, actions, furniture, mastery, titles, abilities).
+
+### State module imports (Phase 4.3)
+Consuming modules (game/, ui/, systems/, main.ts) import grouped exports and destructure:
+```typescript
+import { dom, global, you, data, flags, stats, combat, settings, gameText } from '../state';
+const { creature, item, wpn, skl } = data;
+```
+Data modules (src/data/*.ts) import individual registry vars directly since they populate them:
+```typescript
+import { creature, item, wpn, effect, skl } from '../state';
+```
+Setter functions are used for objects that need full reassignment in save/load: `resetFlags(v?)`, `setYou(v)`, `setTime(v)`, etc.
 
 ### Save/Load system
 - `save()` serializes game state into a pipe-delimited (`|`) string of JSON segments, base64-encodes it, and stores in `localStorage` under key `"v0.3"`

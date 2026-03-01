@@ -37,7 +37,7 @@
 
 - [x] **Step 4.1:** Resolve circular imports — extracted 33+ functions from `main.ts` into 8 `src/game/` modules, redirected all re-exports, eliminated data/ui/systems imports from `main.ts`
 - [x] **Step 4.2:** Extract remaining main.ts exports — moved `giveAction`, `wdrseason`, `ontick`, `recshop`+shop helpers, `giveFurniture`+`renderFurniture` to proper modules. Zero imports from `main.ts` remain. Created `src/systems/loop.ts` and `src/ui/shop.ts`.
-- [ ] **Step 4.3:** Dependency injection for state — replace direct singleton access with scoped objects where possible
+- [x] **Step 4.3:** Unglobal the globals — grouped `global` grab-bag into purpose-specific exports: `data` (19 registries), `gameText`, `flags`, `stats`, `combat`, `settings`. Consuming modules destructure from grouped exports. ~62 misc properties remain in `global` for future cleanup.
 - [ ] **Step 4.4:** Externalize game content — move item/creature/area definitions to JSON data files, hydrate at startup
 - [x] **Step 4.5:** Constructor delegate cleanup — folded ~389 post-construction delegate assignments (`.use`, `.oneq`, `.onuneq`, `.onDeath`, `.onGet`, etc.) into constructor config objects across 8 data modules (equipment, skills, effects, world, actions, furniture, items, creatures)
 - [x] **Step 4.6:** Enable `strict: true` in tsconfig incrementally — fix type errors module by module
@@ -61,6 +61,23 @@
 - [x] **Step 5.6:** Remaining data modules — world.ts `onStay`, actions.ts `use`/`activate`/`deactivate`, furniture.ts `activate`/`deactivate`/quest `rwd`, mastery.ts `onlevel`, titles.ts `talent`/`onGet`, abilities.ts `f`
 
 **Result:** `you` removed from imports in 9 data modules (equipment, effects, items, world, actions, furniture, mastery, titles, abilities). Remaining 3 (creatures, crafting, skills) still import `you` for non-delegate reasons.
+
+## Phase 6: Naming & Types (Future)
+**Goal:** Replace cryptic variable/field/property names with meaningful names throughout the codebase. Replace `any` types with accurate types that reflect each argument's purpose.
+
+- [ ] **Step 6.1:** Rename state properties — `global.s_l`, `global.lw_op`, `you.str_d`, `w.wc`, `w.rar`, etc. to self-documenting names
+- [ ] **Step 6.2:** Rename function parameters — replace `w`, `c`, `bc`, `dsc`, `l`, `f`, `a`, `k` with descriptive names
+- [ ] **Step 6.3:** Define interfaces/types for core entities — `Player`, `Item`, `Creature`, `Effect`, `Skill`, `Area`, `Equipment` etc.
+- [ ] **Step 6.4:** Replace `any` in function signatures with accurate types — constructor configs, delegate callbacks, utility params
+- [ ] **Step 6.5:** Replace `any` on state exports — `dom`, `global`, `flags`, `stats`, `settings`, `combat` etc.
+
+## Phase 7: Testable Seams & Event Extraction (Future)
+**Goal:** Create testable seams for monolithic methods. Extract baked-in event listener closures to named, first-class function references that can be tested and replaced independently.
+
+- [ ] **Step 7.1:** Extract inline event listeners — replace anonymous closures in `addEventListener`/`onclick`/`onmouseover` with named handler functions
+- [ ] **Step 7.2:** Extract monolithic initialization — break up large init blocks (DOM setup, game start) into focused, individually-callable functions
+- [ ] **Step 7.3:** Decouple DOM mutation from game logic — separate state changes from DOM updates in combat, inventory, movement
+- [ ] **Step 7.4:** Create unit-testable interfaces — introduce test harness, mock DOM layer, write first tests for pure game logic (combat math, progression, economy)
 
 ## Known Bugs
 
