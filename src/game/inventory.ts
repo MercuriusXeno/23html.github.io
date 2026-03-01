@@ -1,7 +1,7 @@
 import { random, rand } from '../random';
 import { copy, deepCopy, scan, scanbyid } from '../utils';
 import { addElement, empty } from '../dom-utils';
-import { dom, global, you, inv, dar, planner, timers, furn, data, flags } from '../state';
+import { dom, global, you, inv, dar, planner, timers, furn, data, flags, stats, } from '../state';
 const { skl, creature } = data;
 import { msg, msg_add } from '../ui/messages';
 import { renderItem, updateInv, isort, rsort } from '../ui/inventory';
@@ -32,7 +32,7 @@ import { kill } from './utils-game';
           if (!scan(dar[g], obj.id)) dar[g].push(obj.id);
           if (flag && flag.fl) iftrunkopen(1);
           else iftrunkopenc(1);
-          if (!flags.loadstate && !ignore) global.stat.igtttl += am;
+          if (!flags.loadstate && !ignore) stats.igtttl += am;
         }
         return nitm;
       }
@@ -70,7 +70,7 @@ import { kill } from './utils-game';
       }
       if (flag && !flag.fi && flag.fl) iftrunkopen(1);
       else iftrunkopenc(1);
-      if (!flags.loadstate && !ignore) global.stat.igtttl += am;
+      if (!flags.loadstate && !ignore) stats.igtttl += am;
       return obj;
     }
 

@@ -1,4 +1,4 @@
-import { creature, eqp, global, you, dom, callback, checksd, item, wpn, acc, abl, effect, skl, flags } from '../state';
+import { creature, eqp, global, you, dom, callback, checksd, item, wpn, acc, abl, effect, skl, flags, stats, } from '../state';
 import { random, rand } from '../random';
 import { giveSkExp } from '../game/progression';
 import { area_init } from '../game/movement';
@@ -70,8 +70,8 @@ function Creature(this: any, cfg?: any) {
       if (global.bestiary[obj].id === this.id) { global.bestiary[obj].kills++; break }
       if (++tt === global.bestiary.length) global.bestiary.push({ id: this.id, kills: 1 });
     }
-    global.stat.akills++;
-    global.stat.pts += this.pts;
+    stats.akills++;
+    stats.pts += this.pts;
     if (killer.eqp[0].id !== 10000) killer.eqp[0].data.kills ? killer.eqp[0].data.kills++ : (killer.eqp[0].data.kills = 1);
     if (this.type !== 2 && this.type !== 4) global.spirits++;
     else if (this.type === 4) global.spirits--;
@@ -89,7 +89,7 @@ function Creature(this: any, cfg?: any) {
     else { if (global.current_z.size <= -1) area_init(global.current_z); else { msg('Area cleared', 'orange'); global.current_z.onEnd(); flags.civil = true; flags.btl = false; } };
     if (flags.to_pause === true) flags.btl = false;
     wpndiestt(killer, this);
-    if (this.blood) global.stat.bloodt += this.blood;
+    if (this.blood) stats.bloodt += this.blood;
     for (let a in checksd) checksd[a].f(this, checksd[a].o);
     for (let x in global.achchk[1]) global.achchk[1][x](killer);
     dom.d5_1_1m.update();

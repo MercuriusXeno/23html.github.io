@@ -5,7 +5,7 @@
 import { random, rand } from '../random';
 import { copy, scanbyid } from '../utils';
 import { empty } from '../dom-utils';
-import { dom, global, you, sectors, effector, data, flags } from '../state';
+import { dom, global, you, sectors, effector, data, flags, stats, } from '../state';
 const { creature, area, effect, act, skl } = data;
 import { msg } from '../ui/messages';
 import { clr_chs } from '../ui/choices';
@@ -132,7 +132,7 @@ export function smove(where: any, lv?: any) {
   flags.btl = false;
   global.current_z = area.nwh;
   dom.d7m.update();
-  global.stat.smovet++
+  stats.smovet++
   flags.inside = false;
   for (let a in where.sector) { if (where.sector[a].inside || where.inside) flags.inside = true }
   clr_chs();

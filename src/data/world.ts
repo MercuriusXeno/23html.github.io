@@ -1,4 +1,4 @@
-import { area, sector, creature, item, wpn, acc, ttl, global, dom, time, furn, furniture, effect, effector, skl, chss, itemgroup, act, gameText, flags } from '../state';
+import { area, sector, creature, item, wpn, acc, ttl, global, dom, time, furn, furniture, effect, effector, skl, chss, itemgroup, act, gameText, flags, stats, } from '../state';
 import { findbyid, select, z_bake } from '../utils';
 import { random, rand } from '../random';
 import { smove, inSector } from '../game/movement';
@@ -264,7 +264,7 @@ sector.home = new Sector({
     }
   },
   onLeave: function (this: any) {
-    global.stat.athmec = 0;
+    stats.athmec = 0;
     if (effect.fplc.active === true) removeEff(effect.fplc);
     this.data.smkt = time.minute;
     for (let f in furn) deactivatef(furn[f])
@@ -276,8 +276,8 @@ sector.home = new Sector({
       if (--this.data.smkp <= 0) smove(global.current_l)
     }
     if (flags.catget) giveSkExp(skl.pet, player.mods.petxp);
-    global.stat.athme += global.timescale;
-    global.stat.athmec += global.timescale;
+    stats.athme += global.timescale;
+    stats.athmec += global.timescale;
     for (let x in global.nethmchk) global.nethmchk[x]();
     let fire = findbyid(furn, furniture.frplc.id);
 

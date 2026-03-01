@@ -1,6 +1,6 @@
 import { addElement, empty } from '../dom-utils';
 declare var InstallTrigger: any;
-import { dom, global, you, timers, acts, home, furn, chss, data, flags } from '../state';
+import { dom, global, you, timers, acts, home, furn, chss, data, flags, stats, } from '../state';
 const { skl, act } = data;
 import { addDesc } from './descriptions';
 import { chs, clr_chs, deactivatef } from './choices';
@@ -186,7 +186,7 @@ import { formatw } from '../game/utils-game';
     }
 
     function _fcraft(what: any, safe: any) {
-      if (safe) { safe = false; if (flags.sleepmode === true) { msg('You may want to wake up first', 'red'); return }; if (flags.btl === true) { msg('You\'re too busy fighting', 'red'); return }; if (flags.rdng === true) { msg('You\'re too occupied with reading', 'red'); return }; if (flags.busy === true) { msg('You\'re too busy with something else', 'red'); return }; let ntest = make(what, true); for (let g = 0; g < what.rec.length; g++) { if (what.rec.length === ntest.y.length && ntest.o[0] !== 2) safe = true } if (safe) { make(what); global.stat.crftt++; iftrunkopen(1) } else { if (flags.rptbncgtf) { clearInterval(timers.rptbncgt); flags.rptbncgtf = false; } } }
+      if (safe) { safe = false; if (flags.sleepmode === true) { msg('You may want to wake up first', 'red'); return }; if (flags.btl === true) { msg('You\'re too busy fighting', 'red'); return }; if (flags.rdng === true) { msg('You\'re too occupied with reading', 'red'); return }; if (flags.busy === true) { msg('You\'re too busy with something else', 'red'); return }; let ntest = make(what, true); for (let g = 0; g < what.rec.length; g++) { if (what.rec.length === ntest.y.length && ntest.o[0] !== 2) safe = true } if (safe) { make(what); stats.crftt++; iftrunkopen(1) } else { if (flags.rptbncgtf) { clearInterval(timers.rptbncgt); flags.rptbncgtf = false; } } }
     }
 
     export function renderSkl(skl: any) {

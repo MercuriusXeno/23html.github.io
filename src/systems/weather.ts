@@ -1,4 +1,4 @@
-import { w_manager, global, you, dom, callback, time, setTime, data, gameText, flags } from '../state';
+import { w_manager, global, you, dom, callback, time, setTime, data, gameText, flags, stats, } from '../state';
 const { effect, skl } = data;
 import { random, rand } from '../random';
 import { findbyid, copy } from '../utils';
@@ -101,7 +101,7 @@ weather.thunder.ontick = function () {
     let f = findbyid(global.current_m.eff, effect.wet.id);
     if (!f || f.active === false) giveEff(global.current_m, effect.wet, 5)
     if (random() < .0009) {
-      global.stat.lgtstk++;
+      stats.lgtstk++;
       msg("You were struck by lightning!", 'black', null, null, 'yellow');
       let d = (200 / (1 + skl.aba.lvl * .05)) << 0;
       if (you.hp - d < 0) { global.atkdfty[0] = 1; you.hp = 0; you.onDeath();; giveSkExp(skl.painr, 300); giveSkExp(skl.dth, 100) } else { you.hp -= d; giveSkExp(skl.painr, 170) } giveSkExp(skl.aba, 30);
@@ -203,7 +203,7 @@ export function isWeather(w: any) {
 function onSeasonTick(season: any) {
   switch (season) {
     case 4:
-      if (global.stat.wsnrest > 0) { global.stat.wsnrest--; return }
+      if (stats.wsnrest > 0) { stats.wsnrest--; return }
       if (!flags.inside) {
         if (!effect.cold.active) giveEff(you, effect.cold, 5);
         else {
@@ -214,11 +214,11 @@ function onSeasonTick(season: any) {
           }
         }
       }
-      if (global.stat.wsnburst <= 0) {
-        global.stat.wsnburst = rand(200, 1300)
-        global.stat.wsnrest = rand(20, 100)
+      if (stats.wsnburst <= 0) {
+        stats.wsnburst = rand(200, 1300)
+        stats.wsnrest = rand(20, 100)
       }
-      global.stat.wsnburst--
+      stats.wsnburst--
       break
   }
 }

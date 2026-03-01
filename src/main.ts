@@ -8,7 +8,7 @@ import { dom, global, listen, w_manager, offline, callback, effector,
   timers, chss, test, planner, check, home,
   itemgroup, sectors, inv, furn, qsts, dar, acts, plans, checksd,
   you, time, data, gameText, flags, setYou, setTime,
-  setInv, setDar, setFurn, setQsts, setActs, setSectors } from './state';
+  setInv, setDar, setFurn, setQsts, setActs, setSectors, stats, } from './state';
 const { creature, effect, wpn, eqp, acc, sld, item, rcp, area, sector, ttl, skl, abl,
   furniture, vendor, quest, act, container, mastery } = data;
 import { weather, Weather, Time, setWeather, isWeather, wManager, getSeason,
@@ -64,7 +64,7 @@ declare var InstallTrigger: any;
     }
 
     function finishQst(q: any) {
-      if (q.data.started) { q.data.done = true; q.data.started = false; q.data.pending = false; msg('Quest completed: ', 'lime'); msg_add('"' + q.name + '"', 'orange'); q.rwd(you); global.stat.qstc++ }
+      if (q.data.started) { q.data.done = true; q.data.started = false; q.data.pending = false; msg('Quest completed: ', 'lime'); msg_add('"' + q.name + '"', 'orange'); q.rwd(you); stats.qstc++ }
     }
 
     gameText.alcohol_d = ["You drank some alcohol. You feel warm inside.", "You drank alcohol. Party on!", "You drank lots of alcohol. Are those white mice?", "You drank unholy amounts of alcohol. But what do you care?", "You embalmed yourself alive with so much alcohol, that even undead will leave your dead body alone."];
@@ -81,15 +81,15 @@ declare var InstallTrigger: any;
         function (x: any) { if (ttl.ddw.have === false) { if ((x.id === 103 || x.id === 102) && x.lvl === 1) { giveTitle(ttl.ddw) } } }
       ],
       [
-        function (x: any) { if (ttl.kill1.have === false) { if (global.stat.akills >= 10000) { giveTitle(ttl.kill1) } } },
-        function (x: any) { if (ttl.kill2.have === false) { if (global.stat.akills >= 50000) { giveTitle(ttl.kill2) } } },
-        function (x: any) { if (ttl.kill3.have === false) { if (global.stat.akills >= 200000) { giveTitle(ttl.kill3) } } },
-        function (x: any) { if (ttl.kill4.have === false) { if (global.stat.akills >= 1000000) { giveTitle(ttl.kill4) } } },
-        function (x: any) { if (ttl.kill5.have === false) { if (global.stat.akills >= 5000000) { giveTitle(ttl.kill5) } } },
+        function (x: any) { if (ttl.kill1.have === false) { if (stats.akills >= 10000) { giveTitle(ttl.kill1) } } },
+        function (x: any) { if (ttl.kill2.have === false) { if (stats.akills >= 50000) { giveTitle(ttl.kill2) } } },
+        function (x: any) { if (ttl.kill3.have === false) { if (stats.akills >= 200000) { giveTitle(ttl.kill3) } } },
+        function (x: any) { if (ttl.kill4.have === false) { if (stats.akills >= 1000000) { giveTitle(ttl.kill4) } } },
+        function (x: any) { if (ttl.kill5.have === false) { if (stats.akills >= 5000000) { giveTitle(ttl.kill5) } } },
       ]
     ];
     global.monchk = [
-      function (x: any) { if (ttl.mone1.have === false) { if (global.stat.moneyg >= GOLD) { giveTitle(ttl.mone1) } } },
+      function (x: any) { if (ttl.mone1.have === false) { if (stats.moneyg >= GOLD) { giveTitle(ttl.mone1) } } },
     ];
     global.ttlschk = [
       function (x: any) { if (ttl.ttsttl1.have === false) { if (global.titles.length >= 10) { giveTitle(ttl.ttsttl1) } } },
@@ -98,10 +98,10 @@ declare var InstallTrigger: any;
     ];
 
     global.shptchk = [
-      function (x: any) { if (ttl.shpt1.have === false) { if (global.stat.buyt >= 500) { giveTitle(ttl.shpt1) } } },
+      function (x: any) { if (ttl.shpt1.have === false) { if (stats.buyt >= 500) { giveTitle(ttl.shpt1) } } },
     ];
     global.cptchk = [
-      function (x: any) { if (ttl.cpet1.have === false) { if (global.stat.cat_c >= 9999) { giveTitle(ttl.cpet1) } } },
+      function (x: any) { if (ttl.cpet1.have === false) { if (stats.cat_c >= 9999) { giveTitle(ttl.cpet1) } } },
     ];
     global.htrchl = [
       function (x: any) { if (ttl.hstr1.have === false) { if (x >= 100) { giveTitle(ttl.hstr1) } } },
@@ -109,9 +109,9 @@ declare var InstallTrigger: any;
       function (x: any) { if (ttl.hstr3.have === false) { if (x >= 500) { giveTitle(ttl.hstr3) } } },
     ];
     global.nethmchk = [
-      function (x: any) { if (ttl.neet.have === false) { if (global.stat.athmec >= YEAR) { giveTitle(ttl.neet) } } },
-      function (x: any) { if (ttl.neet2.have === false) { if (global.stat.athmec >= YEAR * 5) { giveTitle(ttl.neet2) } } },
-      function (x: any) { if (ttl.neet3.have === false) { if (global.stat.athmec >= YEAR * 10) { giveTitle(ttl.neet3) } } },
+      function (x: any) { if (ttl.neet.have === false) { if (stats.athmec >= YEAR) { giveTitle(ttl.neet) } } },
+      function (x: any) { if (ttl.neet2.have === false) { if (stats.athmec >= YEAR * 5) { giveTitle(ttl.neet2) } } },
+      function (x: any) { if (ttl.neet3.have === false) { if (stats.athmec >= YEAR * 10) { giveTitle(ttl.neet3) } } },
     ];
 
     ///////////////////////////////////////////
@@ -725,12 +725,12 @@ declare var InstallTrigger: any;
           dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
           dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
           dom.tcleft.innerHTML = 'Game start time';
-          dom.tcright.innerHTML = global.stat.sttime
+          dom.tcright.innerHTML = stats.sttime
           /*dom.tccon=addElement(dom.statbod,'small',null,'stat-row');
           dom.tcleft=addElement(dom.tccon,'div',null,'stat-label');
           dom.tcright=addElement(dom.tccon,'div',null,'stat-value');
           dom.tcleft.innerHTML='Time passed';
-          let br=global.stat.tick;
+          let br=stats.tick;
           dom.tcright.innerHTML=(br>=86400?(br/(86400)<<0+' Days '):'')+(br%86400>=3600?(((br%86400/3600)<<0)%24+':'):'')+(br%3600<60?'00':(br%3600>=600?(br%3600/60)<<0:'0'+(br%3600/60)<<0))+(':'+(br%360<60?'0'+br%60:br%60));
           */
           dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
@@ -740,154 +740,154 @@ declare var InstallTrigger: any;
           let br = time.minute - 338143959;
           dom.tcright.innerHTML = (br >= YEAR ? '<span style="color:orange">' + (br / YEAR << 0) + '</span> Years ' : '') + (br >= MONTH ? '<span style="color:yellow">' + (br / MONTH << 0) % 12 + '</span> Months ' : '') + (br >= DAY ? '<span style="color:lime">' + (br / DAY << 0) % 30 + '</span> Days ' : '') + (br / HOUR % 24 << 0) + ':' + (br % 60 < 10 ? '0' + br % 60 : br % 60);
           dom.tcright.style.fontSize = '.9em';
-          if (global.stat.gsvs > 0) {
+          if (stats.gsvs > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Game saves';
-            dom.tcright.innerHTML += global.stat.gsvs
+            dom.tcright.innerHTML += stats.gsvs
           }
-          if (global.stat.athme > 0) {
+          if (stats.athme > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Total time spent at home';
-            let br = global.stat.athme;
+            let br = stats.athme;
             dom.tcright.innerHTML = (br >= YEAR ? '<span style="color:orange">' + (br / YEAR << 0) + '</span> Years ' : '') + (br >= MONTH ? '<span style="color:yellow">' + (br / MONTH << 0) % 12 + '</span> Months ' : '') + (br >= DAY ? '<span style="color:lime">' + (br / DAY << 0) % 30 + '</span> Days ' : '') + (br / HOUR % 24 << 0) + ':' + (br % 60 < 10 ? '0' + br % 60 : br % 60)
           }
-          if (global.stat.timeslp > 0) {
+          if (stats.timeslp > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Time Slept';
-            let br = global.stat.timeslp;
+            let br = stats.timeslp;
             dom.tcright.innerHTML = (br >= YEAR ? '<span style="color:orange">' + (br / YEAR << 0) + '</span> Years ' : '') + (br >= MONTH ? '<span style="color:yellow">' + (br / MONTH << 0) % 12 + '</span> Months ' : '') + (br >= DAY ? '<span style="color:lime">' + (br / DAY << 0) % 30 + '</span> Days ' : '') + (br / HOUR % 24 << 0) + ':' + (br % 60 < 10 ? '0' + br % 60 : br % 60)
           }
-          if (global.stat.lgtstk > 0) {
+          if (stats.lgtstk > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Times struck by lightning';
-            dom.tcright.innerHTML = '<span style="color:black;background-color:yellow">' + global.stat.lgtstk + '</span>'
+            dom.tcright.innerHTML = '<span style="color:black;background-color:yellow">' + stats.lgtstk + '</span>'
           }
-          if (global.stat.qstc > 0) {
+          if (stats.qstc > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Quests completed';
-            dom.tcright.innerHTML = global.stat.qstc
+            dom.tcright.innerHTML = stats.qstc
           }
-          if (global.stat.jcom > 0) {
+          if (stats.jcom > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Jobs completed';
-            dom.tcright.innerHTML = global.stat.jcom
+            dom.tcright.innerHTML = stats.jcom
           }
-          if (global.stat.dsct > 0) {
+          if (stats.dsct > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Discoveries made';
-            dom.tcright.innerHTML = global.stat.dsct
+            dom.tcright.innerHTML = stats.dsct
           }
-          if (global.stat.smovet > 0) {
+          if (stats.smovet > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Times walked';
-            dom.tcright.innerHTML = global.stat.smovet
+            dom.tcright.innerHTML = stats.smovet
           }
-          if (global.stat.cat_c > 0) {
+          if (stats.cat_c > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Cat pets';
-            dom.tcright.innerHTML = global.stat.cat_c
+            dom.tcright.innerHTML = stats.cat_c
           }
-          if (global.stat.fooda > 0) {
+          if (stats.fooda > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Food consumed';
-            dom.tcright.innerHTML = global.stat.fooda
+            dom.tcright.innerHTML = stats.fooda
           }
-          if (global.stat.foodt > 0) {
+          if (stats.foodt > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Bad food consumed';
-            dom.tcright.innerHTML = global.stat.foodt
+            dom.tcright.innerHTML = stats.foodt
           }
-          if (global.stat.foodb > 0) {
+          if (stats.foodb > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Drinks consumed';
-            dom.tcright.innerHTML = global.stat.foodb
+            dom.tcright.innerHTML = stats.foodb
           }
-          if (global.stat.foodal > 0) {
+          if (stats.foodal > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Alcohol consumed';
-            dom.tcright.innerHTML = global.stat.foodal
+            dom.tcright.innerHTML = stats.foodal
           }
-          if (global.stat.ftried > 0) {
+          if (stats.ftried > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Unique food tried';
-            dom.tcright.innerHTML = global.stat.ftried
+            dom.tcright.innerHTML = stats.ftried
           }
-          if (global.stat.medst > 0) {
+          if (stats.medst > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Medicine used';
-            dom.tcright.innerHTML = global.stat.medst
+            dom.tcright.innerHTML = stats.medst
           }
-          if (global.stat.potst > 0) {
+          if (stats.potst > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Potions consumed';
-            dom.tcright.innerHTML = global.stat.potst
+            dom.tcright.innerHTML = stats.potst
           }
-          if (global.stat.plst > 0) {
+          if (stats.plst > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Pills consumed';
-            dom.tcright.innerHTML = global.stat.plst
+            dom.tcright.innerHTML = stats.plst
           }
-          if (global.stat.igtttl > 0) {
+          if (stats.igtttl > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Items picked up';
-            dom.tcright.innerHTML = global.stat.igtttl
+            dom.tcright.innerHTML = stats.igtttl
           }
-          if (global.stat.dsst > 0) {
+          if (stats.dsst > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Items disassembled';
-            dom.tcright.innerHTML = global.stat.dsst
+            dom.tcright.innerHTML = stats.dsst
           }
-          if (global.stat.thrt > 0) {
+          if (stats.thrt > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Items thrown away';
-            dom.tcright.innerHTML = global.stat.thrt
+            dom.tcright.innerHTML = stats.thrt
           }
-          if (global.stat.crftt > 0) {
+          if (stats.crftt > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Items crafted';
-            dom.tcright.innerHTML = global.stat.crftt
+            dom.tcright.innerHTML = stats.crftt
           }
           if (global.rec_d.length > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
@@ -910,21 +910,21 @@ declare var InstallTrigger: any;
             dom.tcleft.innerHTML = 'Titles unlocked';
             dom.tcright.innerHTML = global.titles.length
           }
-          if (global.stat.exptotl > 0) {
+          if (stats.exptotl > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Total EXP gained';
-            dom.tcright.innerHTML = formatw(global.stat.exptotl)
+            dom.tcright.innerHTML = formatw(stats.exptotl)
           }
-          if (global.stat.slvs > 0) {
+          if (stats.slvs > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Total skill levels';
-            dom.tcright.innerHTML = global.stat.slvs
+            dom.tcright.innerHTML = stats.slvs
           }
-          if (global.stat.moneyg > 0) {
+          if (stats.moneyg > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
@@ -935,12 +935,12 @@ declare var InstallTrigger: any;
             dom.ch_etn2_2.style.width = '33.3%';
             dom.ch_etn2_3 = addElement(dom.tcright, 'span');
             dom.ch_etn2_3.style.width = '33.3%';
-            let p = global.stat.moneyg
+            let p = stats.moneyg
             if (p >= GOLD) { dom.ch_etn2_1.innerHTML = (dom.coingold + ((p / GOLD) << 0)); dom.ch_etn2_1.style.backgroundColor = 'rgb(102, 66, 0)'; }
             if (p >= SILVER && p % GOLD >= SILVER) { dom.ch_etn2_2.innerHTML = (dom.coinsilver + ((p / SILVER % SILVER) << 0)); dom.ch_etn2_2.style.backgroundColor = 'rgb(56, 56, 56)'; }
             if (p < SILVER || (p > SILVER && p % SILVER > 0)) { dom.ch_etn2_3.innerHTML = (dom.coincopper + ((p % SILVER) << 0)); dom.ch_etn2_3.style.backgroundColor = 'rgb(102, 38, 23)'; }
           }
-          if (global.stat.moneysp > 0) {
+          if (stats.moneysp > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
@@ -951,24 +951,24 @@ declare var InstallTrigger: any;
             dom.ch_etn2_2.style.width = '33.3%';
             dom.ch_etn2_3 = addElement(dom.tcright, 'span');
             dom.ch_etn2_3.style.width = '33.3%';
-            let p = global.stat.moneysp
+            let p = stats.moneysp
             if (p >= GOLD) { dom.ch_etn2_1.innerHTML = (dom.coingold + ((p / GOLD) << 0)); dom.ch_etn2_1.style.backgroundColor = 'rgb(102, 66, 0)'; }
             if (p >= SILVER && p % GOLD >= SILVER) { dom.ch_etn2_2.innerHTML = (dom.coinsilver + ((p / SILVER % SILVER) << 0)); dom.ch_etn2_2.style.backgroundColor = 'rgb(56, 56, 56)'; }
             if (p < SILVER || (p > SILVER && p % SILVER > 0)) { dom.ch_etn2_3.innerHTML = (dom.coincopper + ((p % SILVER) << 0)); dom.ch_etn2_3.style.backgroundColor = 'rgb(102, 38, 23)'; }
           }
-          if (global.stat.buyt > 0) {
+          if (stats.buyt > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Goods bought';
-            dom.tcright.innerHTML = global.stat.buyt
+            dom.tcright.innerHTML = stats.buyt
           }
-          if (global.stat.rdttl > 0) {
+          if (stats.rdttl > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Books read';
-            dom.tcright.innerHTML = global.stat.rdttl;
+            dom.tcright.innerHTML = stats.rdttl;
             addDesc(dom.tccon, null, 2, 'Info', '<span style="color:lie">Click to list known books</span>');
             dom.tccon.addEventListener('click', function (this: any) {
               if (!flags.bksstt) {
@@ -994,216 +994,216 @@ declare var InstallTrigger: any;
               }
             });
           }
-          if (global.stat.rdgtttl > 0) {
+          if (stats.rdgtttl > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Total reading time';
-            let br = global.stat.rdgtttl;
+            let br = stats.rdgtttl;
             dom.tcright.innerHTML = (br >= YEAR ? '<span style="color:orange">' + (br / YEAR << 0) + '</span> Years ' : '') + (br >= MONTH ? '<span style="color:yellow">' + (br / MONTH << 0) % 12 + '</span> Months ' : '') + (br >= DAY ? '<span style="color:lime">' + (br / DAY << 0) % 30 + '</span> Days ' : '') + (br / HOUR % 24 << 0) + ':' + (br % 60 < 10 ? '0' + br % 60 : br % 60)
           }
-          if (global.stat.popt > 0) {
+          if (stats.popt > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Times description window appeared';
-            dom.tcright.innerHTML = global.stat.popt
+            dom.tcright.innerHTML = stats.popt
           }
-          if (global.stat.dmgdt > 0) {
+          if (stats.dmgdt > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Total damage dealt';
-            dom.tcright.innerHTML = formatw(global.stat.dmgdt)
+            dom.tcright.innerHTML = formatw(stats.dmgdt)
           }
-          if (global.stat.dmgrt > 0) {
+          if (stats.dmgrt > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Total damage recieved';
-            dom.tcright.innerHTML = formatw(global.stat.dmgrt)
+            dom.tcright.innerHTML = formatw(stats.dmgrt)
           }
-          if (global.stat.deadt > 0) {
+          if (stats.deadt > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Times died';
-            dom.tcright.innerHTML = global.stat.deadt
+            dom.tcright.innerHTML = stats.deadt
           }
-          if (global.stat.deadt > 0) {
+          if (stats.deadt > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Last cause of casualty';
             dom.tcright.innerHTML = getlastd()
           }
-          if (global.stat.akills > 0) {
+          if (stats.akills > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Total kills';
-            dom.tcright.innerHTML = global.stat.akills
+            dom.tcright.innerHTML = stats.akills
           }
-          if (global.stat.onesht > 0) {
+          if (stats.onesht > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Times killed with a single hit';
-            dom.tcright.innerHTML = global.stat.onesht
+            dom.tcright.innerHTML = stats.onesht
           }
-          if (global.stat.misst > 0) {
+          if (stats.misst > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Times missed the attack';
-            dom.tcright.innerHTML = global.stat.misst
+            dom.tcright.innerHTML = stats.misst
           }
-          if (global.stat.dodgt > 0) {
+          if (stats.dodgt > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Times dodged the attack';
-            dom.tcright.innerHTML = global.stat.dodgt
+            dom.tcright.innerHTML = stats.dodgt
           }
-          if (global.stat.msks[0] > 0) {
+          if (stats.msks[0] > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Humanoid-class foes slayed';
-            dom.tcright.innerHTML = global.stat.msks[0]
+            dom.tcright.innerHTML = stats.msks[0]
           }
-          if (global.stat.msks[1] > 0) {
+          if (stats.msks[1] > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Beast-class foes slayed';
-            dom.tcright.innerHTML = global.stat.msks[1]
+            dom.tcright.innerHTML = stats.msks[1]
           }
-          if (global.stat.msks[2] > 0) {
+          if (stats.msks[2] > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Undead-class foes slayed';
-            dom.tcright.innerHTML = global.stat.msks[2]
+            dom.tcright.innerHTML = stats.msks[2]
           }
-          if (global.stat.msks[3] > 0) {
+          if (stats.msks[3] > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Evil-class foes slayed';
-            dom.tcright.innerHTML = global.stat.msks[3]
+            dom.tcright.innerHTML = stats.msks[3]
           }
-          if (global.stat.msks[4] > 0) {
+          if (stats.msks[4] > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Phantom-class foes slayed';
-            dom.tcright.innerHTML = global.stat.msks[4]
+            dom.tcright.innerHTML = stats.msks[4]
           }
-          if (global.stat.msks[5] > 0) {
+          if (stats.msks[5] > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Dragon-class foes slayed';
-            dom.tcright.innerHTML = global.stat.msks[5]
+            dom.tcright.innerHTML = stats.msks[5]
           }
-          if (global.stat.msts[0][0] > 0) {
+          if (stats.msts[0][0] > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Unarmed attacks';
-            dom.tcright.innerHTML = global.stat.msts[0][0]
+            dom.tcright.innerHTML = stats.msts[0][0]
           }
-          if (global.stat.msts[0][1] > 0) {
+          if (stats.msts[0][1] > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Unarmed kills';
-            dom.tcright.innerHTML = global.stat.msts[0][1]
+            dom.tcright.innerHTML = stats.msts[0][1]
           }
-          if (global.stat.msts[1][0] > 0) {
+          if (stats.msts[1][0] > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Sword attacks';
-            dom.tcright.innerHTML = global.stat.msts[1][0]
+            dom.tcright.innerHTML = stats.msts[1][0]
           }
-          if (global.stat.msts[1][1] > 0) {
+          if (stats.msts[1][1] > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Sword kills';
-            dom.tcright.innerHTML = global.stat.msts[1][1]
+            dom.tcright.innerHTML = stats.msts[1][1]
           }
-          if (global.stat.msts[2][0] > 0) {
+          if (stats.msts[2][0] > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Axe attacks';
-            dom.tcright.innerHTML = global.stat.msts[2][0]
+            dom.tcright.innerHTML = stats.msts[2][0]
           }
-          if (global.stat.msts[2][1] > 0) {
+          if (stats.msts[2][1] > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Axe kills';
-            dom.tcright.innerHTML = global.stat.msts[2][1]
+            dom.tcright.innerHTML = stats.msts[2][1]
           }
-          if (global.stat.msts[3][0] > 0) {
+          if (stats.msts[3][0] > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Dagger attacks';
-            dom.tcright.innerHTML = global.stat.msts[3][0]
+            dom.tcright.innerHTML = stats.msts[3][0]
           }
-          if (global.stat.msts[3][1] > 0) {
+          if (stats.msts[3][1] > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Dagger kills';
-            dom.tcright.innerHTML = global.stat.msts[3][1]
+            dom.tcright.innerHTML = stats.msts[3][1]
           }
-          if (global.stat.msts[4][0] > 0) {
+          if (stats.msts[4][0] > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Polearm/Spear attacks';
-            dom.tcright.innerHTML = global.stat.msts[4][0]
+            dom.tcright.innerHTML = stats.msts[4][0]
           }
-          if (global.stat.msts[4][1] > 0) {
+          if (stats.msts[4][1] > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Polearm/Spear kills';
-            dom.tcright.innerHTML = global.stat.msts[4][1]
+            dom.tcright.innerHTML = stats.msts[4][1]
           }
-          if (global.stat.msts[5][0] > 0) {
+          if (stats.msts[5][0] > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Hammer/Club attacks';
-            dom.tcright.innerHTML = global.stat.msts[5][0]
+            dom.tcright.innerHTML = stats.msts[5][0]
           }
-          if (global.stat.msts[5][1] > 0) {
+          if (stats.msts[5][1] > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Hammer/Club kills';
-            dom.tcright.innerHTML = global.stat.msts[5][1]
+            dom.tcright.innerHTML = stats.msts[5][1]
           }
-          if (global.stat.msts[6][0] > 0) {
+          if (stats.msts[6][0] > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Staff attacks';
-            dom.tcright.innerHTML = global.stat.msts[6][0]
+            dom.tcright.innerHTML = stats.msts[6][0]
           }
-          if (global.stat.msts[6][1] > 0) {
+          if (stats.msts[6][1] > 0) {
             dom.tccon = addElement(dom.statbod, 'small', null, 'stat-row');
             dom.tcleft = addElement(dom.tccon, 'div', null, 'stat-label');
             dom.tcright = addElement(dom.tccon, 'div', null, 'stat-value');
             dom.tcleft.innerHTML = 'Staff kills';
-            dom.tcright.innerHTML = global.stat.msts[6][1]
+            dom.tcright.innerHTML = stats.msts[6][1]
           }
 
         });
@@ -1765,7 +1765,7 @@ declare var InstallTrigger: any;
         for (let obj in global.shortcuts) if (e.which === global.shortcuts[obj][0]) {
           let g = global.shortcuts[obj][2];
           if (g.amount > 0 || !!g.slot) {
-            g.use(you); reduce(g); iftrunkopenc(1); if (g.id < 3000 && !g.data.tried) { g.data.tried = true; global.stat.ftried += 1; }
+            g.use(you); reduce(g); iftrunkopenc(1); if (g.id < 3000 && !g.data.tried) { g.data.tried = true; stats.ftried += 1; }
             break
           }
         }
@@ -2054,10 +2054,10 @@ declare var InstallTrigger: any;
                 chs('"Instructor: For all your stuff I can fetch you ' + dlr + ' ' + (dom.coincopper) + ' copper. How does that sound?"', true);
                 chs('"Accept"', false, 'lime').addEventListener('click', () => {
                   msg(stash.length + " Items returned back to dojo", 'ghostwhite');
-                  global.stat.ivtntdj += stash.length;
+                  stats.ivtntdj += stash.length;
                   giveWealth(dlr);
                   for (let a in stash) removeItem(stash[a]);
-                  if (global.stat.ivtntdj >= 300) giveTitle(ttl.tqtm);
+                  if (stats.ivtntdj >= 300) giveTitle(ttl.tqtm);
                   smove(chss.t3, false);
                 });
               }
@@ -2806,7 +2806,7 @@ declare var InstallTrigger: any;
       // });
       if (!flags.catget) chs('"=> Approach the cat"', false).addEventListener('click', () => {
         smove(chss.cat1);
-        if (!global.stat.cat_c) global.stat.cat_c = 0;
+        if (!stats.cat_c) stats.cat_c = 0;
       });
       if (!flags.mkplc1u) {
         if (flags.dj1end === true && flags.pmfspmkm1 !== true && random() < .4) {
@@ -3032,11 +3032,11 @@ declare var InstallTrigger: any;
         chs('Herbalist: Yes indeed, if you have any cure grass to sell, by all means bring it here, you can never have too much. I will take bundles of 50 for 15 ' + dom.coincopper, true);
         chs('"Sell your goods"', false, 'lime').addEventListener('click', () => {
           if (item.hrb1.amount >= 50) {
-            global.stat.hbhbsld++;
+            stats.hbhbsld++;
             giveWealth(15);
             item.hrb1.amount -= 50;
             reduce(item.hrb1);
-            if (global.stat.hbhbsld >= 7 && !flags.hbhbgft) {
+            if (stats.hbhbsld >= 7 && !flags.hbhbgft) {
               chs('Herbalist: You were such a great help bringing all this cure grass to me! Take this, as a bonus', true);
               chs('"Accept"', false, 'lime').addEventListener('click', () => {
                 giveItem(item.hptn1, 15);
@@ -3089,7 +3089,7 @@ declare var InstallTrigger: any;
         let itm = vendor.stvr1.stock[ost];
         dom.vndrs = chs(itm[0].name + ' <small style="color:rgb(255, 116, 63)">' + itm[2] + '●</small> x' + itm[1], false);
         dom.vndrs.addEventListener('click', function (this: any) {
-          if (you.wealth - itm[2] >= 0) { spend(itm[2]); mf(-itm[2], 1); m_update(); giveItem(itm[0]); global.stat.buyt++; if (--itm[1] === 0) { clr_chs(vendor.stvr1.stock.indexOf(itm) + 1); vendor.stvr1.stock.splice(vendor.stvr1.stock.indexOf(itm), 1); empty(global.dscr); global.dscr.style.display = 'none' } else this.innerHTML = itm[0].name + ' <small style="color:rgb(255, 116, 63)">' + itm[2] + '●</small> x' + itm[1]; } else { clearTimeout(timers.shopcant); dom.vndr1.innerHTML = 'Sorry you can\'t afford that!'; timers.shopcant = setTimeout(() => { dom.vndr1.innerHTML = hi }, 1000) }
+          if (you.wealth - itm[2] >= 0) { spend(itm[2]); mf(-itm[2], 1); m_update(); giveItem(itm[0]); stats.buyt++; if (--itm[1] === 0) { clr_chs(vendor.stvr1.stock.indexOf(itm) + 1); vendor.stvr1.stock.splice(vendor.stvr1.stock.indexOf(itm), 1); empty(global.dscr); global.dscr.style.display = 'none' } else this.innerHTML = itm[0].name + ' <small style="color:rgb(255, 116, 63)">' + itm[2] + '●</small> x' + itm[1]; } else { clearTimeout(timers.shopcant); dom.vndr1.innerHTML = 'Sorry you can\'t afford that!'; timers.shopcant = setTimeout(() => { dom.vndr1.innerHTML = hi }, 1000) }
         });
         addDesc(dom.vndrs, itm[0]);
       }
@@ -3116,7 +3116,7 @@ declare var InstallTrigger: any;
         let itm = vendor.kid1.stock[ost];
         dom.vndrs = chs(itm[0].name + ' <small style="color:rgb(255, 116, 63)">' + itm[2] + '●</small> x' + itm[1], false);
         dom.vndrs.addEventListener('click', function (this: any) {
-          if (you.wealth - itm[2] >= 0) { spend(itm[2]); mf(-itm[2], 1); m_update(); giveItem(itm[0]); global.stat.buyt++; if (--itm[1] === 0) { clr_chs(vendor.kid1.stock.indexOf(itm) + 1); vendor.kid1.stock.splice(vendor.kid1.stock.indexOf(itm), 1); empty(global.dscr); global.dscr.style.display = 'none' } else this.innerHTML = itm[0].name + ' <small style="color:rgb(255, 116, 63)">' + itm[2] + '●</small> x' + itm[1]; } else { clearTimeout(timers.shopcant); dom.vndr1.innerHTML = 'Bring money next time'; timers.shopcant = setTimeout(() => { dom.vndr1.innerHTML = hi }, 1000) }
+          if (you.wealth - itm[2] >= 0) { spend(itm[2]); mf(-itm[2], 1); m_update(); giveItem(itm[0]); stats.buyt++; if (--itm[1] === 0) { clr_chs(vendor.kid1.stock.indexOf(itm) + 1); vendor.kid1.stock.splice(vendor.kid1.stock.indexOf(itm), 1); empty(global.dscr); global.dscr.style.display = 'none' } else this.innerHTML = itm[0].name + ' <small style="color:rgb(255, 116, 63)">' + itm[2] + '●</small> x' + itm[1]; } else { clearTimeout(timers.shopcant); dom.vndr1.innerHTML = 'Bring money next time'; timers.shopcant = setTimeout(() => { dom.vndr1.innerHTML = hi }, 1000) }
         });
         addDesc(dom.vndrs, itm[0]);
       }
@@ -3145,7 +3145,7 @@ declare var InstallTrigger: any;
           });
         });
       });
-      else if (global.stat.moneyg >= 1000 && !flags.vndrkd1sp2 && flags.vndrkd1sp1) chs('"Show me something better"', false, 'darkgrey').addEventListener('click', () => {
+      else if (stats.moneyg >= 1000 && !flags.vndrkd1sp2 && flags.vndrkd1sp1) chs('"Show me something better"', false, 'darkgrey').addEventListener('click', () => {
         chs('Alright, there\'s something else for you, snatched from some sleeping guy and I bet would be useful for you. Similar deal, 5 silver' + dom.coinsilver, true);
         chs('"Yes please"', false, 'lime').addEventListener('click', () => {
           if (you.wealth >= 500) {
@@ -3217,7 +3217,7 @@ declare var InstallTrigger: any;
     addtosector(sector.vmain1, chss.cat1)
     chss.cat1.sl = () => {
       d_loc('Village Center, Cat'); //global.lst_loc = 107;
-      let w = !global.stat.cat_c ? chs('There is a cat.', true) : chs('There is a cat. Pets: ' + global.stat.cat_c, true);
+      let w = !stats.cat_c ? chs('There is a cat.', true) : chs('There is a cat. Pets: ' + stats.cat_c, true);
       chs('"Pet the cat"', false).addEventListener('click', (x: any) => {
         let a: any = addElement(document.body, 'span');
         a.style.pointerEvents = 'none';
@@ -3242,10 +3242,10 @@ declare var InstallTrigger: any;
             document.body.removeChild(a);
           }
         }, 20);
-        global.stat.cat_c++;
-        if (global.stat.cat_c < 333) skl.pet.use();
-        w.innerHTML = 'There is a cat. Pets: ' + global.stat.cat_c;
-        if (global.stat.cat_c >= 100) {
+        stats.cat_c++;
+        if (stats.cat_c < 333) skl.pet.use();
+        w.innerHTML = 'There is a cat. Pets: ' + stats.cat_c;
+        if (stats.cat_c >= 100) {
           if (!flags.cat_g) {
             clr_chs(2); flags.cat_g = true;
             chs('"???"', false).addEventListener('click', () => {
@@ -3273,7 +3273,7 @@ declare var InstallTrigger: any;
           }
         }
       });
-      if (global.stat.cat_c >= 100) {
+      if (stats.cat_c >= 100) {
         chs('"???"', false).addEventListener('click', () => {
           chs('Cat wants to tag along', true);
           chs('"Take it with you"', false).addEventListener('click', () => {
@@ -3412,7 +3412,7 @@ declare var InstallTrigger: any;
       dom.trddots.style.position = 'absolute';
       timers.rdngdots = setInterval(() => { dom.trddots.innerHTML = dom.trddots.frames[(dom.trddots.frame = dom.trddots.frame > 2 ? 0 : ++dom.trddots.frame)] }, 333);
       timers.rdng = setInterval(() => {
-        global.stat.rdgtttl++; let rd = skl.rdg.use(); giveSkExp(skl.rdg, x || 1);
+        stats.rdgtttl++; let rd = skl.rdg.use(); giveSkExp(skl.rdg, x || 1);
         b.cmax = (b.data.time * (1 / (1 + (rd) / 10)) / you.mods.rdgrt) - (1 / (1 + (rd) / 10) - 1) / you.mods.rdgrt;
         let c = b.cmax - b.data.timep;
         if (c < 0) c = 0;
@@ -3420,7 +3420,7 @@ declare var InstallTrigger: any;
         if (c > HOUR) ttxt = (c / HOUR << 0) + '</span> hours to finish';
         else ttxt = (c << 0) + '</span> minutes to finish';
         dom.trd.innerHTML = 'You are reading <span style="color:orange">' + b.name + '</span><br>It will take you about <span style="color:lime">' + ttxt;
-        if (++b.data.timep >= b.cmax) { clearInterval(timers.rdng); clearInterval(timers.rdngdots); global.stat.rdttl++; flags.rdng = false; for (let gg in chss) if (chss[gg].id === global.lst_loc) chss[gg].sl(); b.use(you); reduce(b); b.data.timep = 0; }
+        if (++b.data.timep >= b.cmax) { clearInterval(timers.rdng); clearInterval(timers.rdngdots); stats.rdttl++; flags.rdng = false; for (let gg in chss) if (chss[gg].id === global.lst_loc) chss[gg].sl(); b.use(you); reduce(b); b.data.timep = 0; }
       }, 1000);
       chs('"Stop reading"', false).addEventListener('click', () => {
         clearInterval(timers.rdng);
@@ -3511,7 +3511,7 @@ declare var InstallTrigger: any;
           dom.ctspcl = chs('"Pet ' + tcat.data.name + '"', false);
           dom.ctspcl.addEventListener('click', (x: any) => {
             let a: any = addElement(document.body, 'span');
-            global.stat.cat_c++;
+            stats.cat_c++;
             for (let x in global.cptchk) global.cptchk[x]()
             a.style.pointerEvents = 'none';
             a.style.position = 'absolute';

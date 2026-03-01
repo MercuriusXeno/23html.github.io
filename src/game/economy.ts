@@ -1,7 +1,7 @@
 import { random, rand } from '../random';
 import { shuffle } from '../utils';
 import { appear } from '../dom-utils';
-import { dom, global, you, data } from '../state';
+import { dom, global, you, data, stats, } from '../state';
 const { skl, vendor } = data;
 import { SILVER, GOLD } from '../constants';
 import { msg, msg_add } from '../ui/messages';
@@ -12,9 +12,9 @@ import { recshop } from '../ui/shop';
     export function giveWealth(val: number, mes?: any, f?: any): void {
       if (you.mods.wthexrt !== 0 && f) val += 1;
       you.wealth += val;
-      global.stat.moneyg += val;
+      stats.moneyg += val;
       for (let x in global.monchk) global.monchk[x]();
-      if (!global.stat.mndrgnu && you.wealth >= 100000000) { global.stat.mndrgnu = true; appear(dom.mn_1) }
+      if (!stats.mndrgnu && you.wealth >= 100000000) { stats.mndrgnu = true; appear(dom.mn_1) }
       m_update();
       giveSkExp(skl.gred, val * .01);
       if (mes !== false) {
@@ -28,7 +28,7 @@ import { recshop } from '../ui/shop';
     export function spend(m: number): void {
       if (you.wealth < m) return
       you.wealth -= m;
-      global.stat.moneysp += m;
+      stats.moneysp += m;
       m_update()
     }
 

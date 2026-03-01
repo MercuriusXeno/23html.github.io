@@ -1,4 +1,4 @@
-import { item, dom, global, effect, skl, inv, wpn, eqp, sld, acc, furniture, home, furn, sector, ttl, chss, rcp, timers, area, creature, time, gameText, flags } from '../state';
+import { item, dom, global, effect, skl, inv, wpn, eqp, sld, acc, furniture, home, furn, sector, ttl, chss, rcp, timers, area, creature, time, gameText, flags, stats, } from '../state';
 import { HOUR } from '../constants';
 import { random, rand, randf } from '../random';
 import { select, findbyid, z_bake } from '../utils';
@@ -62,10 +62,10 @@ function foodItem(opts: any) {
       }
       player.sat + this.val > player.satmax ? player.sat = player.satmax : player.sat += this.val;
       skl.glt.use(glt);
-      global.stat[stat]++;
+      stats[stat]++;
       if (drka) giveSkExp(skl.drka, drka);
       if (drunk) {
-        global.stat.foodal++;
+        stats.foodal++;
         if (effect.drunk.active === false) giveEff(player, effect.drunk, drunk.dur);
         else effect.drunk.duration += drunk.add;
       }
@@ -93,8 +93,8 @@ function healItem(opts: any) {
     rar: opts.rar || 1,
     use: function (player: any) {
       player.hp + this.val > player.hpmax ? player.hp = player.hpmax : player.hp += this.val;
-      if (potion) global.stat.potnst++;
-      global.stat.medst++;
+      if (potion) stats.potnst++;
+      stats.medst++;
       this.amount--;
       dom.d5_1_1.update();
       msg('Restored ' + this.val + ' hp', 'lime');
@@ -115,8 +115,8 @@ function expItem(opts: any) {
     rar: opts.rar || 1,
     use: function () {
       giveExp(opts.exp, true, true, true);
-      global.stat.plst++;
-      global.stat.medst++;
+      stats.plst++;
+      stats.medst++;
       if (opts.extra) opts.extra();
       this.amount--;
     }
@@ -141,7 +141,7 @@ healItem({ key: 'hrb1', id: 3001, name: 'Cure Grass', val: 7, desc: 'Herb with m
 // @ts-ignore: constructor function
 item.atd1 = new Item({ id: 3002, name: 'Herbal Antidote', desc: 'Bundle of certain common herbs, mixed together. Tastes incredibly bitter, but helps to detoxify blood from containments' + dom.dseparator + '<span style=\'color:lime\'> Neautralizes the effects of weak poisons </span>', stype: 4,
   use: function () {
-    global.stat.medst++
+    stats.medst++
     if (effect.psn.active === true) { if (effect.psn.duration - 30 <= 0) { removeEff(effect.psn); msg('You feel better', 'lime') } else { effect.psn.duration -= 30; msg('You feel a little better', 'lightgreen') } } else msg('Tastes like medicine..', 'lightblue');
     this.amount--;
   }
@@ -150,7 +150,7 @@ item.atd1 = new Item({ id: 3002, name: 'Herbal Antidote', desc: 'Bundle of certa
 // @ts-ignore: constructor function
 item.psnwrd = new Item({ id: 3003, name: 'Poison Ward', desc: 'Solution developed to protect residents from diseases during times of plague' + dom.dseparator + '<span style=\'color:lime\'> Grants invulnerability to poisons for a few hours </span>', stype: 4, rar: 2,
   use: function (player: any) {
-    global.stat.medst++
+    stats.medst++
     if (effect.psnwrd.active === false) giveEff(player, effect.psnwrd, 600);
     else effect.psnwrd.duration = 600;
     this.amount--;
@@ -162,7 +162,7 @@ healItem({ key: 'hlpd', id: 3004, name: 'Low-grade Healing Powder', val: 16, des
 // @ts-ignore: constructor function
 item.smm = new Item({ id: 3005, name: 'Stomach Medicine', desc: 'Mixture of ginger, bittervine,  and other herbs. Destroys toxins in one\'s body' + dom.dseparator + '<span style=\'color:lime\'> Alliviates food poisoning </span>', stype: 4,
   use: function () {
-    global.stat.medst++
+    stats.medst++
     if (effect.fpn.active === true) { if (effect.fpn.duration - 30 <= 0) { removeEff(effect.fpn); msg('You feel better', 'lime') } else { effect.fpn.duration -= 30; msg('You feel a little better', 'lightgreen') } } else msg('Tastes like medicine..', 'lightblue');
     this.amount--;
   }
@@ -270,7 +270,7 @@ item.incsk = new Item({ id: 3017, name: 'Incense Stick', desc: 'A stick of aroma
 // @ts-ignore: constructor function
 item.sp0a = new Item({ id: 3018, name: 'Spirit Opening Powder', desc: 'Powder refined from blood of the wyrm. Has potential to improve internal energy' + dom.dseparator + '<span style=\'color:orange\'> Grants +95000 EXP </span><br><span style=\'color:deeppink\'>EXP Gain +1%</span>', stype: 4, rar: 2,
   use: function (player: any) {
-    global.stat.medst++
+    stats.medst++
     giveExp(95000, true, true, true);
     player.exp_t += .01;
     this.amount--;
@@ -330,7 +330,7 @@ item.mpwdr = new Item({ id: 3021, name: 'Monster Powder', desc: 'Dried and groun
 item.smbpll = new Item({ id: 3022, name: 'Slumber Pill', desc: 'Pill with a strong sedative effect. Normally used by sick and old people to treat insomnia, if they can afford it. Has other uses if you are creative enough' + dom.dseparator + '<span style=\'color:lightgrey\'>Makes you sleep through 18 hours in an instant</span>', stype: 4,
   use: function (player: any, x: any) {
     if (flags.btl || flags.rdng || flags.isshop || flags.busy || flags.work) { msg('You can\'t sleep now!', 'red'); return } else {
-      let b = .1; let s = HOUR * 18; if (!flags.sleepmode) giveEff(player, effect.slep); else if (global.current_l.id === 112) b += home.bed.sq; global.stat.plst++
+      let b = .1; let s = HOUR * 18; if (!flags.sleepmode) giveEff(player, effect.slep); else if (global.current_l.id === 112) b += home.bed.sq; stats.plst++
       for (let a = 0; a < s; a++) { giveSkExp(skl.sleep, .1); ontick() } if (!flags.sleepmode) removeEff(effect.slep);
     }
     this.amount--;
@@ -396,7 +396,7 @@ item.feip1 = new Item({ id: 3030, name: 'Fei Pill', desc: 'When an alchemist mis
   use: function (player: any) {
     giveEff(player, effect.fei1, 60, 1);
     this.amount--;
-    global.stat.plst++
+    stats.plst++
   }
 });
 
@@ -955,7 +955,7 @@ item.sstraw = new Item({ id: 5002, name: 'Strand Of Straw', desc: 'This fell out
 // @ts-ignore: constructor function
 item.d6 = new Item({ id: 5003, name: 'Red Die', desc: 'Die with 6 sides. Brings luck', stype: 5, rar: 2,
   use: function () {
-    let r = rand(1, 6); global.stat.die_p += r; global.stat.die_p_t += r;
+    let r = rand(1, 6); stats.die_p += r; stats.die_p_t += r;
     msg('You roll <span style="color:red">' + r + '</span>');
     skl.dice.use(1);
     if (random() < .05) {

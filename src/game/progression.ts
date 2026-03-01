@@ -1,7 +1,7 @@
 import { randf, rand } from '../random';
 import { col, scanbyid } from '../utils';
 import { empty } from '../dom-utils';
-import { dom, global, you, acts, data, flags } from '../state';
+import { dom, global, you, acts, data, flags, stats, } from '../state';
 const { skl: sklState, ttl } = data;
 import { msg, msg_add } from '../ui/messages';
 import { update_d } from '../ui/stats';
@@ -41,7 +41,7 @@ import { formatw } from './utils-game';
           msg_add(' | HP +' + hpp, 'darkturquoise');
           you.expnext_t = you.expnext();
           if (you.eqp[0].id === 10000) { you.eqp[0].cls[2] = you.lvl / 4 << 0; you.eqp[0].aff[0] = you.lvl / 5 << 0; you.eqp[0].ctype = 2 }
-          if (global.stat.deadt < 1 && you.lvl >= 20) giveTitle(ttl.ndthextr)
+          if (stats.deadt < 1 && you.lvl >= 20) giveTitle(ttl.ndthextr)
         }
       } p.stat_r(); update_d();
     }
@@ -49,7 +49,7 @@ import { formatw } from './utils-game';
     export function giveExp(exp: any, r?: any, g?: any, b?: any) {
       if (!r) exp = Math.round((exp * you.exp_t * (0.4 + you.efficiency() * 0.6))) - (you.lvl - 1);
       exp = exp <= 0 ? 1 : exp;
-      if (!b) { if (flags.m_blh === false) if (!g) { msg('EXP: +' + formatw(exp), 'hotpink'); global.stat.exptotl += exp } } else { msg('EXP: +' + formatw(exp), 'hotpink'); global.stat.exptotl += exp }
+      if (!b) { if (flags.m_blh === false) if (!g) { msg('EXP: +' + formatw(exp), 'hotpink'); stats.exptotl += exp } } else { msg('EXP: +' + formatw(exp), 'hotpink'); stats.exptotl += exp }
       if (you.exp + exp < you.expnext_t) you.exp += exp;
       else {
         let extra = (you.exp + exp) - you.expnext_t;
@@ -67,7 +67,7 @@ import { formatw } from './utils-game';
         let extra = (skl.exp + exp) - skl.expnext_t;
         skl.exp = 0;
         skl.lvl++;
-        global.stat.slvs++;
+        stats.slvs++;
         if (!scanbyid(you.skls, skl.id)) { you.skls.push(skl); msg('<span style="text-shadow:cyan 0px 0px 2px">New Skill Unlocked! <span style="text-shadow:red 0px 0px 2px;color:orange">"' + (!!skl.bname ? skl.bname : skl.name) + '"</span></span>', 'aqua', skl, 6); if (!flags.sklu) { dom.ct_bt2.innerHTML = 'skills'; flags.sklu = true } }
         else { msg('Skill <span style="color:tomato">\'' + (!!skl.bname ? skl.bname : skl.name) + '\'</span> Leveled Up: ' + skl.lvl, 'deepskyblue', skl, 6); } skl.onLevel(you);
         skl.expnext_t = skl.expnext();

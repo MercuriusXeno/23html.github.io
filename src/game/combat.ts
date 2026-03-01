@@ -1,7 +1,7 @@
 import { random, rand, randf } from '../random';
 import { select } from '../utils';
 import { addElement } from '../dom-utils';
-import { dom, global, you, timers, time, data, flags } from '../state';
+import { dom, global, you, timers, time, data, flags, stats, } from '../state';
 const { abl, skl, effect, creature } = data;
 import { msg, msg_add } from '../ui/messages';
 import { update_d } from '../ui/stats';
@@ -59,7 +59,7 @@ export function fght(att: any, def: any) {
         if (sc.hp <= 0) break;
       }
       flags.multih = false;
-      if (att.id === you.id && acc_dmg >= sc.hpmax) global.stat.onesht++;
+      if (att.id === you.id && acc_dmg >= sc.hpmax) stats.onesht++;
       if (flags.m_blh === false && (hts - global.miss) > 0) {
         if (hts === 1) printHitMessage(inn.name, acc_dmg, !isyouinn);
         else
@@ -139,23 +139,23 @@ export function attack(att: any, def: any, atk?: any, power?: any) {
     flags.msd = false;
     if (flags.m_blh === false && (!flags.multih && flags.m_blh === false)) printHitMessage(att.name, dmg, att.id === you.id ? false : true);
     if (isyou === true) {
-      dom.d8_2.innerHTML = 'Critical chance: ' + (Math.round(you.mods.crflt * 1000 + ((you.crt * (2 - (you.sat / you.satmax + you.mods.sbonus) * 2) + you.crt) * (you.luck / 25 + 1) + skl.seye.use()) * 1000) / 10) + '%'; if (you.eqp[0].id != 10000) you.eqp[0].dp > 0 ? you.eqp[0].dp -= .008 : you.eqp[0].dp = 0; global.stat.dmgdt += dmg;
+      dom.d8_2.innerHTML = 'Critical chance: ' + (Math.round(you.mods.crflt * 1000 + ((you.crt * (2 - (you.sat / you.satmax + you.mods.sbonus) * 2) + you.crt) * (you.luck / 25 + 1) + skl.seye.use()) * 1000) / 10) + '%'; if (you.eqp[0].id != 10000) you.eqp[0].dp > 0 ? you.eqp[0].dp -= .008 : you.eqp[0].dp = 0; stats.dmgdt += dmg;
       if (flags.eshake === true) {
         dom.d1m.style.left = parseInt(global.special_x) + rand(-3, 3) + 'px'; dom.d1m.style.top = parseInt(global.special_y) + rand(-3, 3) + 'px';
         setTimeout(() => { dom.d1m.style.left = parseInt(global.special_x) + 'px'; dom.d1m.style.top = parseInt(global.special_y) + 'px'; }, 60);
       }
     }
-    else { if (global.target.id !== 10000) global.target.dp > 0 ? global.target.dp -= .008 : global.target.dp = 0; if (you.eqp[1].id !== 10000) you.eqp[1].dp > 0 ? you.eqp[1].dp -= .008 : you.eqp[1].dp = 0; if (dmg > 0) giveSkExp(skl.painr, 1); if (global.target.id === 10000 && dmg > 0) giveSkExp(skl.tghs, dmg * .05); global.stat.dmgrt += dmg }
+    else { if (global.target.id !== 10000) global.target.dp > 0 ? global.target.dp -= .008 : global.target.dp = 0; if (you.eqp[1].id !== 10000) you.eqp[1].dp > 0 ? you.eqp[1].dp -= .008 : you.eqp[1].dp = 0; if (dmg > 0) giveSkExp(skl.painr, 1); if (global.target.id === 10000 && dmg > 0) giveSkExp(skl.tghs, dmg * .05); stats.dmgrt += dmg }
   } else {
     global.miss++;
-    global.stat.misst++;
+    stats.misst++;
     ;
     if (flags.m_blh === false && (!flags.multih && flags.m_blh === false)) msg(att.name + ' missed', 'grey');
     flags.msd = true;
     if (dk) giveSkExp(skl.ntst, .01);
-    if (!isyou) global.stat.dodgt++;
+    if (!isyou) stats.dodgt++;
   } update_d();
-  if (!flags.multih) { if (isyou && dmg >= def.hpmax) global.stat.onesht++; if (def.hp <= 0 && def.alive === true) { global.atkdfty = [3, global.atkdftydt]; def.onDeath(att); def.onDeathE(att); } }
+  if (!flags.multih) { if (isyou && dmg >= def.hpmax) stats.onesht++; if (def.hp <= 0 && def.alive === true) { global.atkdfty = [3, global.atkdftydt]; def.onDeath(att); def.onDeathE(att); } }
   return dmg || 0;
 }
 
@@ -172,7 +172,7 @@ export function tattack(pow: any, type: any, e: any) {
   giveSkExp(skl.fgt, skl.thr.lvl * 5 + 1);
   if (rand(100) < hit) {
     dmg = Math.round(((1 + you.str_r * .05) * (you.efficiency() + 1) * pow * (ddat.a + 1)) / 2);
-    global.stat.dmgdt += dmg;
+    stats.dmgdt += dmg;
     if (!flags.m_blh) msg('You hit ' + global.current_m.name + ' for <span style="color:hotpink">' + dmg + '</span> damage', 'yellow');
     global.current_m.hp -= dmg;
     if (m.hp <= 0 && m.alive === true) { m.onDeath(you); m.onDeathE(); } dom.d5_1_1m.update();
@@ -310,56 +310,56 @@ export function hit_calc(tp: any) {
 
 function wpnhitstt() {
   switch (you.eqp[0].wtype) {
-    case 0: global.stat.msts[0][0]++;
+    case 0: stats.msts[0][0]++;
       break
-    case 1: global.stat.msts[1][0]++;
+    case 1: stats.msts[1][0]++;
       break
-    case 2: global.stat.msts[2][0]++;
+    case 2: stats.msts[2][0]++;
       break
-    case 3: global.stat.msts[3][0]++;
+    case 3: stats.msts[3][0]++;
       break
-    case 4: global.stat.msts[4][0]++;
+    case 4: stats.msts[4][0]++;
       break
-    case 5: global.stat.msts[5][0]++;
+    case 5: stats.msts[5][0]++;
       break
-    case 6: global.stat.msts[6][0]++;
+    case 6: stats.msts[6][0]++;
       break
-    case 7: global.stat.msts[7][0]++;
+    case 7: stats.msts[7][0]++;
       break
   }
 }
 
 export function wpndiestt(killer: any, me: any) {
   switch (killer.eqp[0].wtype) {
-    case 0: global.stat.msts[0][1]++;
+    case 0: stats.msts[0][1]++;
       break
-    case 1: global.stat.msts[1][1]++;
+    case 1: stats.msts[1][1]++;
       break
-    case 2: global.stat.msts[2][1]++;
+    case 2: stats.msts[2][1]++;
       break
-    case 3: global.stat.msts[3][1]++;
+    case 3: stats.msts[3][1]++;
       break
-    case 4: global.stat.msts[4][1]++;
+    case 4: stats.msts[4][1]++;
       break
-    case 5: global.stat.msts[5][1]++;
+    case 5: stats.msts[5][1]++;
       break
-    case 6: global.stat.msts[6][1]++;
+    case 6: stats.msts[6][1]++;
       break
-    case 7: global.stat.msts[7][1]++;
+    case 7: stats.msts[7][1]++;
       break
   }
   switch (me.type) {
-    case 0: global.stat.msks[0]++;
+    case 0: stats.msks[0]++;
       break
-    case 1: global.stat.msks[1]++;
+    case 1: stats.msks[1]++;
       break
-    case 2: global.stat.msks[2]++;
+    case 2: stats.msks[2]++;
       break
-    case 3: global.stat.msks[3]++;
+    case 3: stats.msks[3]++;
       break
-    case 4: global.stat.msks[4]++;
+    case 4: stats.msks[4]++;
       break
-    case 5: global.stat.msks[5]++;
+    case 5: stats.msks[5]++;
       break
   }
 }

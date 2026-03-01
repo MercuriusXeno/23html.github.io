@@ -1,4 +1,4 @@
-import { furniture, quest, home, dom, global, item, sld, chss, skl, furn, sector, wpn, eqp, callback, creature } from '../state';
+import { furniture, quest, home, dom, global, item, sld, chss, skl, furn, sector, wpn, eqp, callback, creature, stats, } from '../state';
 import { DAY } from '../constants';
 import { smove, inSector } from '../game/movement';
 import { giveItem } from '../game/inventory';
@@ -242,7 +242,7 @@ quest.hnt1 = new Quest({
 // @ts-ignore: constructor function
 quest.grds1 = new Quest({
   id: 4, name: 'Guarding Duty', rar: 1, loc: 'Village Center, Marketplace Entry Gate', desc: 'You were tasked with guarding duty to watch over marketplace', repeatable: true,
-  rwd: function (this: any) { this.data.t++; giveWealth(65); giveExp(3000, true, true, true); global.stat.jcom++ },
+  rwd: function (this: any) { this.data.t++; giveWealth(65); giveExp(3000, true, true, true); stats.jcom++ },
   goals: function (this: any) {
     return ['Guard the gate until 8PM (<span style="color:yellow">in progress</span>)']
   },

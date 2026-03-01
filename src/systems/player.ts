@@ -1,4 +1,4 @@
-import { you, callback, global, dom, timers, chss, setYou, data, flags } from '../state';
+import { you, callback, global, dom, timers, chss, setYou, data, flags, stats, } from '../state';
 const { ttl, eqp, item, skl, creature, act, sector, area } = data;
 import { random } from '../random';
 import { smove } from '../game/movement';
@@ -69,7 +69,7 @@ export function You(this: any) {
       giveItem(item.death_b);
       dom.d5_1_1.update();
       global.s_l = 0;
-      global.stat.deadt++;
+      stats.deadt++;
       for (let x in global.achchk[0]) global.achchk[0][x](killer);
       clearInterval(timers.rdng);
       clearInterval(timers.rdngdots);

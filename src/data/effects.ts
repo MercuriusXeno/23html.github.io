@@ -1,4 +1,4 @@
-import { effect, global, dom, skl, timers, furn, furniture, item, flags } from '../state';
+import { effect, global, dom, skl, timers, furn, furniture, item, flags, stats, } from '../state';
 import { select } from '../utils';
 import { random, rand, randf } from '../random';
 import { findbyid } from '../utils';
@@ -74,7 +74,7 @@ effect.psn = new Effect({ id: 1, name: 'Poison', desc: 'Depletes health each sec
         giveSkExp(skl.poisr, this.power * .1);
         dmg *= Math.ceil(1 - skl.poisr.use());
         giveSkExp(skl.painr, this.power * .05);
-        global.stat.dmgrt += dmg;
+        stats.dmgrt += dmg;
         if (player.hp - dmg > 0) player.hp -= dmg;
         else { player.hp = 0; removeEff(this); this.duration = 5; player.onDeath(); global.atkdfty = [2, 1] }
         dom.d5_1_1.update();
@@ -82,7 +82,7 @@ effect.psn = new Effect({ id: 1, name: 'Poison', desc: 'Depletes health each sec
     }
     else {
       if (this.target.hp - dmg > 0) this.target.hp -= dmg;
-      else { this.target.hp = 0; removeEff(this, this.target); this.duration = 5; global.atkdftm = [-1, -1, 1]; this.target.onDeath(player); global.stat.indkill++ }
+      else { this.target.hp = 0; removeEff(this, this.target); this.duration = 5; global.atkdftm = [-1, -1, 1]; this.target.onDeath(player); stats.indkill++ }
       dom.d5_1_1m.update();
     }
     if (this.duration === 0) {
@@ -109,7 +109,7 @@ effect.vnm = new Effect({ id: 2, name: 'Venom', desc: 'Depletes health each seco
         giveSkExp(skl.poisr, this.power * .1);
         dmg *= Math.ceil(1 - (skl.poisr.use() * .3));
         giveSkExp(skl.painr, this.power * .2);
-        global.stat.dmgrt += dmg;
+        stats.dmgrt += dmg;
         if (player.hp - dmg > 0) player.hp -= dmg;
         else { player.hp = 0; removeEff(this); this.duration = 5; player.onDeath(); global.atkdfty = [2, 2] }
         dom.d5_1_1.update();
@@ -117,7 +117,7 @@ effect.vnm = new Effect({ id: 2, name: 'Venom', desc: 'Depletes health each seco
     }
     else {
       if (this.target.hp - dmg > 0) this.target.hp -= dmg;
-      else { this.target.hp = 0; removeEff(this, this.target); this.duration = 5; global.atkdftm = [-1, -1, 1]; this.target.onDeath(player); global.stat.indkill++ }
+      else { this.target.hp = 0; removeEff(this, this.target); this.duration = 5; global.atkdftm = [-1, -1, 1]; this.target.onDeath(player); stats.indkill++ }
       dom.d5_1_1m.update();
     }
     if (this.duration === 0) {
@@ -362,12 +362,12 @@ effect.bled = new Effect({ id: 14, name: 'Bleeding', desc: 'Depletes health each
     if (this.target.id === player.id) {
       giveSkExp(skl.bledr, this.power * .1);
       dmg *= Math.ceil(1 - skl.bledr.use());
-      global.stat.dmgrt += dmg;
+      stats.dmgrt += dmg;
       if (player.hp - dmg > 0) player.hp -= dmg;
       else { player.hp = 0; removeEff(this); this.duration = 5; player.onDeath(); global.atkdfty = [2, 3] }
       dom.d5_1_1.update();
     }
-    else { if (this.target.hp - dmg > 0) this.target.hp -= dmg; else { this.target.hp = 0; removeEff(this, this.target); this.duration = 5; this.target.onDeath(player); global.stat.indkill++ } }
+    else { if (this.target.hp - dmg > 0) this.target.hp -= dmg; else { this.target.hp = 0; removeEff(this, this.target); this.duration = 5; this.target.onDeath(player); stats.indkill++ } }
     if (this.duration === 0) { removeEff(this, this.target); this.duration = 5; };
   },
   onClick: function (player: any) {
@@ -445,7 +445,7 @@ effect.fei1 = new Effect({ id: 23, name: 'Fei poisoning', desc: 'Fei impurities 
     giveSkExp(skl.crptr, 1);
     giveSkExp(skl.painr, this.power);
     let dmg = (this.power * 5 * (1 - skl.crptr.lvl * .05)) << 0;
-    global.stat.dmgrt += dmg;
+    stats.dmgrt += dmg;
     if (player.hp - dmg > 0) player.hp -= dmg;
     else { player.hp = 0; removeEff(this); player.onDeath(); global.atkdfty = [2, 4]; msg("You fail to purify the pill", 'darkgrey') }
     dom.d5_1_1.update();
@@ -463,10 +463,10 @@ effect.cold = new Effect({ id: 24, name: 'Cold', desc: 'You\'re freezing', type:
       giveSkExp(skl.abw, .01);
       giveSkExp(skl.coldr, .01);
       effect.fplc.active === true ? this.duration -= 15 : this.duration--;
-      effect.wet.active ? global.stat.coldnt += 6 : global.stat.coldnt += 2;
+      effect.wet.active ? stats.coldnt += 6 : stats.coldnt += 2;
       if (effect.fbite.active) effect.fbite.duration += 5;
-      else if (global.stat.coldnt >= 460) giveEff(player, effect.fbite, 20);
-      if (global.stat.coldnt > 0) global.stat.coldnt--
+      else if (stats.coldnt >= 460) giveEff(player, effect.fbite, 20);
+      if (stats.coldnt > 0) stats.coldnt--
     }
     else this.duration--;
     if (this.duration > 600) this.duration = 600;
@@ -496,7 +496,7 @@ effect.smoke = new Effect({ id: 25, name: 'Smoke', desc: 'Thick smoke abstructs 
 effect.fbite = new Effect({ id: 26, name: 'Hypothermia', desc: 'Your limbs are suffering from frostbites', type: 5, duration: 5, x: '凍', c: 'red', b: '#aaf',
   mods: function (player: any) { player.agle /= 1.15; player.stre /= 1.2; player.hpe /= 1.2; player.sate /= 1.1 },
   onGive: function (player: any) { if (this.target.id === player.id) msg('Sharp pain stings you', 'red', null, null, 'cyan') },
-  onRemove: function (player: any) { if (this.target.id === player.id) { msg('You aren\'t freezing anymore', 'orange'); global.stat.coldnt = 0 } },
+  onRemove: function (player: any) { if (this.target.id === player.id) { msg('You aren\'t freezing anymore', 'orange'); stats.coldnt = 0 } },
   use: function (player: any) {
     if (this.target.id === player.id) {
       giveSkExp(skl.coldr, .05);

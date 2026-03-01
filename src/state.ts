@@ -118,8 +118,8 @@ global.timescale = 1;
 global.keytarget;
 global.offline_evil_index = 1;
 
-// Statistics
-global.stat = {
+// Statistics (top-level export, formerly global.stat)
+export var stats: any = {
   tick: 0,
   akills: 0,
   fooda: 0,

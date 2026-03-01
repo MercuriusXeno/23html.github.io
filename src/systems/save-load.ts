@@ -6,8 +6,8 @@ import { addElement, empty, appear, fade } from '../dom-utils';
 import {
   dom, global, you, time, callback, w_manager, timers, chss, home, inv, furn, qsts, dar, acts, sectors,
   itemgroup, data, gameText, flags,
-  setYou, setTime, setInv, setDar, setFurn, setQsts, setActs, setSectors, resetFlags
-} from '../state';
+  setYou, setTime, setInv, setDar, setFurn, setQsts, setActs, setSectors, resetFlags,
+stats, } from '../state';
 const { effect, creature, wpn, eqp, acc, sld, item, rcp, area, sector, ttl, skl,
   furniture, vendor, quest, act, container, mastery } = data;
 import { wdrseason } from './weather';
@@ -69,7 +69,7 @@ function restoreDiscovery(savedIds: any, namespace: any) {
 export function save(lvr?: any) {
   let storage = window.localStorage;
   flags.savestate = true;
-  global.stat.gsvs++;
+  stats.gsvs++;
   let str = "";
 
   // Timestamp
@@ -169,7 +169,7 @@ export function save(lvr?: any) {
     if (item[obj].data.finished === true) datare[nindxat++] = item[obj].id;
   }
   let a1 = {
-    uid: global.uid, jj: global.stat,
+    uid: global.uid, jj: stats,
     x: global.current_z.id, a: global.rm, b: global.sm,
     e: flags, f: global.spirits,
     g: global.msgs_max, i: global.lst_loc,
@@ -544,18 +544,18 @@ export function load(dt?: any) {
     global.bg_b = a1.p;
 
     // Restore statistics
-    for (let a in global.stat) global.stat[a] = a1.jj[a] || 0;
+    for (let a in stats) stats[a] = a1.jj[a] || 0;
     let tempt = new Date();
-    if (global.stat.sttime === 0)
-      global.stat.sttime = tempt.getFullYear() + '/' + (tempt.getMonth() + 1) + '/' + tempt.getDate() + ' ' + tempt.getHours() + ':' + (tempt.getMinutes() >= 10 ? tempt.getMinutes() : '0' + tempt.getMinutes()) + ':' + (tempt.getSeconds() > 10 ? tempt.getSeconds() : '0' + tempt.getSeconds());
-    if (global.stat.msts === 0) global.stat.msts = [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]];
-    if (global.stat.msks === 0) global.stat.msks = [0, 0, 0, 0, 0, 0, 0];
+    if (stats.sttime === 0)
+      stats.sttime = tempt.getFullYear() + '/' + (tempt.getMonth() + 1) + '/' + tempt.getDate() + ' ' + tempt.getHours() + ':' + (tempt.getMinutes() >= 10 ? tempt.getMinutes() : '0' + tempt.getMinutes()) + ':' + (tempt.getSeconds() > 10 ? tempt.getSeconds() : '0' + tempt.getSeconds());
+    if (stats.msts === 0) stats.msts = [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]];
+    if (stats.msks === 0) stats.msks = [0, 0, 0, 0, 0, 0, 0];
 
     // Restore UI settings
     dom.ct_bt4_21b.value = global.bg_r;
     dom.ct_bt4_22b.value = global.bg_g;
     dom.ct_bt4_23b.value = global.bg_b;
-    global.stat.wsnburst = 50;
+    stats.wsnburst = 50;
     dom.ctrwin4.style.display = 'none';
     dom.ctrwin2.style.display = 'none';
     dom.ctrwin1.style.display = '';
@@ -841,7 +841,7 @@ export function load(dt?: any) {
       dom.mn_2.style.display = '';
       dom.mn_4.style.display = '';
       dom.mn_3.style.display = '';
-      if (global.stat.mndrgnu) dom.mn_1.style.display = '';
+      if (stats.mndrgnu) dom.mn_1.style.display = '';
       m_update();
     }
 

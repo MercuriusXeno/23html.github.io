@@ -1,7 +1,7 @@
 import { DAY, WEEK } from '../constants';
 import { random } from '../random';
 import { empty } from '../dom-utils';
-import { dom, global, you, time, timers, furn, plans, sectors, data, gameText, flags } from '../state';
+import { dom, global, you, time, timers, furn, plans, sectors, data, gameText, flags, stats, } from '../state';
 const { skl, vendor, effect, item } = data;
 import { wManager, getDay, timeDisp, getLunarPhase, getHour, getSeason, wdrseason } from './weather';
 import { runEffectors } from '../game/movement';
@@ -12,12 +12,12 @@ import { msg } from '../ui/messages';
 import { addDesc } from '../ui/descriptions';
 
     export function ontick() {
-      global.stat.tick++;
+      stats.tick++;
       time.minute += global.timescale;
       wManager();
       for (let a in plans[0]) plans[0][a].f();
       dom.d_time.innerHTML = '<small>' + getDay(flags.tmmode || 2) + '</small> ' + timeDisp(time);
-      //global.stat.seed1=(random()*7e+7<<7)%7&7
+      //stats.seed1=(random()*7e+7<<7)%7&7
       global.current_l.onStay(you);
       runEffectors(global.current_l.effectors)
       for (let a in sectors) { sectors[a].onStay(you); runEffectors(sectors[a].effectors) }
@@ -56,7 +56,7 @@ import { addDesc } from '../ui/descriptions';
         if (flags.iscold === true) lose += effect.cold.duration / 1000 / (1 + skl.coldr.lvl * .05);
         you.sat -= lose
       } else giveSkExp(skl.fmn, .1);
-      if (flags.sleepmode) global.stat.timeslp += global.timescale;
+      if (flags.sleepmode) stats.timeslp += global.timescale;
       if (random() < .00000001) { let au = new Audio("laugh6.wav"); au.play() }
       dom.d5_3_1.update();
     }

@@ -1,6 +1,6 @@
 import { addElement, empty } from '../dom-utils';
 import { scanbyuid } from '../utils';
-import { dom, global, you, inv, timers, data, flags } from '../state';
+import { dom, global, you, inv, timers, data, flags, stats, } from '../state';
 const { item, skl } = data;
 import { addDesc } from './descriptions';
 import { equip, unequip } from './equipment';
@@ -82,10 +82,10 @@ import { renderRcp } from './panels';
               piie.addEventListener('mouseenter', function (this: any) { this.style.backgroundColor = '#666' });
               phai.addEventListener('mouseleave', function (this: any) { this.style.backgroundColor = 'darkgrey' });
               piie.addEventListener('mouseleave', function (this: any) { this.style.backgroundColor = 'darkgrey' });
-              phai.addEventListener('click', () => { giveSkExp(skl.rccln, (2 ** obj.rar) * 5 - 9.5); giveSkExp(skl.thr, .5); global.stat.thrt++; removeItem(obj); document.body.removeChild(prm); document.body.removeChild(prm2) });
+              phai.addEventListener('click', () => { giveSkExp(skl.rccln, (2 ** obj.rar) * 5 - 9.5); giveSkExp(skl.thr, .5); stats.thrt++; removeItem(obj); document.body.removeChild(prm); document.body.removeChild(prm2) });
               piie.addEventListener('click', () => { document.body.removeChild(prm); document.body.removeChild(prm2) });
             }
-            else { giveSkExp(skl.rccln, (2 ** obj.rar) * 5 - 9.5); removeItem(obj); giveSkExp(skl.thr, .5); global.stat.thrt++; empty(global.dscr); }
+            else { giveSkExp(skl.rccln, (2 ** obj.rar) * 5 - 9.5); removeItem(obj); giveSkExp(skl.thr, .5); stats.thrt++; empty(global.dscr); }
           }
           );
         }
@@ -203,7 +203,7 @@ import { renderRcp } from './panels';
         }
       }
       addDesc(inv_slot, obj, null, null, null, null, 100);
-      inv_slot.addEventListener('click', function (x) { if (obj.amount > 0 || !!obj.slot) { obj.use(you, x); if (!obj.slot) reduce(obj); if (obj.id < 3000 && !obj.data.tried) { obj.data.tried = true; global.stat.ftried += 1; if (global.dscr.style.display != 'none') dom.dtrd.innerHTML = 'Tried: <span style="color: lime">Yes</span>'; } } });
+      inv_slot.addEventListener('click', function (x) { if (obj.amount > 0 || !!obj.slot) { obj.use(you, x); if (!obj.slot) reduce(obj); if (obj.id < 3000 && !obj.data.tried) { obj.data.tried = true; stats.ftried += 1; if (global.dscr.style.display != 'none') dom.dtrd.innerHTML = 'Tried: <span style="color: lime">Yes</span>'; } } });
       inv_slot.addEventListener('mouseleave', function () { if (obj.new === true) { obj.new = false; clearTimeout(timers.nsblk); inv_name.innerHTML = obj.name } });
     }
 
