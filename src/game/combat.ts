@@ -1,7 +1,7 @@
 import { random, rand, randf } from '../random';
 import { select } from '../utils';
 import { addElement } from '../dom-utils';
-import { dom, global, you, timers, time, data, flags, stats, combat, } from '../state';
+import { dom, global, settings, you, timers, time, data, flags, stats, combat, } from '../state';
 const { abl, skl, effect, creature } = data;
 import { msg, msg_add } from '../ui/messages';
 import { update_d } from '../ui/stats';
@@ -81,7 +81,7 @@ export function fght(att: any, def: any) {
       doSingleAttack(sc, inn, !isyouinn);
       you.stat_r();
     }
-  }, 500 / global.fps);
+  }, 500 / settings.fps);
 }
 
 export function attack(att: any, def: any, atk?: any, power?: any) {

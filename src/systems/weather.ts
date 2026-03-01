@@ -1,4 +1,4 @@
-import { w_manager, global, you, dom, callback, time, setTime, data, gameText, flags, stats, combat, } from '../state';
+import { w_manager, global, settings, you, dom, callback, time, setTime, data, gameText, flags, stats, combat, } from '../state';
 const { effect, skl } = data;
 import { random, rand } from '../random';
 import { findbyid, copy } from '../utils';
@@ -225,7 +225,7 @@ function onSeasonTick(season: any) {
 
 export function wManager() {
   let ses = getSeason()
-  if (w_manager.duration > 0) w_manager.duration -= global.timescale;
+  if (w_manager.duration > 0) w_manager.duration -= settings.timescale;
   else {
     let chance = rand(1, 100);
     switch (ses) {

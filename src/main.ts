@@ -4,7 +4,7 @@ import { Base64, utf8_to_b64, b64_to_utf8 } from './base64';
 import { random, rand, randf, _rand, xmur3 } from './random';
 import { select, shuffle, deepCopy, copy, objempty, format3, col, scan, scanbyid, scanbyuid, find, findbyid, findbest, findworst } from './utils';
 import { addElement, empty, appear, fade } from './dom-utils';
-import { dom, global, listen, w_manager, offline, callback, effector,
+import { dom, global, settings, listen, w_manager, offline, callback, effector,
   timers, chss, test, planner, check, home,
   itemgroup, sectors, inv, furn, qsts, dar, acts, plans, checksd,
   you, time, data, gameText, flags, setYou, setTime,
@@ -422,7 +422,7 @@ declare var InstallTrigger: any;
       if (global.lw_op === 1) { dom.ctrwin6.style.display = 'none'; dom.ctrwin5.style.display = 'none'; dom.ctrwin4.style.display = 'none'; dom.ctrwin3.style.display = 'none'; dom.ctrwin2.style.display = 'none'; dom.ctrwin1.style.display = ''; global.lw_op = 0; clearInterval(timers.sklupdate); clearInterval(timers.bstmonupdate) }
       else {
         dom.ctrwin6.style.display = 'none'; dom.ctrwin5.style.display = 'none'; dom.ctrwin4.style.display = 'none'; dom.ctrwin3.style.display = 'none'; dom.ctrwin2.style.display = ''; dom.ctrwin1.style.display = 'none'; global.lw_op = 1;
-        if (global.rec_d.length > 0) { dom.ct_bt1_c.style.display = ''; rsort(global.rm); clearInterval(timers.sklupdate); clearInterval(timers.bstmonupdate) } else { dom.ct_bt1_c.style.display = 'none'; dom.nthngdsp.style.display = '' }
+        if (global.rec_d.length > 0) { dom.ct_bt1_c.style.display = ''; rsort(settings.rm); clearInterval(timers.sklupdate); clearInterval(timers.bstmonupdate) } else { dom.ct_bt1_c.style.display = 'none'; dom.nthngdsp.style.display = '' }
       }
     });
 
@@ -1259,24 +1259,24 @@ declare var InstallTrigger: any;
     dom.ct_bt4_1a = addElement(dom.ct_bt4_1, 'div', null, 'option-label');
     dom.ct_bt4_1a.innerHTML = 'Message log limit';
     dom.ct_bt4_1b = addElement(dom.ct_bt4_1, 'input', null, 'option-input');
-    dom.ct_bt4_1b.value = global.msgs_max;
+    dom.ct_bt4_1b.value = settings.msgs_max;
     dom.ct_bt4_1b.type = 'number';
     dom.ct_bt4_1b.min = 1;
     dom.ct_bt4_1b.max = 100;
-    dom.ct_bt4_1b.addEventListener('change', function (this: any) { if (this.value < 1) this.value = 1; else if (this.value > 100) this.value = 100; global.msgs_max = this.value });
+    dom.ct_bt4_1b.addEventListener('change', function (this: any) { if (this.value < 1) this.value = 1; else if (this.value > 100) this.value = 100; settings.msgs_max = this.value });
     dom.ct_bt4_2 = addElement(dom.ctrwin4, 'div', null, 'option-row');
     dom.ct_bt4_2a = addElement(dom.ct_bt4_2, 'div', null, 'option-label');
     dom.ct_bt4_2a.innerHTML = 'BG Color';
     dom.ct_bt4_21b = addElement(dom.ct_bt4_2, 'input', null, 'option-input');
-    dom.ct_bt4_21b.value = global.bg_r;
+    dom.ct_bt4_21b.value = settings.bg_r;
     dom.ct_bt4_21b.type = 'range';
     dom.ct_bt4_21b.min = 0;
     dom.ct_bt4_21b.max = 255;
     dom.ct_bt4_21b.style.width = '85px';
     dom.ct_bt4_21b.style.height = '16px';
-    dom.ct_bt4_21b.addEventListener('input', function (this: any) { document.body.removeAttribute('style'); flags.bgspc = false; global.bg_r = this.value; document.body.style.backgroundColor = 'rgb(' + global.bg_r + ',' + global.bg_g + ',' + global.bg_b + ')'; dom.ct_bt4_31b.innerHTML = global.bg_r });
+    dom.ct_bt4_21b.addEventListener('input', function (this: any) { document.body.removeAttribute('style'); flags.bgspc = false; settings.bg_r = this.value; document.body.style.backgroundColor = 'rgb(' + settings.bg_r + ',' + settings.bg_g + ',' + settings.bg_b + ')'; dom.ct_bt4_31b.innerHTML = settings.bg_r });
     dom.ct_bt4_22b = addElement(dom.ct_bt4_2, 'input', null, 'option-input');
-    dom.ct_bt4_22b.value = global.bg_g;
+    dom.ct_bt4_22b.value = settings.bg_g;
     dom.ct_bt4_22b.type = 'range';
     dom.ct_bt4_21b.style.height = '16px';
     dom.ct_bt4_22b.style.height = '16px';
@@ -1284,9 +1284,9 @@ declare var InstallTrigger: any;
     dom.ct_bt4_22b.max = 255;
     dom.ct_bt4_22b.style.width = '85px';
     dom.ct_bt4_22b.style.left = '367px';
-    dom.ct_bt4_22b.addEventListener('input', function (this: any) { document.body.removeAttribute('style'); flags.bgspc = false; global.bg_g = this.value; document.body.style.backgroundColor = 'rgb(' + global.bg_r + ',' + global.bg_g + ',' + global.bg_b + ')'; dom.ct_bt4_32b.innerHTML = global.bg_g });
+    dom.ct_bt4_22b.addEventListener('input', function (this: any) { document.body.removeAttribute('style'); flags.bgspc = false; settings.bg_g = this.value; document.body.style.backgroundColor = 'rgb(' + settings.bg_r + ',' + settings.bg_g + ',' + settings.bg_b + ')'; dom.ct_bt4_32b.innerHTML = settings.bg_g });
     dom.ct_bt4_23b = addElement(dom.ct_bt4_2, 'input', null, 'option-input');
-    dom.ct_bt4_23b.value = global.bg_b;
+    dom.ct_bt4_23b.value = settings.bg_b;
     dom.ct_bt4_23b.type = 'range';
     dom.ct_bt4_21b.style.height = '16px';
     dom.ct_bt4_23b.style.height = '16px';
@@ -1294,7 +1294,7 @@ declare var InstallTrigger: any;
     dom.ct_bt4_23b.max = 255;
     dom.ct_bt4_23b.style.width = '85px';
     dom.ct_bt4_23b.style.left = '459px';
-    dom.ct_bt4_23b.addEventListener('input', function (this: any) { document.body.removeAttribute('style'); flags.bgspc = false; global.bg_b = this.value; document.body.style.backgroundColor = 'rgb(' + global.bg_r + ',' + global.bg_g + ',' + global.bg_b + ')'; dom.ct_bt4_33b.innerHTML = global.bg_b });
+    dom.ct_bt4_23b.addEventListener('input', function (this: any) { document.body.removeAttribute('style'); flags.bgspc = false; settings.bg_b = this.value; document.body.style.backgroundColor = 'rgb(' + settings.bg_r + ',' + settings.bg_g + ',' + settings.bg_b + ')'; dom.ct_bt4_33b.innerHTML = settings.bg_b });
 
     dom.ct_bt4_3 = addElement(dom.ctrwin4, 'div', null, 'option-row');
     dom.ct_bt4_3a = addElement(dom.ct_bt4_3, 'div', null, 'option-label');
@@ -1302,16 +1302,16 @@ declare var InstallTrigger: any;
     dom.ct_bt4_31b = addElement(dom.ct_bt4_3, 'div', null, 'option-input');
     dom.ct_bt4_31b.style.textAlign = 'center';
     dom.ct_bt4_31b.style.width = '83px';
-    dom.ct_bt4_31b.innerHTML = global.bg_r || 255;
+    dom.ct_bt4_31b.innerHTML = settings.bg_r || 255;
     dom.ct_bt4_32b = addElement(dom.ct_bt4_3, 'div', null, 'option-input');
     dom.ct_bt4_32b.style.textAlign = 'center';
     dom.ct_bt4_32b.style.width = '83px';
-    dom.ct_bt4_32b.innerHTML = global.bg_g || 255;
+    dom.ct_bt4_32b.innerHTML = settings.bg_g || 255;
     dom.ct_bt4_32b.style.left = '367px';
     dom.ct_bt4_33b = addElement(dom.ct_bt4_3, 'div', null, 'option-input');
     dom.ct_bt4_33b.style.textAlign = 'center';
     dom.ct_bt4_33b.style.width = '83px';
-    dom.ct_bt4_33b.innerHTML = global.bg_b || 255;
+    dom.ct_bt4_33b.innerHTML = settings.bg_b || 255;
     dom.ct_bt4_33b.style.left = '459px';
 
     dom.ct_bt4_03 = addElement(dom.ctrwin4, 'div', null, 'option-row');
@@ -1341,45 +1341,45 @@ declare var InstallTrigger: any;
     dom.ct_bt4_03b4.style.background = 'linear-gradient(180deg,#000,#123)';
     dom.ct_bt4_03b1.addEventListener('click', function (this: any) {
       flags.bgspc = false
-      global.bg_r = 255;
-      global.bg_g = 255;
-      global.bg_b = 255;
+      settings.bg_r = 255;
+      settings.bg_g = 255;
+      settings.bg_b = 255;
       document.body.removeAttribute('style')
       dom.ct_bt4_31b.innerHTML = 255;
       dom.ct_bt4_32b.innerHTML = 255;
       dom.ct_bt4_33b.innerHTML = 255;
-      dom.ct_bt4_21b.value = global.bg_r;
-      dom.ct_bt4_22b.value = global.bg_g;
-      dom.ct_bt4_23b.value = global.bg_b
-      document.body.style.backgroundColor = 'rgb(' + global.bg_r + ',' + global.bg_g + ',' + global.bg_b + ')';
+      dom.ct_bt4_21b.value = settings.bg_r;
+      dom.ct_bt4_22b.value = settings.bg_g;
+      dom.ct_bt4_23b.value = settings.bg_b
+      document.body.style.backgroundColor = 'rgb(' + settings.bg_r + ',' + settings.bg_g + ',' + settings.bg_b + ')';
     });
     dom.ct_bt4_03b2.addEventListener('click', function (this: any) {
       flags.bgspc = false
-      global.bg_r = 188;
-      global.bg_g = 188;
-      global.bg_b = 188;
+      settings.bg_r = 188;
+      settings.bg_g = 188;
+      settings.bg_b = 188;
       document.body.removeAttribute('style')
       dom.ct_bt4_31b.innerHTML = 188;
       dom.ct_bt4_32b.innerHTML = 188;
       dom.ct_bt4_33b.innerHTML = 188;
-      dom.ct_bt4_21b.value = global.bg_r;
-      dom.ct_bt4_22b.value = global.bg_g;
-      dom.ct_bt4_23b.value = global.bg_b
-      document.body.style.backgroundColor = 'rgb(' + global.bg_r + ',' + global.bg_g + ',' + global.bg_b + ')';
+      dom.ct_bt4_21b.value = settings.bg_r;
+      dom.ct_bt4_22b.value = settings.bg_g;
+      dom.ct_bt4_23b.value = settings.bg_b
+      document.body.style.backgroundColor = 'rgb(' + settings.bg_r + ',' + settings.bg_g + ',' + settings.bg_b + ')';
     });
     dom.ct_bt4_03b3.addEventListener('click', function (this: any) {
       flags.bgspc = false
-      global.bg_r = 18;
-      global.bg_g = 18;
-      global.bg_b = 46;
+      settings.bg_r = 18;
+      settings.bg_g = 18;
+      settings.bg_b = 46;
       document.body.removeAttribute('style')
       dom.ct_bt4_31b.innerHTML = 18;
       dom.ct_bt4_32b.innerHTML = 18;
       dom.ct_bt4_33b.innerHTML = 46;
-      dom.ct_bt4_21b.value = global.bg_r;
-      dom.ct_bt4_22b.value = global.bg_g;
-      dom.ct_bt4_23b.value = global.bg_b
-      document.body.style.backgroundColor = 'rgb(' + global.bg_r + ',' + global.bg_g + ',' + global.bg_b + ')';
+      dom.ct_bt4_21b.value = settings.bg_r;
+      dom.ct_bt4_22b.value = settings.bg_g;
+      dom.ct_bt4_23b.value = settings.bg_b
+      document.body.style.backgroundColor = 'rgb(' + settings.bg_r + ',' + settings.bg_g + ',' + settings.bg_b + ')';
     });
     dom.ct_bt4_03b4.addEventListener('click', function (this: any) {
       flags.bgspc = true
@@ -1615,7 +1615,7 @@ declare var InstallTrigger: any;
         inv.sort(function (a: any, b: any) { if (a.name > b.name) return -1; if (a.name < b.name) return 1; return 0 });
         flags.sort_a = true;
       } iftrunkopenc(1);
-      isort(global.sm)
+      isort(settings.sm)
     });
     dom.inv_btn_2_b.addEventListener('click', function (this: any) {
       if (flags.sort_b === true) {
@@ -1625,7 +1625,7 @@ declare var InstallTrigger: any;
         inv.sort(function (a: any, b: any) { if (a.amount > b.amount) return -1; if (a.amount < b.amount) return 1; if (a.name > b.name) return -1; if (a.name < b.name) return 1; return 0 });
         flags.sort_b = true;
       } iftrunkopenc(1);
-      isort(global.sm)
+      isort(settings.sm)
     });
     dom.inv_btn_3_b.addEventListener('click', function (this: any) {
       if (flags.sort_c === true) {
@@ -1635,7 +1635,7 @@ declare var InstallTrigger: any;
         inv.sort(function (a: any, b: any) { if (a.id > b.id) return -1; if (a.id < b.id) return 1; if (a.name > b.name) return -1; if (a.name < b.name) return 1; return 0 });
         flags.sort_c = true;
       } iftrunkopenc(1);
-      isort(global.sm)
+      isort(settings.sm)
     });
     dom.d3.update = function (this: any) { this.innerHTML = ' lvl:' + you.lvl + ' \'' + you.title.name + '\''; }
     dom.d5_1_1.update = function (this: any) { this.innerHTML = 'hp: ' + format3(you.hp.toString()) + '/' + format3(you.hpmax.toString()); dom.d5_1.style.width = 100 * you.hp / you.hpmax + '%' };
@@ -3638,7 +3638,7 @@ declare var InstallTrigger: any;
       if (you.alive === false) { chs(select(['You lost consciousness...', 'You have been knocked out...', 'You passed out...']), true); you.alive = true }
       else { if (flags.catget) extra = select(['. Your cat is resting next to you', '. You feel warm']); chs('Great way to pass time' + extra, true); }
       chs('"<= Get up"', false).addEventListener('click', () => {
-        for (let i in chss) if (chss[i].id === global.home_loc) smove(chss[i]);
+        for (let i in chss) if (chss[i].id === settings.home_loc) smove(chss[i]);
       });
     }
     chss.hbed.onStay = function (this: any) {
@@ -3655,11 +3655,11 @@ declare var InstallTrigger: any;
     chss.hbed.onEnter = function (this: any) {
       flags.sleepmode = true;
       if (effect.slep.active === false) giveEff(you, effect.slep);
-      global.timescale = 5;
+      settings.timescale = 5;
     }
     chss.hbed.onLeave = function (this: any) {
       flags.sleepmode = false;
-      global.timescale = 1;
+      settings.timescale = 1;
       removeEff(effect.slep);
     }
 
@@ -3698,8 +3698,8 @@ declare var InstallTrigger: any;
           else if (fire.data.fuel >= 130 && fire.data.fuel <= 300) dom.frpls.innerHTML = gameText.frplcfrextra[1];
           else if (fire.data.fuel >= 300 && fire.data.fuel <= 540) dom.frpls.innerHTML = gameText.frplcfrextra[2];
           else if (fire.data.fuel >= 540) dom.frpls.innerHTML = gameText.frplcfrextra[3];
-          if (its[a][0].amount <= 0) { removeItem(its[a][0]); dom.ctr_2.removeChild(this) } else if (global.sm === 1) updateInv(inv.indexOf(its[a][0]));
-          else if (global.sm === its[a][0]) updateInv(global.sinv.indexOf(its[a][0]));
+          if (its[a][0].amount <= 0) { removeItem(its[a][0]); dom.ctr_2.removeChild(this) } else if (settings.sm === 1) updateInv(inv.indexOf(its[a][0]));
+          else if (settings.sm === its[a][0]) updateInv(global.sinv.indexOf(its[a][0]));
         });
       };
       let afire = findbyid(furn, furniture.fwdpile.id);
@@ -4153,7 +4153,7 @@ declare var InstallTrigger: any;
     // ontick — moved to systems/loop.ts
 
     (function update() {
-      setTimeout(function (this: any) { update(); ontick(); }, 1000 / global.fps);
+      setTimeout(function (this: any) { update(); ontick(); }, 1000 / settings.fps);
     })();
 
     // select() imported from ./utils
@@ -4336,8 +4336,8 @@ declare var InstallTrigger: any;
           let am = (itm.amount * randf(itm.rot[2], itm.rot[3]) + 1) << 0;
           itm.data.rottil--;
           itm.amount -= am;
-          if (itm.stype === global.sm) updateInv(global.sinv.indexOf(itm));
-          else if (global.sm === 1) updateInv(inv.indexOf(itm));
+          if (itm.stype === settings.sm) updateInv(global.sinv.indexOf(itm));
+          else if (settings.sm === 1) updateInv(inv.indexOf(itm));
           if (itm.amount <= 0) { planner.chkrot.data.items.splice(planner.chkrot.data.items.indexOf(itm)); removeItem(itm) }
           msg('Your <span style="color:cyan">x' + am + '</span> <span style="color: orange">' + itm.name + '</span> ' + select(['rotted away', 'went bad', 'spoiled']) + '!', 'yellow', null, null, 'green')
           if (itm.onChange) itm.onChange(am)

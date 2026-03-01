@@ -1,7 +1,7 @@
 import { randf, rand } from '../random';
 import { col, scanbyid } from '../utils';
 import { empty } from '../dom-utils';
-import { dom, global, you, acts, data, flags, stats, } from '../state';
+import { dom, global, settings, you, acts, data, flags, stats, } from '../state';
 const { skl: sklState, ttl } = data;
 import { msg, msg_add } from '../ui/messages';
 import { update_d } from '../ui/stats';
@@ -94,7 +94,7 @@ import { formatw } from './utils-game';
       if (rcp.have === false) {
         global.rec_d.push(rcp);
         rcp.have = true;
-        if (global.lw_op === 1) rsort(global.rm)
+        if (global.lw_op === 1) rsort(settings.rm)
         msg('New blueprint unlocked: ', 'cyan');
         msg_add('"' + rcp.name + '"', 'orange');
         return 1;

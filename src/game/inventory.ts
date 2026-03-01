@@ -1,7 +1,7 @@
 import { random, rand } from '../random';
 import { copy, deepCopy, scan, scanbyid } from '../utils';
 import { addElement, empty } from '../dom-utils';
-import { dom, global, you, inv, dar, planner, timers, furn, data, flags, stats, combat, } from '../state';
+import { dom, global, settings, you, inv, dar, planner, timers, furn, data, flags, stats, combat, } from '../state';
 const { skl, creature } = data;
 import { msg, msg_add } from '../ui/messages';
 import { renderItem, updateInv, isort, rsort } from '../ui/inventory';
@@ -26,8 +26,8 @@ import { kill } from './utils-game';
           inv.push(nitm);
           msg('New item obtained: <span style="color:coral">' + nitm.name + '</span>', 'cyan', obj);
           obj.onGet(you);
-          if (global.sm === nitm.stype) global.sinv.push(nitm);
-          if (nitm.stype === global.sm || global.sm === 1) renderItem(nitm);
+          if (settings.sm === nitm.stype) global.sinv.push(nitm);
+          if (nitm.stype === settings.sm || settings.sm === 1) renderItem(nitm);
           let g = obj.id / 10000 << 0;
           if (!scan(dar[g], obj.id)) dar[g].push(obj.id);
           if (flag && flag.fl) iftrunkopen(1);
@@ -51,13 +51,13 @@ import { kill } from './utils-game';
         obj.amount += am;
         msg('New item obtained: <span style="color:coral">' + obj.name + '</span><span style="color:lime"> x' + am + '</span>', 'cyan', obj);
         obj.onGet(you);
-        if (global.sm === obj.stype) global.sinv.push(obj);
-        if (obj.stype === global.sm || global.sm === 1) renderItem(obj);
+        if (settings.sm === obj.stype) global.sinv.push(obj);
+        if (obj.stype === settings.sm || settings.sm === 1) renderItem(obj);
       } else {
         obj.amount += am;
         msg('Item Acquired: <span style="color:chartreuse">' + obj.name + '</span><span style="color:lime"> x' + am + '</span>', 'cyan', obj);
-        if (global.sm === 1) updateInv(inv.indexOf(obj));
-        else if (global.sm === obj.stype) updateInv(global.sinv.indexOf(obj));
+        if (settings.sm === 1) updateInv(inv.indexOf(obj));
+        else if (settings.sm === obj.stype) updateInv(global.sinv.indexOf(obj));
         obj.onGet(you);
       }
       let g = obj.id / 10000 << 0;
@@ -87,7 +87,7 @@ import { kill } from './utils-game';
         let tg;
         for (let obj in global.shortcuts) {
           if (e.which === global.shortcuts[obj][0]) { global.shortcuts[obj][2].data.skey = null; global.shortcuts.splice(global.shortcuts.indexOf(global.shortcuts[obj]), 1); }
-        } global.keyobj.data.skey = e.which; global.shortcuts.push([e.which, global.keyobj.id, global.keyobj]); global.shortcuts[global.shortcuts.length - 1][2].data.skey = e.which; isort(global.sm)
+        } global.keyobj.data.skey = e.which; global.shortcuts.push([e.which, global.keyobj.id, global.keyobj]); global.shortcuts[global.shortcuts.length - 1][2].data.skey = e.which; isort(settings.sm)
       }
     }
 
@@ -97,10 +97,10 @@ import { kill } from './utils-game';
         for (let s in global.shortcuts) if (obj.data.skey === global.shortcuts[s][0]) { global.shortcuts.splice(global.shortcuts.indexOf(obj.data.skey), 1); continue };
       }
       let idx;
-      if (global.sm === 1) {
+      if (settings.sm === 1) {
         idx = inv.indexOf(obj);
         dom.inv_con.removeChild(dom.inv_con.children[idx])
-      } else if (global.sm === obj.stype) {
+      } else if (settings.sm === obj.stype) {
         idx = global.sinv.indexOf(obj);
         dom.inv_con.removeChild(dom.inv_con.children[idx])
         global.sinv.splice(idx, 1);
@@ -109,7 +109,7 @@ import { kill } from './utils-game';
       inv.splice(inv.indexOf(obj), 1);
       obj.have = false;
       if (obj.rot) for (let a in planner.imorph.data.items) if (planner.imorph.data.items[a].id === obj.id) { planner.imorph.data.items.splice(planner.imorph.data.items.indexOf(obj)); }
-      if (global.lw_op === 1) rsort(global.rm)
+      if (global.lw_op === 1) rsort(settings.rm)
       if (flag && flag.fl) iftrunkopen(1);
       else iftrunkopenc(1);
       if (obj.slot) kill(obj)
@@ -162,13 +162,13 @@ import { kill } from './utils-game';
               let nit = addToContainer(trunk, item, item.amount);
               item.amount = 0;
               titem = nit;
-              if (item.amount <= 0 || item.slot) { dom.invp1.removeChild(dom.invp1.children[inv.indexOf(item)]); removeItem(item, { fl: true }) } else if (global.sm === 1) updateInv(inv.indexOf(item));
-              else if (global.sm === item.stype) updateInv(global.sinv.indexOf(item));
+              if (item.amount <= 0 || item.slot) { dom.invp1.removeChild(dom.invp1.children[inv.indexOf(item)]); removeItem(item, { fl: true }) } else if (settings.sm === 1) updateInv(inv.indexOf(item));
+              else if (settings.sm === item.stype) updateInv(global.sinv.indexOf(item));
             } else {
               titem.am += item.amount;
               item.amount = 0;
-              if (item.amount <= 0) { dom.invp1.removeChild(dom.invp1.children[inv.indexOf(item)]); removeItem(item, { fl: true }); } else if (global.sm === 1) updateInv(inv.indexOf(item));
-              else if (global.sm === item.stype) updateInv(global.sinv.indexOf(item));
+              if (item.amount <= 0) { dom.invp1.removeChild(dom.invp1.children[inv.indexOf(item)]); removeItem(item, { fl: true }); } else if (settings.sm === 1) updateInv(inv.indexOf(item));
+              else if (settings.sm === item.stype) updateInv(global.sinv.indexOf(item));
             } if (titem.item.onTIn) titem.item.onTIn(trunk, titem); //  big stack moves into container
           } else {
             for (let a in inv) { if (inv[a].id === item.id && !item.slot) { scann = true; titem = inv[a]; break } }
@@ -189,8 +189,8 @@ import { kill } from './utils-game';
               dom.invp2.removeChild(dom.invp2.children[trunk.c.indexOf(fin)]);
               removeFromContainer(trunk, fin);
               if (trunk.c.length === 0) global.dscr.style.display = 'none'
-              if (global.sm === 1) updateInv(inv.indexOf(item));
-              else if (global.sm === item.stype) updateInv(global.sinv.indexOf(item));
+              if (settings.sm === 1) updateInv(inv.indexOf(item));
+              else if (settings.sm === item.stype) updateInv(global.sinv.indexOf(item));
             } if (ni.nit.item.onTOut) ni.nit.item.onTOut(trunk, ni.nit); //  big stack moves out of container
           } iftrunkopen();
         });
@@ -208,14 +208,14 @@ import { kill } from './utils-game';
               let nit = addToContainer(trunk, item);
               item.amount--;
               titem = nit;
-              if (item.amount <= 0) { dom.invp1.removeChild(dom.invp1.children[inv.indexOf(item)]); removeItem(item, { fl: true }); } else if (global.sm === 1) updateInv(inv.indexOf(item));
-              else if (global.sm === item.stype) updateInv(global.sinv.indexOf(item));
+              if (item.amount <= 0) { dom.invp1.removeChild(dom.invp1.children[inv.indexOf(item)]); removeItem(item, { fl: true }); } else if (settings.sm === 1) updateInv(inv.indexOf(item));
+              else if (settings.sm === item.stype) updateInv(global.sinv.indexOf(item));
 
             } else {
               titem.am++;
               item.amount--;
-              if (item.amount <= 0 || item.slot) { dom.invp1.removeChild(dom.invp1.children[inv.indexOf(item)]); removeItem(item, { fl: true }) } else if (global.sm === 1) updateInv(inv.indexOf(item));
-              else if (global.sm === item.stype) updateInv(global.sinv.indexOf(item));
+              if (item.amount <= 0 || item.slot) { dom.invp1.removeChild(dom.invp1.children[inv.indexOf(item)]); removeItem(item, { fl: true }) } else if (settings.sm === 1) updateInv(inv.indexOf(item));
+              else if (settings.sm === item.stype) updateInv(global.sinv.indexOf(item));
             } if (titem.item.onTIn) titem.item.onTIn(trunk, titem); //  1 item moves into container
           } else {
             for (let a in inv) { if (inv[a].id === item.id && !item.slot) { scann = true; titem = inv[a]; break } }
@@ -232,8 +232,8 @@ import { kill } from './utils-game';
               let fin;
               for (let a in trunk.c) { if (trunk.c[a].item.id === ni.nit.item.id) { fin = trunk.c[a]; break } }
               if (--fin.am <= 0) { dom.invp2.removeChild(dom.invp2.children[trunk.c.indexOf(fin)]); removeFromContainer(trunk, fin) } if (trunk.c.length === 0) global.dscr.style.display = 'none';
-              if (global.sm === 1) updateInv(inv.indexOf(item));
-              else if (global.sm === item.stype) updateInv(global.sinv.indexOf(item));
+              if (settings.sm === 1) updateInv(inv.indexOf(item));
+              else if (settings.sm === item.stype) updateInv(global.sinv.indexOf(item));
             } if (ni.nit.item.onTOut) ni.nit.item.onTOut(trunk, ni.nit); //  1 item moves out of container
           } iftrunkopen()
         }

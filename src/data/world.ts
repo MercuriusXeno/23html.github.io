@@ -1,4 +1,4 @@
-import { area, sector, creature, item, wpn, acc, ttl, global, dom, time, furn, furniture, effect, effector, skl, chss, itemgroup, act, gameText, flags, stats, combat, } from '../state';
+import { area, sector, creature, item, wpn, acc, ttl, global, settings, dom, time, furn, furniture, effect, effector, skl, chss, itemgroup, act, gameText, flags, stats, combat, } from '../state';
 import { findbyid, select, z_bake } from '../utils';
 import { random, rand } from '../random';
 import { smove, inSector } from '../game/movement';
@@ -276,8 +276,8 @@ sector.home = new Sector({
       if (--this.data.smkp <= 0) smove(combat.current_l)
     }
     if (flags.catget) giveSkExp(skl.pet, player.mods.petxp);
-    stats.athme += global.timescale;
-    stats.athmec += global.timescale;
+    stats.athme += settings.timescale;
+    stats.athmec += settings.timescale;
     for (let x in global.nethmchk) global.nethmchk[x]();
     let fire = findbyid(furn, furniture.frplc.id);
 

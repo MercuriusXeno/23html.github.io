@@ -1,4 +1,4 @@
-import { furniture, quest, home, dom, global, item, sld, chss, skl, furn, sector, wpn, eqp, callback, creature, stats, } from '../state';
+import { furniture, quest, home, dom, global, settings, item, sld, chss, skl, furn, sector, wpn, eqp, callback, creature, stats, } from '../state';
 import { DAY } from '../constants';
 import { smove, inSector } from '../game/movement';
 import { giveItem } from '../game/inventory';
@@ -32,7 +32,7 @@ function Furniture(this: any, cfg?: any) {
 furniture.cat = new Furniture({
   id: 2, name: 'Cat', desc: 'Your best feline friend', data: { age: DAY * 15, c: 0, p: 0, l1: 0, l2: 0, amount: 0, named: false, sex: false, name: 'Cat', mood: 1 }, v: 1,
   use: function (this: any) {
-    this.data.age += global.timescale;
+    this.data.age += settings.timescale;
     this.data.mood = this.data.mood > 1 ? 1 : this.data.mood + .002;
   }
 });

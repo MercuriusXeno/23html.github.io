@@ -1,10 +1,10 @@
 import { addElement } from '../dom-utils';
-import { dom, global, flags } from '../state';
+import { dom, global, settings, flags } from '../state';
 import { addDesc } from './descriptions';
 
     export function msg(txt: string, c?: string, dsc?: any, type?: any, bc?: string, chck?: any): void {
       if (flags.m_freeze === false && flags.loadstate === false) {
-        while (dom.gmsgs.children[1].children.length > global.msgs_max - 1) dom.gmsgs.children[1].removeChild(dom.gmsgs.children[1].children[0]);
+        while (dom.gmsgs.children[1].children.length > settings.msgs_max - 1) dom.gmsgs.children[1].removeChild(dom.gmsgs.children[1].children[0]);
         let msg = addElement(dom.mscont, 'div', null, 'msg');
         if (flags.msgtm) {
           let now = new Date();
@@ -26,7 +26,7 @@ import { addDesc } from './descriptions';
     }
 
     export function _msg(txt: string, c?: string, dsc?: any, type?: any, bc?: string, chck?: any): void {
-      while (dom.gmsgs.children[1].children.length > global.msgs_max - 1) dom.gmsgs.children[1].removeChild(dom.gmsgs.children[1].children[0]);
+      while (dom.gmsgs.children[1].children.length > settings.msgs_max - 1) dom.gmsgs.children[1].removeChild(dom.gmsgs.children[1].children[0]);
       let msg = addElement(dom.mscont, 'div', null, 'msg');
       if (dsc) { if (type) addDesc(msg, dsc, type); else addDesc(msg, dsc); }
       if (c) msg.innerHTML = '<span style=color:' + c + (bc ? (';background-color:' + bc) : '') + '>' + txt + '</span>';

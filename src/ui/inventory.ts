@@ -1,6 +1,6 @@
 import { addElement, empty } from '../dom-utils';
 import { scanbyuid } from '../utils';
-import { dom, global, you, inv, timers, data, flags, stats, } from '../state';
+import { dom, global, settings, you, inv, timers, data, flags, stats, } from '../state';
 const { item, skl } = data;
 import { addDesc } from './descriptions';
 import { equip, unequip } from './equipment';
@@ -208,7 +208,7 @@ import { renderRcp } from './panels';
     }
 
     export function updateInv(slot: any) {
-      if (global.sm === 1) dom.inv_con.children[slot].children[0].children[1].innerHTML = ' x' + inv[slot].amount;
+      if (settings.sm === 1) dom.inv_con.children[slot].children[0].children[1].innerHTML = ' x' + inv[slot].amount;
       else dom.inv_con.children[slot].children[0].children[1].innerHTML = ' x' + global.sinv[slot].amount;
     }
 
@@ -219,7 +219,7 @@ import { renderRcp } from './panels';
         global.sinv = [];
         for (let k = 0; k < inv.length; k++) if (type === inv[k].stype) { global.sinv.push(inv[k]); renderItem(inv[k]); }
       }
-      global.sm = type;
+      settings.sm = type;
       if (flags && flags.tr) iftrunkopenc(1);
     }
 
@@ -231,7 +231,7 @@ import { renderRcp } from './panels';
         for (let k = 0; k < global.rec_d.length; k++) if (type === global.rec_d[k].type) global.srcp.push(global.rec_d[k]);
         for (let k = 0; k < global.srcp.length; k++) renderRcp(global.srcp[k])
       }
-      global.rm = type;
+      settings.rm = type;
     }
 
     export function invbtsrst() {
@@ -240,7 +240,7 @@ import { renderRcp } from './panels';
       dom.inv_btn_3.removeAttribute('style');
       dom.inv_btn_4.removeAttribute('style');
       dom.inv_btn_5.removeAttribute('style');
-      switch (global.sm) {
+      switch (settings.sm) {
         case 1: dom.inv_btn_1.style.color = 'black';
           dom.inv_btn_1.style.backgroundColor = 'yellow';
           break;
@@ -261,4 +261,4 @@ import { renderRcp } from './panels';
 
     export function rstcrtthg() { for (let a in global.spbtsr) global.spbtsr[a].style.color = 'inherit'; }
 
-    export function reduce(itm: any, am?: any) { if (am) { itm.amount = itm.amount - am <= 0 ? 0 : itm.amount - am } if (itm.amount <= 0) { removeItem(itm); updateTrunkLeftItem(itm, true) } else if (global.sm === 1) updateInv(inv.indexOf(itm)); else if (global.sm === itm.stype) updateInv(global.sinv.indexOf(itm)); updateTrunkLeftItem(itm) }
+    export function reduce(itm: any, am?: any) { if (am) { itm.amount = itm.amount - am <= 0 ? 0 : itm.amount - am } if (itm.amount <= 0) { removeItem(itm); updateTrunkLeftItem(itm, true) } else if (settings.sm === 1) updateInv(inv.indexOf(itm)); else if (settings.sm === itm.stype) updateInv(global.sinv.indexOf(itm)); updateTrunkLeftItem(itm) }

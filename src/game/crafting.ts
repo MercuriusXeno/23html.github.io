@@ -4,7 +4,7 @@
 
 import { rand } from '../random';
 import { findworst } from '../utils';
-import { global, inv } from '../state';
+import { global, settings, inv } from '../state';
 import { isort } from '../ui/inventory';
 import { giveItem, removeItem } from './inventory';
 
@@ -86,5 +86,5 @@ export function make(rc: any, rp?: any, times?: number): any {
       rc.onmake();
     }
   }
-  isort(global.sm);
+  isort(settings.sm);
 }

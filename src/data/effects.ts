@@ -1,4 +1,4 @@
-import { effect, global, dom, skl, timers, furn, furniture, item, flags, stats, combat, } from '../state';
+import { effect, global, settings, dom, skl, timers, furn, furniture, item, flags, stats, combat, } from '../state';
 import { select } from '../utils';
 import { random, rand, randf } from '../random';
 import { findbyid } from '../utils';
@@ -315,7 +315,7 @@ effect.fplc = new Effect({ id: 10, save: false, name: 'Fireplace Aura', desc: 'Y
     giveSkExp(skl.abf, .2);
     if (this.duration === 0) {
       removeEff(this); this.duration = 2;
-      rsort(global.rm);
+      rsort(settings.rm);
     }
   },
   onRemove: function (player: any) { player.mods.ckfre -= 1; }

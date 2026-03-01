@@ -4,7 +4,7 @@ import { random } from '../random';
 import { scanbyuid, objempty } from '../utils';
 import { addElement, empty, appear, fade } from '../dom-utils';
 import {
-  dom, global, you, time, callback, w_manager, timers, chss, home, inv, furn, qsts, dar, acts, sectors,
+  dom, global, settings, you, time, callback, w_manager, timers, chss, home, inv, furn, qsts, dar, acts, sectors,
   itemgroup, data, gameText, flags,
   setYou, setTime, setInv, setDar, setFurn, setQsts, setActs, setSectors, resetFlags,
 stats, combat, } from '../state';
@@ -170,15 +170,15 @@ export function save(lvr?: any) {
   }
   let a1 = {
     uid: global.uid, jj: stats,
-    x: combat.current_z.id, a: global.rm, b: global.sm,
+    x: combat.current_z.id, a: settings.rm, b: settings.sm,
     e: flags, f: global.spirits,
-    g: global.msgs_max, i: global.lst_loc,
+    g: settings.msgs_max, i: global.lst_loc,
     j: time.minute, k: w_manager.duration, l: w_manager.curr.id,
     m: global.lst_sve,
-    n: global.bg_r, o: global.bg_g, p: global.bg_b,
+    n: settings.bg_r, o: settings.bg_g, p: settings.bg_b,
     q: global.bestiary,
     r: global.timehold, r2: global.timewold,
-    datas: datasi, u: global.timescale,
+    datas: datasi, u: settings.timescale,
     datar: datare, z: global.offline_evil_index,
     drdata: global.drdata
   };
@@ -443,7 +443,7 @@ export function load(dt?: any) {
 
     // --- Segment 1: Effects ---
     let a4 = JSON.parse(str[1]);
-    global.msgs_max = 300;
+    settings.msgs_max = 300;
     empty(dom.mscont);
     global.rec_d = [];
     for (let ba in rcp) { rcp[ba].have = false; }
@@ -507,19 +507,19 @@ export function load(dt?: any) {
 
     // --- Segment 4: Global state ---
     let a1 = JSON.parse(str[4]);
-    global.sm = a1.b;
-    global.rm = a1.a;
+    settings.sm = a1.b;
+    settings.rm = a1.a;
     global.spirits = a1.f;
     global.lst_loc = a1.i;
     global.uid = a1.uid;
-    global.msgs_max = a1.g;
+    settings.msgs_max = a1.g;
     resetFlags();
     global.sinv = [];
     global.bestiary = a1.q;
     global.timehold = a1.r || ((time.minute / DAY) << 0);
     global.timewold = a1.r2 || ((time.minute / WEEK) << 0);
     global.lst_sve = a1.m;
-    global.timescale = a1.u || 1;
+    settings.timescale = a1.u || 1;
     global.offline_evil_index = a1.z || 1;
     global.drdata = a1.drdata || {};
 
@@ -539,9 +539,9 @@ export function load(dt?: any) {
     for (let w in weather) if (weather[w].id === a1.l) setWeather(weather[w], a1.k);
 
     // Restore background color
-    global.bg_r = a1.n;
-    global.bg_g = a1.o;
-    global.bg_b = a1.p;
+    settings.bg_r = a1.n;
+    settings.bg_g = a1.o;
+    settings.bg_b = a1.p;
 
     // Restore statistics
     for (let a in stats) stats[a] = a1.jj[a] || 0;
@@ -552,9 +552,9 @@ export function load(dt?: any) {
     if (stats.msks === 0) stats.msks = [0, 0, 0, 0, 0, 0, 0];
 
     // Restore UI settings
-    dom.ct_bt4_21b.value = global.bg_r;
-    dom.ct_bt4_22b.value = global.bg_g;
-    dom.ct_bt4_23b.value = global.bg_b;
+    dom.ct_bt4_21b.value = settings.bg_r;
+    dom.ct_bt4_22b.value = settings.bg_g;
+    dom.ct_bt4_23b.value = settings.bg_b;
     stats.wsnburst = 50;
     dom.ctrwin4.style.display = 'none';
     dom.ctrwin2.style.display = 'none';
@@ -801,11 +801,11 @@ export function load(dt?: any) {
     }
 
     // Final UI restoration
-    isort(global.sm);
-    rsort(global.rm);
+    isort(settings.sm);
+    rsort(settings.rm);
     rstcrtthg();
     you.stat_r();
-    global.spbtsr[global.rm].style.color = 'yellow';
+    global.spbtsr[settings.rm].style.color = 'yellow';
 
     if (flags.aw_u) {
       dom.d0.style.display = '';
@@ -874,7 +874,7 @@ export function load(dt?: any) {
     addToContainer(home.trunk, item.bonig);
     flags.stbxinifld = true;
   }
-  if (flags.bgspc) document.body.style.background = 'linear-gradient(180deg,#000,#123)'; else document.body.style.backgroundColor = 'rgb(' + global.bg_r + ',' + global.bg_g + ',' + global.bg_b + ')';
+  if (flags.bgspc) document.body.style.background = 'linear-gradient(180deg,#000,#123)'; else document.body.style.backgroundColor = 'rgb(' + settings.bg_r + ',' + settings.bg_g + ',' + settings.bg_b + ')';
   if (dom.bkssttbd) { empty(dom.bkssttbd); document.body.removeChild(dom.bkssttbd); flags.bksstt = false; kill(dom.bkssttbd) }
   if (flags.expatv) { empty(dom.ct_bt4_5a_nc); document.body.removeChild(dom.ct_bt4_5a_nc); kill(dom.ct_bt4_5a_nc) }
   if (flags.impatv) { empty(dom.ct_bt4_5b_nc); document.body.removeChild(dom.ct_bt4_5b_nc); kill(dom.ct_bt4_5b_nc) }

@@ -1,4 +1,4 @@
-import { dom, global, you, planner, data, gameText, flags } from '../state';
+import { dom, global, settings, you, planner, data, gameText, flags } from '../state';
 const { eqp } = data;
 import { giveEff, removeEff } from './effects';
 import { update_d } from './stats';
@@ -7,7 +7,7 @@ import { isort } from './inventory';
 
     export function equip(w: any, opts?: any) {
       if (!w.data || !w.data.uid) return;
-      if (w.data.uid === you.eqp[w.slot - 1].data.uid) { unequip(w); if (w.twoh === true) { dom.d7_slot_2.innerHTML = 'Shield'; dom.d7_slot_2.style.color = 'grey' }; isort(global.sm) } else {
+      if (w.data.uid === you.eqp[w.slot - 1].data.uid) { unequip(w); if (w.twoh === true) { dom.d7_slot_2.innerHTML = 'Shield'; dom.d7_slot_2.style.color = 'grey' }; isort(settings.sm) } else {
         if (w.req && !w.req() && !flags.loadstate) { msg("Requirenments not met!", 'red'); return }
     /*switch(w.slot){
       case 5 :{
@@ -56,7 +56,7 @@ import { isort } from './inventory';
         if (w.twoh === true) { dom.d7_slot_2.innerHTML = you.eqp[0].name; dom.d7_slot_2.removeAttribute('style'); dom.d7_slot_2.style.color = 'lightgrey' } else {
           if (you.eqp[1].id === 10000) { dom.d7_slot_2.innerHTML = 'Shield'; dom.d7_slot_2.removeAttribute('style'); dom.d7_slot_2.style.color = 'grey' }
         }
-        if (!opts || !opts.save) { you.stat_r(); update_d(); isort(global.sm) }
+        if (!opts || !opts.save) { you.stat_r(); update_d(); isort(settings.sm) }
       }
     }
 

@@ -78,12 +78,8 @@ export function resetFlags(v?: any) { for (let k in flags) delete flags[k]; if (
 let tempt = new Date();
 
 // Core settings
-global.home_loc = 111;
 global.lst_sve = '?';
 global.ver = 470;
-global.sm = 1;
-global.rm = 0;
-global.bg_g = global.bg_r = global.bg_b = 255;
 global.s_l = 0;
 global.spnew = 0;
 global.vsnew = 10;
@@ -117,7 +113,6 @@ export var combat: any = {
   hit_b: 0,
   keytarget: undefined,
 };
-global.timescale = 1;
 global.offline_evil_index = 1;
 
 // Statistics (top-level export, formerly global.stat)
@@ -211,8 +206,19 @@ export var flags: any = {
 global.spirits = 100;
 global.bestiary = [{ a: false }];
 global.shortcuts = [];
-global.msgs_max = 36;
-global.fps = 1;
+
+// Settings (user-configurable, serialized in save)
+export var settings: any = {
+  sm: 1,
+  rm: 0,
+  msgs_max: 36,
+  fps: 1,
+  timescale: 1,
+  home_loc: 111,
+  bg_r: 255,
+  bg_g: 255,
+  bg_b: 255,
+};
 
 // ==========================================================================
 // Text / display constants

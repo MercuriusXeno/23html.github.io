@@ -1,6 +1,6 @@
 import { addElement, empty } from '../dom-utils';
 declare var InstallTrigger: any;
-import { dom, global, you, timers, acts, home, furn, chss, data, flags, stats, } from '../state';
+import { dom, global, settings, you, timers, acts, home, furn, chss, data, flags, stats, } from '../state';
 const { skl, act } = data;
 import { addDesc } from './descriptions';
 import { chs, clr_chs, deactivatef } from './choices';
@@ -158,7 +158,7 @@ import { formatw } from '../game/utils-game';
     }
 
     export function refreshRcp(fl: any) {
-      if (global.rm === 0 || !global.rm) {
+      if (settings.rm === 0 || !settings.rm) {
         for (let a in global.rec_d) _refreshRcpCnt(global.rec_d[a], global.rec_d[a]._t)
       } else {
         for (let a in global.srcp) _refreshRcpCnt(global.srcp[a], global.srcp[a]._t)

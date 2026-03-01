@@ -4,7 +4,7 @@
 
 import { random } from '../random';
 import { select } from '../utils';
-import { dom, global, you, inv, data, flags, stats, combat, } from '../state';
+import { dom, global, settings, you, inv, data, flags, stats, combat, } from '../state';
 const { skl, act } = data;
 import { msg } from '../ui/messages';
 import { updateInv } from '../ui/inventory';
@@ -45,5 +45,5 @@ export function disassembleGeneric(obj: any): void {
     giveItem(obj.dss[a].item, am)
   } giveSkExp(skl.dssmb, (2 ** obj.rar || 1) * 5 - 9.5); stats.dsst++;
   if (obj.slot) removeItem(obj);
-  else { obj.amount--; if (obj.amount <= 0) removeItem(obj); else if (obj.stype === global.sm) updateInv(global.sinv.indexOf(obj)); else if (global.sm === 1) updateInv(inv.indexOf(obj)) }
+  else { obj.amount--; if (obj.amount <= 0) removeItem(obj); else if (obj.stype === settings.sm) updateInv(global.sinv.indexOf(obj)); else if (settings.sm === 1) updateInv(inv.indexOf(obj)) }
 }
