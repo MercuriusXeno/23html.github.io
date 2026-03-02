@@ -564,6 +564,7 @@ export function load(dt?: any) {
     // Restore area if in combat
     if (flags.civil === false && flags.btl === true) {
       for (let obj in area) if (area[obj].id === a1.x) { area_init(area[obj]); break; }
+      if (flags.to_pause === true) flags.btl = false;
     }
 
     // --- Segment 5: Recipes ---
@@ -832,6 +833,7 @@ export function load(dt?: any) {
 
     if (flags.m_freeze === true) dom.m_b_1_c.innerHTML = 'Ｘ';
     if (flags.m_blh === true) dom.m_b_2_c.innerHTML = 'Ｘ';
+    if (flags.to_pause === true) dom.d8m1.innerHTML = 'Pause next battle: <span style=\'color:crimson\'>&nbspON';
     if (flags.jnlu) dom.ct_bt6.innerHTML = 'journal';
     if (flags.asbu) dom.ct_bt1.innerHTML = 'assemble';
     if (flags.actsu) dom.ct_bt3.innerHTML = 'actions';
