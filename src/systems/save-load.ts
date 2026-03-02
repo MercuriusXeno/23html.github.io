@@ -561,11 +561,7 @@ export function load(dt?: any) {
     dom.ctrwin1.style.display = '';
     global.lw_op = 0;
 
-    // Restore area if in combat
-    if (flags.civil === false && flags.btl === true) {
-      for (let obj in area) if (area[obj].id === a1.x) { area_init(area[obj]); break; }
-      if (flags.to_pause === true) flags.btl = false;
-    }
+    // (area_init is triggered by smove → location sl() script below)
 
     // --- Segment 5: Recipes ---
     let a2 = JSON.parse(str[5]);
@@ -755,6 +751,7 @@ export function load(dt?: any) {
         smove(chss[obj], false);
       }
     }
+    if (flags.to_pause === true) flags.btl = false;
 
     // --- Segment 16: Containers ---
     let a17 = JSON.parse(str[16]);
