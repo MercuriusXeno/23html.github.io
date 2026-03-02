@@ -624,7 +624,7 @@ export function load(dt?: any) {
     // --- Segment 7: Area sizes ---
     let a5 = JSON.parse(str[7]);
     let xx = 0;
-    for (let o in area) if (a5[xx]) area[o].size = a5[xx++];
+    for (let o in area) if (xx < a5.length) area[o].size = a5[xx++];
 
     // --- Segment 8: Discovery arrays ---
     let a8 = JSON.parse(str[8]);
