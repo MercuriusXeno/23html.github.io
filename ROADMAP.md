@@ -81,8 +81,8 @@
 
 ## Known Bugs
 
-- [x] **"Pause next battle" skips first battle after load:** Persists correctly, but doesn't engage until the first fight completes — confirmed vanilla behavior, not a regression
-- [x] **Area clearing progress:** Confirmed saved correctly between runs — was never a bug
+- [x] **"Pause next battle" not honored on load:** Flag was saved/loaded correctly but button display wasn't synced (showed OFF when secretly ON). Also, `smove()` during load triggered `area_init()` which started combat before `to_pause` was checked — fixed by syncing button innerHTML and checking `to_pause` after `smove`
+- [x] **Area clearing progress lost on page reload:** `if (a5[xx])` in load treated size `0` (cleared areas) as falsy, skipping restoration and misaligning the index for all subsequent areas — fixed with `if (xx < a5.length)`
 - [x] **Inventory crash on load:** `giveItem` return value wasn't captured in `save-load.ts`, causing `inv[o].data` to be undefined — fixed by using returned item reference
 - [x] **Bare variable assignments crash in strict mode:** 8 implicit globals (`testz`, `tcat`, `t`, `bt`, `g`, `stash`/`verify`, `lr`, `scann`) caused `ReferenceError` in esbuild's strict IIFE — added `let` declarations
 
