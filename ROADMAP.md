@@ -66,7 +66,7 @@
 **Goal:** Replace cryptic variable/field/property names with meaningful names throughout the codebase. Replace `any` types with accurate types that reflect each argument's purpose.
 
 - [x] **Step 6.1:** Rename state properties — player stats (`str_r`→`str_base`, `stra`→`str_bonus`, `strm`→`str_mult`, `stre`→`str_eff`), player mods (all 20 fields), combat state, stats counters (~50 fields), flags, global misc, settings. Save-load uses `PLAYER_KEY_MAP`/`STATS_KEY_MAP`/`FLAGS_KEY_MAP`/`MODS_KEY_MAP` to migrate old saves
-- [ ] **Step 6.2:** Rename function parameters — replace `w`, `c`, `bc`, `dsc`, `l`, `f`, `a`, `k` with descriptive names
+- [x] **Step 6.2:** Rename function parameters — 3 tiers: high-volume UI (equipment, effects, descriptions, messages), moderate-volume game logic (progression, crafting, movement, panels, choices), low-volume utils + function name renames (`update_d`→`updateCombatDisplay`, `update_m`→`updateMonsterDisplay`, `m_update`→`updateWealthDisplay`, `update_db`→`updateStatDisplay`, `mf`→`coinAnimation`, `eqpres`→`resetEquipDisplay`)
 - [x] **Step 6.3:** Define interfaces/types for core entities — `Player`, `Item`, `Creature`, `Effect`, `Skill`, `Area`, `Equipment` etc. (23 entity types + 8 state types in `src/types.ts`)
 - [x] **Step 6.4:** Replace `any` in function signatures with accurate types — constructor configs, delegate callbacks, utility params (all game/, ui/, systems/ modules typed)
 - [x] **Step 6.5:** Replace `any` on state exports — `dom`, `global`, `flags`, `stats`, `settings`, `combat` etc. (all state.ts exports typed)
