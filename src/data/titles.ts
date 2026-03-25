@@ -18,14 +18,14 @@ class Title {
   onGet(_player: any) { }
 }
 
-function init_title_collection(title_data: any) {
-  for (let title_spec of title_data) {
-    const { id, abbr, name, desc, tdesc, rar, rars } = title_spec;
+function init_collection(data: any) {
+  for (let spec of data) {
+    const { id, abbr, name, desc, tdesc, rar, rars } = spec;
     ttl[abbr] = new Title(id, name, desc, tdesc, rar, rars)
   }
 }
 
-function add_title_custom_logic() {
+function add_custom_logic() {
   ttl.wlk.talent = function (player: any) { player.mods.runerg -= .05 }
   ttl.jgg.talent = function (player: any) { player.mods.runerg -= .15 }
   ttl.rfpn2.talent = function (player: any) { player.mods.survinf++ }
@@ -34,5 +34,5 @@ function add_title_custom_logic() {
   ttl.jgg.onGet = function (player: any) { if (act.demo.active) player.mods.sdrate -= .015 }
 }
 
-init_title_collection(titleData)
-add_title_custom_logic()
+init_collection(titleData)
+add_custom_logic()
