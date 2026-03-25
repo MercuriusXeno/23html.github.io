@@ -5,9 +5,9 @@
             "type": "chrome",
             "request": "launch",
             "name": "Build & Launch Proto23",
-            "file": "${workspaceFolder}/index.html",
+            "url": "http://localhost:3000",
             "webRoot": "${workspaceFolder}",
-            "preLaunchTask": "Build"
+            "preLaunchTask": "Build & Serve"
         }
     ]
 }

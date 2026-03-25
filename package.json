@@ -6,7 +6,8 @@
   "scripts": {
     "build": "node build.mjs",
     "watch": "node build.mjs --watch",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "serve": "npx serve . -l 3000"
   },
   "devDependencies": {
     "esbuild": "^0.24.0",

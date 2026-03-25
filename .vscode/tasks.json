@@ -19,8 +19,23 @@
         "problemMatcher": []
       },
       {
-        "label": "Build and Launch",
-        "dependsOn": ["Build"],
+        "label": "Serve",
+        "type": "npm",
+        "script": "serve",
+        "isBackground": true,
+        "problemMatcher": {
+          "pattern": { "regexp": "." },
+          "background": {
+            "activeOnStart": true,
+            "beginsPattern": ".",
+            "endsPattern": "Accepting connections"
+          }
+        }
+      },
+      {
+        "label": "Build & Serve",
+        "dependsOn": ["Build", "Serve"],
+        "dependsOrder": "sequence",
         "presentation": {
           "reveal": "silent"
         }
