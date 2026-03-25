@@ -1,3 +1,4 @@
+import type { Action, Combatant, Recipe, Skill, Title } from '../types';
 import { randf, rand } from '../random';
 import { col, scanbyid } from '../utils';
 import { empty } from '../dom-utils';
@@ -9,7 +10,7 @@ import { rsort } from '../ui/inventory';
 import { renderAct } from '../ui/panels';
 import { formatw } from './utils-game';
 
-    export function lvlup(p: any, t?: any) {
+    export function lvlup(p: Combatant, t?: number) {
       if (t === 0) {
         p.hp = p.hp_r;
         p.str = p.str_r;
@@ -46,7 +47,7 @@ import { formatw } from './utils-game';
       } p.stat_r(); update_d();
     }
 
-    export function giveExp(exp: any, r?: any, g?: any, b?: any) {
+    export function giveExp(exp: number, r?: boolean, g?: boolean, b?: boolean) {
       if (!r) exp = Math.round((exp * you.exp_t * (0.4 + you.efficiency() * 0.6))) - (you.lvl - 1);
       exp = exp <= 0 ? 1 : exp;
       if (!b) { if (flags.m_blh === false) if (!g) { msg('EXP: +' + formatw(exp), 'hotpink'); stats.exptotl += exp } } else { msg('EXP: +' + formatw(exp), 'hotpink'); stats.exptotl += exp }
@@ -60,7 +61,7 @@ import { formatw } from './utils-game';
       dom.d5_2_1.update();
     }
 
-    export function giveSkExp(skl: any, exp: any, res?: any) {
+    export function giveSkExp(skl: Skill, exp: number, res?: boolean) {
       exp = res === false ? exp : exp * skl.p; //skl.lastupd = time.minute+2;
       if (skl.exp + exp < skl.expnext_t) skl.exp += exp;
       else {
@@ -76,7 +77,7 @@ import { formatw } from './utils-game';
       } skl.onGive(you, exp);
     }
 
-    export function giveTitle(title: any, lv?: any) {
+    export function giveTitle(title: Title, lv?: boolean) {
       if (title.have === false) {
         global.titles.push(title);
         if (title.id !== 0) global.titlese.push(title);
@@ -89,7 +90,7 @@ import { formatw } from './utils-game';
       } else return;
     }
 
-    export function giveRcp(rcp: any) {
+    export function giveRcp(rcp: Recipe) {
       if (!flags.asbu) { flags.asbu = true; dom.ct_bt1.innerHTML = 'assemble' }
       if (rcp.have === false) {
         global.rec_d.push(rcp);
@@ -101,11 +102,11 @@ import { formatw } from './utils-game';
       } else return 0;
     }
 
-    export function giveCrExp(skl: any, am: any, lvl?: any) {
+    export function giveCrExp(skl: Skill, am: number, lvl?: number) {
       if (!lvl || skl.lvl < lvl) giveSkExp(skl, am);
     }
 
-    export function giveAction(a: any) {
+    export function giveAction(a: Action) {
       if (a.have === false) {
         if (!flags.actsu) { flags.actsu = true; dom.ct_bt3.innerHTML = 'actions' }
         msg('You learned a new action: <span style="color:tomato">"' + a.name + '"</span>', 'lime', a, 9);

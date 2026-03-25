@@ -30,7 +30,7 @@ export function scoutGeneric(chs: any): void {
   if (chs.data.scout >= chs.data.scoutm) { m = 5; chs.data.scout = 0 }
   if ((!sct.cond || sct.cond() === true) && !chs.data.gets[idx] && random() <= sct.c * m * (1 + skl.scout.lvl * .15) * (1 + chs.data.gotmod * .2)) { stats.dsct++; chs.data.gotmod++; sct.f(); giveSkExp(skl.scout, (sct.exp ? sct.exp : .5 / sct.c)) }
   let t = 2;
-  for (let a in combat.current_l.sector) { let m = canScout(combat.current_l.sector[a]); if (m === 1) t = m }
+  for (let a in combat.current_l.sector) { let m = canScout(combat.current_l.sector![a as any]); if (m === 1) t = m }
   if (canScout(combat.current_l) >= 2 && t >= 2) { deactivateAct(act.scout); msg('There doesn\'t seem to be anything of interest left in this area') }
 }
 

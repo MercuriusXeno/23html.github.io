@@ -1,3 +1,4 @@
+import type { Recipe, Skill, Action, Furniture } from '../types';
 import { addElement, empty } from '../dom-utils';
 declare var InstallTrigger: any;
 import { dom, global, settings, you, timers, acts, home, furn, chss, data, flags, stats, } from '../state';
@@ -11,7 +12,7 @@ import { giveSkExp } from '../game/progression';
 import { smove } from '../game/movement';
 import { formatw } from '../game/utils-game';
 
-    export function renderRcp(rcp: any) {
+    export function renderRcp(rcp: Recipe) {
       let self: any = {};
       dom.ct_bt1_1_mc = addElement(dom.ct_bt1_1, 'div', null, 'craft-log-entry');
       dom.ct_bt1_1_mc.style.position = 'relative';
@@ -133,8 +134,8 @@ import { formatw } from '../game/utils-game';
           self.ct_bt1_3cc.style.left = '255px';
           if (l > 1) {
             for (let nu in test.o) {
-              if (test.o[nu] === 1) self.ct_bt1_3cc.innerHTML += '<span style="color:lime">' + rcp.srect[nu] + '</span>' + (l - 1 == Number(nu) ? '' : ', ');
-              else if (test.o[nu] === 2) self.ct_bt1_3cc.innerHTML += '<span style="color:red">' + rcp.srect[nu] + '</span>' + (l - 1 == Number(nu) ? '' : ', ');
+              if ((test.o as any)[nu] === 1) self.ct_bt1_3cc.innerHTML += '<span style="color:lime">' + (rcp.srect as any)[nu] + '</span>' + (l - 1 == Number(nu) ? '' : ', ');
+              else if ((test.o as any)[nu] === 2) self.ct_bt1_3cc.innerHTML += '<span style="color:red">' + (rcp.srect as any)[nu] + '</span>' + (l - 1 == Number(nu) ? '' : ', ');
             }
           } else { if (test.o[0] === 1) self.ct_bt1_3cc.style.color = 'lime'; else if (test.o[0] === 2) self.ct_bt1_3cc.style.color = 'red'; self.ct_bt1_3cc.innerHTML += rcp.srect[0] }
         }
@@ -157,7 +158,7 @@ import { formatw } from '../game/utils-game';
       });
     }
 
-    export function refreshRcp(fl: any) {
+    export function refreshRcp(fl: Recipe) {
       if (settings.rm === 0 || !settings.rm) {
         for (let a in global.rec_d) _refreshRcpCnt(global.rec_d[a], global.rec_d[a]._t)
       } else {
@@ -179,17 +180,17 @@ import { formatw } from '../game/utils-game';
       }
     }
 
-    function _refreshRcpCnt(r: any, t: any, t2?: any) {
+    function _refreshRcpCnt(r: Recipe, t: HTMLElement, t2?: HTMLElement) {
       let test = make(r, true);
       if (test.y.length != r.rec.length || test.o[0] === 2) t.style.color = 'grey';
       else t.style.color = 'rgb(188,254,254)';
     }
 
-    function _fcraft(what: any, safe: any) {
+    function _fcraft(what: Recipe, safe: boolean) {
       if (safe) { safe = false; if (flags.sleepmode === true) { msg('You may want to wake up first', 'red'); return }; if (flags.btl === true) { msg('You\'re too busy fighting', 'red'); return }; if (flags.rdng === true) { msg('You\'re too occupied with reading', 'red'); return }; if (flags.busy === true) { msg('You\'re too busy with something else', 'red'); return }; let ntest = make(what, true); for (let g = 0; g < what.rec.length; g++) { if (what.rec.length === ntest.y.length && ntest.o[0] !== 2) safe = true } if (safe) { make(what); stats.crftt++; iftrunkopen(1) } else { if (flags.rptbncgtf) { clearInterval(timers.rptbncgt); flags.rptbncgtf = false; } } }
     }
 
-    export function renderSkl(skl: any) {
+    export function renderSkl(skl: Skill) {
       let self: any = {};
       self.skwmmc = addElement(dom.skcon, 'div', null, 'skill-entry');
       addDesc(self.skwmmc, skl, 6);
@@ -213,11 +214,11 @@ import { formatw } from '../game/utils-game';
       self.skwmm3.style.backgroundColor = 'yellow';
     }
 
-    export function renderAct(a: any) {
+    export function renderAct(a: Action) {
       let self: any = {};
       self.accm = addElement(dom.acccon, 'div', null, 'skill-entry');
       a.t = self.accm;
-      addDesc(self.accm, null, 2, a.name, a.desc());
+      addDesc(self.accm, null, 2, a.name, (a.desc as () => string)());
       self.accm.innerHTML = a.name;
       self.accm.style.textAlign = 'center';
       self.accm.style.display = 'block'
@@ -230,7 +231,7 @@ import { formatw } from '../game/utils-game';
             if (a.cond() === true && a.id !== global.current_a.id) { activateAct(a); self.style.color = 'lime' } else
               if (a.id === global.current_a.id) { deactivateAct(global.current_a); self.style.color = 'inherit' }
             break;
-          case 2: if (a.cond() === true) a.use();
+          case 2: if (a.cond() === true) a.use(you);
             break;
           case 3: break;
         }
@@ -238,9 +239,9 @@ import { formatw } from '../game/utils-game';
       })
     }
 
-    export function refreshAct(e: any, a: any) { e.style.color = 'inherit'; if (a.cond(false) !== true) e.style.color = 'grey'; if (a.active === true) e.style.color = 'lime'; }
+    export function refreshAct(e: HTMLElement, a: Action) { e.style.color = 'inherit'; if (a.cond(false) !== true) e.style.color = 'grey'; if (a.active === true) e.style.color = 'lime'; }
 
-    export function activateAct(actn: any) {
+    export function activateAct(actn: Action) {
       global.current_a.deactivate(you);
       actn.activate(you);
       global.current_a = actn;
@@ -248,7 +249,7 @@ import { formatw } from '../game/utils-game';
       dom.ct_bt3.style.backgroundColor = 'darkslategray'
     }
 
-    export function deactivateAct(actn: any) {
+    export function deactivateAct(actn: Action) {
       actn.deactivate(you);
       global.current_a = act.default;
       flags.busy = false;
@@ -256,7 +257,7 @@ import { formatw } from '../game/utils-game';
       for (let a in acts) refreshAct(acts[a].t, acts[a])
     }
 
-    export function renderFurniture(frn: any) {
+    export function renderFurniture(frn: Furniture) {
       dom.ch_etn = addElement(dom.ch_1h, 'div', 'bst_entrh', 'list-row');
       dom.ch_etn.style.backgroundColor = 'rgb(10,30,54)';
       dom.ch_etn1 = addElement(dom.ch_etn, 'div', null, 'list-col-name');

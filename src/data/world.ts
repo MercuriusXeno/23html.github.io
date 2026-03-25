@@ -1,4 +1,5 @@
 import { area, sector, creature, item, wpn, acc, ttl, global, settings, dom, time, furn, furniture, effect, effector, skl, chss, itemgroup, act, gameText, flags, stats, combat, } from '../state';
+import type { Player } from '../types';
 import { findbyid, select, z_bake } from '../utils';
 import { random, rand } from '../random';
 import { smove, inSector } from '../game/movement';
@@ -30,7 +31,7 @@ export function Area(this: any, cfg?: any) {
   this.onDeath = function () { };
   if (cfg) for (let k in cfg) this[k] = cfg[k];
 }
-area._ctor = Area;
+area._ctor = Area as any;
 
 // @ts-ignore: constructor function
 area.nwh = new Area({ id: 101, name: 'Somewhere', pop: [{ crt: creature.default, lvlmin: 1, lvlmax: 1, c: 1 }], size: 1 });
@@ -235,7 +236,7 @@ function Sector(this: any, cfg?: any) {
   this.active = false;
   this.onEnter = function () { }
   this.onLeave = function () { }
-  this.onStay = function (_player: any) { }
+  this.onStay = function (_player: Player) { }
   this.onMove = function () { }
   this.onScout = function () { }
   if (cfg) for (let k in cfg) this[k] = cfg[k];
@@ -269,7 +270,7 @@ sector.home = new Sector({
     this.data.smkt = time.minute;
     for (let f in furn) deactivatef(furn[f])
   },
-  onStay: function (this: any, player: any) {
+  onStay: function (this: any, player: Player) {
     if (this.data.smkp > 0) {
       if (effect.smoke.active) effect.smoke.duration = 26;
       else giveEff(player, effect.smoke, 26)

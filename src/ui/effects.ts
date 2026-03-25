@@ -1,18 +1,19 @@
+import type { Combatant, Effect } from '../types';
 import { addElement, empty } from '../dom-utils';
 import { findbyid } from '../utils';
 import { dom, global, you, timers, flags } from '../state';
 import { addDesc } from './descriptions';
 
-    let node: any;
+    let node: number;
 
-    export function giveEff(target: any, e: any, d?: any, y?: any, z?: any): any {
+    export function giveEff(target: Combatant, e: Effect, d?: number, y?: any, z?: any): Effect | undefined {
       if (target.id !== 0) {
-        let ef = e;
-        if (target.id !== you.id) { ef = new Object(); for (let g in e) ef[g] = e[g]; }
+        let ef: Effect = e;
+        if (target.id !== you.id) { ef = new Object() as Effect; for (let g in e) (ef as any)[g] = (e as any)[g]; }
         if (target.id === you.id || flags.btl) {
           let p = findbyid(target.eff, e.id);
           if (!p || !p.active) {
-            if (d) ef.duration = d; ef.y = y; ef.z = z; if (ef.x) eff_d(ef, ef.x, ef.c, ef.b, target);
+            if (d) ef.duration = d; ef.y = y; ef.z = z; if (ef.x) eff_d(ef, ef.x, ef.c!, ef.b!, target);
             ef.target = target;
             target.eff.push(ef);
           } ef.onGive(you, d, y, z); ef.active = true;
@@ -23,20 +24,20 @@ import { addDesc } from './descriptions';
     }
 
 
-    export function removeEff(e: any, t?: any): void {
+    export function removeEff(e: Effect, t?: any): void {
       if (e.active === true) {
         if (e.x) {
-          if (e.target.id === you.id) {
+          if (e.target!.id === you.id) {
             node = global.e_e.indexOf(e); dom.d101.removeChild(dom.d101.children[node]); global.e_e.splice(node, 1);
             if (dom.d101.children.length > you.eff.length) empty(dom.d101);
           }
           else {
             node = global.e_em.indexOf(e); dom.d101m.removeChild(dom.d101m.children[node]); global.e_em.splice(node, 1);
-            if (dom.d101m.children.length > e.target.eff.length) empty(dom.d101m);
+            if (dom.d101m.children.length > e.target!.eff.length) empty(dom.d101m);
           } e.onRemove(you); global.dscr.style.display = 'none';
-        } e.target.eff.splice(e.target.eff.indexOf(e), 1); e.active = false; clearInterval(timers.inup); effdfix()
+        } e.target!.eff.splice(e.target!.eff.indexOf(e), 1); e.active = false; clearInterval(timers.inup); effdfix()
       }
-      e.target.stat_r();
+      e.target!.stat_r();
     }
 
     function effdfix(): void {
@@ -51,7 +52,7 @@ import { addDesc } from './descriptions';
       }
     }
 
-    function eff_d(e: any, s: string, c: string, b: string, tgt: any): void {
+    function eff_d(e: Effect, s: string, c: string, b: string, tgt: Combatant): void {
       if (tgt.id === you.id) {
         let ic = addElement(dom.d101, 'div', null, 'sprite-cell');
         ic.innerHTML = s;

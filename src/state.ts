@@ -1,76 +1,78 @@
+import type { Dom, Global, Creature, Item, Equipment, Effect, Skill, Area, Sector, Recipe, Furniture as FurnitureType, Vendor, Action, Ability, Title, Mastery, Container, CombatState, Stats, Flags, Settings, GameText, Player, DataRegistry } from './types';
+
 // ==========================================================================
 // Namespace objects
 // ==========================================================================
-export var dom: any = new Object();
-export var global: any = new Object();
+export var dom = new Object() as Dom;
+export var global = new Object() as Global;
 export var listen: any = new Object();
 export var w_manager: any = new Object();
-export var creature: any = new Object();
+export var creature = new Object() as Record<string, Creature>;
 export var offline: any = new Object();
-export var effect: any = new Object();
+export var effect = new Object() as Record<string, Effect>;
 export var callback: any = new Object();
 export var effector: any = new Object();
 
 // Item namespaces
-export var wpn: any = new Object();
-export var eqp: any = new Object();
-export var acc: any = new Object();
-export var sld: any = new Object();
-export var item: any = new Object();
+export var wpn = new Object() as Record<string, Equipment>;
+export var eqp = new Object() as Record<string, Equipment>;
+export var acc = new Object() as Record<string, Equipment>;
+export var sld = new Object() as Record<string, Equipment>;
+export var item = new Object() as Record<string, Item>;
 export var itemgroup = [item, wpn, eqp, sld, acc];
-export var rcp: any = new Object();
+export var rcp = new Object() as Record<string, Recipe>;
 
 // World namespaces
-export var area: any = new Object();
-export var sector: any = new Object();
-export var sectors: any[] = [];
+export var area = new Object() as Record<string, Area> & { _ctor: new (cfg?: any) => Area };
+export var sector = new Object() as Record<string, Sector>;
+export var sectors: Sector[] = [];
 
 // Game system namespaces
 export var timers: any = new Object();
 export var chss: any = new Object();
-export var ttl: any = new Object();
-export var skl: any = new Object();
-export var abl: any = new Object();
-export var furniture: any = new Object();
-export var vendor: any = new Object();
-export var quest: any = new Object();
-export var act: any = new Object();
+export var ttl = new Object() as Record<string, Title>;
+export var skl = new Object() as Record<string, Skill>;
+export var abl = new Object() as Record<string, Ability>;
+export var furniture = new Object() as Record<string, FurnitureType>;
+export var vendor = new Object() as Record<string, Vendor>;
+export var quest: Record<string, any> = new Object();
+export var act = new Object() as Record<string, Action>;
 export var test: any = new Object();
 export var planner: any = new Object();
 export var plans: any = [[], [], []];
 export var check: any = new Object();
 export var checksd: any[] = [];
-export var container: any = new Object();
-export var mastery: any = new Object();
+export var container = new Object() as Record<string, Container>;
+export var mastery = new Object() as Record<string, Mastery>;
 
 // Grouped data registry export (consumers import this instead of individual vars)
-export const data = {
+export const data: DataRegistry = {
   creature, item, wpn, eqp, acc, sld, rcp, skl, effect,
   area, sector, furniture, vendor, quest, act, abl,
   container, ttl, mastery
 };
 
 // Player and game state
-export var inv: any[] = [];
-export var furn: any[] = [];
+export var inv: Item[] = [];
+export var furn: FurnitureType[] = [];
 export var qsts: any[] = [];
-export var dar: any = [[], [], [], [], []];
-export var you: any = new Object();
+export var dar: Item[][] = [[], [], [], [], []];
+export var you: Player = new Object() as Player;
 export var home: any = new Object();
 // eqp.dummy is set in src/data/equipment.ts after Eqp constructor is defined
-export var acts: any[] = [];
+export var acts: Action[] = [];
 
 // Reassignable singletons
 export var time: any;
-export function setYou(v: any) { you = v; }
+export function setYou(v: Player) { you = v; }
 export function setTime(v: any) { time = v; }
-export function setInv(v: any) { inv = v; }
-export function setDar(v: any) { dar = v; }
-export function setFurn(v: any) { furn = v; }
+export function setInv(v: Item[]) { inv = v; }
+export function setDar(v: Item[][]) { dar = v; }
+export function setFurn(v: FurnitureType[]) { furn = v; }
 export function setQsts(v: any) { qsts = v; }
-export function setActs(v: any) { acts = v; }
-export function setSectors(v: any) { sectors = v; }
-export function resetFlags(v?: any) { for (let k in flags) delete flags[k]; if (v) Object.assign(flags, v); }
+export function setActs(v: Action[]) { acts = v; }
+export function setSectors(v: Sector[]) { sectors = v; }
+export function resetFlags(v?: Partial<Flags>) { for (let k in flags) delete (flags as any)[k]; if (v) Object.assign(flags, v); }
 
 // ==========================================================================
 // Global state initialization
@@ -102,13 +104,13 @@ global.titlese = [];
 global.tstcr = [];
 
 // Combat state (ephemeral, not serialized)
-export var combat: any = {
+export var combat: CombatState = {
   atkdftm: [-1, -1, -1],
   atkdfty: [-1, -1],
   atkdftydt: {},
-  current_m: undefined,
-  current_z: undefined,
-  current_l: undefined,
+  current_m: undefined as any, // set in area_init before combat
+  current_z: undefined as any, // set to area.nwh in world.ts eval
+  current_l: undefined as any, // set in smove
   hit_a: 0,
   hit_b: 0,
   keytarget: undefined,
@@ -116,7 +118,7 @@ export var combat: any = {
 global.offline_evil_index = 1;
 
 // Statistics (top-level export, formerly global.stat)
-export var stats: any = {
+export var stats: Stats = {
   tick: 0,
   akills: 0,
   fooda: 0,
@@ -174,7 +176,7 @@ export var stats: any = {
 };
 
 // Flags (top-level export, formerly global.flags)
-export var flags: any = {
+export var flags: Flags = {
   btl: false,
   m_freeze: false,
   msd: false,
@@ -208,7 +210,7 @@ global.bestiary = [{ a: false }];
 global.shortcuts = [];
 
 // Settings (user-configurable, serialized in save)
-export var settings: any = {
+export var settings: Settings = {
   sm: 1,
   rm: 0,
   msgs_max: 36,
@@ -223,7 +225,7 @@ export var settings: any = {
 // ==========================================================================
 // Text / display constants
 // ==========================================================================
-export var gameText: any = {
+export var gameText: GameText = {
   nt: ['K', 'M', 'B', 'T', 'Qa', 'Qi', 'Sx', 'Sp', 'Oc', 'No', 'De', 'Un', 'DDe', 'TDe', 'QaDe', 'QiDe', 'Lc'],
   wecs: [
     ['grey', 'inherit'], ['white', 'inherit'], ['cyan', 'cyan'], ['lime', 'green'],

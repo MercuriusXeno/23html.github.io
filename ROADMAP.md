@@ -67,9 +67,9 @@
 
 - [ ] **Step 6.1:** Rename state properties — `global.s_l`, `global.lw_op`, `you.str_d`, `w.wc`, `w.rar`, etc. to self-documenting names
 - [ ] **Step 6.2:** Rename function parameters — replace `w`, `c`, `bc`, `dsc`, `l`, `f`, `a`, `k` with descriptive names
-- [ ] **Step 6.3:** Define interfaces/types for core entities — `Player`, `Item`, `Creature`, `Effect`, `Skill`, `Area`, `Equipment` etc.
-- [ ] **Step 6.4:** Replace `any` in function signatures with accurate types — constructor configs, delegate callbacks, utility params
-- [ ] **Step 6.5:** Replace `any` on state exports — `dom`, `global`, `flags`, `stats`, `settings`, `combat` etc.
+- [x] **Step 6.3:** Define interfaces/types for core entities — `Player`, `Item`, `Creature`, `Effect`, `Skill`, `Area`, `Equipment` etc. (23 entity types + 8 state types in `src/types.ts`)
+- [x] **Step 6.4:** Replace `any` in function signatures with accurate types — constructor configs, delegate callbacks, utility params (all game/, ui/, systems/ modules typed)
+- [x] **Step 6.5:** Replace `any` on state exports — `dom`, `global`, `flags`, `stats`, `settings`, `combat` etc. (all state.ts exports typed)
 
 ## Phase 7: Testable Seams & Event Extraction (Future)
 **Goal:** Create testable seams for monolithic methods. Extract baked-in event listener closures to named, first-class function references that can be tested and replaced independently.

@@ -2,25 +2,26 @@
 // Crafting System
 // ==========================================================================
 
+import type { Recipe } from '../types';
 import { rand } from '../random';
 import { findworst } from '../utils';
 import { global, settings, inv } from '../state';
 import { isort } from '../ui/inventory';
 import { giveItem, removeItem } from './inventory';
 
-function evaluateSpecialRequirementsForRecipe(recipe: any): any[] {
+function evaluateSpecialRequirementsForRecipe(recipe: Recipe): (0 | 1 | 2)[] {
   if (recipe.srect == null) {
     return [0];
   }
 
-  let results: any[] = [];
+  let results: (0 | 1 | 2)[] = [];
   for (let i in recipe.srec) {
-    results[i as any] = (recipe.srec[i]() === true) ? 1 : 2;
+    results[i as any] = ((recipe.srec as any)[i]() === true) ? 1 : 2;
   }
   return results;
 }
 
-function scan2(arr: any[], val: any, am: number): any {
+function scan2(arr: any[], val: { id?: number }, am: number): { a: boolean; b: any } | undefined {
   for (let o = 0; o < arr.length + 1; o++) {
     if (o === arr.length) return { a: false, b: arr[o] };
     if (arr[o].id === val.id && arr[o].amount >= am) return { a: true, b: arr[o] };
@@ -28,7 +29,7 @@ function scan2(arr: any[], val: any, am: number): any {
   }
 }
 
-export function canMake(rc: any, times: number): any {
+export function canMake(rc: Recipe, times: number): { x: any[]; y: any[]; z: number[]; o: (0 | 1 | 2)[]; success: boolean; b: boolean[]; r: any[] } {
   let missing: any[] = [];
   let has: any[] = [];
   let z: any[] = [];
@@ -58,7 +59,7 @@ export function canMake(rc: any, times: number): any {
 }
 
 
-export function make(rc: any, rp?: any, times?: number): any {
+export function make(rc: Recipe, rp?: boolean, times?: number): any {
   times = times || 1
   let check = canMake(rc, times);
   if (rp || !check.success) {
@@ -67,7 +68,7 @@ export function make(rc: any, rp?: any, times?: number): any {
     for (let j = 0; j < rc.rec.length; j++) {
       if (rc.rec[j].return) continue;
       if (!rc.rec[j].item.slot) {
-        let itemToAlter = scan2(inv, rc.rec[j].item, rc.rec[j].amount).b;
+        let itemToAlter = scan2(inv, rc.rec[j].item, rc.rec[j].amount)!.b;
         itemToAlter.amount -= rc.rec[j].amount;
         if (itemToAlter.amount === 0) removeItem(itemToAlter);
       } else {

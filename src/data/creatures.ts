@@ -1,4 +1,5 @@
 import { creature, eqp, global, you, dom, callback, checksd, item, wpn, acc, abl, effect, skl, flags, stats, combat, } from '../state';
+import type { Combatant } from '../types';
 import { random, rand } from '../random';
 import { giveSkExp } from '../game/progression';
 import { area_init } from '../game/movement';
@@ -61,7 +62,7 @@ function Creature(this: any, cfg?: any) {
   this.alive = true;
   this.eff = [];
   this.drop = [];
-  this.onDeath = function (this: any, killer: any) {
+  this.onDeath = function (this: any, killer: Combatant) {
     callback.onDeath.fire(this, killer)
     this.hp = 0;
     this.alive = false;

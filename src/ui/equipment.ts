@@ -1,3 +1,4 @@
+import type { Equipment } from '../types';
 import { dom, global, settings, you, planner, data, gameText, flags } from '../state';
 const { eqp } = data;
 import { giveEff, removeEff } from './effects';
@@ -5,7 +6,7 @@ import { update_d } from './stats';
 import { msg } from './messages';
 import { isort } from './inventory';
 
-    export function equip(w: any, opts?: any) {
+    export function equip(w: Equipment, opts?: { save?: boolean }) {
       if (!w.data || !w.data.uid) return;
       if (w.data.uid === you.eqp[w.slot - 1].data.uid) { unequip(w); if (w.twoh === true) { dom.d7_slot_2.innerHTML = 'Shield'; dom.d7_slot_2.style.color = 'grey' }; isort(settings.sm) } else {
         if (w.req && !w.req() && !flags.loadstate) { msg("Requirenments not met!", 'red'); return }
@@ -60,7 +61,7 @@ import { isort } from './inventory';
       }
     }
 
-    export function unequip(w: any, opts?: any) {
+    export function unequip(w: Equipment, opts?: { save?: boolean }) {
       if (!w.data || !w.data.uid) return;
       if (w.eff.length > 0) for (let k = 0; k < w.eff.length; k++) { w.eff[k].un(you); removeEff(w.eff[k]) }
       w.onuneq(you);
