@@ -82,10 +82,10 @@ import { renderRcp } from './panels';
               piie.addEventListener('mouseenter', function (this: any) { this.style.backgroundColor = '#666' });
               phai.addEventListener('mouseleave', function (this: any) { this.style.backgroundColor = 'darkgrey' });
               piie.addEventListener('mouseleave', function (this: any) { this.style.backgroundColor = 'darkgrey' });
-              phai.addEventListener('click', () => { giveSkExp(skl.rccln, (2 ** obj.rar) * 5 - 9.5); giveSkExp(skl.thr, .5); stats.thrt++; removeItem(obj); document.body.removeChild(prm); document.body.removeChild(prm2) });
+              phai.addEventListener('click', () => { giveSkExp(skl.rccln, (2 ** obj.rar) * 5 - 9.5); giveSkExp(skl.thr, .5); stats.thrownTotal++; removeItem(obj); document.body.removeChild(prm); document.body.removeChild(prm2) });
               piie.addEventListener('click', () => { document.body.removeChild(prm); document.body.removeChild(prm2) });
             }
-            else { giveSkExp(skl.rccln, (2 ** obj.rar) * 5 - 9.5); removeItem(obj); giveSkExp(skl.thr, .5); stats.thrt++; empty(global.dscr); }
+            else { giveSkExp(skl.rccln, (2 ** obj.rar) * 5 - 9.5); removeItem(obj); giveSkExp(skl.thr, .5); stats.thrownTotal++; empty(global.dscr); }
           }
           );
         }
@@ -203,35 +203,35 @@ import { renderRcp } from './panels';
         }
       }
       addDesc(inv_slot, obj, null, null, null, null, 100);
-      inv_slot.addEventListener('click', function (x) { if (obj.amount > 0 || !!obj.slot) { obj.use(you, x); if (!obj.slot) reduce(obj); if (obj.id < 3000 && !obj.data.tried) { obj.data.tried = true; stats.ftried += 1; if (global.dscr.style.display != 'none') dom.dtrd.innerHTML = 'Tried: <span style="color: lime">Yes</span>'; } } });
+      inv_slot.addEventListener('click', function (x) { if (obj.amount > 0 || !!obj.slot) { obj.use(you, x); if (!obj.slot) reduce(obj); if (obj.id < 3000 && !obj.data.tried) { obj.data.tried = true; stats.foodTried += 1; if (global.dscr.style.display != 'none') dom.dtrd.innerHTML = 'Tried: <span style="color: lime">Yes</span>'; } } });
       inv_slot.addEventListener('mouseleave', function () { if (obj.new === true) { obj.new = false; clearTimeout(timers.nsblk); inv_name.innerHTML = obj.name } });
     }
 
     export function updateInv(slot: number) {
-      if (settings.sm === 1) dom.inv_con.children[slot].children[0].children[1].innerHTML = ' x' + inv[slot].amount;
-      else dom.inv_con.children[slot].children[0].children[1].innerHTML = ' x' + global.sinv[slot].amount;
+      if (settings.sortMode === 1) dom.inv_con.children[slot].children[0].children[1].innerHTML = ' x' + inv[slot].amount;
+      else dom.inv_con.children[slot].children[0].children[1].innerHTML = ' x' + global.slottedInventory[slot].amount;
     }
 
     export function isort(type: number, opts?: { tr?: boolean }) {
       empty(dom.inv_con);
       if (type === 1) for (let k = 0; k < inv.length; k++) renderItem(inv[k]);
       else {
-        global.sinv = [];
-        for (let k = 0; k < inv.length; k++) if (type === inv[k].stype) { global.sinv.push(inv[k]); renderItem(inv[k]); }
+        global.slottedInventory = [];
+        for (let k = 0; k < inv.length; k++) if (type === inv[k].stype) { global.slottedInventory.push(inv[k]); renderItem(inv[k]); }
       }
-      settings.sm = type;
+      settings.sortMode = type;
       if (opts && opts.tr) iftrunkopenc(1);
     }
 
     export function rsort(type: number) {
       empty(dom.ct_bt1_1);
-      if (type === 0 || !type) for (let ind in global.rec_d) renderRcp(global.rec_d[ind]);
+      if (type === 0 || !type) for (let ind in global.recipesDiscovered) renderRcp(global.recipesDiscovered[ind]);
       else {
-        global.srcp = [];
-        for (let k = 0; k < global.rec_d.length; k++) if (type === global.rec_d[k].type) global.srcp.push(global.rec_d[k]);
-        for (let k = 0; k < global.srcp.length; k++) renderRcp(global.srcp[k])
+        global.sortedRecipes = [];
+        for (let k = 0; k < global.recipesDiscovered.length; k++) if (type === global.recipesDiscovered[k].type) global.sortedRecipes.push(global.recipesDiscovered[k]);
+        for (let k = 0; k < global.sortedRecipes.length; k++) renderRcp(global.sortedRecipes[k])
       }
-      settings.rm = type;
+      settings.recipeSortMode = type;
     }
 
     export function invbtsrst() {
@@ -240,7 +240,7 @@ import { renderRcp } from './panels';
       dom.inv_btn_3.removeAttribute('style');
       dom.inv_btn_4.removeAttribute('style');
       dom.inv_btn_5.removeAttribute('style');
-      switch (settings.sm) {
+      switch (settings.sortMode) {
         case 1: dom.inv_btn_1.style.color = 'black';
           dom.inv_btn_1.style.backgroundColor = 'yellow';
           break;
@@ -261,4 +261,4 @@ import { renderRcp } from './panels';
 
     export function rstcrtthg() { for (let a in global.spbtsr) global.spbtsr[a].style.color = 'inherit'; }
 
-    export function reduce(itm: any, am?: number) { if (am) { itm.amount = itm.amount - am <= 0 ? 0 : itm.amount - am } if (itm.amount <= 0) { removeItem(itm); updateTrunkLeftItem(itm, true) } else if (settings.sm === 1) updateInv(inv.indexOf(itm)); else if (settings.sm === itm.stype) updateInv(global.sinv.indexOf(itm)); updateTrunkLeftItem(itm) }
+    export function reduce(itm: any, am?: number) { if (am) { itm.amount = itm.amount - am <= 0 ? 0 : itm.amount - am } if (itm.amount <= 0) { removeItem(itm); updateTrunkLeftItem(itm, true) } else if (settings.sortMode === 1) updateInv(inv.indexOf(itm)); else if (settings.sortMode === itm.stype) updateInv(global.slottedInventory.indexOf(itm)); updateTrunkLeftItem(itm) }

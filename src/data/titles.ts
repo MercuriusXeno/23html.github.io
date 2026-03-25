@@ -113,8 +113,8 @@ ttl.plm.desc = 'You found it fun to make little holes in plant leaves and look t
 ttl.wlk = new Title(17);
 ttl.wlk.name = 'Walker';
 ttl.wlk.desc = 'All this walking around feels very beneficial for your body';
-ttl.wlk.talent = function (player: Player) { player.mods.runerg -= .05 }
-ttl.wlk.onGet = function (player: Player) { if (act.demo.active) player.mods.sdrate -= .005 }
+ttl.wlk.talent = function (player: Player) { player.mods.runningEnergyCost -= .05 }
+ttl.wlk.onGet = function (player: Player) { if (act.demo.active) player.mods.satiationDrainRate -= .005 }
 ttl.wlk.tdesc = 'Running consumes 5% less energy'
 
 // @ts-ignore: constructor function
@@ -162,8 +162,8 @@ ttl.jgg = new Title(25);
 ttl.jgg.name = 'Jogger';
 ttl.jgg.rar = 2
 ttl.jgg.desc = 'Simply walking doesn\'t cut it anymore, maybe you should speed up a bit while travelling on foot?';
-ttl.jgg.talent = function (player: Player) { player.mods.runerg -= .15 }
-ttl.jgg.onGet = function (player: Player) { if (act.demo.active) player.mods.sdrate -= .015 }
+ttl.jgg.talent = function (player: Player) { player.mods.runningEnergyCost -= .15 }
+ttl.jgg.onGet = function (player: Player) { if (act.demo.active) player.mods.satiationDrainRate -= .015 }
 ttl.jgg.tdesc = 'Running consumes 15% less energy'
 
 // @ts-ignore: constructor function
@@ -266,7 +266,7 @@ ttl.rfpn2 = new Title(43);
 ttl.rfpn2.name = 'Iron Stomach';
 ttl.rfpn2.rar = 2;
 ttl.rfpn2.desc = 'Going through these desperate times of having such an unsafe diet, your stomach doesn\'t feel as awful anymore. You really shouldn\'t be doing that';
-ttl.rfpn2.talent = function (player: Player) { player.mods.survinf++ }
+ttl.rfpn2.talent = function (player: Player) { player.mods.survivalInfo++ }
 ttl.rfpn2.tdesc = 'Allows you to roughly guess when perishable food rots (shift key)'
 
 // @ts-ignore: constructor function
@@ -639,8 +639,8 @@ ttl.ndthextr.rars = true;
 ttl.ndthextr.desc = 'You kept yourself well and protected, avoiding danger and moving out of harm\'s way for quiet some time. Almost like any other person who fears for his life';
 
 // @ts-ignore: constructor function
-ttl.indkill = new Title(107);
-ttl.indkill.name = 'Indirect Killer';
-ttl.indkill.rar = 2;
-ttl.indkill.rars = true;
-ttl.indkill.desc = '';
+ttl.indirectKills = new Title(107);
+ttl.indirectKills.name = 'Indirect Killer';
+ttl.indirectKills.rar = 2;
+ttl.indirectKills.rars = true;
+ttl.indirectKills.desc = '';

@@ -54,7 +54,7 @@ export function canMake(rc: Recipe, times: number): { x: any[]; y: any[]; z: num
       has.push(rc.rec[i].item);
       b.push(true)
     }
-  } for (let a in global.tstcr) global.tstcr[a].testc = false;
+  } for (let a in global.testCorc) global.testCorc[a].testc = false;
   return { x: missing, y: has, z, o, success: missing.length === 0 && !o.includes(2), b, r };
 }
 
@@ -87,5 +87,5 @@ export function make(rc: Recipe, rp?: boolean, times?: number): any {
       rc.onmake();
     }
   }
-  isort(settings.sm);
+  isort(settings.sortMode);
 }

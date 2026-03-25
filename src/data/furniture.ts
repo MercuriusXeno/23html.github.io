@@ -135,8 +135,8 @@ furniture.spillw = new Furniture({
 // @ts-ignore: constructor function
 furniture.cyrn = new Furniture({
   id: 13, removable: true, name: 'Yarn Ball', desc: 'Fluffy ball of yarn which is normally used as a material for knitting. Cats love these and often claim them as toys' + dom.dseparator + '<span style="color:deeppink">Patting EXP gain +15%</span><br><span style="color:springgreen">Passive Patting EXP +0.5</span>', data: { amount: 0 }, v: 3,
-  activate: function (this: any, player: Player) { skl.pet.p += .15; player.mods.petxp += .25 },
-  deactivate: function (this: any, player: Player) { skl.pet.p -= .15; player.mods.petxp -= .25 },
+  activate: function (this: any, player: Player) { skl.pet.p += .15; player.mods.pettingExperience += .25 },
+  deactivate: function (this: any, player: Player) { skl.pet.p -= .15; player.mods.pettingExperience -= .25 },
   onRemove: function (this: any) {
     giveItem(item.cyrn, 1, true);
   }
@@ -243,7 +243,7 @@ quest.hnt1 = new Quest({
 // @ts-ignore: constructor function
 quest.grds1 = new Quest({
   id: 4, name: 'Guarding Duty', rar: 1, loc: 'Village Center, Marketplace Entry Gate', desc: 'You were tasked with guarding duty to watch over marketplace', repeatable: true,
-  rwd: function (this: any) { this.data.t++; giveWealth(65); giveExp(3000, true, true, true); stats.jcom++ },
+  rwd: function (this: any) { this.data.t++; giveWealth(65); giveExp(3000, true, true, true); stats.jobsCompleted++ },
   goals: function (this: any) {
     return ['Guard the gate until 8PM (<span style="color:yellow">in progress</span>)']
   },

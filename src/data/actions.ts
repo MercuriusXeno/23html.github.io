@@ -51,15 +51,15 @@ act.demo = new Action({
   activate: function (this: any, player: Player) {
     msg('You start running', 'orange');
     this.active = true;
-    player.mods.sdrate += .1 * player.mods.runerg;
-    player.mods.stdstps += .5;
+    player.mods.satiationDrainRate += .1 * player.mods.runningEnergyCost;
+    player.mods.stardustParticleSpawn += .5;
     clearInterval(timers.actm);
     giveEff(player, effect.run);
     timers.actm = setInterval(() => {
       this.use(player);
     }, 1000);
   },
-  deactivate: function (this: any, player: Player) { msg('You stop', 'skyblue'); clearInterval(timers.actm); this.active = false; removeEff(effect.run); player.mods.sdrate -= .1 * player.mods.runerg; player.mods.stdstps -= .5; }
+  deactivate: function (this: any, player: Player) { msg('You stop', 'skyblue'); clearInterval(timers.actm); this.active = false; removeEff(effect.run); player.mods.satiationDrainRate -= .1 * player.mods.runningEnergyCost; player.mods.stardustParticleSpawn -= .5; }
 });
 
 // @ts-ignore: constructor function
@@ -77,21 +77,21 @@ act.scout = new Action({
     clearInterval(timers.actm);
     giveEff(player, effect.scout);
     let t = 2;
-    for (let a in combat.current_l.sector) { let m = canScout((combat.current_l.sector as any)[a]); if (m === 1) t = m; }
-    if (canScout(combat.current_l) === 1 || t === 1) msg('You sense something', 'white')
+    for (let a in combat.currentLocation.sector) { let m = canScout((combat.currentLocation.sector as any)[a]); if (m === 1) t = m; }
+    if (canScout(combat.currentLocation) === 1 || t === 1) msg('You sense something', 'white')
     timers.actm = setInterval(() => {
       this.use(player);
     }, 1000);
   },
   use: function (this: any) {
     if (flags.isdark && !cansee()) { deactivateAct(this); msg('You can\'t see anything', 'grey'); return }
-    let a1 = canScout(combat.current_l);
+    let a1 = canScout(combat.currentLocation);
     let a2c = []
-    for (let a in combat.current_l.sector) a2c.push(canScout((combat.current_l.sector as any)[a]));
+    for (let a in combat.currentLocation.sector) a2c.push(canScout((combat.currentLocation.sector as any)[a]));
     let a2 = 3;
     for (let a in a2c) if (a2c[a] !== 3) { if (a2c[a] === 1) { a2 = 1; break } else a2 = 2 }
-    if (a1 === 1) combat.current_l.onScout();
-    if (a2 === 1) { for (let a in combat.current_l.sector) if (canScout((combat.current_l.sector as any)[a]) === 1) (combat.current_l.sector as any)[a].onScout(); }
+    if (a1 === 1) combat.currentLocation.onScout();
+    if (a2 === 1) { for (let a in combat.currentLocation.sector) if (canScout((combat.currentLocation.sector as any)[a]) === 1) (combat.currentLocation.sector as any)[a].onScout(); }
     if (a1 === 3 && a2 === 3) {
       msg('There doesn\'t seem to be anything of interest around..', 'lightgrey');
       deactivateAct(this)

@@ -25,8 +25,8 @@ function allbuff(who: Combatant) {
 export function fght(att: Combatant, def: Combatant) {
   /*if(flags.btlinterrupt===true){
     msg('battle interrupted');
-    if(combat.current_z.size>0) {area_init(combat.current_z);combat.current_z.size--;}else if(combat.current_z.size===-1)area_init(combat.current_z);
-    else {msg('Area cleared','orange');combat.current_z.onEnd();flags.civil=true;flags.btl=false;};
+    if(combat.currentZone.size>0) {area_init(combat.currentZone);combat.currentZone.size--;}else if(combat.currentZone.size===-1)area_init(combat.currentZone);
+    else {msg('Area cleared','orange');combat.currentZone.onEnd();flags.civil=true;flags.btl=false;};
     dom.d7m.update();
     flags.btlinterrupt=false;
     return;
@@ -40,9 +40,9 @@ export function fght(att: Combatant, def: Combatant) {
   for (let g in att.eff) if (att.eff[g].type === 1) att.eff[g].use(you, att.eff[g].y, att.eff[g].z);
   for (let g in def.eff) if (def.eff[g].type === 1) def.eff[g].use(you, def.eff[g].y, def.eff[g].z);
   if (att.spd > 0 && def.spd > 0) {
-    global.s_l += Math.abs(att.spd - def.spd);
+    global.speedLevel += Math.abs(att.spd - def.spd);
   } else {
-    global.s_l = Math.abs(att.spd - def.spd);
+    global.speedLevel = Math.abs(att.spd - def.spd);
   }
   let inn, sc;
   if (att.spd >= def.spd || att.spd <= 0) { inn = att; sc = def; } else { inn = def; sc = att };
@@ -50,25 +50,25 @@ export function fght(att: Combatant, def: Combatant) {
   let isyouinn = inn.id === you.id;
   //if(isyouinn===false){if(random()<.9){console.log('stealth active'); inn=att; sc=def}}
   if (inn.spd > 0) {
-    if (global.s_l / sc.spd >= 2) {
+    if (global.speedLevel / sc.spd >= 2) {
       let acc_dmg = 0;
       let hts = 0;
       flags.multih = true;
-      for (let ii = 0; ii < Math.ceil(global.s_l / sc.spd); ii++) {
+      for (let ii = 0; ii < Math.ceil(global.speedLevel / sc.spd); ii++) {
         hts++;
         acc_dmg += inn.battle_ai!(inn, sc);
         if (sc.hp <= 0) break;
       }
       flags.multih = false;
-      if (att.id === you.id && acc_dmg >= sc.hpmax) stats.onesht++;
-      if (flags.m_blh === false && (hts - global.miss) > 0) {
+      if (att.id === you.id && acc_dmg >= sc.hpmax) stats.oneShotKills++;
+      if (flags.monsterBattleHide === false && (hts - global.miss) > 0) {
         if (hts === 1) printHitMessage(inn.name, acc_dmg, !isyouinn);
         else
           printMultihitMessage(hts, inn.name, acc_dmg, !isyouinn);
       }
-      else if (flags.m_blh === false) msg(inn.name + ' missed', 'grey');
-      if (sc.hp <= 0 && sc.alive === true) { combat.atkdfty = [3, combat.atkdftydt]; sc.onDeath(inn); sc.onDeathE(inn); }
-      global.s_l = global.s_l % sc.spd;
+      else if (flags.monsterBattleHide === false) msg(inn.name + ' missed', 'grey');
+      if (sc.hp <= 0 && sc.alive === true) { combat.attackDamageFromYou = [3, combat.attackDamageFromYouDamageType]; sc.onDeath(inn); sc.onDeathE(inn); }
+      global.speedLevel = global.speedLevel % sc.spd;
     } else {
       doSingleAttack(inn, sc, isyouinn);
     }
@@ -126,45 +126,45 @@ export function attack(att: Combatant, def: Combatant, atk?: Ability, power?: nu
           break;
       }
       if (dk) giveSkExp(skl.ntst, .1);
-      if (you.mods.tstl > 0) {
+      if (you.mods.toSteal > 0) {
         let itm = select(def.drop);
         if (random() < (itm.chance + (itm.chance / 100 * you.luck)) * .01 * skl.stel.use()) { giveItem(itm.item); giveSkExp(skl.stel, 1 / itm.chance * 10) } else giveSkExp(skl.stel, 1);
       }
     } else {
       if (you.eqp[1].id !== 10000 && !you.eqp[0].twoh) giveSkExp(skl.shdc, .2);
       you.stat_r();
-      if (you.mods.ddgmod !== 0) if (random() < you.mods.ddgmod) { global.miss++; if (flags.m_blh === false && (!flags.multih && flags.m_blh === false)) msg(att.name + ' missed', 'grey'); flags.msd = true; giveSkExp(skl.evas, .5); return 0 }
+      if (you.mods.dodgeModifier !== 0) if (random() < you.mods.dodgeModifier) { global.miss++; if (flags.monsterBattleHide === false && (!flags.multih && flags.monsterBattleHide === false)) msg(att.name + ' missed', 'grey'); flags.missed = true; giveSkExp(skl.evas, .5); return 0 }
     }
     dmg = Math.round(atk.f(att, def, power));
     def.hp -= dmg;
-    flags.msd = false;
-    if (flags.m_blh === false && (!flags.multih && flags.m_blh === false)) printHitMessage(att.name, dmg, att.id === you.id ? false : true);
+    flags.missed = false;
+    if (flags.monsterBattleHide === false && (!flags.multih && flags.monsterBattleHide === false)) printHitMessage(att.name, dmg, att.id === you.id ? false : true);
     if (isyou === true) {
-      dom.d8_2.innerHTML = 'Critical chance: ' + (Math.round(you.mods.crflt * 1000 + ((you.crt * (2 - (you.sat / you.satmax + you.mods.sbonus) * 2) + you.crt) * (you.luck / 25 + 1) + skl.seye.use()) * 1000) / 10) + '%'; if (you.eqp[0].id != 10000) you.eqp[0].dp > 0 ? you.eqp[0].dp -= .008 : you.eqp[0].dp = 0; stats.dmgdt += dmg;
-      if (flags.eshake === true) {
+      dom.d8_2.innerHTML = 'Critical chance: ' + (Math.round(you.mods.critChanceFlat * 1000 + ((you.critChance * (2 - (you.sat / you.satmax + you.mods.satiationBonus) * 2) + you.critChance) * (you.luck / 25 + 1) + skl.seye.use()) * 1000) / 10) + '%'; if (you.eqp[0].id != 10000) you.eqp[0].dp > 0 ? you.eqp[0].dp -= .008 : you.eqp[0].dp = 0; stats.damageDealtTotal += dmg;
+      if (flags.effectShake === true) {
         dom.d1m.style.left = parseInt(global.special_x) + rand(-3, 3) + 'px'; dom.d1m.style.top = parseInt(global.special_y) + rand(-3, 3) + 'px';
         setTimeout(() => { dom.d1m.style.left = parseInt(global.special_x) + 'px'; dom.d1m.style.top = parseInt(global.special_y) + 'px'; }, 60);
       }
     }
-    else { if (global.target.id !== 10000) global.target.dp > 0 ? global.target.dp -= .008 : global.target.dp = 0; if (you.eqp[1].id !== 10000) you.eqp[1].dp > 0 ? you.eqp[1].dp -= .008 : you.eqp[1].dp = 0; if (dmg > 0) giveSkExp(skl.painr, 1); if (global.target.id === 10000 && dmg > 0) giveSkExp(skl.tghs, dmg * .05); stats.dmgrt += dmg }
+    else { if (global.target.id !== 10000) global.target.dp > 0 ? global.target.dp -= .008 : global.target.dp = 0; if (you.eqp[1].id !== 10000) you.eqp[1].dp > 0 ? you.eqp[1].dp -= .008 : you.eqp[1].dp = 0; if (dmg > 0) giveSkExp(skl.painr, 1); if (global.target.id === 10000 && dmg > 0) giveSkExp(skl.tghs, dmg * .05); stats.damageReceivedTotal += dmg }
   } else {
     global.miss++;
-    stats.misst++;
+    stats.missesTotal++;
     ;
-    if (flags.m_blh === false && (!flags.multih && flags.m_blh === false)) msg(att.name + ' missed', 'grey');
-    flags.msd = true;
+    if (flags.monsterBattleHide === false && (!flags.multih && flags.monsterBattleHide === false)) msg(att.name + ' missed', 'grey');
+    flags.missed = true;
     if (dk) giveSkExp(skl.ntst, .01);
-    if (!isyou) stats.dodgt++;
+    if (!isyou) stats.dodgesTotal++;
   } update_d();
-  if (!flags.multih) { if (isyou && dmg >= def.hpmax) stats.onesht++; if (def.hp <= 0 && def.alive === true) { combat.atkdfty = [3, combat.atkdftydt]; def.onDeath(att); def.onDeathE(att); } }
+  if (!flags.multih) { if (isyou && dmg >= def.hpmax) stats.oneShotKills++; if (def.hp <= 0 && def.alive === true) { combat.attackDamageFromYou = [3, combat.attackDamageFromYouDamageType]; def.onDeath(att); def.onDeathE(att); } }
   return dmg || 0;
 }
 
 export function tattack(pow: number, type: number, e: number) {
   let dmg;
   let ddat = skl.thr.use();
-  let m = combat.current_m;
-  combat.atkdftm[0] = type;
+  let m = combat.currentMonster;
+  combat.attackDamageFromMonster[0] = type;
   let agl_bonus = 0;
   let spd = m.spd > 0 ? m.spd : 0;
   for (let i = 0; i < you.eqp.length; i++) agl_bonus += you.eqp[i].agl;
@@ -172,17 +172,17 @@ export function tattack(pow: number, type: number, e: number) {
   giveSkExp(skl.thr, e);
   giveSkExp(skl.fgt, skl.thr.lvl * 5 + 1);
   if (rand(100) < hit) {
-    dmg = Math.round(((1 + you.str_r * .05) * (you.efficiency() + 1) * pow * (ddat.a + 1)) / 2);
-    stats.dmgdt += dmg;
-    if (!flags.m_blh) msg('You hit ' + combat.current_m.name + ' for <span style="color:hotpink">' + dmg + '</span> damage', 'yellow');
-    combat.current_m.hp -= dmg;
+    dmg = Math.round(((1 + you.str_base * .05) * (you.efficiency() + 1) * pow * (ddat.a + 1)) / 2);
+    stats.damageDealtTotal += dmg;
+    if (!flags.monsterBattleHide) msg('You hit ' + combat.currentMonster.name + ' for <span style="color:hotpink">' + dmg + '</span> damage', 'yellow');
+    combat.currentMonster.hp -= dmg;
     if (m.hp <= 0 && m.alive === true) { m.onDeath(you); m.onDeathE(); } dom.d5_1_1m.update();
-    if (flags.eshake === true) {
+    if (flags.effectShake === true) {
       dom.d1m.style.left = parseInt(global.special_x) + rand(-3, 3) + 'px'; dom.d1m.style.top = parseInt(global.special_y) + rand(-3, 3) + 'px';
       setTimeout(() => { dom.d1m.style.left = parseInt(global.special_x) + 'px'; dom.d1m.style.top = parseInt(global.special_y) + 'px'; }, 60);
     }
   } else {
-    if (flags.m_blh === false) msg(you.name + ' missed', 'grey');
+    if (flags.monsterBattleHide === false) msg(you.name + ' missed', 'grey');
   }
 }
 
@@ -197,13 +197,13 @@ export function dmg_calc(att: Combatant, def: Combatant, atk: Ability) {
   let b = 1;
   if (atk.stt === 1) {
     if (isyou === true) {
-      global.atype_d = atk.aff || you.eqp[0].atype; combat.atkdftm = [atea, atcs, 0];
+      global.atype_d = atk.aff || you.eqp[0].atype; combat.attackDamageFromMonster = [atea, atcs, 0];
       let b = you.luck / 25 + 1;
-      let undc = 0;
-      if (you.eqp[0].id === 10000) undc = you.mods.undc;
-      dmg = (att.str * eff + (((att.eqp[0].str + undc) * (att.eqp[0].dp / att.eqp[0].dpmax) * .9 + .1) * (att.eqp[0].id === 10000 ? 1 : ta))) * (100 + (att.eqp[0].aff[atea] * 10 + atk.affp * 10 + att.eqp[0].cls[atcs] * 10 + att.maff[combat.current_m.type] * 10 + att.aff[atea] * 10) * (att.eqp[0].id === 10000 ? 1 : ta)) / 100 - (def.str * (100 + def.aff[atea] * 5 + def.cls[atcs] * 5) / 100) + 1;
+      let unarmedDamage = 0;
+      if (you.eqp[0].id === 10000) unarmedDamage = you.mods.unarmedDamage;
+      dmg = (att.str * eff + (((att.eqp[0].str + unarmedDamage) * (att.eqp[0].dp / att.eqp[0].dpmax) * .9 + .1) * (att.eqp[0].id === 10000 ? 1 : ta))) * (100 + (att.eqp[0].aff[atea] * 10 + atk.affp * 10 + att.eqp[0].cls[atcs] * 10 + att.maff[combat.currentMonster.type] * 10 + att.aff[atea] * 10) * (att.eqp[0].id === 10000 ? 1 : ta)) / 100 - (def.str * (100 + def.aff[atea] * 5 + def.cls[atcs] * 5) / 100) + 1;
     } else {
-      dmg = (att.str * (100 + att.eqp[0].aff[att.atype!] * 10 + atk.affp * 10 + att.eqp[0].cls[att.ctype!] * 10) / 100 - ((def.str * eff + (global.target.str * ((global.target.dp / global.target.dpmax) * .85 + .15) * ta)) * (100 + global.target.aff[att.atype!] * 5 * ta + global.target.cls[att.ctype!] * 5 * ta + you.caff[att.atype!] * 10 + you.cmaff[combat.current_m.type] * 10 + you.ccls[att.ctype!] * 10) / 100 + ((you.eqp[1].str * (1 + skl.shdc.lvl / 20) * (you.eqp[1].dp / you.eqp[1].dpmax) * .6 + .4) * ta) / 2) * (100 - (you.eqp[1].aff[att.atype!] * 5 * (1 + skl.shdc.lvl / 20) + global.target.cls[att.ctype!] * 5 * (1 + skl.shdc.lvl / 20) * ta)) / 100);
+      dmg = (att.str * (100 + att.eqp[0].aff[att.atype!] * 10 + atk.affp * 10 + att.eqp[0].cls[att.ctype!] * 10) / 100 - ((def.str * eff + (global.target.str * ((global.target.dp / global.target.dpmax) * .85 + .15) * ta)) * (100 + global.target.aff[att.atype!] * 5 * ta + global.target.cls[att.ctype!] * 5 * ta + you.caff[att.atype!] * 10 + you.combatMonsterAffinity[combat.currentMonster.type] * 10 + you.combatClass[att.ctype!] * 10) / 100 + ((you.eqp[1].str * (1 + skl.shdc.lvl / 20) * (you.eqp[1].dp / you.eqp[1].dpmax) * .6 + .4) * ta) / 2) * (100 - (you.eqp[1].aff[att.atype!] * 5 * (1 + skl.shdc.lvl / 20) + global.target.cls[att.ctype!] * 5 * (1 + skl.shdc.lvl / 20) * ta)) / 100);
       b = 1;
     }
   }
@@ -211,16 +211,16 @@ export function dmg_calc(att: Combatant, def: Combatant, atk: Ability) {
     if (isyou === true) {
       global.atype_d = atk.aff || you.eqp[0].atype;
       let b = you.luck / 20 + 1;
-      dmg = (att.int * eff + ((att.eqp[0].int * (att.eqp[0].dp / att.eqp[0].dpmax) * .9 + .1) * (att.eqp[0].id === 10000 ? 1 : ta))) * (100 + (att.eqp[0].aff[atea] * 10 + atk.affp * 10 + att.eqp[0].cls[atcs] * 10 + att.maff[combat.current_m.type] * 10 + att.aff[atea] * 10) * (att.eqp[0].id === 10000 ? 1 : ta)) / 100 - (def.int * (100 + def.aff[atea] * 5 + def.cls[atcs] * 5) / 100) + 1;
+      dmg = (att.int * eff + ((att.eqp[0].int * (att.eqp[0].dp / att.eqp[0].dpmax) * .9 + .1) * (att.eqp[0].id === 10000 ? 1 : ta))) * (100 + (att.eqp[0].aff[atea] * 10 + atk.affp * 10 + att.eqp[0].cls[atcs] * 10 + att.maff[combat.currentMonster.type] * 10 + att.aff[atea] * 10) * (att.eqp[0].id === 10000 ? 1 : ta)) / 100 - (def.int * (100 + def.aff[atea] * 5 + def.cls[atcs] * 5) / 100) + 1;
     } else {
-      dmg = (att.int * (100 + att.eqp[0].aff[att.atype!] * 15 + atk.affp * 15 + att.eqp[0].cls[att.ctype!] * 5) / 100 - ((def.int * eff + (global.target.int * ((global.target.dp / global.target.dpmax) * .85 + .15) * ta)) * (100 + global.target.aff[att.atype!] * 5 * ta + global.target.cls[att.ctype!] * 5 * ta + you.caff[att.atype!] * 10 + you.cmaff[combat.current_m.type] * 10 + you.ccls[att.ctype!] * 10) / 100 + ((you.eqp[1].int * (1 + skl.shdc.lvl / 20) * (you.eqp[1].dp / you.eqp[1].dpmax) * .6 + .4) * ta) / 2) * (100 - (you.eqp[1].aff[att.atype!] * 5 * (1 + skl.shdc.lvl / 20) + global.target.cls[att.ctype!] * 5 * (1 + skl.shdc.lvl / 20) * ta)) / 100);
+      dmg = (att.int * (100 + att.eqp[0].aff[att.atype!] * 15 + atk.affp * 15 + att.eqp[0].cls[att.ctype!] * 5) / 100 - ((def.int * eff + (global.target.int * ((global.target.dp / global.target.dpmax) * .85 + .15) * ta)) * (100 + global.target.aff[att.atype!] * 5 * ta + global.target.cls[att.ctype!] * 5 * ta + you.caff[att.atype!] * 10 + you.combatMonsterAffinity[combat.currentMonster.type] * 10 + you.combatClass[att.ctype!] * 10) / 100 + ((you.eqp[1].int * (1 + skl.shdc.lvl / 20) * (you.eqp[1].dp / you.eqp[1].dpmax) * .6 + .4) * ta) / 2) * (100 - (you.eqp[1].aff[att.atype!] * 5 * (1 + skl.shdc.lvl / 20) + global.target.cls[att.ctype!] * 5 * (1 + skl.shdc.lvl / 20) * ta)) / 100);
       b = 1;
     }
   }
   let ran = random();
   let c = 0;
   if (isyou === true) c = skl.seye.use();
-  let ctr_r = (att.crt * (2 - (you.sat / you.satmax + you.mods.sbonus) * 2) + att.crt) * b + c + you.mods.crflt;
+  let ctr_r = (att.critChance * (2 - (you.sat / you.satmax + you.mods.satiationBonus) * 2) + att.critChance) * b + c + you.mods.critChanceFlat;
   if (isyou === false && dmg > 0) {
     switch (global.atype_d) {
       case 1: giveSkExp(skl.aba, dmg * .01);
@@ -236,16 +236,16 @@ export function dmg_calc(att: Combatant, def: Combatant, atk: Ability) {
       case 6: giveSkExp(skl.abd, dmg * .01);
         break;
     }
-    combat.atkdftydt.a = atea;
-    combat.atkdftydt.c = atcs;
-    combat.atkdftydt.id = att.id
+    combat.attackDamageFromYouDamageType.a = atea;
+    combat.attackDamageFromYouDamageType.c = atcs;
+    combat.attackDamageFromYouDamageType.id = att.id
   }
   let pn = isyou === true ? 1 : 1 - skl.painr.use();
   dmg = dmg * def.res.ph * pn;
   if (ran < ctr_r) {
     let cpw = 1; let dmod = 1; let cbst = 1;
     if (isyou === true) {
-      giveSkExp(skl.seye, 1); cpw = you.mods.cpwr; cbst = 1 + skl.war.use();
+      giveSkExp(skl.seye, 1); cpw = you.mods.critPower; cbst = 1 + skl.war.use();
       dom.d1m.style.left = parseInt(global.special_x) + rand(-3, 3) + 'px';
       dom.d1m.style.top = parseInt(global.special_y) + rand(-3, 3) + 'px';
       setTimeout(() => { dom.d1m.style.left = parseInt(global.special_x) + 'px'; dom.d1m.style.top = parseInt(global.special_y) + 'px'; }, 60);
@@ -256,9 +256,9 @@ export function dmg_calc(att: Combatant, def: Combatant, atk: Ability) {
     }
     if (dmg <= 0) dmg = 0;
     let cdmg = dmg * randf(1.9 * cpw, 2.1 * cpw) * .5 * dmod * cbst;
-    flags.crti = true;
-    return dmg + cdmg <= 1 ? rand(1, 5) : Math.ceil((dmg + cdmg) * att.dmlt * randf(.9, 1.1)) + rand(1, 5);
-  } else return dmg > 0 ? Math.ceil(dmg * att.dmlt * randf(.9, 1.1)) : 0;
+    flags.criticalHit = true;
+    return dmg + cdmg <= 1 ? rand(1, 5) : Math.ceil((dmg + cdmg) * att.damageMultiplier * randf(.9, 1.1)) + rand(1, 5);
+  } else return dmg > 0 ? Math.ceil(dmg * att.damageMultiplier * randf(.9, 1.1)) : 0;
 }
 
 export function dumb(x: MouseEvent) {
@@ -295,72 +295,72 @@ export function dumb(x: MouseEvent) {
 export function hit_calc(tp: number) {
   if (tp === 1) {
     let agl_bonus = 0;
-    let spd = combat.current_m.spd > 0 ? combat.current_m.spd : 0;
+    let spd = combat.currentMonster.spd > 0 ? combat.currentMonster.spd : 0;
     for (let i = 0; i < you.eqp.length; i++) agl_bonus += you.eqp[i].agl;
-    //return (200 + ((you.agl+agl_bonus)*you.efficiency()) - (combat.current_m.spd+combat.current_m.agl+100/(100*you.efficiency())*100));
-    return ((you.agl + agl_bonus / 2) * you.efficiency()) / ((spd + combat.current_m.agl + combat.current_m.eva)) * 130 + 5;
+    //return (200 + ((you.agl+agl_bonus)*you.efficiency()) - (combat.currentMonster.spd+combat.currentMonster.agl+100/(100*you.efficiency())*100));
+    return ((you.agl + agl_bonus / 2) * you.efficiency()) / ((spd + combat.currentMonster.agl + combat.currentMonster.evasion)) * 130 + 5;
   }
   else if (tp === 2) {
     let agl_bonus = 0;
     let spd = you.spd > 0 ? you.spd : 0;
     for (let i = 0; i < you.eqp.length; i++) agl_bonus += you.eqp[i].agl;
-    return combat.current_m.agl / ((spd + you.agl + agl_bonus / 2) * you.efficiency()) * 100 + 10 - skl.evas.lvl
-    //return (210 + combat.current_m.agl - (you.spd+you.agl+100*(100*you.efficiency())/100));
+    return combat.currentMonster.agl / ((spd + you.agl + agl_bonus / 2) * you.efficiency()) * 100 + 10 - skl.evas.lvl
+    //return (210 + combat.currentMonster.agl - (you.spd+you.agl+100*(100*you.efficiency())/100));
   }
 }
 
 function wpnhitstt() {
   switch (you.eqp[0].wtype) {
-    case 0: stats.msts[0][0]++;
+    case 0: stats.masteryStatuses[0][0]++;
       break
-    case 1: stats.msts[1][0]++;
+    case 1: stats.masteryStatuses[1][0]++;
       break
-    case 2: stats.msts[2][0]++;
+    case 2: stats.masteryStatuses[2][0]++;
       break
-    case 3: stats.msts[3][0]++;
+    case 3: stats.masteryStatuses[3][0]++;
       break
-    case 4: stats.msts[4][0]++;
+    case 4: stats.masteryStatuses[4][0]++;
       break
-    case 5: stats.msts[5][0]++;
+    case 5: stats.masteryStatuses[5][0]++;
       break
-    case 6: stats.msts[6][0]++;
+    case 6: stats.masteryStatuses[6][0]++;
       break
-    case 7: stats.msts[7][0]++;
+    case 7: stats.masteryStatuses[7][0]++;
       break
   }
 }
 
 export function wpndiestt(killer: Combatant, me: Creature) {
   switch (killer.eqp[0].wtype) {
-    case 0: stats.msts[0][1]++;
+    case 0: stats.masteryStatuses[0][1]++;
       break
-    case 1: stats.msts[1][1]++;
+    case 1: stats.masteryStatuses[1][1]++;
       break
-    case 2: stats.msts[2][1]++;
+    case 2: stats.masteryStatuses[2][1]++;
       break
-    case 3: stats.msts[3][1]++;
+    case 3: stats.masteryStatuses[3][1]++;
       break
-    case 4: stats.msts[4][1]++;
+    case 4: stats.masteryStatuses[4][1]++;
       break
-    case 5: stats.msts[5][1]++;
+    case 5: stats.masteryStatuses[5][1]++;
       break
-    case 6: stats.msts[6][1]++;
+    case 6: stats.masteryStatuses[6][1]++;
       break
-    case 7: stats.msts[7][1]++;
+    case 7: stats.masteryStatuses[7][1]++;
       break
   }
   switch (me.type) {
-    case 0: stats.msks[0]++;
+    case 0: stats.masterySkillKills[0]++;
       break
-    case 1: stats.msks[1]++;
+    case 1: stats.masterySkillKills[1]++;
       break
-    case 2: stats.msks[2]++;
+    case 2: stats.masterySkillKills[2]++;
       break
-    case 3: stats.msks[3]++;
+    case 3: stats.masterySkillKills[3]++;
       break
-    case 4: stats.msks[4]++;
+    case 4: stats.masterySkillKills[4]++;
       break
-    case 5: stats.msks[5]++;
+    case 5: stats.masterySkillKills[5]++;
       break
   }
 }
@@ -400,7 +400,7 @@ function printBodyPartHit(partNumber: number) {
 }
 
 function printCritIfCrit() {
-  if (flags.crti) { msg_add(' CRIT! ', 'yellow'); flags.crti = false }
+  if (flags.criticalHit) { msg_add(' CRIT! ', 'yellow'); flags.criticalHit = false }
 }
 
 function printDamageNumber(ddmg: number) {
@@ -445,7 +445,7 @@ function printMultihitMessage(times: number, attackerName: string, acc_dmg: numb
 function printHitMessageResult(ddmg: number, targetsPlayer: boolean) {
   printDamageNumber(ddmg);
   printCritIfCrit();
-  if (targetsPlayer === true && !flags.msd) printBodyPartHit(global.t_n)
+  if (targetsPlayer === true && !flags.missed) printBodyPartHit(global.t_n)
 }
 
 function doSingleAttack(attacker: Combatant, defender: Combatant, isPlayerAttacking: boolean) {

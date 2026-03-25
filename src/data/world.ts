@@ -36,7 +36,7 @@ area._ctor = Area as any;
 // @ts-ignore: constructor function
 area.nwh = new Area({ id: 101, name: 'Somewhere', pop: [{ crt: creature.default, lvlmin: 1, lvlmax: 1, c: 1 }], size: 1 });
 z_bake(area.nwh);
-combat.current_z = area.nwh;
+combat.currentZone = area.nwh;
 
 // @ts-ignore: constructor function
 area.trn = new Area({
@@ -265,7 +265,7 @@ sector.home = new Sector({
     }
   },
   onLeave: function (this: any) {
-    stats.athmec = 0;
+    stats.atHomeCounter = 0;
     if (effect.fplc.active === true) removeEff(effect.fplc);
     this.data.smkt = time.minute;
     for (let f in furn) deactivatef(furn[f])
@@ -274,11 +274,11 @@ sector.home = new Sector({
     if (this.data.smkp > 0) {
       if (effect.smoke.active) effect.smoke.duration = 26;
       else giveEff(player, effect.smoke, 26)
-      if (--this.data.smkp <= 0) smove(combat.current_l)
+      if (--this.data.smkp <= 0) smove(combat.currentLocation)
     }
-    if (flags.catget) giveSkExp(skl.pet, player.mods.petxp);
-    stats.athme += settings.timescale;
-    stats.athmec += settings.timescale;
+    if (flags.catget) giveSkExp(skl.pet, player.mods.pettingExperience);
+    stats.atHomeTime += settings.timescale;
+    stats.atHomeCounter += settings.timescale;
     for (let x in global.nethmchk) global.nethmchk[x]();
     let fire = findbyid(furn, furniture.frplc.id);
 

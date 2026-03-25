@@ -80,128 +80,128 @@ export function resetFlags(v?: Partial<Flags>) { for (let k in flags) delete (fl
 let tempt = new Date();
 
 // Core settings
-global.lst_sve = '?';
+global.lastSave = '?';
 global.ver = 470;
-global.s_l = 0;
-global.spnew = 0;
-global.vsnew = 10;
+global.speedLevel = 0;
+global.unusedNewItemBlinkCounter = 0;
+global.newItemBlinkCountdown = 10;
 global.uid = 1;
-global.wdwidx = 0;
-global.menuo = 0;
-global.lastmsgc = 0;
+global.windowIndex = 0;
+global.menuOpen = 0;
+global.lastMessageCount = 0;
 
 // Arrays and data stores
-global.sinv = [];
-global.srcp = [];
-global.drdata = {};
-global.lw_op = 0;
-global.zone_a_p = [];
-global.rec_d = [];
-global.e_e = [];
-global.e_em = [];
+global.slottedInventory = [];
+global.sortedRecipes = [];
+global.dropData = {};
+global.lastWindowOpen = 0;
+global.zoneAreaProfile = [];
+global.recipesDiscovered = [];
+global.effects = [];
+global.enemyEffects = [];
 global.titles = [];
-global.titlese = [];
-global.tstcr = [];
+global.titlesEarned = [];
+global.testCorc = [];
 
 // Combat state (ephemeral, not serialized)
 export var combat: CombatState = {
-  atkdftm: [-1, -1, -1],
-  atkdfty: [-1, -1],
-  atkdftydt: {},
-  current_m: undefined as any, // set in area_init before combat
-  current_z: undefined as any, // set to area.nwh in world.ts eval
-  current_l: undefined as any, // set in smove
-  hit_a: 0,
-  hit_b: 0,
-  keytarget: undefined,
+  attackDamageFromMonster: [-1, -1, -1],
+  attackDamageFromYou: [-1, -1],
+  attackDamageFromYouDamageType: {},
+  currentMonster: undefined as any, // set in area_init before combat
+  currentZone: undefined as any, // set to area.nwh in world.ts eval
+  currentLocation: undefined as any, // set in smove
+  hitAccuracy: 0,
+  hitBlock: 0,
+  keyTarget: undefined,
 };
-global.offline_evil_index = 1;
+global.offlineEvilIndex = 1;
 
 // Statistics (top-level export, formerly global.stat)
 export var stats: Stats = {
   tick: 0,
-  akills: 0,
-  fooda: 0,
-  foodb: 0,
-  foodal: 0,
-  foodt: 0,
-  ftried: 0,
-  moneyg: 0,
-  die_p: 0,
-  die_p_t: 0,
-  ivtntdj: 0,
-  athme: 0,
-  athmec: 0,
-  slvs: 0,
-  lgtstk: 0,
-  moneysp: 0,
-  shppnt: 0,
-  exptotl: 0,
+  allKills: 0,
+  foodAttempts: 0,
+  foodBenefit: 0,
+  foodAlcohol: 0,
+  foodTotal: 0,
+  foodTried: 0,
+  moneyGained: 0,
+  deathsInCombat: 0,
+  deathsInCombatTotal: 0,
+  itemsReturnedToDojo: 0,
+  atHomeTime: 0,
+  atHomeCounter: 0,
+  skillLevelsGained: 0,
+  lightningStrikes: 0,
+  moneySpent: 0,
+  shopPoints: 0,
+  expTotal: 0,
   seed1: (Math.random() * 7e+7 << 7) % 7 & 7,
-  igtttl: 0,
-  msts: [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]],
-  msks: [0, 0, 0, 0, 0, 0, 0],
-  sttime: tempt.getFullYear() + '/' + (tempt.getMonth() + 1) + '/' + tempt.getDate() + ' ' + tempt.getHours() + ':' + (tempt.getMinutes() >= 10 ? tempt.getMinutes() : '0' + tempt.getMinutes()) + ':' + (tempt.getSeconds() > 10 ? tempt.getSeconds() : '0' + tempt.getSeconds()),
-  buyt: 0,
-  rdttl: 0,
-  dsst: 0,
-  thrt: 0,
-  crftt: 0,
-  deadt: 0,
-  smovet: 0,
-  timeslp: 0,
-  misst: 0,
-  dodgt: 0,
-  potnst: 0,
-  medst: 0,
-  plst: 0,
-  jcom: 0,
-  qstc: 0,
-  popt: 0,
-  dsct: 0,
-  bloodt: 0,
-  rdgtttl: 0,
-  cat_c: 0,
-  dmgdt: 0,
-  dmgrt: 0,
-  onesht: 0,
+  itemsPickedUp: 0,
+  masteryStatuses: [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]],
+  masterySkillKills: [0, 0, 0, 0, 0, 0, 0],
+  startTime: tempt.getFullYear() + '/' + (tempt.getMonth() + 1) + '/' + tempt.getDate() + ' ' + tempt.getHours() + ':' + (tempt.getMinutes() >= 10 ? tempt.getMinutes() : '0' + tempt.getMinutes()) + ':' + (tempt.getSeconds() > 10 ? tempt.getSeconds() : '0' + tempt.getSeconds()),
+  buyTotal: 0,
+  readTotal: 0,
+  disassembleTotal: 0,
+  thrownTotal: 0,
+  craftTotal: 0,
+  deathTotal: 0,
+  sectorMoveTotal: 0,
+  timeSlept: 0,
+  missesTotal: 0,
+  dodgesTotal: 0,
+  potionsTotal: 0,
+  medicineTotal: 0,
+  pillsTaken: 0,
+  jobsCompleted: 0,
+  questsCompleted: 0,
+  descriptionViews: 0,
+  discoveryTotal: 0,
+  bloodthirst: 0,
+  readingTimeTotal: 0,
+  catCount: 0,
+  damageDealtTotal: 0,
+  damageReceivedTotal: 0,
+  oneShotKills: 0,
   pts: 0,
-  gsvs: 0,
-  hbhbsld: 0,
-  wsnburst: 50,
-  wsnrest: 50,
-  indkill: 0,
-  coldnt: 0,
-  lastver: global.ver
+  gameSaves: 0,
+  herbalistHerbsSold: 0,
+  weaponBurstCount: 50,
+  weaponRestCount: 50,
+  indirectKills: 0,
+  coldDamageTaken: 0,
+  lastVersion: global.ver
 };
 
 // Flags (top-level export, formerly global.flags)
 export var flags: Flags = {
   btl: false,
-  m_freeze: false,
-  msd: false,
-  m_blh: false,
-  crti: false,
-  to_pause: false,
+  monsterFreeze: false,
+  missed: false,
+  monsterBattleHide: false,
+  criticalHit: false,
+  pauseNextBattle: false,
   civil: true,
   sleepmode: false,
   loadstate: false,
-  eshake: false,
-  msgtm: false,
-  grd_s: true,
+  effectShake: false,
+  messageTime: false,
+  guardStance: true,
   inside: true,
   israin: false,
   issnow: false,
   iscold: false,
-  bstu: false,
-  blken: false,
-  rtcrutch: false,
+  bestiaryUnlocked: false,
+  blinkEnabled: false,
+  renderTrunkCrutch: false,
   savestate: false,
-  expatv: false,
+  exportActive: false,
   gameone: false,
-  tmmode: 1,
-  ssngaijin: true,
-  rptbncgt: false
+  timeMode: 1,
+  seasonGaijin: true,
+  repeatableCrafting: false
 };
 
 // Misc globals
@@ -211,8 +211,8 @@ global.shortcuts = [];
 
 // Settings (user-configurable, serialized in save)
 export var settings: Settings = {
-  sm: 1,
-  rm: 0,
+  sortMode: 1,
+  recipeSortMode: 0,
   msgs_max: 36,
   fps: 1,
   timescale: 1,

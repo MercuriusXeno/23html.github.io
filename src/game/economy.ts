@@ -11,9 +11,9 @@ import { giveSkExp } from './progression';
 import { recshop } from '../ui/shop';
 
     export function giveWealth(val: number, mes?: boolean, f?: boolean): void {
-      if (you.mods.wthexrt !== 0 && f) val += 1;
+      if (you.mods.wealthExtra !== 0 && f) val += 1;
       you.wealth += val;
-      stats.moneyg += val;
+      stats.moneyGained += val;
       for (let x in global.monchk) global.monchk[x]();
       if (!stats.mndrgnu && you.wealth >= 100000000) { stats.mndrgnu = true; appear(dom.mn_1) }
       m_update();
@@ -29,7 +29,7 @@ import { recshop } from '../ui/shop';
     export function spend(m: number): void {
       if (you.wealth < m) return
       you.wealth -= m;
-      stats.moneysp += m;
+      stats.moneySpent += m;
       m_update()
     }
 

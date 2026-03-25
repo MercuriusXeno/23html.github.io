@@ -23,26 +23,26 @@ export interface Resistances {
 }
 
 export interface Mods {
-  sbonus: number;
-  sdrate: number;
-  infsrate: number;
-  enmondren: number;
-  enmondrts: number;
-  ddgmod: number;
-  rdgrt: number;
-  cpwr: number;
-  crflt: number;
-  wthexrt: number;
-  tstl: number;
-  lkdbt: number;
-  ckfre: number;
-  rnprtk: number;
+  satiationBonus: number;
+  satiationDrainRate: number;
+  inflationRate: number;
+  enemyMoneyDropRateEnhance: number;
+  enemyMoneyDropRateTries: number;
+  dodgeModifier: number;
+  readingRate: number;
+  critPower: number;
+  critChanceFlat: number;
+  wealthExtra: number;
+  toSteal: number;
+  luckDoubleTry: number;
+  cookingFire: number;
+  rainProtect: number;
   light: number;
-  undc: number;
-  petxp: number;
-  stdstps: number;
-  survinf: number;
-  runerg: number;
+  unarmedDamage: number;
+  pettingExperience: number;
+  stardustParticleSpawn: number;
+  survivalInfo: number;
+  runningEnergyCost: number;
   [key: string]: number; // for save/load iteration
 }
 
@@ -182,36 +182,36 @@ export interface Combatant {
   type: number;
   lvl: number;
   hp: number;
-  hp_r: number;
+  hp_base: number;
   hpmax: number;
   str: number;
-  str_r: number;
-  str_d: number;
+  str_base: number;
+  str_display: number;
   agl: number;
-  agl_r: number;
-  agl_d: number;
+  agl_base: number;
+  agl_display: number;
   int: number;
-  int_r: number;
-  int_d: number;
+  int_base: number;
+  int_display: number;
   spd: number;
-  spd_r: number;
-  spd_d?: number;
-  stra: number;
-  agla: number;
-  inta: number;
-  spda: number;
-  hpa: number;
-  strm: number;
-  intm: number;
-  spdm: number;
-  aglm: number;
-  hpm: number;
-  stre: number;
-  inte: number;
-  agle: number;
-  spde: number;
-  hpe: number;
-  stat_p: number[];
+  spd_base: number;
+  spd_display?: number;
+  str_bonus: number;
+  agl_bonus: number;
+  int_bonus: number;
+  spd_bonus: number;
+  hp_bonus: number;
+  str_mult: number;
+  int_mult: number;
+  spd_mult: number;
+  agl_mult: number;
+  hp_mult: number;
+  str_eff: number;
+  int_eff: number;
+  agl_eff: number;
+  spd_eff: number;
+  hp_eff: number;
+  statPotential: number[];
   eqp: Equipment[];
   eff: Effect[];
   cls: [number, number, number];
@@ -219,10 +219,10 @@ export interface Combatant {
   atype?: number;
   ctype?: number;
   res: Resistances;
-  crt: number;
-  dmlt: number;
+  critChance: number;
+  damageMultiplier: number;
   rnk: number;
-  eva: number;
+  evasion: number;
   atkmode: number;
   alive: boolean;
   drop: Drop[];
@@ -245,18 +245,18 @@ export interface Player extends Combatant {
   ki: Record<string, any>;
   sat: number;
   satmax: number;
-  sat_r: number;
-  sata: number;
-  satm: number;
-  sate: number;
+  sat_base: number;
+  sat_bonus: number;
+  sat_mult: number;
+  sat_eff: number;
   wealth: number;
   luck: number;
   karma: number;
   skls: Skill[];
   maff: number[];
   caff: number[];
-  cmaff: number[];
-  ccls: [number, number, number];
+  combatMonsterAffinity: number[];
+  combatClass: [number, number, number];
   onDeathE: () => void;
   ai: () => void;
 }
@@ -433,8 +433,8 @@ export interface GameText {
 }
 
 export interface Settings {
-  sm: number;
-  rm: number;
+  sortMode: number;
+  recipeSortMode: number;
   msgs_max: number;
   fps: number;
   timescale: number;
@@ -447,102 +447,102 @@ export interface Settings {
 export interface Flags {
   // Core flags (from initializer)
   btl: boolean;
-  m_freeze: boolean;
-  msd: boolean;
-  m_blh: boolean;
-  crti: boolean;
-  to_pause: boolean;
+  monsterFreeze: boolean;
+  missed: boolean;
+  monsterBattleHide: boolean;
+  criticalHit: boolean;
+  pauseNextBattle: boolean;
   civil: boolean;
   sleepmode: boolean;
   loadstate: boolean;
-  eshake: boolean;
-  msgtm: boolean;
-  grd_s: boolean;
+  effectShake: boolean;
+  messageTime: boolean;
+  guardStance: boolean;
   inside: boolean;
   israin: boolean;
   issnow: boolean;
   iscold: boolean;
-  bstu: boolean;
-  blken: boolean;
-  rtcrutch: boolean;
+  bestiaryUnlocked: boolean;
+  blinkEnabled: boolean;
+  renderTrunkCrutch: boolean;
   savestate: boolean;
-  expatv: boolean;
+  exportActive: boolean;
   gameone: boolean;
-  tmmode: number;
-  ssngaijin: boolean;
-  rptbncgt: boolean;
+  timeMode: number;
+  seasonGaijin: boolean;
+  repeatableCrafting: boolean;
   // Dynamic game-progression flags
   [key: string]: boolean | number | undefined; // TODO: remove index signature — enumerate all ~80 game-progression flags
 }
 
 export interface Stats {
   tick: number;
-  akills: number;
-  fooda: number;
-  foodb: number;
-  foodal: number;
-  foodt: number;
-  ftried: number;
-  moneyg: number;
-  die_p: number;
-  die_p_t: number;
-  ivtntdj: number;
-  athme: number;
-  athmec: number;
-  slvs: number;
-  lgtstk: number;
-  moneysp: number;
-  shppnt: number;
-  exptotl: number;
+  allKills: number;
+  foodAttempts: number;
+  foodBenefit: number;
+  foodAlcohol: number;
+  foodTotal: number;
+  foodTried: number;
+  moneyGained: number;
+  deathsInCombat: number;
+  deathsInCombatTotal: number;
+  itemsReturnedToDojo: number;
+  atHomeTime: number;
+  atHomeCounter: number;
+  skillLevelsGained: number;
+  lightningStrikes: number;
+  moneySpent: number;
+  shopPoints: number;
+  expTotal: number;
   seed1: number;
-  igtttl: number;
-  msts: [number, number][];
-  msks: number[];
-  sttime: string | number;
-  buyt: number;
-  rdttl: number;
-  dsst: number;
-  thrt: number;
-  crftt: number;
-  deadt: number;
-  smovet: number;
-  timeslp: number;
-  misst: number;
-  dodgt: number;
-  potnst: number;
-  medst: number;
-  plst: number;
-  jcom: number;
-  qstc: number;
-  popt: number;
-  dsct: number;
-  bloodt: number;
-  rdgtttl: number;
-  cat_c: number;
-  dmgdt: number;
-  dmgrt: number;
-  onesht: number;
+  itemsPickedUp: number;
+  masteryStatuses: [number, number][];
+  masterySkillKills: number[];
+  startTime: string | number;
+  buyTotal: number;
+  readTotal: number;
+  disassembleTotal: number;
+  thrownTotal: number;
+  craftTotal: number;
+  deathTotal: number;
+  sectorMoveTotal: number;
+  timeSlept: number;
+  missesTotal: number;
+  dodgesTotal: number;
+  potionsTotal: number;
+  medicineTotal: number;
+  pillsTaken: number;
+  jobsCompleted: number;
+  questsCompleted: number;
+  descriptionViews: number;
+  discoveryTotal: number;
+  bloodthirst: number;
+  readingTimeTotal: number;
+  catCount: number;
+  damageDealtTotal: number;
+  damageReceivedTotal: number;
+  oneShotKills: number;
   pts: number;
-  gsvs: number;
-  hbhbsld: number;
-  wsnburst: number;
-  wsnrest: number;
-  indkill: number;
-  coldnt: number;
-  lastver: number;
+  gameSaves: number;
+  herbalistHerbsSold: number;
+  weaponBurstCount: number;
+  weaponRestCount: number;
+  indirectKills: number;
+  coldDamageTaken: number;
+  lastVersion: number;
   [key: string]: any; // TODO: remove index signature — some stats set dynamically (mndrgnu)
 }
 
 export interface CombatState {
-  atkdftm: any[];
-  atkdfty: any[];
-  atkdftydt: Record<string, any>;
-  current_m: Creature; // initialized in area_init before any combat access
-  current_z: Area; // initialized to area.nwh at eval time
-  current_l: Area; // initialized in smove before any access
-  hit_a: number;
-  hit_b: number;
-  keytarget: Combatant | undefined;
+  attackDamageFromMonster: any[];
+  attackDamageFromYou: any[];
+  attackDamageFromYouDamageType: Record<string, any>;
+  currentMonster: Creature; // initialized in area_init before any combat access
+  currentZone: Area; // initialized to area.nwh at eval time
+  currentLocation: Area; // initialized in smove before any access
+  hitAccuracy: number;
+  hitBlock: number;
+  keyTarget: Combatant | undefined;
 }
 
 export interface Dom {
@@ -555,27 +555,27 @@ export interface Dom {
 }
 
 export interface Global {
-  lst_sve: string;
+  lastSave: string;
   ver: number;
-  s_l: number;
-  spnew: number;
-  vsnew: number;
+  speedLevel: number;
+  unusedNewItemBlinkCounter: number;
+  newItemBlinkCountdown: number;
   uid: number;
-  wdwidx: number;
-  menuo: number;
-  lastmsgc: number;
-  sinv: any[];
-  srcp: any[];
-  drdata: Record<string, any>;
-  lw_op: number;
-  zone_a_p: any[];
-  rec_d: any[];
-  e_e: any[];
-  e_em: any[];
+  windowIndex: number;
+  menuOpen: number;
+  lastMessageCount: number;
+  slottedInventory: any[];
+  sortedRecipes: any[];
+  dropData: Record<string, any>;
+  lastWindowOpen: number;
+  zoneAreaProfile: any[];
+  recipesDiscovered: any[];
+  effects: any[];
+  enemyEffects: any[];
   titles: any[];
-  titlese: any[];
-  tstcr: any[];
-  offline_evil_index: number;
+  titlesEarned: any[];
+  testCorc: any[];
+  offlineEvilIndex: number;
   spirits: number;
   bestiary: any[];
   shortcuts: any[];

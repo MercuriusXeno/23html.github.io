@@ -69,13 +69,13 @@ function restoreDiscovery(savedIds: any, namespace: any) {
 export function save(lvr?: boolean) {
   let storage = window.localStorage;
   flags.savestate = true;
-  stats.gsvs++;
+  stats.gameSaves++;
   let str = "";
 
   // Timestamp
   let a = new Date();
-  global.lst_sve = a.getFullYear() + '/' + (a.getMonth() + 1) + '/' + a.getDate() + ' ' + a.getHours() + ':' + (a.getMinutes() >= 10 ? a.getMinutes() : '0' + a.getMinutes()) + ':' + (a.getSeconds() >= 10 ? a.getSeconds() : '0' + a.getSeconds());
-  dom.sl_extra.innerHTML = 'Last save: ' + global.lst_sve;
+  global.lastSave = a.getFullYear() + '/' + (a.getMonth() + 1) + '/' + a.getDate() + ' ' + a.getHours() + ':' + (a.getMinutes() >= 10 ? a.getMinutes() : '0' + a.getMinutes()) + ':' + (a.getSeconds() >= 10 ? a.getSeconds() : '0' + a.getSeconds());
+  dom.sl_extra.innerHTML = 'Last save: ' + global.lastSave;
 
   // Temporarily unequip everything and snapshot equipment
   let o: any[] = [];
@@ -84,14 +84,14 @@ export function save(lvr?: boolean) {
     unequip(you.eqp[obj], { save: true });
   }
   you.stat_r();
-  let freezete = flags.m_freeze;
+  let freezete = flags.monsterFreeze;
 
   if (inSector(sector.home)) {
     for (let a in furn) deactivatef(furn[a]);
   }
 
   // Remove type-5 effects before serializing
-  flags.m_freeze = true;
+  flags.monsterFreeze = true;
   for (let a in you.eff) {
     if (you.eff[a].type === 5) you.eff[a].onRemove();
   }
@@ -100,27 +100,27 @@ export function save(lvr?: boolean) {
   let yu = {
     name: you.name, title: you.title.id, lvl: you.lvl,
     exp: you.exp, exp_t: you.exp_t,
-    sat: you.sat, satmax: you.satmax, sat_r: you.sat_r,
-    hp: you.hp, hpmax: you.hpmax, hp_r: you.hp_r,
-    str: you.str, str_r: you.str_r,
-    agl: you.agl, agl_r: you.agl_r,
-    int: you.int, int_r: you.int_r,
-    spd: you.spd, spd_r: you.spd_r,
-    luck: you.luck, stat_p: you.stat_p,
-    wealth: you.wealth, crt: you.crt,
+    sat: you.sat, satmax: you.satmax, sat_base: you.sat_base,
+    hp: you.hp, hpmax: you.hpmax, hp_base: you.hp_base,
+    str: you.str, str_base: you.str_base,
+    agl: you.agl, agl_base: you.agl_base,
+    int: you.int, int_base: you.int_base,
+    spd: you.spd, spd_base: you.spd_base,
+    luck: you.luck, statPotential: you.statPotential,
+    wealth: you.wealth, critChance: you.critChance,
     res: you.res, mods: you.mods,
-    stra: you.stra, strm: you.strm,
-    inta: you.inta, intm: you.intm,
-    agla: you.agla, aglm: you.agml,
-    spda: you.spda, spdm: you.spdm,
-    hpa: you.hpa, hpm: you.hpm,
-    sata: you.sata, satm: you.satm,
-    cls: you.cls, ccls: you.ccls,
+    str_bonus: you.str_bonus, str_mult: you.str_mult,
+    int_bonus: you.int_bonus, int_mult: you.int_mult,
+    agl_bonus: you.agl_bonus, agl_mult: you.agml,
+    spd_bonus: you.spd_bonus, spd_mult: you.spd_mult,
+    hp_bonus: you.hp_bonus, hp_mult: you.hp_mult,
+    sat_bonus: you.sat_bonus, sat_mult: you.sat_mult,
+    cls: you.cls, combatClass: you.combatClass,
     aff: you.aff, maff: you.maff,
-    caff: you.caff, cmaff: you.cmaff,
+    caff: you.caff, combatMonsterAffinity: you.combatMonsterAffinity,
     karma: you.karma, ki: you.ki
   };
-  flags.m_freeze = true;
+  flags.monsterFreeze = true;
   global.current_a.deactivate();
   dom.ct_bt3.style.backgroundColor = 'inherit';
   for (let a in you.eff) {
@@ -138,7 +138,7 @@ export function save(lvr?: boolean) {
       a4[obj as any] = { a: you.eff[obj].id, b: you.eff[obj].duration, c: pw };
     }
   }
-  flags.m_freeze = false;
+  flags.monsterFreeze = false;
   str += JSON.stringify(a4);
   str += '|';
 
@@ -170,23 +170,23 @@ export function save(lvr?: boolean) {
   }
   let a1 = {
     uid: global.uid, jj: stats,
-    x: combat.current_z.id, a: settings.rm, b: settings.sm,
+    x: combat.currentZone.id, a: settings.recipeSortMode, b: settings.sortMode,
     e: flags, f: global.spirits,
     g: settings.msgs_max, i: global.lst_loc,
     j: time.minute, k: w_manager.duration, l: w_manager.curr.id,
-    m: global.lst_sve,
+    m: global.lastSave,
     n: settings.bg_r, o: settings.bg_g, p: settings.bg_b,
     q: global.bestiary,
     r: global.timehold, r2: global.timewold,
     datas: datasi, u: settings.timescale,
-    datar: datare, z: global.offline_evil_index,
-    drdata: global.drdata
+    datar: datare, z: global.offlineEvilIndex,
+    dropData: global.dropData
   };
   str += JSON.stringify(a1);
   str += '|';
 
   // --- Segment 5: Discovered recipes ---
-  str += JSON.stringify(serializeIdData(global.rec_d));
+  str += JSON.stringify(serializeIdData(global.recipesDiscovered));
   str += '|';
 
   // --- Segment 6: Inventory (5 item categories + saved item data) ---
@@ -297,9 +297,9 @@ export function save(lvr?: boolean) {
   if (inSector(sector.home)) {
     for (let a in furn) activatef(furn[a]);
   }
-  flags.m_freeze = true;
+  flags.monsterFreeze = true;
   global.current_a.activate();
-  flags.m_freeze = freezete;
+  flags.monsterFreeze = freezete;
   if (flags.busy === true) dom.ct_bt3.style.backgroundColor = 'darkslategray';
 
   // Encode and store
@@ -359,18 +359,77 @@ export function load(dt?: any) {
     clearInterval(timers.autos);
     clearInterval(timers.rdng);
     clearInterval(timers.rdngdots);
-    global.menuo = 0;
+    global.menuOpen = 0;
     clearInterval(timers.actm);
     clearInterval(timers.job1t);
     clearInterval(timers.bstmonupdate);
-    clearInterval(timers.rptbncgt);
+    clearInterval(timers.repeatableCrafting);
     flags.rptbncgtf = false;
-    flags.rptbncgt = false;
+    flags.repeatableCrafting = false;
 
     str = str.split('|');
 
+    // --- Save migration: rename old property names to new names ---
+    function migrateKeys(obj: any, map: Record<string, string>) {
+      if (!obj) return obj;
+      for (const oldKey in map) {
+        if (oldKey in obj && !(map[oldKey] in obj)) {
+          obj[map[oldKey]] = obj[oldKey];
+          delete obj[oldKey];
+        }
+      }
+      return obj;
+    }
+    const PLAYER_KEY_MAP: Record<string, string> = {
+      stat_p: 'statPotential', crt: 'critChance', dmlt: 'damageMultiplier',
+      str_r: 'str_base', str_d: 'str_display', stra: 'str_bonus', strm: 'str_mult',
+      agl_r: 'agl_base', agl_d: 'agl_display', agla: 'agl_bonus', aglm: 'agl_mult',
+      int_r: 'int_base', int_d: 'int_display', inta: 'int_bonus', intm: 'int_mult',
+      spd_r: 'spd_base', spd_d: 'spd_display', spda: 'spd_bonus', spdm: 'spd_mult',
+      hp_r: 'hp_base', hpa: 'hp_bonus', hpm: 'hp_mult',
+      sat_r: 'sat_base', sata: 'sat_bonus', satm: 'sat_mult',
+      eva: 'evasion', ccls: 'combatClass', cmaff: 'combatMonsterAffinity',
+    };
+    const MODS_KEY_MAP: Record<string, string> = {
+      sbonus: 'satiationBonus', sdrate: 'satiationDrainRate', infsrate: 'inflationRate',
+      enmondren: 'enemyMoneyDropRateEnhance', enmondrts: 'enemyMoneyDropRateTries',
+      ddgmod: 'dodgeModifier', rdgrt: 'readingRate', cpwr: 'critPower', crflt: 'critChanceFlat',
+      wthexrt: 'wealthExtra', tstl: 'toSteal', lkdbt: 'luckDoubleTry',
+      ckfre: 'cookingFire', rnprtk: 'rainProtect', undc: 'unarmedDamage',
+      petxp: 'pettingExperience', stdstps: 'stardustParticleSpawn',
+      survinf: 'survivalInfo', runerg: 'runningEnergyCost',
+    };
+    const STATS_KEY_MAP: Record<string, string> = {
+      akills: 'allKills', fooda: 'foodAttempts', foodb: 'foodBenefit', foodal: 'foodAlcohol',
+      foodt: 'foodTotal', ftried: 'foodTried', moneyg: 'moneyGained',
+      die_p: 'deathsInCombat', die_p_t: 'deathsInCombatTotal',
+      ivtntdj: 'itemsReturnedToDojo', athme: 'atHomeTime', athmec: 'atHomeCounter',
+      slvs: 'skillLevelsGained', lgtstk: 'lightningStrikes', moneysp: 'moneySpent',
+      shppnt: 'shopPoints', exptotl: 'expTotal', igtttl: 'itemsPickedUp',
+      buyt: 'buyTotal', rdttl: 'readTotal', dsst: 'disassembleTotal', thrt: 'thrownTotal',
+      crftt: 'craftTotal', deadt: 'deathTotal', smovet: 'sectorMoveTotal',
+      timeslp: 'timeSlept', misst: 'missesTotal', dodgt: 'dodgesTotal',
+      potnst: 'potionsTotal', medst: 'medicineTotal', plst: 'pillsTaken',
+      jcom: 'jobsCompleted', qstc: 'questsCompleted', popt: 'descriptionViews',
+      dsct: 'discoveryTotal', bloodt: 'bloodthirst', rdgtttl: 'readingTimeTotal',
+      cat_c: 'catCount', dmgdt: 'damageDealtTotal', dmgrt: 'damageReceivedTotal',
+      onesht: 'oneShotKills', gsvs: 'gameSaves', hbhbsld: 'herbalistHerbsSold',
+      wsnburst: 'weaponBurstCount', wsnrest: 'weaponRestCount',
+      indkill: 'indirectKills', coldnt: 'coldDamageTaken', lastver: 'lastVersion',
+      sttime: 'startTime', msts: 'masteryStatuses', msks: 'masterySkillKills',
+    };
+    const FLAGS_KEY_MAP: Record<string, string> = {
+      m_freeze: 'monsterFreeze', msd: 'missed', m_blh: 'monsterBattleHide',
+      crti: 'criticalHit', to_pause: 'pauseNextBattle', eshake: 'effectShake',
+      msgtm: 'messageTime', grd_s: 'guardStance', blken: 'blinkEnabled',
+      rtcrutch: 'renderTrunkCrutch', expatv: 'exportActive', tmmode: 'timeMode',
+      ssngaijin: 'seasonGaijin', rptbncgt: 'repeatableCrafting', bstu: 'bestiaryUnlocked',
+    };
+
     // --- Segment 0: Player stats ---
     let yu_s = JSON.parse(str[0]);
+    migrateKeys(yu_s, PLAYER_KEY_MAP);
+    migrateKeys(yu_s.mods, MODS_KEY_MAP);
     for (let a in ttl) { ttl[a].have = false; ttl[a].tget = false; }
     global.titles = [];
     you.name = yu_s.name;
@@ -381,43 +440,43 @@ export function load(dt?: any) {
     you.expnext_t = you.expnext();
     you.sat = yu_s.sat;
     you.satmax = yu_s.satmax;
-    you.sat_r = yu_s.sat_r;
-    you.sata = yu_s.sata || 0;
-    you.satm = yu_s.satm || 1;
+    you.sat_base = yu_s.sat_base;
+    you.sat_bonus = yu_s.sat_bonus || 0;
+    you.sat_mult = yu_s.sat_mult || 1;
     you.ki = yu_s.ki || new Object();
     you.hp = yu_s.hp;
     you.hpmax = yu_s.hpmax;
-    you.hp_r = yu_s.hp_r;
-    you.hpa = yu_s.hpa || 0;
-    you.hpm = yu_s.hpm || 1;
+    you.hp_base = yu_s.hp_base;
+    you.hp_bonus = yu_s.hp_bonus || 0;
+    you.hp_mult = yu_s.hp_mult || 1;
     you.hp = you.hp > you.hpmax ? you.hpmax : you.hp;
     you.str = yu_s.str;
-    you.str_r = yu_s.str_r;
-    you.stra = yu_s.stra || 0;
-    you.strm = yu_s.strm || 1;
+    you.str_base = yu_s.str_base;
+    you.str_bonus = yu_s.str_bonus || 0;
+    you.str_mult = yu_s.str_mult || 1;
     you.agl = yu_s.agl;
-    you.agl_r = yu_s.agl_r;
-    you.agla = yu_s.agla || 0;
-    you.aglm = yu_s.aglm || 1;
+    you.agl_base = yu_s.agl_base;
+    you.agl_bonus = yu_s.agl_bonus || 0;
+    you.agl_mult = yu_s.agl_mult || 1;
     you.int = yu_s.int;
-    you.int_r = yu_s.int_r;
-    you.inta = yu_s.inta || 0;
-    you.intm = yu_s.intm || 1;
+    you.int_base = yu_s.int_base;
+    you.int_bonus = yu_s.int_bonus || 0;
+    you.int_mult = yu_s.int_mult || 1;
     you.spd = yu_s.spd;
-    you.spd_r = yu_s.spd_r;
-    you.spda = yu_s.spda || 0;
-    you.spdm = yu_s.spdm || 1;
+    you.spd_base = yu_s.spd_base;
+    you.spd_bonus = yu_s.spd_bonus || 0;
+    you.spd_mult = yu_s.spd_mult || 1;
     you.cls = yu_s.cls || [0, 0, 0];
-    you.ccls = yu_s.ccls || [0, 0, 0];
+    you.combatClass = yu_s.combatClass || [0, 0, 0];
     you.aff = yu_s.aff || [0, 0, 0, 0, 0, 0, 0];
     you.maff = yu_s.maff || [0, 0, 0, 0, 0, 0, 0];
     you.caff = yu_s.caff || [0, 0, 0, 0, 0, 0, 0];
-    you.cmaff = yu_s.cmaff || [0, 0, 0, 0, 0, 0, 0];
+    you.combatMonsterAffinity = yu_s.combatMonsterAffinity || [0, 0, 0, 0, 0, 0, 0];
     you.luck = yu_s.luck;
-    you.stat_p = yu_s.stat_p;
+    you.statPotential = yu_s.statPotential;
     you.karma = yu_s.karma || 0;
     you.wealth = yu_s.wealth;
-    you.crt = yu_s.crt;
+    you.critChance = yu_s.critChance;
     flags.loadstate = true;
 
     // Clean up quest callbacks
@@ -436,16 +495,16 @@ export function load(dt?: any) {
     for (let a in you.eff) you.eff[a].active = false;
     you.eff = [];
     empty(dom.d101);
-    global.e_e = [];
-    global.e_em = [];
+    global.effects = [];
+    global.enemyEffects = [];
     empty(dom.d101m);
-    combat.current_m.eff = [];
+    combat.currentMonster.eff = [];
 
     // --- Segment 1: Effects ---
     let a4 = JSON.parse(str[1]);
     settings.msgs_max = 300;
     empty(dom.mscont);
-    global.rec_d = [];
+    global.recipesDiscovered = [];
     for (let ba in rcp) { rcp[ba].have = false; }
     flags.loadstate = false;
 
@@ -453,8 +512,8 @@ export function load(dt?: any) {
     let a6 = JSON.parse(str[2]);
     you.skls = [];
     for (let ab in skl) { skl[ab].lvl = 0; skl[ab].exp = 0; }
-    for (let a in global.rec_d) global.rec_d[a].have = false;
-    global.rec_d = [];
+    for (let a in global.recipesDiscovered) global.recipesDiscovered[a].have = false;
+    global.recipesDiscovered = [];
     for (let i in skl)
       for (let ii in skl[i].mlstn) (skl[i].mlstn as any)[ii].g = false;
 
@@ -479,7 +538,7 @@ export function load(dt?: any) {
 
     // --- Segment 3: Skill XP ---
     var ro = [];
-    for (let io in global.rec_d) ro.push(global.rec_d[io].id);
+    for (let io in global.recipesDiscovered) ro.push(global.recipesDiscovered[io].id);
     let a7 = JSON.parse(str[3]);
     let skk = 0;
     for (let obj in skl) {
@@ -507,21 +566,21 @@ export function load(dt?: any) {
 
     // --- Segment 4: Global state ---
     let a1 = JSON.parse(str[4]);
-    settings.sm = a1.b;
-    settings.rm = a1.a;
+    settings.sortMode = a1.b;
+    settings.recipeSortMode = a1.a;
     global.spirits = a1.f;
     global.lst_loc = a1.i;
     global.uid = a1.uid;
     settings.msgs_max = a1.g;
     resetFlags();
-    global.sinv = [];
+    global.slottedInventory = [];
     global.bestiary = a1.q;
     global.timehold = a1.r || ((time.minute / DAY) << 0);
     global.timewold = a1.r2 || ((time.minute / WEEK) << 0);
-    global.lst_sve = a1.m;
+    global.lastSave = a1.m;
     settings.timescale = a1.u || 1;
-    global.offline_evil_index = a1.z || 1;
-    global.drdata = a1.drdata || {};
+    global.offlineEvilIndex = a1.z || 1;
+    global.dropData = a1.dropData || a1.drdata || {};
 
     // Restore tried/finished item flags
     for (let gb = 0; gb < a1.datas.length; gb++) {
@@ -543,23 +602,24 @@ export function load(dt?: any) {
     settings.bg_g = a1.o;
     settings.bg_b = a1.p;
 
-    // Restore statistics
+    // Restore statistics (migrate old save property names)
+    migrateKeys(a1.jj, STATS_KEY_MAP);
     for (let a in stats) stats[a] = a1.jj[a] || 0;
     let tempt = new Date();
-    if (stats.sttime === 0)
-      stats.sttime = tempt.getFullYear() + '/' + (tempt.getMonth() + 1) + '/' + tempt.getDate() + ' ' + tempt.getHours() + ':' + (tempt.getMinutes() >= 10 ? tempt.getMinutes() : '0' + tempt.getMinutes()) + ':' + (tempt.getSeconds() > 10 ? tempt.getSeconds() : '0' + tempt.getSeconds());
-    if (stats.msts as any === 0) stats.msts = [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]];
-    if (stats.msks as any === 0) stats.msks = [0, 0, 0, 0, 0, 0, 0];
+    if (stats.startTime === 0)
+      stats.startTime = tempt.getFullYear() + '/' + (tempt.getMonth() + 1) + '/' + tempt.getDate() + ' ' + tempt.getHours() + ':' + (tempt.getMinutes() >= 10 ? tempt.getMinutes() : '0' + tempt.getMinutes()) + ':' + (tempt.getSeconds() > 10 ? tempt.getSeconds() : '0' + tempt.getSeconds());
+    if (stats.masteryStatuses as any === 0) stats.masteryStatuses = [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]];
+    if (stats.masterySkillKills as any === 0) stats.masterySkillKills = [0, 0, 0, 0, 0, 0, 0];
 
     // Restore UI settings
     dom.ct_bt4_21b.value = settings.bg_r;
     dom.ct_bt4_22b.value = settings.bg_g;
     dom.ct_bt4_23b.value = settings.bg_b;
-    stats.wsnburst = 50;
+    stats.weaponBurstCount = 50;
     dom.ctrwin4.style.display = 'none';
     dom.ctrwin2.style.display = 'none';
     dom.ctrwin1.style.display = '';
-    global.lw_op = 0;
+    global.lastWindowOpen = 0;
 
     // (area_init is triggered by smove → location sl() script below)
 
@@ -568,7 +628,7 @@ export function load(dt?: any) {
     for (let o = 0; o < a2.length; o++) {
       for (let obj in rcp) {
         if (rcp[obj].id === a2[o].id && rcp[obj].have === false) {
-          global.rec_d.push(rcp[obj]);
+          global.recipesDiscovered.push(rcp[obj]);
           rcp[obj].have = true;
           rcp[obj].data = a2[o].data;
         }
@@ -577,7 +637,7 @@ export function load(dt?: any) {
     for (let o = 0; o < ro.length; o++) {
       for (let obj in rcp) {
         if (rcp[obj].id === ro[o] && rcp[obj].have === false) {
-          global.rec_d.push(rcp[obj]);
+          global.recipesDiscovered.push(rcp[obj]);
           rcp[obj].have = true;
         }
       }
@@ -655,12 +715,13 @@ export function load(dt?: any) {
     // --- Segment 10: Vendors ---
     let a10 = JSON.parse(str[10]);
     let a11 = JSON.parse(str[11]);
+    migrateKeys(a1.e, FLAGS_KEY_MAP);
     resetFlags(a1.e);
     flags.rdng = false;
     flags.civil = true;
     flags.btl = false;
-    combat.current_z = area.nwh;
-    combat.current_m = creature.default;
+    combat.currentZone = area.nwh;
+    combat.currentMonster = creature.default;
     update_m();
     dom.d7m.update();
     flags.wkdis = false;
@@ -690,8 +751,8 @@ export function load(dt?: any) {
         }
       }
     }
-    for (let obj in global.titlese) global.titles.push(global.titlese[obj]);
-    global.titlese = [];
+    for (let obj in global.titlesEarned) global.titles.push(global.titlesEarned[obj]);
+    global.titlesEarned = [];
 
     // --- Segment 12: Home furniture ---
     let a13 = JSON.parse(str[12]);
@@ -747,11 +808,11 @@ export function load(dt?: any) {
     clearInterval(timers.vndrstkchk);
     for (let obj in chss) {
       if (chss[obj].id === a1.i) {
-        combat.current_l = chss[obj];
+        combat.currentLocation = chss[obj];
         smove(chss[obj], false);
       }
     }
-    if (flags.to_pause === true) flags.btl = false;
+    if (flags.pauseNextBattle === true) flags.btl = false;
 
     // --- Segment 16: Containers ---
     let a17 = JSON.parse(str[16]);
@@ -799,11 +860,11 @@ export function load(dt?: any) {
     }
 
     // Final UI restoration
-    isort(settings.sm);
-    rsort(settings.rm);
+    isort(settings.sortMode);
+    rsort(settings.recipeSortMode);
     rstcrtthg();
     you.stat_r();
-    global.spbtsr[settings.rm].style.color = 'yellow';
+    global.spbtsr[settings.recipeSortMode].style.color = 'yellow';
 
     if (flags.aw_u) {
       dom.d0.style.display = '';
@@ -828,9 +889,9 @@ export function load(dt?: any) {
     dom.d7m.update();
     dom.d5_3_1.update();
 
-    if (flags.m_freeze === true) dom.m_b_1_c.innerHTML = 'Ｘ';
-    if (flags.m_blh === true) dom.m_b_2_c.innerHTML = 'Ｘ';
-    if (flags.to_pause === true) dom.d8m1.innerHTML = 'Pause next battle: <span style=\'color:crimson\'>&nbspON';
+    if (flags.monsterFreeze === true) dom.m_b_1_c.innerHTML = 'Ｘ';
+    if (flags.monsterBattleHide === true) dom.m_b_2_c.innerHTML = 'Ｘ';
+    if (flags.pauseNextBattle === true) dom.d8m1.innerHTML = 'Pause next battle: <span style=\'color:crimson\'>&nbspON';
     if (flags.jnlu) dom.ct_bt6.innerHTML = 'journal';
     if (flags.asbu) dom.ct_bt1.innerHTML = 'assemble';
     if (flags.actsu) dom.ct_bt3.innerHTML = 'actions';
@@ -847,22 +908,22 @@ export function load(dt?: any) {
     wManager();
     dom.d_moon.innerHTML = gameText.lunarp[getLunarPhase()][0];
     addDesc(dom.d_moon, null, 2, 'Lunar Phase', gameText.lunarp[getLunarPhase()][1]);
-    wdrseason(flags.ssngaijin);
+    wdrseason(flags.seasonGaijin);
     if (flags.isday === false) dom.d_moon.style.display = '';
     else dom.d_moon.style.display = 'none';
 
-    dom.sl_extra.innerHTML = 'Last save: ' + global.lst_sve;
+    dom.sl_extra.innerHTML = 'Last save: ' + global.lastSave;
     dom.nthngdsp.style.display = 'none';
     dom.ctrwin6.style.display = 'none';
     invbtsrst();
-    dom.d_time.innerHTML = '<small>' + getDay(flags.tmmode || 2) + '</small> ' + timeDisp(time);
+    dom.d_time.innerHTML = '<small>' + getDay(flags.timeMode || 2) + '</small> ' + timeDisp(time);
 
     flags.loadstate = false;
     flags.savestate = false;
     flags.ttlscrnopn = false;
-    flags.expatv = false;
+    flags.exportActive = false;
     flags.impatv = false;
-    flags.expatv = false;
+    flags.exportActive = false;
   }
   if (!flags.stbxinifld) {
     addToContainer(home.trunk, eqp.gnt);
@@ -875,11 +936,11 @@ export function load(dt?: any) {
   }
   if (flags.bgspc) document.body.style.background = 'linear-gradient(180deg,#000,#123)'; else document.body.style.backgroundColor = 'rgb(' + settings.bg_r + ',' + settings.bg_g + ',' + settings.bg_b + ')';
   if (dom.bkssttbd) { empty(dom.bkssttbd); document.body.removeChild(dom.bkssttbd); flags.bksstt = false; kill(dom.bkssttbd) }
-  if (flags.expatv) { empty(dom.ct_bt4_5a_nc); document.body.removeChild(dom.ct_bt4_5a_nc); kill(dom.ct_bt4_5a_nc) }
+  if (flags.exportActive) { empty(dom.ct_bt4_5a_nc); document.body.removeChild(dom.ct_bt4_5a_nc); kill(dom.ct_bt4_5a_nc) }
   if (flags.impatv) { empty(dom.ct_bt4_5b_nc); document.body.removeChild(dom.ct_bt4_5b_nc); kill(dom.ct_bt4_5b_nc) }
   if (dom.error) { empty(dom.error); document.body.removeChild(dom.error); kill(dom.error) }
   if (flags.autosave === true) { dom.autosves.checked = true; timers.autos = setInterval(function () { save(true); }, 30000) }
-  //if(flags.msgtm===true)dom.ct_bt4_61b.checked=true;
+  //if(flags.messageTime===true)dom.ct_bt4_61b.checked=true;
   ////patch things
   if (skl.pet.lvl >= 10) giveTitle(ttl.pet3);
   if (item.amrthsck.data.finished) giveRcp(rcp.appljc)

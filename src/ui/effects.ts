@@ -28,11 +28,11 @@ import { addDesc } from './descriptions';
       if (e.active === true) {
         if (e.x) {
           if (e.target!.id === you.id) {
-            node = global.e_e.indexOf(e); dom.d101.removeChild(dom.d101.children[node]); global.e_e.splice(node, 1);
+            node = global.effects.indexOf(e); dom.d101.removeChild(dom.d101.children[node]); global.effects.splice(node, 1);
             if (dom.d101.children.length > you.eff.length) empty(dom.d101);
           }
           else {
-            node = global.e_em.indexOf(e); dom.d101m.removeChild(dom.d101m.children[node]); global.e_em.splice(node, 1);
+            node = global.enemyEffects.indexOf(e); dom.d101m.removeChild(dom.d101m.children[node]); global.enemyEffects.splice(node, 1);
             if (dom.d101m.children.length > e.target!.eff.length) empty(dom.d101m);
           } e.onRemove(you); global.dscr.style.display = 'none';
         } e.target!.eff.splice(e.target!.eff.indexOf(e), 1); e.active = false; clearInterval(timers.inup); effdfix()
@@ -60,7 +60,7 @@ import { addDesc } from './descriptions';
         ic.style.backgroundColor = b;
         ic.addEventListener('click', () => { e.onClick(you) })
         addDesc(ic, e, 4, e.name, e.desc);
-        if (e.duration !== 0) global.e_e.push(e);
+        if (e.duration !== 0) global.effects.push(e);
       }
       else {
         let ic = addElement(dom.d101m, 'div', null, 'sprite-cell');
@@ -68,6 +68,6 @@ import { addDesc } from './descriptions';
         ic.style.color = c;
         ic.style.backgroundColor = b;
         addDesc(ic, e, 4, e.name, e.desc);
-        if (e.duration !== 0) global.e_em.push(e);
+        if (e.duration !== 0) global.enemyEffects.push(e);
       }
     }

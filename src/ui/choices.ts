@@ -12,8 +12,8 @@ import { giveSkExp } from '../game/progression';
       if (bc) dom.ch_1.style.backgroundColor = bc as string;
       if (size) dom.ch_1.style.fontSize = size as string;
       if (slimsize) dom.ch_1.style.height = slimsize;
-      if (!ignore) global.menuo = 0;
-      dom.ch_1.addEventListener('click', () => { clearInterval(timers.rptbncgt); flags.rptbncgtf = false; if (!flags.jdgdis) { flags.jdgdis = true; giveSkExp(skl.jdg, .1); setTimeout(() => { flags.jdgdis = false }, 500) } })
+      if (!ignore) global.menuOpen = 0;
+      dom.ch_1.addEventListener('click', () => { clearInterval(timers.repeatableCrafting); flags.rptbncgtf = false; if (!flags.jdgdis) { flags.jdgdis = true; giveSkExp(skl.jdg, .1); setTimeout(() => { flags.jdgdis = false }, 500) } })
       return dom.ch_1;
     }
 

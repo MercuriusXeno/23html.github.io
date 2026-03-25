@@ -198,9 +198,9 @@ import { giveSkExp } from '../game/progression';
       }
       else if (type === 3) {
         self.label = addElement(global.dscr, 'div', 'd_l');
-        self.label.innerHTML = combat.current_m.name;
+        self.label.innerHTML = combat.currentMonster.name;
         self.text = addElement(global.dscr, 'div', 'd_t');
-        self.text.innerHTML = combat.current_m.desc;
+        self.text.innerHTML = combat.currentMonster.desc;
       }
       else if (type === 4) {
         self.label = addElement(global.dscr, 'div', 'd_l');
@@ -307,7 +307,7 @@ import { giveSkExp } from '../game/progression';
         self.label.innerHTML = what.name;
         self.text = addElement(global.dscr, 'div', 'd_t');
         self.text.innerHTML = what.desc + dom.dseparator;
-        let t = Object.keys(global.drdata);
+        let t = Object.keys(global.dropData);
         let ids: any[] = [];
         for (let a in t) ids[a as any] = Number(t[a as any].substring(1));
         self.o = addElement(self.text, 'small');
@@ -316,7 +316,7 @@ import { giveSkExp } from '../game/progression';
         let thing = false;
         for (let a in ids) {
           if (ids[a] === what.id || what.un) {
-            let dt = global.drdata[Object.keys(global.drdata)[a]]; thing = true;
+            let dt = global.dropData[Object.keys(global.dropData)[a]]; thing = true;
             for (let b in what.drop) {
               self.dbig = addElement(self.text, 'div');
               self.dbig.style.display = 'flex';
@@ -390,16 +390,16 @@ import { giveSkExp } from '../game/progression';
     }
 
     export function addDesc(this: any, dm: HTMLElement, what: any, type?: number | null, ttl?: string | boolean | null, dsc?: string | (() => string) | null, f?: boolean | null, id?: number | null) {
-      dm.addEventListener('mouseenter', (a: any) => { dscr(a, what, type ?? undefined, ttl, f === true ? (dsc as () => string)() : dsc, id ?? undefined); giveSkExp(skl.rdg, .002); stats.popt++; global.curwds = this; global.shiftid = id; if (global.kkey === 1) descsinfo(global.shiftid) });
+      dm.addEventListener('mouseenter', (a: any) => { dscr(a, what, type ?? undefined, ttl, f === true ? (dsc as () => string)() : dsc, id ?? undefined); giveSkExp(skl.rdg, .002); stats.descriptionViews++; global.curwds = this; global.shiftid = id; if (global.kkey === 1) descsinfo(global.shiftid) });
       dm.addEventListener('mousemove', (a: any) => { global.dscr.style.top = global.dscr.clientHeight + 60 + a.clientY > document.body.clientHeight ? (a.clientY + 30 + global.dscr.clientHeight) - ((a.clientY + 30 + global.dscr.clientHeight) - document.body.clientHeight) - global.dscr.clientHeight - 30 : a.clientY + 30; global.dscr.style.left = global.dscr.clientWidth + 60 + a.clientX > document.body.clientWidth ? (a.clientX + 30 + global.dscr.clientWidth) - ((a.clientX + 30 + global.dscr.clientWidth) - document.body.clientWidth) - global.dscr.clientWidth - 30 : a.clientX + 30; });
       dm.addEventListener('mouseleave', () => { global.shiftid = 0; empty(global.dscr); global.dscr.style.display = 'none'; clearInterval(timers.inup); clearInterval(timers.dp_tmr); clearInterval(timers.wpnkilsch); if (dom.dscshe) dom.dscshe.innerHTML = '' });
     }
 
     export function descsinfo(id: number) {
-      if (id === 100) if (global.shiftitem.item.rot && you.mods.survinf > 0) {
+      if (id === 100) if (global.shiftitem.item.rot && you.mods.survivalInfo > 0) {
         let itm = global.shiftitem.item;
         let ds, rs, dt, rt, c
-        switch (you.mods.survinf) {
+        switch (you.mods.survivalInfo) {
           case 1:
             ds = Math.ceil(itm.amount * ((itm.rot[2] + itm.rot[3]) / 2));
             rs = itm.data.rottil;

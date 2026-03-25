@@ -27,23 +27,23 @@ import { kill } from './utils-game';
           inv.push(nitm);
           msg('New item obtained: <span style="color:coral">' + nitm.name + '</span>', 'cyan', obj);
           obj.onGet(you);
-          if (settings.sm === nitm.stype) global.sinv.push(nitm);
-          if (nitm.stype === settings.sm || settings.sm === 1) renderItem(nitm);
+          if (settings.sortMode === nitm.stype) global.slottedInventory.push(nitm);
+          if (nitm.stype === settings.sortMode || settings.sortMode === 1) renderItem(nitm);
           let g = obj.id! / 10000 << 0;
           if (!scan(dar[g], obj.id as any)) dar[g].push(obj.id as any);
           if (flag && flag.fl) iftrunkopen(1);
           else iftrunkopenc(1);
-          if (!flags.loadstate && !ignore) stats.igtttl += am;
+          if (!flags.loadstate && !ignore) stats.itemsPickedUp += am;
         }
         return nitm;
       }
       if (!obj.have) {
-        obj.new = true; if (flags.blken === true) {
-          global.spnew++; clearInterval(timers.nsblk); timers.nsblk = setInterval(function () {
+        obj.new = true; if (flags.blinkEnabled === true) {
+          global.unusedNewItemBlinkCounter++; clearInterval(timers.nsblk); timers.nsblk = setInterval(function () {
             let a = document.querySelectorAll('.blinks');
             let g = a.length;
-            for (let i = 0; i < g; i++) (a[i] as HTMLElement).style.opacity = '' + global.vsnew / 10;
-            if (--global.vsnew < 0) global.vsnew = 10;
+            for (let i = 0; i < g; i++) (a[i] as HTMLElement).style.opacity = '' + global.newItemBlinkCountdown / 10;
+            if (--global.newItemBlinkCountdown < 0) global.newItemBlinkCountdown = 10;
           }, 100)
         }
         obj.have = true;
@@ -52,13 +52,13 @@ import { kill } from './utils-game';
         obj.amount += am;
         msg('New item obtained: <span style="color:coral">' + obj.name + '</span><span style="color:lime"> x' + am + '</span>', 'cyan', obj);
         obj.onGet(you);
-        if (settings.sm === obj.stype) global.sinv.push(obj);
-        if (obj.stype === settings.sm || settings.sm === 1) renderItem(obj as any);
+        if (settings.sortMode === obj.stype) global.slottedInventory.push(obj);
+        if (obj.stype === settings.sortMode || settings.sortMode === 1) renderItem(obj as any);
       } else {
         obj.amount += am;
         msg('Item Acquired: <span style="color:chartreuse">' + obj.name + '</span><span style="color:lime"> x' + am + '</span>', 'cyan', obj);
-        if (settings.sm === 1) updateInv(inv.indexOf(obj as any));
-        else if (settings.sm === obj.stype) updateInv(global.sinv.indexOf(obj));
+        if (settings.sortMode === 1) updateInv(inv.indexOf(obj as any));
+        else if (settings.sortMode === obj.stype) updateInv(global.slottedInventory.indexOf(obj));
         obj.onGet(you);
       }
       let g = obj.id! / 10000 << 0;
@@ -71,24 +71,24 @@ import { kill } from './utils-game';
       }
       if (flag && !flag.fi && flag.fl) iftrunkopen(1);
       else iftrunkopenc(1);
-      if (!flags.loadstate && !ignore) stats.igtttl += am;
+      if (!flags.loadstate && !ignore) stats.itemsPickedUp += am;
       return obj;
     }
 
     export function listen_k(e: any) {
-      combat.keytarget = e.target;
+      combat.keyTarget = e.target;
       if (e.which === 46) {
         for (let obj in global.shortcuts) if (global.shortcuts[obj][0] === global.keyobj.data.skey) global.shortcuts.splice(global.shortcuts.indexOf(global.shortcuts[obj]), 1)
-        combat.keytarget!.children[0].innerHTML = global.keyobj.name;
+        combat.keyTarget!.children[0].innerHTML = global.keyobj.name;
         global.keyobj.data.skey = null;
       }
       else if ((e.which >= 47 && e.which <= 90) || (e.which >= 96 && e.which <= 105)) {
-        combat.keytarget!.children[0].innerHTML = global.keyobj.name + '<small> {' + String.fromCharCode(global.keyobj.data.skey) + '}</small>';
+        combat.keyTarget!.children[0].innerHTML = global.keyobj.name + '<small> {' + String.fromCharCode(global.keyobj.data.skey) + '}</small>';
         if (global.keyobj.data.skey > 0 && e.which !== global.keyobj.data.skey) { for (let obje in global.shortcuts) { if (global.shortcuts[obje][2].data.skey === global.keyobj.data.skey) { global.shortcuts[obje][2].data.skey = null; global.shortcuts.splice(global.shortcuts.indexOf(global.shortcuts[obje]), 1); } } }
         let tg;
         for (let obj in global.shortcuts) {
           if (e.which === global.shortcuts[obj][0]) { global.shortcuts[obj][2].data.skey = null; global.shortcuts.splice(global.shortcuts.indexOf(global.shortcuts[obj]), 1); }
-        } global.keyobj.data.skey = e.which; global.shortcuts.push([e.which, global.keyobj.id, global.keyobj]); global.shortcuts[global.shortcuts.length - 1][2].data.skey = e.which; isort(settings.sm)
+        } global.keyobj.data.skey = e.which; global.shortcuts.push([e.which, global.keyobj.id, global.keyobj]); global.shortcuts[global.shortcuts.length - 1][2].data.skey = e.which; isort(settings.sortMode)
       }
     }
 
@@ -98,19 +98,19 @@ import { kill } from './utils-game';
         for (let s in global.shortcuts) if (obj.data.skey === global.shortcuts[s][0]) { global.shortcuts.splice(global.shortcuts.indexOf(obj.data.skey), 1); continue };
       }
       let idx;
-      if (settings.sm === 1) {
+      if (settings.sortMode === 1) {
         idx = inv.indexOf(obj as any);
         dom.inv_con.removeChild(dom.inv_con.children[idx])
-      } else if (settings.sm === obj.stype) {
-        idx = global.sinv.indexOf(obj);
+      } else if (settings.sortMode === obj.stype) {
+        idx = global.slottedInventory.indexOf(obj);
         dom.inv_con.removeChild(dom.inv_con.children[idx])
-        global.sinv.splice(idx, 1);
+        global.slottedInventory.splice(idx, 1);
       }
       global.dscr.style.display = 'none';
       inv.splice(inv.indexOf(obj as any), 1);
       obj.have = false;
       if (obj.rot) for (let a in planner.imorph.data.items) if (planner.imorph.data.items[a].id === obj.id) { planner.imorph.data.items.splice(planner.imorph.data.items.indexOf(obj)); }
-      if (global.lw_op === 1) rsort(settings.rm)
+      if (global.lastWindowOpen === 1) rsort(settings.recipeSortMode)
       if (flag && flag.fl) iftrunkopen(1);
       else iftrunkopenc(1);
       if (obj.slot) kill(obj)
@@ -151,9 +151,9 @@ import { kill } from './utils-game';
       dom.invp1_con.addEventListener('mouseenter', function (this: any) {
         dom.invp1_op2 = addElement(this, 'small', null, ni.right ? 'track-move-left' : 'track-move-right');
         dom.invp1_op2.innerHTML = ni.right ? '<<' : '>>';
-        dom.invp1_op2.addEventListener('mouseenter', function () { flags.rtcrutch = true });
+        dom.invp1_op2.addEventListener('mouseenter', function () { flags.renderTrunkCrutch = true });
         //ugly hack
-        dom.invp1_op2.addEventListener('mouseleave', function () { flags.rtcrutch = false });
+        dom.invp1_op2.addEventListener('mouseleave', function () { flags.renderTrunkCrutch = false });
         //self to self: revisit later V:
         dom.invp1_op2.addEventListener('click', function () {
           let scann = false; let titem;
@@ -163,13 +163,13 @@ import { kill } from './utils-game';
               let nit = addToContainer(trunk, item, item.amount);
               item.amount = 0;
               titem = nit;
-              if (item.amount <= 0 || item.slot) { dom.invp1.removeChild(dom.invp1.children[inv.indexOf(item)]); removeItem(item, { fl: true }) } else if (settings.sm === 1) updateInv(inv.indexOf(item));
-              else if (settings.sm === item.stype) updateInv(global.sinv.indexOf(item));
+              if (item.amount <= 0 || item.slot) { dom.invp1.removeChild(dom.invp1.children[inv.indexOf(item)]); removeItem(item, { fl: true }) } else if (settings.sortMode === 1) updateInv(inv.indexOf(item));
+              else if (settings.sortMode === item.stype) updateInv(global.slottedInventory.indexOf(item));
             } else {
               titem.am += item.amount;
               item.amount = 0;
-              if (item.amount <= 0) { dom.invp1.removeChild(dom.invp1.children[inv.indexOf(item)]); removeItem(item, { fl: true }); } else if (settings.sm === 1) updateInv(inv.indexOf(item));
-              else if (settings.sm === item.stype) updateInv(global.sinv.indexOf(item));
+              if (item.amount <= 0) { dom.invp1.removeChild(dom.invp1.children[inv.indexOf(item)]); removeItem(item, { fl: true }); } else if (settings.sortMode === 1) updateInv(inv.indexOf(item));
+              else if (settings.sortMode === item.stype) updateInv(global.slottedInventory.indexOf(item));
             } if (titem.item.onTIn) titem.item.onTIn(trunk, titem); //  big stack moves into container
           } else {
             for (let a in inv) { if (inv[a].id === item.id && !item.slot) { scann = true; titem = inv[a]; break } }
@@ -190,8 +190,8 @@ import { kill } from './utils-game';
               dom.invp2.removeChild(dom.invp2.children[trunk.c.indexOf(fin)]);
               removeFromContainer(trunk, fin);
               if (trunk.c.length === 0) global.dscr.style.display = 'none'
-              if (settings.sm === 1) updateInv(inv.indexOf(item));
-              else if (settings.sm === item.stype) updateInv(global.sinv.indexOf(item));
+              if (settings.sortMode === 1) updateInv(inv.indexOf(item));
+              else if (settings.sortMode === item.stype) updateInv(global.slottedInventory.indexOf(item));
             } if (ni.nit.item.onTOut) ni.nit.item.onTOut(trunk, ni.nit); //  big stack moves out of container
           } iftrunkopen();
         });
@@ -201,7 +201,7 @@ import { kill } from './utils-game';
         this.removeChild(this.children[2]);
       });
       dom.invp1_con.addEventListener('click', function (this: any) {
-        if (flags.rtcrutch === true) { this.children[0].click(); return } else {
+        if (flags.renderTrunkCrutch === true) { this.children[0].click(); return } else {
           let scann = false; let titem;
           if (ni.right === false) {
             for (let a in trunk.c) { if (trunk.c[a].item.id === item.id && !item.slot) { scann = true; titem = trunk.c[a]; break } }
@@ -209,14 +209,14 @@ import { kill } from './utils-game';
               let nit = addToContainer(trunk, item);
               item.amount--;
               titem = nit;
-              if (item.amount <= 0) { dom.invp1.removeChild(dom.invp1.children[inv.indexOf(item)]); removeItem(item, { fl: true }); } else if (settings.sm === 1) updateInv(inv.indexOf(item));
-              else if (settings.sm === item.stype) updateInv(global.sinv.indexOf(item));
+              if (item.amount <= 0) { dom.invp1.removeChild(dom.invp1.children[inv.indexOf(item)]); removeItem(item, { fl: true }); } else if (settings.sortMode === 1) updateInv(inv.indexOf(item));
+              else if (settings.sortMode === item.stype) updateInv(global.slottedInventory.indexOf(item));
 
             } else {
               titem!.am++;
               item.amount--;
-              if (item.amount <= 0 || item.slot) { dom.invp1.removeChild(dom.invp1.children[inv.indexOf(item)]); removeItem(item, { fl: true }) } else if (settings.sm === 1) updateInv(inv.indexOf(item));
-              else if (settings.sm === item.stype) updateInv(global.sinv.indexOf(item));
+              if (item.amount <= 0 || item.slot) { dom.invp1.removeChild(dom.invp1.children[inv.indexOf(item)]); removeItem(item, { fl: true }) } else if (settings.sortMode === 1) updateInv(inv.indexOf(item));
+              else if (settings.sortMode === item.stype) updateInv(global.slottedInventory.indexOf(item));
             } if (titem.item.onTIn) titem.item.onTIn(trunk, titem); //  1 item moves into container
           } else {
             for (let a in inv) { if (inv[a].id === item.id && !item.slot) { scann = true; titem = inv[a]; break } }
@@ -233,8 +233,8 @@ import { kill } from './utils-game';
               let fin;
               for (let a in trunk.c) { if (trunk.c[a].item.id === ni.nit.item.id) { fin = trunk.c[a]; break } }
               if (--fin.am <= 0) { dom.invp2.removeChild(dom.invp2.children[trunk.c.indexOf(fin)]); removeFromContainer(trunk, fin) } if (trunk.c.length === 0) global.dscr.style.display = 'none';
-              if (settings.sm === 1) updateInv(inv.indexOf(item));
-              else if (settings.sm === item.stype) updateInv(global.sinv.indexOf(item));
+              if (settings.sortMode === 1) updateInv(inv.indexOf(item));
+              else if (settings.sortMode === item.stype) updateInv(global.slottedInventory.indexOf(item));
             } if (ni.nit.item.onTOut) ni.nit.item.onTOut(trunk, ni.nit); //  1 item moves out of container
           } iftrunkopen()
         }
@@ -246,7 +246,7 @@ import { kill } from './utils-game';
     }
 
     export function updateTrunkLeftItem(item: any, kill?: any) {
-      if (global.menuo === 3) {
+      if (global.menuOpen === 3) {
         for (let a in inv) if ((inv[a].data.uid && inv[a].data.uid === item.data.uid) || (inv[a].id === item.id)) {
           if (kill) dom.invp1.removeChild(dom.invp1.children[inv.indexOf(inv[a])]);
           else {
@@ -257,7 +257,7 @@ import { kill } from './utils-game';
     }
 
     export function iftrunkopen(side?: any) {
-      if (global.menuo === 3) {
+      if (global.menuOpen === 3) {
         let trunk = global.cchest;
         if (!side || side === 1) for (let obj in inv) updateTrunkItem(dom.invp1, obj, inv[obj], inv[obj].amount);
         if (!side || side === 2) for (let obj in trunk.c) updateTrunkItem(dom.invp2, obj, trunk.c[obj].item, trunk.c[obj].am);
@@ -267,7 +267,7 @@ import { kill } from './utils-game';
     }
 
     export function iftrunkopenc(side?: any) {
-      if (global.menuo === 3) {
+      if (global.menuOpen === 3) {
         let trunk = global.cchest;
         if (!side || side === 1) { empty(dom.invp1); for (let obj in inv) rendertrunkitem(dom.invp1, inv[obj]); }
         if (!side || side === 2) { empty(dom.invp2); for (let obj in trunk.c) rendertrunkitem(dom.invp2, trunk.c[obj].item, { right: true, nit: { item: trunk.c[obj].item, data: trunk.c[obj].data, am: trunk.c[obj].am, dp: trunk.c[obj].dp } }); }
@@ -282,7 +282,7 @@ import { kill } from './utils-game';
       let r = { item: it, am: am || 1, data: data || thing.data, dp: thing.slot ? thing.dp : 0 }
       if (r.item.slot) r.data.uid = ++global.uid;
       cont.c.push(r);
-      if (global.menuo == 3) rendertrunkitem(dom.invp2, r.item, { right: true, nit: { item: r.item, data: r.data, am: r.am, dp: r.dp } });
+      if (global.menuOpen == 3) rendertrunkitem(dom.invp2, r.item, { right: true, nit: { item: r.item, data: r.data, am: r.am, dp: r.dp } });
       return r;
     }
 
@@ -299,12 +299,12 @@ import { kill } from './utils-game';
     export function dropC(crt: Creature, t?: number) {
       t = t || 1;
       for (let j in crt.drop) if (!crt.drop[j].cond || (!!crt.drop[j].cond && crt.drop[j].cond!() === true)) if (random() < crt.drop[j].chance! + (crt.drop[j].chance! / 100 * you.luck)) {
-        giveItem(crt.drop[j].item, !!crt.drop[j].min ? rand(crt.drop[j].min!, crt.drop[j].max!) : t); if (you.mods.lkdbt > 0 && random() < you.mods.lkdbt) giveItem(crt.drop[j].item);
-        let d = global.drdata["d" + crt.id];
-        if (!d) { d = global.drdata["d" + crt.id] = []; d[j] = 1 } else d[j] = 1;
+        giveItem(crt.drop[j].item, !!crt.drop[j].min ? rand(crt.drop[j].min!, crt.drop[j].max!) : t); if (you.mods.luckDoubleTry > 0 && random() < you.mods.luckDoubleTry) giveItem(crt.drop[j].item);
+        let d = global.dropData["d" + crt.id];
+        if (!d) { d = global.dropData["d" + crt.id] = []; d[j] = 1 } else d[j] = 1;
       }
       for (let jj in global.wdrop) if (random() < global.wdrop[jj].c + (global.wdrop[jj].c / 100 * you.luck)) giveItem(global.wdrop[jj].item, t);
-      for (let obj in combat.current_z.drop) if (!combat.current_z.drop[obj].cond || (!!combat.current_z.drop[obj].cond && combat.current_z.drop[obj].cond!() === true)) if (random() < combat.current_z.drop[obj].c! + (combat.current_z.drop[obj].c! / 100 * you.luck) + (combat.current_z.drop[obj].c! / 75 * skl.hst.lvl)) { giveItem(combat.current_z.drop[obj].item, t); giveSkExp(skl.hst, .2) }
+      for (let obj in combat.currentZone.drop) if (!combat.currentZone.drop[obj].cond || (!!combat.currentZone.drop[obj].cond && combat.currentZone.drop[obj].cond!() === true)) if (random() < combat.currentZone.drop[obj].c! + (combat.currentZone.drop[obj].c! / 100 * you.luck) + (combat.currentZone.drop[obj].c! / 75 * skl.hst.lvl)) { giveItem(combat.currentZone.drop[obj].item, t); giveSkExp(skl.hst, .2) }
       if (crt.rnk < 22) { let ar = (crt.rnk - 1) / 3 << 0; for (let a in global.rdrop[ar]) if (random() < global.rdrop[ar][a].c + (global.rdrop[ar][a].c / 100 * you.luck)) giveItem(global.rdrop[ar][a].item, t) }
     }
 
@@ -317,7 +317,7 @@ import { kill } from './utils-game';
       if (scanbyid(furn, frn.id)) frn.data.amount++;
       else { furn.push(frn); frn.data.amount++; }
       frn.onGive();
-      if (global.wdwidx === 1) { empty(dom.ch_1h); for (let a in furn) renderFurniture(furn[a]) }
+      if (global.windowIndex === 1) { empty(dom.ch_1h); for (let a in furn) renderFurniture(furn[a]) }
       let v = 0;
       for (let a in furn) if (furn[a].v) { if (furn[a].multv) v += furn[a].v * furn[a].amount; else v += furn[a].v } if (dom.flsthdrbb) dom.flsthdrbb.innerHTML = v;
       return frn

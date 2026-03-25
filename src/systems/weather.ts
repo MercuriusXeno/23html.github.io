@@ -89,22 +89,22 @@ weather.sstorm.fsnow = true;
 
 weather.storm.ontick = weather.rain.ontick = weather.heavyrain.ontick = weather.drizzle.ontick = function () {
   if (flags.inside === false) {
-    if (effect.wet.active === false && !you.mods.rnprtk) giveEff(you, effect.wet, 5);
-    let f = findbyid(combat.current_m.eff, effect.wet.id);
-    if (!f || f.active === false) giveEff(combat.current_m, effect.wet, 5)
+    if (effect.wet.active === false && !you.mods.rainProtect) giveEff(you, effect.wet, 5);
+    let f = findbyid(combat.currentMonster.eff, effect.wet.id);
+    if (!f || f.active === false) giveEff(combat.currentMonster, effect.wet, 5)
   }
 }
 
 weather.thunder.ontick = function () {
   if (flags.inside === false) {
-    if (effect.wet.active === false && !you.mods.rnprtk) giveEff(you, effect.wet, 5);
-    let f = findbyid(combat.current_m.eff, effect.wet.id);
-    if (!f || f.active === false) giveEff(combat.current_m, effect.wet, 5)
+    if (effect.wet.active === false && !you.mods.rainProtect) giveEff(you, effect.wet, 5);
+    let f = findbyid(combat.currentMonster.eff, effect.wet.id);
+    if (!f || f.active === false) giveEff(combat.currentMonster, effect.wet, 5)
     if (random() < .0009) {
-      stats.lgtstk++;
+      stats.lightningStrikes++;
       msg("You were struck by lightning!", 'black', null, null, 'yellow');
       let d = (200 / (1 + skl.aba.lvl * .05)) << 0;
-      if (you.hp - d < 0) { combat.atkdfty[0] = 1; you.hp = 0; you.onDeath();; giveSkExp(skl.painr, 300); giveSkExp(skl.dth, 100) } else { you.hp -= d; giveSkExp(skl.painr, 170) } giveSkExp(skl.aba, 30);
+      if (you.hp - d < 0) { combat.attackDamageFromYou[0] = 1; you.hp = 0; you.onDeath();; giveSkExp(skl.painr, 300); giveSkExp(skl.dth, 100) } else { you.hp -= d; giveSkExp(skl.painr, 170) } giveSkExp(skl.aba, 30);
       dom.d5_1_1.update();
     }
   }
@@ -203,7 +203,7 @@ export function isWeather(w: any) {
 function onSeasonTick(season: number | string) {
   switch (season) {
     case 4:
-      if (stats.wsnrest > 0) { stats.wsnrest--; return }
+      if (stats.weaponRestCount > 0) { stats.weaponRestCount--; return }
       if (!flags.inside) {
         if (!effect.cold.active) giveEff(you, effect.cold, 5);
         else {
@@ -214,11 +214,11 @@ function onSeasonTick(season: number | string) {
           }
         }
       }
-      if (stats.wsnburst <= 0) {
-        stats.wsnburst = rand(200, 1300)
-        stats.wsnrest = rand(20, 100)
+      if (stats.weaponBurstCount <= 0) {
+        stats.weaponBurstCount = rand(200, 1300)
+        stats.weaponRestCount = rand(20, 100)
       }
-      stats.wsnburst--
+      stats.weaponBurstCount--
       break
   }
 }

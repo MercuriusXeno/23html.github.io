@@ -40,7 +40,7 @@ import { formatw } from '../game/utils-game';
         self.ct_bt1_2a.style.textAlign = 'center';
         self.ct_bt1_2a.style.borderBottom = '1px solid #3e4092';
         if (skl.crft.lvl > 0) {
-          self.ct_bt1_2at = addElement(dom.ct_bt1_2, 'div', 'rptbn'); if (!flags.rptbncgt) {
+          self.ct_bt1_2at = addElement(dom.ct_bt1_2, 'div', 'rptbn'); if (!flags.repeatableCrafting) {
             self.ct_bt1_2at.style.backgroundColor = '#a11'; self.ct_bt1_2at.innerHTML = '';
           } else {
             self.ct_bt1_2at.style.backgroundColor = 'green';
@@ -49,15 +49,15 @@ import { formatw } from '../game/utils-game';
           let tm = (5000 - (skl.crft.lvl * 350 + skl.ptnc.lvl * 150) < 300 ? 300 : (5000 - (skl.crft.lvl * 350 + skl.ptnc.lvl * 150)))
           addDesc(self.ct_bt1_2at, { name: "Enable Repeatable Crafting", desc: function () { let txt = "<span style='color:magenta'>Current speed: </span><span style='color:orange'>" + ((tm / 1000).toFixed(2)) + " sec</span>"; return txt } }, 9);
           self.ct_bt1_2at.addEventListener('click', function () {
-            if (flags.rptbncgt) {
-              clearInterval(timers.rptbncgt); flags.rptbncgtf = false;
+            if (flags.repeatableCrafting) {
+              clearInterval(timers.repeatableCrafting); flags.rptbncgtf = false;
               self.style.backgroundColor = '#a11';
               self.innerHTML = '';
             } else {
               self.style.backgroundColor = 'green';
               self.innerHTML = '‣';
             }
-            flags.rptbncgt = !flags.rptbncgt
+            flags.repeatableCrafting = !flags.repeatableCrafting
           });
         } rcp._t2 = [];
         for (let g = 0; g < rcp.rec.length; g++) {
@@ -152,17 +152,17 @@ import { formatw } from '../game/utils-game';
       })
       dom.ct_bt1_1_mc.addEventListener('click', function () {
         test = make(rcp, true); if (rcp.rec.length === test.y.length && test.o[0] !== 2) safe = true
-        if (flags.rptbncgt) { _fcraft(rcp, safe); global.crrpsat = rcp; clearInterval(timers.rptbncgt); flags.rptbncgtf = true; if (safe) timers.rptbncgt = setInterval(() => { _fcraft(global.crrpsat, safe); giveSkExp(skl.ptnc, .05); refreshRcp(global.curr_r) }, (5000 - (skl.crft.lvl * 350 + skl.ptnc.lvl * 150) < 300 ? 300 : (5000 - (skl.crft.lvl * 350 + skl.ptnc.lvl * 150)))) }
+        if (flags.repeatableCrafting) { _fcraft(rcp, safe); global.crrpsat = rcp; clearInterval(timers.repeatableCrafting); flags.rptbncgtf = true; if (safe) timers.repeatableCrafting = setInterval(() => { _fcraft(global.crrpsat, safe); giveSkExp(skl.ptnc, .05); refreshRcp(global.curr_r) }, (5000 - (skl.crft.lvl * 350 + skl.ptnc.lvl * 150) < 300 ? 300 : (5000 - (skl.crft.lvl * 350 + skl.ptnc.lvl * 150)))) }
         else _fcraft(rcp, safe);
         refreshRcp(rcp);
       });
     }
 
     export function refreshRcp(fl: Recipe) {
-      if (settings.rm === 0 || !settings.rm) {
-        for (let a in global.rec_d) _refreshRcpCnt(global.rec_d[a], global.rec_d[a]._t)
+      if (settings.recipeSortMode === 0 || !settings.recipeSortMode) {
+        for (let a in global.recipesDiscovered) _refreshRcpCnt(global.recipesDiscovered[a], global.recipesDiscovered[a]._t)
       } else {
-        for (let a in global.srcp) _refreshRcpCnt(global.srcp[a], global.srcp[a]._t)
+        for (let a in global.sortedRecipes) _refreshRcpCnt(global.sortedRecipes[a], global.sortedRecipes[a]._t)
       }
       let t2 = fl._t2;
       let test = make(fl, true);
@@ -187,7 +187,7 @@ import { formatw } from '../game/utils-game';
     }
 
     function _fcraft(what: Recipe, safe: boolean) {
-      if (safe) { safe = false; if (flags.sleepmode === true) { msg('You may want to wake up first', 'red'); return }; if (flags.btl === true) { msg('You\'re too busy fighting', 'red'); return }; if (flags.rdng === true) { msg('You\'re too occupied with reading', 'red'); return }; if (flags.busy === true) { msg('You\'re too busy with something else', 'red'); return }; let ntest = make(what, true); for (let g = 0; g < what.rec.length; g++) { if (what.rec.length === ntest.y.length && ntest.o[0] !== 2) safe = true } if (safe) { make(what); stats.crftt++; iftrunkopen(1) } else { if (flags.rptbncgtf) { clearInterval(timers.rptbncgt); flags.rptbncgtf = false; } } }
+      if (safe) { safe = false; if (flags.sleepmode === true) { msg('You may want to wake up first', 'red'); return }; if (flags.btl === true) { msg('You\'re too busy fighting', 'red'); return }; if (flags.rdng === true) { msg('You\'re too occupied with reading', 'red'); return }; if (flags.busy === true) { msg('You\'re too busy with something else', 'red'); return }; let ntest = make(what, true); for (let g = 0; g < what.rec.length; g++) { if (what.rec.length === ntest.y.length && ntest.o[0] !== 2) safe = true } if (safe) { make(what); stats.craftTotal++; iftrunkopen(1) } else { if (flags.rptbncgtf) { clearInterval(timers.repeatableCrafting); flags.rptbncgtf = false; } } }
     }
 
     export function renderSkl(skl: Skill) {

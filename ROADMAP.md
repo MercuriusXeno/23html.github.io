@@ -38,7 +38,7 @@
 - [x] **Step 4.1:** Resolve circular imports — extracted 33+ functions from `main.ts` into 8 `src/game/` modules, redirected all re-exports, eliminated data/ui/systems imports from `main.ts`
 - [x] **Step 4.2:** Extract remaining main.ts exports — moved `giveAction`, `wdrseason`, `ontick`, `recshop`+shop helpers, `giveFurniture`+`renderFurniture` to proper modules. Zero imports from `main.ts` remain. Created `src/systems/loop.ts` and `src/ui/shop.ts`.
 - [x] **Step 4.3:** Unglobal the globals — grouped `global` grab-bag into purpose-specific exports: `data` (19 registries), `gameText`, `flags`, `stats`, `combat`, `settings`. Consuming modules destructure from grouped exports. ~62 misc properties remain in `global` for future cleanup.
-- [ ] **Step 4.4:** Externalize game content — move item/creature/area definitions to JSON data files, hydrate at startup
+- ~~Step 4.4~~ → moved to **Step 8.1**
 - [x] **Step 4.5:** Constructor delegate cleanup — folded ~389 post-construction delegate assignments (`.use`, `.oneq`, `.onuneq`, `.onDeath`, `.onGet`, etc.) into constructor config objects across 8 data modules (equipment, skills, effects, world, actions, furniture, items, creatures)
 - [x] **Step 4.6:** Enable `strict: true` in tsconfig incrementally — fix type errors module by module
   - [x] Enabled `strict: true`, added `@ts-nocheck` to 33 unfixed files (0 typecheck errors)
@@ -78,6 +78,11 @@
 - [ ] **Step 7.2:** Extract monolithic initialization — break up large init blocks (DOM setup, game start) into focused, individually-callable functions
 - [ ] **Step 7.3:** Decouple DOM mutation from game logic — separate state changes from DOM updates in combat, inventory, movement
 - [ ] **Step 7.4:** Create unit-testable interfaces — introduce test harness, mock DOM layer, write first tests for pure game logic (combat math, progression, economy)
+
+## Phase 8: Data Externalization (Future)
+**Goal:** Separate game content from code for easier authoring and modding.
+
+- [ ] **Step 8.1:** Externalize game content — move item/creature/area definitions to JSON data files, hydrate at startup
 
 ## Known Bugs
 

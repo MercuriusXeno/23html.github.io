@@ -54,7 +54,7 @@ export function runEffectors(e: any[]) {
 }
 
 export function inSector(sec: Sector) {
-  for (let a in combat.current_l.sector) if ((combat.current_l.sector as any)[a].id === sec.id) return true
+  for (let a in combat.currentLocation.sector) if ((combat.currentLocation.sector as any)[a].id === sec.id) return true
 }
 
 export function addtosector(sec: Sector, loc: Area) {
@@ -65,7 +65,7 @@ export function addtosector(sec: Sector, loc: Area) {
 
 function mon_gen(crt: Creature) {
   crt.eff = [];
-  global.e_em = [];
+  global.enemyEffects = [];
   empty(dom.d101m);
   let newobj = copy(crt);
   newobj.drop = crt.drop;
@@ -84,12 +84,12 @@ export function area_init(ar: Area) {
       for (let obj in ar.pop) if (rnd >= (ar as any).popc[obj][0] && rnd <= (ar as any).popc[obj][1]) if (!ar.pop[obj].cond || ar.pop[obj].cond() === true) {
         flags.civil = false;
         flags.btl = true;
-        combat.current_z = ar;
+        combat.currentZone = ar;
         let temp = ar.pop[obj];
         let newobj = temp.crt.id === creature.default.id ? creature.default : mon_gen(temp.crt);
         lvlup(newobj, rand(temp.lvlmin - 1, temp.lvlmax - 1));
         //newobj.data.lasthp=newobj.hp;
-        combat.current_m = newobj;
+        combat.currentMonster = newobj;
         update_m();
         dom.d5_1_1m.update();
         if (!!dom.d7m) dom.d7m.update();
@@ -112,45 +112,45 @@ function rfeff(what: Area) {
 }
 
 export function smove(where: Area, lv?: boolean | number) {
-  flags.busy = false; flags.work = false; global.wdwidx = 0;
+  flags.busy = false; flags.work = false; global.windowIndex = 0;
   if (flags.loadstate) return;
   if (!flags.wkdis) { flags.wkdis = true; if (lv !== false) giveSkExp(skl.walk, .25); setTimeout(() => { flags.wkdis = false }, 500) }
   you.eqp[6].dp = you.eqp[6].dp - .08 < 0 ? 0 : you.eqp[6].dp - .08;
   let flg = false;
   let und = []
-  for (let c in combat.current_l.sector) {
+  for (let c in combat.currentLocation.sector) {
     for (let a in where.sector) {
       for (let b in (where.sector as any)[a].group)
-        if ((where.sector as any)[a].group[b] === combat.current_l.id && (where.sector as any)[a].id === (combat.current_l.sector as any)[c].id) flg = true
+        if ((where.sector as any)[a].group[b] === combat.currentLocation.id && (where.sector as any)[a].id === (combat.currentLocation.sector as any)[c].id) flg = true
     } if (flg === false) {
-      (combat.current_l.sector as any)[c].onLeave();
-      deactivateEffectors((combat.current_l.sector as any)[c].effectors);
-      sectors.splice(sectors.indexOf((combat.current_l.sector as any)[c]))
+      (combat.currentLocation.sector as any)[c].onLeave();
+      deactivateEffectors((combat.currentLocation.sector as any)[c].effectors);
+      sectors.splice(sectors.indexOf((combat.currentLocation.sector as any)[c]))
     } else flg = false
   }
-  combat.current_l.onLeave();
-  deactivateEffectors(combat.current_l.effectors as any);
+  combat.currentLocation.onLeave();
+  deactivateEffectors(combat.currentLocation.effectors as any);
   flags.civil = true;
   flags.btl = false;
-  combat.current_z = area.nwh;
+  combat.currentZone = area.nwh;
   dom.d7m.update();
-  stats.smovet++
+  stats.sectorMoveTotal++
   flags.inside = false;
   for (let a in where.sector) { if ((where.sector as any)[a].inside || where.inside) flags.inside = true }
   clr_chs();
   activateEffectors(where.effectors as any);
   where.sl!();
-  combat.current_l = where;
+  combat.currentLocation = where;
   for (let a in sectors) sectors[a].onMove();
   global.current_a.deactivate();
   global.current_a = act.default;
   dom.ct_bt3.style.backgroundColor = 'inherit';
-  for (let a in combat.current_l.sector) if (!scanbyid(sectors, (combat.current_l.sector as any)[a].id)) { sectors.push((combat.current_l.sector as any)[a]); (combat.current_l.sector as any)[a].onEnter(); activateEffectors((combat.current_l.sector as any)[a].effectors) }
-  combat.current_l.onEnter!();
-  rfeff(combat.current_l)
+  for (let a in combat.currentLocation.sector) if (!scanbyid(sectors, (combat.currentLocation.sector as any)[a].id)) { sectors.push((combat.currentLocation.sector as any)[a]); (combat.currentLocation.sector as any)[a].onEnter(); activateEffectors((combat.currentLocation.sector as any)[a].effectors) }
+  combat.currentLocation.onEnter!();
+  rfeff(combat.currentLocation)
   if (flags.btl === false) {
-    combat.current_m = creature.default;
-    combat.current_m.eff = [];
+    combat.currentMonster = creature.default;
+    combat.currentMonster.eff = [];
     empty(dom.d101m);
     dom.d5_1_1m.update();
     update_m();

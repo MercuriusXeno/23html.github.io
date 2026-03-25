@@ -39,14 +39,14 @@ function Effect(this: any, cfg: any) {
 // @ts-ignore: constructor function
 effect.test1 = new Effect({ name: 'Beast killer', desc: 'Attacks against beast type creatures are 30% more effective', type: 1,
   use: function (player: Player) {
-    if (combat.current_m.type === 1) { player.str = Math.round(player.str * 1.3); }
+    if (combat.currentMonster.type === 1) { player.str = Math.round(player.str * 1.3); }
   }
 });
 
 // @ts-ignore: constructor function
 effect.bk1 = new Effect({ type: 1,
   use: function (player: Player) {
-    if (combat.current_m.type === 1) { player.dmlt += .2 }
+    if (combat.currentMonster.type === 1) { player.damageMultiplier += .2 }
   }
 });
 
@@ -75,15 +75,15 @@ effect.psn = new Effect({ id: 1, name: 'Poison', desc: 'Depletes health each sec
         giveSkExp(skl.poisr, this.power * .1);
         dmg *= Math.ceil(1 - skl.poisr.use());
         giveSkExp(skl.painr, this.power * .05);
-        stats.dmgrt += dmg;
+        stats.damageReceivedTotal += dmg;
         if (player.hp - dmg > 0) player.hp -= dmg;
-        else { player.hp = 0; removeEff(this); this.duration = 5; player.onDeath(); combat.atkdfty = [2, 1] }
+        else { player.hp = 0; removeEff(this); this.duration = 5; player.onDeath(); combat.attackDamageFromYou = [2, 1] }
         dom.d5_1_1.update();
       }
     }
     else {
       if (this.target.hp - dmg > 0) this.target.hp -= dmg;
-      else { this.target.hp = 0; removeEff(this, this.target); this.duration = 5; combat.atkdftm = [-1, -1, 1]; this.target.onDeath(player); stats.indkill++ }
+      else { this.target.hp = 0; removeEff(this, this.target); this.duration = 5; combat.attackDamageFromMonster = [-1, -1, 1]; this.target.onDeath(player); stats.indirectKills++ }
       dom.d5_1_1m.update();
     }
     if (this.duration === 0) {
@@ -110,15 +110,15 @@ effect.vnm = new Effect({ id: 2, name: 'Venom', desc: 'Depletes health each seco
         giveSkExp(skl.poisr, this.power * .1);
         dmg *= Math.ceil(1 - (skl.poisr.use() * .3));
         giveSkExp(skl.painr, this.power * .2);
-        stats.dmgrt += dmg;
+        stats.damageReceivedTotal += dmg;
         if (player.hp - dmg > 0) player.hp -= dmg;
-        else { player.hp = 0; removeEff(this); this.duration = 5; player.onDeath(); combat.atkdfty = [2, 2] }
+        else { player.hp = 0; removeEff(this); this.duration = 5; player.onDeath(); combat.attackDamageFromYou = [2, 2] }
         dom.d5_1_1.update();
       }
     }
     else {
       if (this.target.hp - dmg > 0) this.target.hp -= dmg;
-      else { this.target.hp = 0; removeEff(this, this.target); this.duration = 5; combat.atkdftm = [-1, -1, 1]; this.target.onDeath(player); stats.indkill++ }
+      else { this.target.hp = 0; removeEff(this, this.target); this.duration = 5; combat.attackDamageFromMonster = [-1, -1, 1]; this.target.onDeath(player); stats.indirectKills++ }
       dom.d5_1_1m.update();
     }
     if (this.duration === 0) {
@@ -159,10 +159,10 @@ effect.snch = new Effect({ id: 6, name: 'Sun blessing', desc: 'You are blessed b
       player.hpmax += 100;
       player.satmax += 100
       player.int += 5;
-      player.str_d += 5;
-      player.agl_d += 5;
+      player.str_display += 5;
+      player.agl_display += 5;
       player.agl += 5;
-      player.int_d += 5;
+      player.int_display += 5;
       flags.snch = true;
     }
   },
@@ -175,10 +175,10 @@ effect.snch = new Effect({ id: 6, name: 'Sun blessing', desc: 'You are blessed b
         player.hpmax += 100;
         player.satmax += 100
         player.int += 5;
-        player.str_d += 5;
-        player.agl_d += 5;
+        player.str_display += 5;
+        player.agl_display += 5;
         player.agl += 5;
-        player.int_d += 5;
+        player.int_display += 5;
         flags.snch = true;
       }
     }
@@ -191,10 +191,10 @@ effect.snch = new Effect({ id: 6, name: 'Sun blessing', desc: 'You are blessed b
           player.hpmax += 100;
           player.satmax += 100
           player.int += 5;
-          player.str_d += 5;
-          player.agl_d += 5;
+          player.str_display += 5;
+          player.agl_display += 5;
           player.agl += 5;
-          player.int_d += 5;
+          player.int_display += 5;
           flags.snch = true;
           update_d();
         }
@@ -224,10 +224,10 @@ effect.mnch = new Effect({ id: 7, name: 'Moon blessing', desc: 'You are blessed 
       player.hpmax += 100;
       player.satmax += 100
       player.int += 5;
-      player.str_d += 5;
-      player.agl_d += 5;
+      player.str_display += 5;
+      player.agl_display += 5;
       player.agl += 5;
-      player.int_d += 5;
+      player.int_display += 5;
       flags.mnch = true;
     }
   },
@@ -240,10 +240,10 @@ effect.mnch = new Effect({ id: 7, name: 'Moon blessing', desc: 'You are blessed 
         player.hpmax += 100;
         player.satmax += 100
         player.int += 5;
-        player.str_d += 5;
-        player.agl_d += 5;
+        player.str_display += 5;
+        player.agl_display += 5;
         player.agl += 5;
-        player.int_d += 5;
+        player.int_display += 5;
         flags.mnch = true;
       }
     }
@@ -256,10 +256,10 @@ effect.mnch = new Effect({ id: 7, name: 'Moon blessing', desc: 'You are blessed 
           player.hpmax += 100;
           player.satmax += 100
           player.int += 5;
-          player.str_d += 5;
-          player.agl_d += 5;
+          player.str_display += 5;
+          player.agl_display += 5;
           player.agl += 5;
-          player.int_d += 5;
+          player.int_display += 5;
           flags.mnch = true;
           update_d();
         }
@@ -296,7 +296,7 @@ effect.wet = new Effect({ id: 9, name: 'Wet', desc: 'You\'re drenched in water',
   onGive: function (player: Player) { if (this.target.id === player.id) { msg('Your clothes get soaked', 'cyan', null, null, 'blue'); flags.iswet = true } },
   onRemove: function (player: Player) { msg('You dry up', 'orange'); flags.iswet = false },
   use: function (player: Player) {
-    if (flags.inside === false && flags.israin === true && !player.mods.rnprtk) this.duration += 6;
+    if (flags.inside === false && flags.israin === true && !player.mods.rainProtect) this.duration += 6;
     if (this.target.id === player.id) {
       if (player.sat > 0) giveSkExp(skl.abw, .05);
       effect.fplc.active === true ? this.duration -= 15 : this.duration--;
@@ -309,17 +309,17 @@ effect.wet = new Effect({ id: 9, name: 'Wet', desc: 'You\'re drenched in water',
 
 // @ts-ignore: constructor function
 effect.fplc = new Effect({ id: 10, save: false, name: 'Fireplace Aura', desc: 'You\'re feeling the warmth of the fireplace', type: 3, duration: 2, x: '火', c: 'yellow', b: 'crimson',
-  onGive: function (player: Player) { player.mods.ckfre += 1; },
+  onGive: function (player: Player) { player.mods.cookingFire += 1; },
   use: function (player: Player) {
     var fire = findbyid(furn, furniture.frplc.id);
     this.duration = fire.data.fuel;
     giveSkExp(skl.abf, .2);
     if (this.duration === 0) {
       removeEff(this); this.duration = 2;
-      rsort(settings.rm);
+      rsort(settings.recipeSortMode);
     }
   },
-  onRemove: function (player: Player) { player.mods.ckfre -= 1; }
+  onRemove: function (player: Player) { player.mods.cookingFire -= 1; }
 });
 
 // @ts-ignore: constructor function
@@ -336,7 +336,7 @@ effect.cdlt = new Effect({ id: 11, name: 'Candlelight', desc: 'You\'re carrying 
 effect.tst2 = new Effect({ id: 12, name: 'STR+', desc: 'STR+', type: 2, duration: 0, x: 'X', c: 'RED', b: 'WHITE',
   use: function (player: Player) {
     player.str *= .5;
-    player.str_d *= .5
+    player.str_display *= .5
   }
 });
 
@@ -363,12 +363,12 @@ effect.bled = new Effect({ id: 14, name: 'Bleeding', desc: 'Depletes health each
     if (this.target.id === player.id) {
       giveSkExp(skl.bledr, this.power * .1);
       dmg *= Math.ceil(1 - skl.bledr.use());
-      stats.dmgrt += dmg;
+      stats.damageReceivedTotal += dmg;
       if (player.hp - dmg > 0) player.hp -= dmg;
-      else { player.hp = 0; removeEff(this); this.duration = 5; player.onDeath(); combat.atkdfty = [2, 3] }
+      else { player.hp = 0; removeEff(this); this.duration = 5; player.onDeath(); combat.attackDamageFromYou = [2, 3] }
       dom.d5_1_1.update();
     }
-    else { if (this.target.hp - dmg > 0) this.target.hp -= dmg; else { this.target.hp = 0; removeEff(this, this.target); this.duration = 5; this.target.onDeath(player); stats.indkill++ } }
+    else { if (this.target.hp - dmg > 0) this.target.hp -= dmg; else { this.target.hp = 0; removeEff(this, this.target); this.duration = 5; this.target.onDeath(player); stats.indirectKills++ } }
     if (this.duration === 0) { removeEff(this, this.target); this.duration = 5; };
   },
   onClick: function (player: Player) {
@@ -407,7 +407,7 @@ effect.drunk = new Effect({ id: 19, name: 'Inebriated', desc: 'You\'re feeling d
   use: function (player: Player) {
     if (--this.duration === 0) removeEff(this);
   },
-  mods: function (player: Player) { player.agle /= 1 + (.4 - skl.drka.lvl * .03); player.stre *= 1 + (.2 + skl.drka.lvl * .02); player.inte /= 1 + (.5 - skl.drka.lvl * .04) },
+  mods: function (player: Player) { player.agl_eff /= 1 + (.4 - skl.drka.lvl * .03); player.str_eff *= 1 + (.2 + skl.drka.lvl * .02); player.int_eff /= 1 + (.5 - skl.drka.lvl * .04) },
   onGive: function (player: Player) { msg('You\'re feeling tipsy', 'chocolate') },
   onRemove: function (player: Player) { msg('You sober up', 'orange') }
 });
@@ -416,7 +416,7 @@ effect.drunk = new Effect({ id: 19, name: 'Inebriated', desc: 'You\'re feeling d
 effect.virus = new Effect({ id: 20, name: 'Virus', desc: 'You are contaminated', type: 5, duration: -1, x: '⁑', c: 'black', b: 'lightgrey',
   use: function (player: Player) {
   },
-  mods: function (player: Player) { player.agle /= 1.1; player.stre /= 1.1; player.sat -= 70; player.sata -= 70 },
+  mods: function (player: Player) { player.agl_eff /= 1.1; player.str_eff /= 1.1; player.sat -= 70; player.sat_bonus -= 70 },
   onGive: function (player: Player) { msg('You feel bad', 'grey') },
   onRemove: function (player: Player) { msg('You feel better', 'orange') }
 });
@@ -426,8 +426,8 @@ effect.scout = new Effect({ id: 21, name: 'Investigating', desc: 'You\'re explor
 
 // @ts-ignore: constructor function
 effect.invgrt = new Effect({ id: 22, name: 'Invigorate', desc: 'Your joints feel flexible', type: 3, duration: -1, x: 'ℐ', c: 'yellowgreen', b: 'darkgreen',
-  onGive: function (player: Player) { if (!this.active) { msg(this.target.id === player.id ? 'You become nimble' : (this.target.name + ' becomes nimble'), 'green'); this.target.aglm += .3 } },
-  onRemove: function (player: Player) { this.target.aglm -= .3 },
+  onGive: function (player: Player) { if (!this.active) { msg(this.target.id === player.id ? 'You become nimble' : (this.target.name + ' becomes nimble'), 'green'); this.target.agl_mult += .3 } },
+  onRemove: function (player: Player) { this.target.agl_mult -= .3 },
   use: function (player: Player) {
     if (--this.duration === 0) {
       removeEff(this); this.duration = 5;
@@ -446,9 +446,9 @@ effect.fei1 = new Effect({ id: 23, name: 'Fei poisoning', desc: 'Fei impurities 
     giveSkExp(skl.crptr, 1);
     giveSkExp(skl.painr, this.power);
     let dmg = (this.power * 5 * (1 - skl.crptr.lvl * .05)) << 0;
-    stats.dmgrt += dmg;
+    stats.damageReceivedTotal += dmg;
     if (player.hp - dmg > 0) player.hp -= dmg;
-    else { player.hp = 0; removeEff(this); player.onDeath(); combat.atkdfty = [2, 4]; msg("You fail to purify the pill", 'darkgrey') }
+    else { player.hp = 0; removeEff(this); player.onDeath(); combat.attackDamageFromYou = [2, 4]; msg("You fail to purify the pill", 'darkgrey') }
     dom.d5_1_1.update();
     if (this.duration === 0) { removeEff(this, this.target); this.duration = 5; msg("You have successfully purified the pill!", 'lime'); giveExp(this.power * 5000 + (this.power > 1 ? (this.power * .15 * 5000) : 0), true, true, true) }
   }
@@ -456,7 +456,7 @@ effect.fei1 = new Effect({ id: 23, name: 'Fei poisoning', desc: 'Fei impurities 
 
 // @ts-ignore: constructor function
 effect.cold = new Effect({ id: 24, name: 'Cold', desc: 'You\'re freezing', type: 5, duration: 5, x: '冷', c: '#88a', b: '#eef',
-  mods: function (player: Player) { player.agle /= 1.1; player.stre /= 1.1; player.hpe /= 1.1; player.sate /= 1.05 },
+  mods: function (player: Player) { player.agl_eff /= 1.1; player.str_eff /= 1.1; player.hp_eff /= 1.1; player.sat_eff /= 1.05 },
   onGive: function (player: Player) { if (this.target.id === player.id) msg('You feel colder', 'blue', null, null, 'cyan'); },
   onRemove: function (player: Player) { if (this.target.id === player.id) msg('You\'re warming up', 'orange'); },
   use: function (player: Player) {
@@ -464,10 +464,10 @@ effect.cold = new Effect({ id: 24, name: 'Cold', desc: 'You\'re freezing', type:
       giveSkExp(skl.abw, .01);
       giveSkExp(skl.coldr, .01);
       effect.fplc.active === true ? this.duration -= 15 : this.duration--;
-      effect.wet.active ? stats.coldnt += 6 : stats.coldnt += 2;
+      effect.wet.active ? stats.coldDamageTaken += 6 : stats.coldDamageTaken += 2;
       if (effect.fbite.active) effect.fbite.duration += 5;
-      else if (stats.coldnt >= 460) giveEff(player, effect.fbite, 20);
-      if (stats.coldnt > 0) stats.coldnt--
+      else if (stats.coldDamageTaken >= 460) giveEff(player, effect.fbite, 20);
+      if (stats.coldDamageTaken > 0) stats.coldDamageTaken--
     }
     else this.duration--;
     if (this.duration > 600) this.duration = 600;
@@ -495,9 +495,9 @@ effect.smoke = new Effect({ id: 25, name: 'Smoke', desc: 'Thick smoke abstructs 
 
 // @ts-ignore: constructor function
 effect.fbite = new Effect({ id: 26, name: 'Hypothermia', desc: 'Your limbs are suffering from frostbites', type: 5, duration: 5, x: '凍', c: 'red', b: '#aaf',
-  mods: function (player: Player) { player.agle /= 1.15; player.stre /= 1.2; player.hpe /= 1.2; player.sate /= 1.1 },
+  mods: function (player: Player) { player.agl_eff /= 1.15; player.str_eff /= 1.2; player.hp_eff /= 1.2; player.sat_eff /= 1.1 },
   onGive: function (player: Player) { if (this.target.id === player.id) msg('Sharp pain stings you', 'red', null, null, 'cyan') },
-  onRemove: function (player: Player) { if (this.target.id === player.id) { msg('You aren\'t freezing anymore', 'orange'); stats.coldnt = 0 } },
+  onRemove: function (player: Player) { if (this.target.id === player.id) { msg('You aren\'t freezing anymore', 'orange'); stats.coldDamageTaken = 0 } },
   use: function (player: Player) {
     if (this.target.id === player.id) {
       giveSkExp(skl.coldr, .05);

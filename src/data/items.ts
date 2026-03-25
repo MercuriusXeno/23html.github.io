@@ -43,7 +43,7 @@ function Item(this: any, cfg: any) {
 // --- Item factory helpers ---
 
 function foodItem(opts: any) {
-  let stat = opts.stat || 'fooda';
+  let stat = opts.stat || 'foodAttempts';
   let glt = opts.glt || 1;
   let poisonChance = opts.poison || 0;
   let drunk = opts.drunk || null;
@@ -66,7 +66,7 @@ function foodItem(opts: any) {
       stats[stat]++;
       if (drka) giveSkExp(skl.drka, drka);
       if (drunk) {
-        stats.foodal++;
+        stats.foodAlcohol++;
         if (effect.drunk.active === false) giveEff(player, effect.drunk, drunk.dur);
         else effect.drunk.duration += drunk.add;
       }
@@ -94,8 +94,8 @@ function healItem(opts: any) {
     rar: opts.rar || 1,
     use: function (player: Player) {
       player.hp + this.val > player.hpmax ? player.hp = player.hpmax : player.hp += this.val;
-      if (potion) stats.potnst++;
-      stats.medst++;
+      if (potion) stats.potionsTotal++;
+      stats.medicineTotal++;
       this.amount--;
       dom.d5_1_1.update();
       msg('Restored ' + this.val + ' hp', 'lime');
@@ -116,8 +116,8 @@ function expItem(opts: any) {
     rar: opts.rar || 1,
     use: function () {
       giveExp(opts.exp, true, true, true);
-      stats.plst++;
-      stats.medst++;
+      stats.pillsTaken++;
+      stats.medicineTotal++;
       if (opts.extra) opts.extra();
       this.amount--;
     }
@@ -142,7 +142,7 @@ healItem({ key: 'hrb1', id: 3001, name: 'Cure Grass', val: 7, desc: 'Herb with m
 // @ts-ignore: constructor function
 item.atd1 = new Item({ id: 3002, name: 'Herbal Antidote', desc: 'Bundle of certain common herbs, mixed together. Tastes incredibly bitter, but helps to detoxify blood from containments' + dom.dseparator + '<span style=\'color:lime\'> Neautralizes the effects of weak poisons </span>', stype: 4,
   use: function () {
-    stats.medst++
+    stats.medicineTotal++
     if (effect.psn.active === true) { if (effect.psn.duration - 30 <= 0) { removeEff(effect.psn); msg('You feel better', 'lime') } else { effect.psn.duration -= 30; msg('You feel a little better', 'lightgreen') } } else msg('Tastes like medicine..', 'lightblue');
     this.amount--;
   }
@@ -151,7 +151,7 @@ item.atd1 = new Item({ id: 3002, name: 'Herbal Antidote', desc: 'Bundle of certa
 // @ts-ignore: constructor function
 item.psnwrd = new Item({ id: 3003, name: 'Poison Ward', desc: 'Solution developed to protect residents from diseases during times of plague' + dom.dseparator + '<span style=\'color:lime\'> Grants invulnerability to poisons for a few hours </span>', stype: 4, rar: 2,
   use: function (player: Player) {
-    stats.medst++
+    stats.medicineTotal++
     if (effect.psnwrd.active === false) giveEff(player, effect.psnwrd, 600);
     else effect.psnwrd.duration = 600;
     this.amount--;
@@ -163,7 +163,7 @@ healItem({ key: 'hlpd', id: 3004, name: 'Low-grade Healing Powder', val: 16, des
 // @ts-ignore: constructor function
 item.smm = new Item({ id: 3005, name: 'Stomach Medicine', desc: 'Mixture of ginger, bittervine,  and other herbs. Destroys toxins in one\'s body' + dom.dseparator + '<span style=\'color:lime\'> Alliviates food poisoning </span>', stype: 4,
   use: function () {
-    stats.medst++
+    stats.medicineTotal++
     if (effect.fpn.active === true) { if (effect.fpn.duration - 30 <= 0) { removeEff(effect.fpn); msg('You feel better', 'lime') } else { effect.fpn.duration -= 30; msg('You feel a little better', 'lightgreen') } } else msg('Tastes like medicine..', 'lightblue');
     this.amount--;
   }
@@ -180,7 +180,7 @@ item.lsrd = new Item({ id: 3009, name: 'Life Shard', desc: 'A fragment of living
   use: function (player: Player) {
     player.hpmax += 2;
     player.hp += 2;
-    player.hpa += 2;
+    player.hp_bonus += 2;
     dom.d5_1_1.update();
     msg('HP increased by +2 permanently', 'hotpink')
     this.amount--;
@@ -231,7 +231,7 @@ item.bdgh = new Item({ id: 3013, name: 'Bandage', desc: 'Clean piece of thin stu
 // @ts-ignore: constructor function
 item.amshrm = new Item({ id: 3014, name: 'Asura Mushroom', desc: 'The ultimate mushroom of the mushroom world. Eating it makes you feel a mysterious kind of vitality' + dom.dseparator + '<span style="color: springgreen">Permanently increases STR by +5</span>', stype: 4, rar: 4,
   use: function (player: Player, x: any) {
-    player.stra += 5;
+    player.str_bonus += 5;
     msg('You feel the surge of strength!', 'crimson');
     msg('STR +5!', 'lime');
     player.stat_r();
@@ -271,7 +271,7 @@ item.incsk = new Item({ id: 3017, name: 'Incense Stick', desc: 'A stick of aroma
 // @ts-ignore: constructor function
 item.sp0a = new Item({ id: 3018, name: 'Spirit Opening Powder', desc: 'Powder refined from blood of the wyrm. Has potential to improve internal energy' + dom.dseparator + '<span style=\'color:orange\'> Grants +95000 EXP </span><br><span style=\'color:deeppink\'>EXP Gain +1%</span>', stype: 4, rar: 2,
   use: function (player: Player) {
-    stats.medst++
+    stats.medicineTotal++
     giveExp(95000, true, true, true);
     player.exp_t += .01;
     this.amount--;
@@ -282,11 +282,11 @@ item.sp0a = new Item({ id: 3018, name: 'Spirit Opening Powder', desc: 'Powder re
 item.smkbmb = new Item({ id: 3019, name: 'Smoke Bomb', desc: 'Pellets that release thick smog when crushed. Can create a smokescreen to help you escape from danger' + dom.dseparator + '<span style=\'color:springgreen\'>Bypasses current enemy</span>', stype: 4,
   use: function () {
     if (flags.civil === true && flags.btl === false) { msg('You\'re not in combat!', 'red'); return }
-    if (combat.current_z.size === 1 || combat.current_z.size === 0 || combat.current_z.isboss) { msg('You can\'t pass this enemy!', 'red'); return }
+    if (combat.currentZone.size === 1 || combat.currentZone.size === 0 || combat.currentZone.isboss) { msg('You can\'t pass this enemy!', 'red'); return }
     else {
       clearInterval(timers.btl); clearInterval(timers.btl2); msg('*Puff*', 'black', null, null, 'lightgrey'); flags.smkactv = true;
-      combat.current_z.size--;
-      area_init(combat.current_z);
+      combat.currentZone.size--;
+      area_init(combat.currentZone);
       dom.d7m.update();
       this.amount--;
     }
@@ -319,9 +319,9 @@ item.svial1 = new Item({ id: 3020, name: 'Skeleton Vial', desc: 'Summons a lvl 1
 // @ts-ignore: constructor function
 item.mpwdr = new Item({ id: 3021, name: 'Monster Powder', desc: 'Dried and grounded sunbloom mixed with red salts, it emits aura often mistaken for soul energy that attracts nearby creatures<br>' + dom.dseparator + '<span style=\'color:seagreen\'>Increases area size by 5</span>', stype: 4,
   use: function () {
-    if (combat.current_z.protected || combat.current_z.id <= 101 || combat.current_z.size <= 1) { msg('Unable to use it here!', 'red'); return }
+    if (combat.currentZone.protected || combat.currentZone.id <= 101 || combat.currentZone.size <= 1) { msg('Unable to use it here!', 'red'); return }
     msg('You spread some powder on the ground', 'lime', null, null, 'brown')
-    combat.current_z.size += 5;
+    combat.currentZone.size += 5;
     dom.d7m.update();
     this.amount--;
   }
@@ -331,7 +331,7 @@ item.mpwdr = new Item({ id: 3021, name: 'Monster Powder', desc: 'Dried and groun
 item.smbpll = new Item({ id: 3022, name: 'Slumber Pill', desc: 'Pill with a strong sedative effect. Normally used by sick and old people to treat insomnia, if they can afford it. Has other uses if you are creative enough' + dom.dseparator + '<span style=\'color:lightgrey\'>Makes you sleep through 18 hours in an instant</span>', stype: 4,
   use: function (player: Player, x: any) {
     if (flags.btl || flags.rdng || flags.isshop || flags.busy || flags.work) { msg('You can\'t sleep now!', 'red'); return } else {
-      let b = .1; let s = HOUR * 18; if (!flags.sleepmode) giveEff(player, effect.slep); else if (combat.current_l.id === 112) b += home.bed.sq; stats.plst++
+      let b = .1; let s = HOUR * 18; if (!flags.sleepmode) giveEff(player, effect.slep); else if (combat.currentLocation.id === 112) b += home.bed.sq; stats.pillsTaken++
       for (let a = 0; a < s; a++) { giveSkExp(skl.sleep, .1); ontick() } if (!flags.sleepmode) removeEff(effect.slep);
     }
     this.amount--;
@@ -341,10 +341,10 @@ item.smbpll = new Item({ id: 3022, name: 'Slumber Pill', desc: 'Pill with a stro
 // @ts-ignore: constructor function
 item.lifedr = new Item({ id: 3023, name: 'Life Drop', desc: 'A single drop of revitalizing liquid. Consuming even such a meager amount has a miraclous effect on the lifeforce of a mortal' + dom.dseparator + '<span style=\'color:hotpink\'> Increases HP by +40 permanently </span><br><span style=\'color:lime\'>HP growth rate +2%</span>', stype: 4, rar: 2,
   use: function (player: Player) {
-    player.stat_p[0] += .03;
+    player.statPotential[0] += .03;
     player.hpmax += 40;
     player.hp += 40;
-    player.hpa += 40;
+    player.hp_bonus += 40;
     dom.d5_1_1.update();
     msg('HP increased by +40 permanently', 'hotpink');
     msg('HP potential grows!', 'pink')
@@ -357,7 +357,7 @@ item.mnblm = new Item({ id: 3024, name: 'Moonbloom', desc: 'A yellow flower whic
   use: function (player: Player) {
     player.satmax += 2;
     player.sat += 2;
-    player.sata += 2;
+    player.sat_bonus += 2;
     dom.d5_3_1.update();
     msg('SAT increased by +2 permanently', 'hotpink');
     this.amount--;
@@ -375,7 +375,7 @@ item.lsstn = new Item({ id: 3028, name: 'Life Stone', desc: 'Life vessel that lo
   use: function (player: Player) {
     player.hpmax += 25;
     player.hp += 25;
-    player.hpa += 25;
+    player.hp_bonus += 25;
     dom.d5_1_1.update();
     msg('HP increased by +25 permanently', 'hotpink')
     this.amount--;
@@ -397,14 +397,14 @@ item.feip1 = new Item({ id: 3030, name: 'Fei Pill', desc: 'When an alchemist mis
   use: function (player: Player) {
     giveEff(player, effect.fei1, 60, 1);
     this.amount--;
-    stats.plst++
+    stats.pillsTaken++
   }
 });
 
 // @ts-ignore: constructor function
 item.stthbm1 = new Item({ id: 3031, name: 'Morgia', desc: 'Herb of might. This fiery herb is rumored to improve muscle density' + dom.dseparator + '<span style="color: springgreen">Permanently increases STR by +1</span>', stype: 4, rar: 2,
   use: function (player: Player, x: any) {
-    player.stra += 1;
+    player.str_bonus += 1;
     msg('You feel the surge of strength!', 'crimson');
     msg('STR +1', 'lime');
     player.stat_r();
@@ -416,7 +416,7 @@ item.stthbm1 = new Item({ id: 3031, name: 'Morgia', desc: 'Herb of might. This f
 // @ts-ignore: constructor function
 item.stthbm2 = new Item({ id: 3032, name: 'Springsweed', desc: 'Herb of swiftness. Loved by Serpents, this herb slightly raises one\'s reaction time' + dom.dseparator + '<span style="color: springgreen">Permanently increases SPD by +1</span>', stype: 4, rar: 2,
   use: function (player: Player, x: any) {
-    player.spda += 1;
+    player.spd_bonus += 1;
     msg('You feel the surge of strength!', 'crimson');
     msg('SPD +1', 'lime');
     player.stat_r();
@@ -428,7 +428,7 @@ item.stthbm2 = new Item({ id: 3032, name: 'Springsweed', desc: 'Herb of swiftnes
 // @ts-ignore: constructor function
 item.stthbm3 = new Item({ id: 3033, name: 'Clearbane', desc: 'Herb of clarity. This herb is often used in making of high quality incense' + dom.dseparator + '<span style="color: springgreen">Permanently increases INT by +1</span>', stype: 4, rar: 2,
   use: function (player: Player, x: any) {
-    player.inta += 1;
+    player.int_bonus += 1;
     msg('You feel the surge of strength!', 'crimson');
     msg('INT +1', 'lime');
     player.stat_r();
@@ -440,7 +440,7 @@ item.stthbm3 = new Item({ id: 3033, name: 'Clearbane', desc: 'Herb of clarity. T
 // @ts-ignore: constructor function
 item.stthbm4 = new Item({ id: 3034, name: 'Drakevine', desc: 'Herb of flexibility. There are rumors of an old hermit growing these herbs under the hidden mountain' + dom.dseparator + '<span style="color: springgreen">Permanently increases AGL by +1</span>', stype: 4, rar: 2,
   use: function (player: Player, x: any) {
-    player.agla += 1;
+    player.agl_bonus += 1;
     msg('You feel the surge of strength!', 'crimson');
     msg('AGL +1', 'lime');
     player.stat_r();
@@ -452,7 +452,7 @@ item.stthbm4 = new Item({ id: 3034, name: 'Drakevine', desc: 'Herb of flexibilit
 // @ts-ignore: constructor function
 item.bmsmktt = new Item({ id: 3035, name: 'Smoke Pellet Cluster', desc: 'Repurposed smoke bomb, made by concentrating multiple volatile components together, making the moke several times more hazardous, but not enough to cause real damage to a living person. Since the ignition period from such a modification is much longer, it has fewer uses than a regular smoke bomb', stype: 4,
   use: function () {
-    if (combat.current_l.id !== 111) { msg('This isn\'t the best place to use this', 'red'); return }
+    if (combat.currentLocation.id !== 111) { msg('This isn\'t the best place to use this', 'red'); return }
     area.hmbsmnt.size = 0;
     msg('You toss a cluster down your basement and hear a distant shrill', 'yellow')
     dom.d_lctt.innerHTML += '<span style="color:grey;font-size:1.2em">&nbsp煙<span>'
@@ -480,7 +480,7 @@ foodItem({ key: 'potat', id: 4, name: 'Potato', val: 7, desc: 'Universal vegetab
 
 foodItem({ key: 'eggn', id: 5, name: 'Egg', val: 4, desc: 'Whole chicken egg, very nutritious', glt: 2 });
 
-foodItem({ key: 'mlkn', id: 6, name: 'Milk', val: 8, desc: 'Power potion for your bones', glt: 2, stat: 'foodb' });
+foodItem({ key: 'mlkn', id: 6, name: 'Milk', val: 8, desc: 'Power potion for your bones', glt: 2, stat: 'foodBenefit' });
 
 foodItem({ key: 'rwmt1', id: 7, name: 'Raw Meat', val: 11, desc: 'Edible part of some animal, has to be cooked before consumption', glt: 6, poison: 0.15,
   onChange: function (x: any, y: any) { if (y) return [item.rtnmt, x]; giveItem(item.rtnmt, x) },
@@ -554,31 +554,31 @@ foodItem({ key: 'htbrwd', id: 37, name: 'Herbal Tea', val: 16, desc: 'Healthy be
 
 foodItem({ key: 'segg', id: 38, name: 'Scrambled Eggs', val: 20, desc: 'Fluffy and delicious scrambled eggs', glt: 7 });
 
-foodItem({ key: 'irntl', id: 39, name: 'Indigo Rantil', val: 31, desc: 'Wierd wine mixed with whiskey and rum', glt: 17, stat: 'foodb', rar: 2, drka: 21, drunk: { dur: 130, add: 75 } });
+foodItem({ key: 'irntl', id: 39, name: 'Indigo Rantil', val: 31, desc: 'Wierd wine mixed with whiskey and rum', glt: 17, stat: 'foodBenefit', rar: 2, drka: 21, drunk: { dur: 130, add: 75 } });
 
-foodItem({ key: 'wine1', id: 40, name: 'One-year Wine', val: 12, desc: 'Barely reached the standard, maybe you should keep it for longer', glt: 10, stat: 'foodb', drka: 5, drunk: { dur: 60, add: 35 } });
+foodItem({ key: 'wine1', id: 40, name: 'One-year Wine', val: 12, desc: 'Barely reached the standard, maybe you should keep it for longer', glt: 10, stat: 'foodBenefit', drka: 5, drunk: { dur: 60, add: 35 } });
 
-foodItem({ key: 'wines1', id: 41, name: 'Valens', val: 100, desc: 'A Celtic red wine with delicate, yet robust, flavour', glt: 100, stat: 'foodb', rar: 4 });
+foodItem({ key: 'wines1', id: 41, name: 'Valens', val: 100, desc: 'A Celtic red wine with delicate, yet robust, flavour', glt: 100, stat: 'foodBenefit', rar: 4 });
 
-foodItem({ key: 'wines2', id: 42, name: 'Prudens', val: 100, desc: 'The most elegant red wine, with gentle flavour and bouquet', glt: 100, stat: 'foodb', rar: 4 });
+foodItem({ key: 'wines2', id: 42, name: 'Prudens', val: 100, desc: 'The most elegant red wine, with gentle flavour and bouquet', glt: 100, stat: 'foodBenefit', rar: 4 });
 
-foodItem({ key: 'wines3', id: 43, name: 'Volare', val: 100, desc: 'A Celtic white wine known for its honey-like fragrance', glt: 100, stat: 'foodb', rar: 4 });
+foodItem({ key: 'wines3', id: 43, name: 'Volare', val: 100, desc: 'A Celtic white wine known for its honey-like fragrance', glt: 100, stat: 'foodBenefit', rar: 4 });
 
-foodItem({ key: 'wines4', id: 44, name: 'Audentia', val: 100, desc: 'A Celtic quality sweet wine allowed to age to perfection', glt: 100, stat: 'foodb', rar: 4 });
+foodItem({ key: 'wines4', id: 44, name: 'Audentia', val: 100, desc: 'A Celtic quality sweet wine allowed to age to perfection', glt: 100, stat: 'foodBenefit', rar: 4 });
 
-foodItem({ key: 'wines5', id: 45, name: 'Virtus', val: 100, desc: 'A sparkling wine made from a blend of three grapes', glt: 100, stat: 'foodb', rar: 4 });
+foodItem({ key: 'wines5', id: 45, name: 'Virtus', val: 100, desc: 'A sparkling wine made from a blend of three grapes', glt: 100, stat: 'foodBenefit', rar: 4 });
 
 foodItem({ key: 'acrn', id: 46, name: 'Acorn', val: 4, desc: 'A handful of acorns, still in their shells. Squirrels like them, but they\'re not very good for you to eat in this state', glt: 6, poison: 0.4 });
 
-foodItem({ key: 'wine2', id: 47, name: 'Three-year Wine', val: 24, desc: 'Delicious wine kept for more than 3 years', glt: 17, stat: 'foodb', rar: 2, drka: 12, drunk: { dur: 90, add: 45 } });
+foodItem({ key: 'wine2', id: 47, name: 'Three-year Wine', val: 24, desc: 'Delicious wine kept for more than 3 years', glt: 17, stat: 'foodBenefit', rar: 2, drka: 12, drunk: { dur: 90, add: 45 } });
 
-foodItem({ key: 'winec1', id: 48, name: 'Cheap Red Wine', val: 8, desc: 'Very rough wine made from fermeted fruit', glt: 9, stat: 'foodb', drka: 5, drunk: { dur: 55, add: 33 } });
+foodItem({ key: 'winec1', id: 48, name: 'Cheap Red Wine', val: 8, desc: 'Very rough wine made from fermeted fruit', glt: 9, stat: 'foodBenefit', drka: 5, drunk: { dur: 55, add: 33 } });
 
-foodItem({ key: 'winec2', id: 49, name: 'Cheap White Wine', val: 12, desc: 'Light wine, prepared only recently', glt: 10, stat: 'foodb', drka: 8, drunk: { dur: 60, add: 35 } });
+foodItem({ key: 'winec2', id: 49, name: 'Cheap White Wine', val: 12, desc: 'Light wine, prepared only recently', glt: 10, stat: 'foodBenefit', drka: 8, drunk: { dur: 60, add: 35 } });
 
-foodItem({ key: 'ske', id: 50, name: 'Sake', val: 31, desc: 'Eastern rice wine, popular past-time drink', glt: 25, stat: 'foodb', rar: 2, drka: 25, drunk: { dur: 180, add: 115 } });
+foodItem({ key: 'ske', id: 50, name: 'Sake', val: 31, desc: 'Eastern rice wine, popular past-time drink', glt: 25, stat: 'foodBenefit', rar: 2, drka: 25, drunk: { dur: 180, add: 115 } });
 
-foodItem({ key: 'pske', id: 51, name: 'Premium Sake', val: 51, desc: 'Rich Sake with strong foundation, flavorful and fragnant. Valued in high society for its presige status', glt: 65, stat: 'foodb', rar: 3, drka: 150, drunk: { dur: 380, add: 190 } });
+foodItem({ key: 'pske', id: 51, name: 'Premium Sake', val: 51, desc: 'Rich Sake with strong foundation, flavorful and fragnant. Valued in high society for its presige status', glt: 65, stat: 'foodBenefit', rar: 3, drka: 150, drunk: { dur: 380, add: 190 } });
 
 foodItem({ key: 'cbun1', id: 52, name: 'Steamed Bun', val: 19, desc: 'Plain round bun, very soft and filling', glt: 4 });
 
@@ -735,11 +735,11 @@ foodItem({ key: 'rmn3', id: 128, name: 'Tonkotsu Ramen', val: 48, desc: 'This de
 
 foodItem({ key: 'sqdyak', id: 129, name: 'Squid Yakisoba', val: 43, desc: 'Tender, delicious yakisoba noodles are combined with tasty squid making a filling and enjoyable meal', glt: 7 });
 
-foodItem({ key: 'mtbeer', id: 130, name: 'Malt Beer', val: 18, desc: 'This beer has a pleasant aftertaste and depth of flavor that only 100% barley malts can provide', glt: 18, stat: 'foodb', drka: 8, drunk: { dur: 40, add: 20 } });
+foodItem({ key: 'mtbeer', id: 130, name: 'Malt Beer', val: 18, desc: 'This beer has a pleasant aftertaste and depth of flavor that only 100% barley malts can provide', glt: 18, stat: 'foodBenefit', drka: 8, drunk: { dur: 40, add: 20 } });
 
-foodItem({ key: 'dbeer', id: 131, name: 'Draft Beer', val: 15, desc: 'A medium-sized mug of draft beet that many like to start with. Its creamy head and crisp taste are perfect after a day of hard work ', glt: 19, stat: 'foodb', drka: 6, drunk: { dur: 52, add: 31 } });
+foodItem({ key: 'dbeer', id: 131, name: 'Draft Beer', val: 15, desc: 'A medium-sized mug of draft beet that many like to start with. Its creamy head and crisp taste are perfect after a day of hard work ', glt: 19, stat: 'foodBenefit', drka: 6, drunk: { dur: 52, add: 31 } });
 
-foodItem({ key: 'ootee', id: 132, name: 'Oolong Tea', val: 25, desc: 'Oolong tea, famous for its thick, rich flavor and light aftertaste, is the quintessential non-alcoholic drink. Enjoy its exquisite fragrance and flavor', glt: 3, stat: 'foodb' });
+foodItem({ key: 'ootee', id: 132, name: 'Oolong Tea', val: 25, desc: 'Oolong tea, famous for its thick, rich flavor and light aftertaste, is the quintessential non-alcoholic drink. Enjoy its exquisite fragrance and flavor', glt: 3, stat: 'foodBenefit' });
 
 foodItem({ key: 'krcsal', id: 133, name: 'Kotchori Salad', val: 49, desc: 'Kotchori salad brimming with eastern bunching onions! The peppery dressing drizzled on top and pungent onion flavor match all manners of drings', glt: 6 });
 
@@ -775,11 +775,11 @@ foodItem({ key: 'onign3', id: 147, name: 'Salmon Onigiri', val: 38, desc: 'Old s
 
 foodItem({ key: 'syakis', id: 148, name: 'Special Yakisoba', val: 50, desc: 'Yakisoba with cabbage and pork. The smell of the sauce is mouth-watering', glt: 9 });
 
-foodItem({ key: 'kkbin', id: 149, name: 'Kakubin', val: 25, desc: 'The most popular whisky in the East. It has a sweet aroma and is thick on the palate, with a smooth, rich taste', glt: 21, stat: 'foodb', drka: 11, drunk: { dur: 80, add: 50 } });
+foodItem({ key: 'kkbin', id: 149, name: 'Kakubin', val: 25, desc: 'The most popular whisky in the East. It has a sweet aroma and is thick on the palate, with a smooth, rich taste', glt: 21, stat: 'foodBenefit', drka: 11, drunk: { dur: 80, add: 50 } });
 
-foodItem({ key: 'blsho', id: 150, name: 'Barley Shochu', val: 39, desc: 'This barley shochy has a dry state popular with experienced drinkers', glt: 23, stat: 'foodb', drka: 21, drunk: { dur: 72, add: 36 } });
+foodItem({ key: 'blsho', id: 150, name: 'Barley Shochu', val: 39, desc: 'This barley shochy has a dry state popular with experienced drinkers', glt: 23, stat: 'foodBenefit', drka: 21, drunk: { dur: 72, add: 36 } });
 
-foodItem({ key: 'scwhi', id: 151, name: 'Scotch Whisky', val: 40, desc: 'This whisky has a high alcohol content, so be careful not to drink too much', glt: 30, stat: 'foodb', drka: 24, drunk: { dur: 140, add: 70 } });
+foodItem({ key: 'scwhi', id: 151, name: 'Scotch Whisky', val: 40, desc: 'This whisky has a high alcohol content, so be careful not to drink too much', glt: 30, stat: 'foodBenefit', drka: 24, drunk: { dur: 140, add: 70 } });
 
 foodItem({ key: 'cham1', id: 152, name: 'Satoyu Champon', val: 45, desc: 'The flavors of Satoyu condensed into one dish. The rich soup is made with fresh vegetables and a wealth of of ohter ingredients', glt: 8 });
 
@@ -813,7 +813,7 @@ foodItem({ key: 'ramen4', id: 166, name: 'Negi Chashu Ramen', val: 66, desc: 'Th
 
 foodItem({ key: 'bffbl', id: 167, name: 'Beef Bowl', val: 48, desc: 'A hearty beef bowl made with top quality eastern beef', glt: 7 });
 
-foodItem({ key: 'sposs', id: 168, name: 'Sweet Potato Shochu', val: 33, desc: 'A sweet potato shochu that succeeds in bringing out the flavors of its ingredients', glt: 26, stat: 'foodb', drka: 20, drunk: { dur: 92, add: 41 } });
+foodItem({ key: 'sposs', id: 168, name: 'Sweet Potato Shochu', val: 33, desc: 'A sweet potato shochu that succeeds in bringing out the flavors of its ingredients', glt: 26, stat: 'foodBenefit', drka: 20, drunk: { dur: 92, add: 41 } });
 
 foodItem({ key: 'soban1', id: 169, name: 'Soba in Hot Broth', val: 40, desc: 'This house classic features freshly-boiled soba noodles served in a piping hot homemade soup', glt: 6 });
 
@@ -922,12 +922,12 @@ foodItem({ key: 'meffg', id: 218, name: 'Meat Effigy', val: 28, desc: 'Strange e
 foodItem({ key: 'rtnmt', id: 219, name: 'Rotten Meat', val: 4, desc: 'Greenish grey organic mass that was once something edible, now isn\'t good for pretty much anything', glt: 13, rar: 0, poison: 0.45 });
 item.rtnmt.rot = [.4, .8, .3, .6];
 
-foodItem({ key: 'appljc', id: 220, name: 'Apple Juice', val: 18, desc: 'Freshly-squeezed from real apples!', glt: 3, stat: 'foodb' });
+foodItem({ key: 'appljc', id: 220, name: 'Apple Juice', val: 18, desc: 'Freshly-squeezed from real apples!', glt: 3, stat: 'foodBenefit' });
 
 foodItem({ key: 'frtplp', id: 221, name: 'Juice Pulp', val: 9, desc: 'Left-over byproduct from juicing the fruit.  Not very tasty, but contains a lot of healthy fiber', glt: 4 });
 item.frtplp.rot = [.05, .15, .05, .15];
 
-foodItem({ key: 'klngbr', id: 222, name: 'Kaoliang', val: 52, desc: 'Strong traditional liquor with a tangy taste and important role during social gatherings', glt: 35, stat: 'foodb', drka: 25, drunk: { dur: 80, add: 40 } });
+foodItem({ key: 'klngbr', id: 222, name: 'Kaoliang', val: 52, desc: 'Strong traditional liquor with a tangy taste and important role during social gatherings', glt: 35, stat: 'foodBenefit', drka: 25, drunk: { dur: 80, add: 40 } });
 
 
 // @ts-ignore: constructor function
@@ -956,7 +956,7 @@ item.sstraw = new Item({ id: 5002, name: 'Strand Of Straw', desc: 'This fell out
 // @ts-ignore: constructor function
 item.d6 = new Item({ id: 5003, name: 'Red Die', desc: 'Die with 6 sides. Brings luck', stype: 5, rar: 2,
   use: function () {
-    let r = rand(1, 6); stats.die_p += r; stats.die_p_t += r;
+    let r = rand(1, 6); stats.deathsInCombat += r; stats.deathsInCombatTotal += r;
     msg('You roll <span style="color:red">' + r + '</span>');
     skl.dice.use(1);
     if (random() < .05) {
@@ -1541,7 +1541,7 @@ item.bstr = new Item({ id: 9007, name: '"Animalis Vicipaedia"', rar: 2, desc: 'H
         msg('Bestiary Unlocked!', 'cyan');
         this.data.read = false;
         this.amount--;
-        flags.bstu = true;
+        flags.bestiaryUnlocked = true;
         this.data.finished = true;
         if (dom.jlbrw1s2) dom.jlbrw1s2.innerHTML = 'B E S T I A R Y'
       } else chss.trd.sl(this);
@@ -1704,7 +1704,7 @@ item.shppmf = new Item({ id: 9015, name: '"Pamphlet"', desc: 'This was shoved on
         flags.mkplc1u = true;
         this.data.finished = true;
         msg('Right, you could go to the marketplace', 'lime');
-        if (combat.current_l.id === chss.lsmain1.id) smove(chss.lsmain1, false);
+        if (combat.currentLocation.id === chss.lsmain1.id) smove(chss.lsmain1, false);
         this.data.read = false;
         this.amount--;
       } else chss.trd.sl(this);
@@ -1884,7 +1884,7 @@ item.pdeedhs = new Item({ id: 9025, name: '"Property Deed"', rar: 2, desc: 'This
     if (canRead()) {
       if (this.data.timep >= this.cmax) {
         flags.hsedchk = true;
-        if (combat.current_l.id === 111) smove(chss.home, false)
+        if (combat.currentLocation.id === 111) smove(chss.home, false)
         this.data.read = false;
         this.amount--;
       } else chss.trd.sl(this);

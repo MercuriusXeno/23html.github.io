@@ -3,10 +3,10 @@ import { dom, global, settings, flags } from '../state';
 import { addDesc } from './descriptions';
 
     export function msg(txt: string, c?: string, dsc?: any, type?: number | null, bc?: string, chck?: any): void {
-      if (flags.m_freeze === false && flags.loadstate === false) {
+      if (flags.monsterFreeze === false && flags.loadstate === false) {
         while (dom.gmsgs.children[1].children.length > settings.msgs_max - 1) dom.gmsgs.children[1].removeChild(dom.gmsgs.children[1].children[0]);
         let msg = addElement(dom.mscont, 'div', null, 'msg');
-        if (flags.msgtm) {
+        if (flags.messageTime) {
           let now = new Date();
           let g = addElement(msg, 'small');
           g.innerHTML = '[' + (now.getHours() < 10 ? ('0' + now.getHours()) : now.getHours()) + ':' + (now.getMinutes() < 10 ? ('0' + now.getMinutes()) : now.getMinutes()) + ':' + (now.getSeconds() < 10 ? ('0' + now.getSeconds()) : now.getSeconds()) + ']'
@@ -20,8 +20,8 @@ import { addDesc } from './descriptions';
         else mtxt.innerHTML = txt;
         dom.mscont.scrollTop = dom.mscont.scrollHeight;
         global.lastmsg = msg.innerHTML;
-        //if(true) {if(msg.innerHTML==global.lstmsg) msg.innerHTML=global.lastmsg+'('+(++global.lastmsgc)+')';
-        //  else {global.lastmsg=msg.innerHTML;global.lastmsgc=0;}} else global.lastmsg=msg.innerHTML;
+        //if(true) {if(msg.innerHTML==global.lstmsg) msg.innerHTML=global.lastmsg+'('+(++global.lastMessageCount)+')';
+        //  else {global.lastmsg=msg.innerHTML;global.lastMessageCount=0;}} else global.lastmsg=msg.innerHTML;
       }
     }
 
@@ -36,7 +36,7 @@ import { addDesc } from './descriptions';
 
 
     export function msg_add(txt: string, c?: string, bc?: string, shd?: string): void {
-      if (flags.m_freeze === false && flags.loadstate === false) {
+      if (flags.monsterFreeze === false && flags.loadstate === false) {
         let bac = '';
         let b = '';
         if (bc) bac = 'background-color:' + bc;

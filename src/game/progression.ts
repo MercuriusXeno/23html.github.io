@@ -12,26 +12,26 @@ import { formatw } from './utils-game';
 
     export function lvlup(p: Combatant, t?: number) {
       if (t === 0) {
-        p.hp = p.hp_r;
-        p.str = p.str_r;
-        p.agl = p.agl_r;
-        p.spd = p.spd_r;
+        p.hp = p.hp_base;
+        p.str = p.str_base;
+        p.agl = p.agl_base;
+        p.spd = p.spd_base;
       } else {
         t = t || 1
         p.lvl += t;
-        let sb = randf(t * p.stat_p[1], 2 * t * p.stat_p[1]);
-        p.str_r += sb;
-        let sa = randf(t * p.stat_p[2], 2 * t * p.stat_p[2]);
-        p.agl_r += sa;
-        let si = randf(t * p.stat_p[3], 2 * t * p.stat_p[3]);
-        p.int_r += si;
+        let sb = randf(t * p.statPotential[1], 2 * t * p.statPotential[1]);
+        p.str_base += sb;
+        let sa = randf(t * p.statPotential[2], 2 * t * p.statPotential[2]);
+        p.agl_base += sa;
+        let si = randf(t * p.statPotential[3], 2 * t * p.statPotential[3]);
+        p.int_base += si;
         let hpp;
-        if (p.id === you.id) hpp = Math.round(rand(1.4 * Math.log(p.lvl) * t * p.stat_p[0], 1.8 * p.lvl * t * p.stat_p[0]));
-        else hpp = Math.round(rand(1.8 * Math.log(p.lvl) * t * p.stat_p[0], 2.2 * p.lvl * t * p.stat_p[0]));
-        p.hp_r += hpp;
+        if (p.id === you.id) hpp = Math.round(rand(1.4 * Math.log(p.lvl) * t * p.statPotential[0], 1.8 * p.lvl * t * p.statPotential[0]));
+        else hpp = Math.round(rand(1.8 * Math.log(p.lvl) * t * p.statPotential[0], 2.2 * p.lvl * t * p.statPotential[0]));
+        p.hp_base += hpp;
         p.hpmax += hpp;
         p.hp += hpp;
-        if (p.id !== you.id) p.hp = p.hpmax = p.hp_r;
+        if (p.id !== you.id) p.hp = p.hpmax = p.hp_base;
         if (p.id != you.id) p.exp = p.exp * (1 + t / 5) + 1 << 0;
         else {
           dom.d3.update();
@@ -42,7 +42,7 @@ import { formatw } from './utils-game';
           msg_add(' | HP +' + hpp, 'darkturquoise');
           you.expnext_t = you.expnext();
           if (you.eqp[0].id === 10000) { you.eqp[0].cls[2] = you.lvl / 4 << 0; you.eqp[0].aff[0] = you.lvl / 5 << 0; you.eqp[0].ctype = 2 }
-          if (stats.deadt < 1 && you.lvl >= 20) giveTitle(ttl.ndthextr)
+          if (stats.deathTotal < 1 && you.lvl >= 20) giveTitle(ttl.ndthextr)
         }
       } p.stat_r(); update_d();
     }
@@ -50,7 +50,7 @@ import { formatw } from './utils-game';
     export function giveExp(exp: number, r?: boolean, g?: boolean, b?: boolean) {
       if (!r) exp = Math.round((exp * you.exp_t * (0.4 + you.efficiency() * 0.6))) - (you.lvl - 1);
       exp = exp <= 0 ? 1 : exp;
-      if (!b) { if (flags.m_blh === false) if (!g) { msg('EXP: +' + formatw(exp), 'hotpink'); stats.exptotl += exp } } else { msg('EXP: +' + formatw(exp), 'hotpink'); stats.exptotl += exp }
+      if (!b) { if (flags.monsterBattleHide === false) if (!g) { msg('EXP: +' + formatw(exp), 'hotpink'); stats.expTotal += exp } } else { msg('EXP: +' + formatw(exp), 'hotpink'); stats.expTotal += exp }
       if (you.exp + exp < you.expnext_t) you.exp += exp;
       else {
         let extra = (you.exp + exp) - you.expnext_t;
@@ -68,7 +68,7 @@ import { formatw } from './utils-game';
         let extra = (skl.exp + exp) - skl.expnext_t;
         skl.exp = 0;
         skl.lvl++;
-        stats.slvs++;
+        stats.skillLevelsGained++;
         if (!scanbyid(you.skls, skl.id)) { you.skls.push(skl); msg('<span style="text-shadow:cyan 0px 0px 2px">New Skill Unlocked! <span style="text-shadow:red 0px 0px 2px;color:orange">"' + (!!skl.bname ? skl.bname : skl.name) + '"</span></span>', 'aqua', skl, 6); if (!flags.sklu) { dom.ct_bt2.innerHTML = 'skills'; flags.sklu = true } }
         else { msg('Skill <span style="color:tomato">\'' + (!!skl.bname ? skl.bname : skl.name) + '\'</span> Leveled Up: ' + skl.lvl, 'deepskyblue', skl, 6); } skl.onLevel(you);
         skl.expnext_t = skl.expnext();
@@ -80,7 +80,7 @@ import { formatw } from './utils-game';
     export function giveTitle(title: Title, lv?: boolean) {
       if (title.have === false) {
         global.titles.push(title);
-        if (title.id !== 0) global.titlese.push(title);
+        if (title.id !== 0) global.titlesEarned.push(title);
         you.title = title;
         title.have = true;
         if (!title.tget && title.talent) { title.talent(you); title.tget = true }
@@ -93,9 +93,9 @@ import { formatw } from './utils-game';
     export function giveRcp(rcp: Recipe) {
       if (!flags.asbu) { flags.asbu = true; dom.ct_bt1.innerHTML = 'assemble' }
       if (rcp.have === false) {
-        global.rec_d.push(rcp);
+        global.recipesDiscovered.push(rcp);
         rcp.have = true;
-        if (global.lw_op === 1) rsort(settings.rm)
+        if (global.lastWindowOpen === 1) rsort(settings.recipeSortMode)
         msg('New blueprint unlocked: ', 'cyan');
         msg_add('"' + rcp.name + '"', 'orange');
         return 1;

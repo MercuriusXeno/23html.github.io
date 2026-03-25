@@ -56,54 +56,54 @@ rcp.hlpd = new Recipe({ id: 104, name: 'Low-grade Healing Powder', type: 2, rec:
 rcp.hlpd.onmake = function (this: any) { giveCrExp(skl.alch, .2, 1) }
 
 // @ts-ignore: constructor function
-rcp.borc = new Recipe({ id: 105, name: 'Boiled Rice', type: 1, rec: [{ item: item.rice, amount: 2 }, { item: item.watr, amount: 2 }], res: [{ item: item.borc, amount: 1 }], srect: ['Nearby firesource'], srec: [function () { if (you.mods.ckfre > 0) return true }] });
+rcp.borc = new Recipe({ id: 105, name: 'Boiled Rice', type: 1, rec: [{ item: item.rice, amount: 2 }, { item: item.watr, amount: 2 }], res: [{ item: item.borc, amount: 1 }], srect: ['Nearby firesource'], srec: [function () { if (you.mods.cookingFire > 0) return true }] });
 rcp.borc.onmake = function (this: any) { giveCrExp(skl.cook, .5, 1) }
 
 // @ts-ignore: constructor function
-rcp.begg = new Recipe({ id: 106, name: 'Boiled Egg', type: 1, rec: [{ item: item.eggn, amount: 1 }, { item: item.watr, amount: 2 }], res: [{ item: item.begg, amount: 1 }], srect: ['Nearby firesource'], srec: [function () { if (you.mods.ckfre > 0) return true }] });
+rcp.begg = new Recipe({ id: 106, name: 'Boiled Egg', type: 1, rec: [{ item: item.eggn, amount: 1 }, { item: item.watr, amount: 2 }], res: [{ item: item.begg, amount: 1 }], srect: ['Nearby firesource'], srec: [function () { if (you.mods.cookingFire > 0) return true }] });
 rcp.begg.onmake = function (this: any) { giveCrExp(skl.cook, .2, 1) }
 
 // @ts-ignore: constructor function
 rcp.trr = new Recipe({ id: 107, name: 'Trinity', type: 4, rec: [{ item: acc.mstn, amount: 1 }, { item: acc.srng, amount: 1 }, { item: acc.bstn, amount: 1 }, { item: acc.mstn, amount: 1 }], res: [{ item: acc.trrng, amount: 1 }] });
 
 // @ts-ignore: constructor function
-rcp.rsmt = new Recipe({ id: 108, name: 'Roasted Meat', type: 1, rec: [{ item: item.rwmt1, amount: 1 }], res: [{ item: item.rsmt, amount: 1 }], srect: ['Nearby firesource'], srec: [function () { if (you.mods.ckfre > 0) return true }] });
+rcp.rsmt = new Recipe({ id: 108, name: 'Roasted Meat', type: 1, rec: [{ item: item.rwmt1, amount: 1 }], res: [{ item: item.rsmt, amount: 1 }], srect: ['Nearby firesource'], srec: [function () { if (you.mods.cookingFire > 0) return true }] });
 rcp.rsmt.cmake = function (this: any) { let rn = random() + skl.cook.lvl * .1; if (rn >= .30) giveItem(rcp.rsmt.res[0].item); else { giveItem(item.brmt); msg('It didn\'t turn out very well...', 'black', null, null, 'lightgrey'); } giveCrExp(skl.cook, .2, 1); }
 
 // @ts-ignore: constructor function
-rcp.segg = new Recipe({ id: 109, name: 'Scrambled Eggs', type: 1, rec: [{ item: item.eggn, amount: 2 }], res: [{ item: item.segg, amount: 1 }], srect: ['Nearby firesource'], srec: [function () { if (you.mods.ckfre > 0) return true }] });
+rcp.segg = new Recipe({ id: 109, name: 'Scrambled Eggs', type: 1, rec: [{ item: item.eggn, amount: 2 }], res: [{ item: item.segg, amount: 1 }], srect: ['Nearby firesource'], srec: [function () { if (you.mods.cookingFire > 0) return true }] });
 rcp.segg.onmake = function (this: any) { giveCrExp(skl.cook, 1, 2) }
 
 // @ts-ignore: constructor function
-rcp.lnch1 = new Recipe({ id: 110, name: 'Bacon and Eggs', type: 1, rec: [{ item: item.eggn, amount: 2 }, { item: item.bac, amount: 1 }], res: [{ item: item.lnch1, amount: 1 }], srect: ['Nearby firesource'], srec: [function () { if (you.mods.ckfre > 0) return true }] });
+rcp.lnch1 = new Recipe({ id: 110, name: 'Bacon and Eggs', type: 1, rec: [{ item: item.eggn, amount: 2 }, { item: item.bac, amount: 1 }], res: [{ item: item.lnch1, amount: 1 }], srect: ['Nearby firesource'], srec: [function () { if (you.mods.cookingFire > 0) return true }] });
 rcp.lnch1.onmake = function (this: any) { giveCrExp(skl.cook, 5, 3) }
 
 // @ts-ignore: constructor function
-rcp.lnch2 = new Recipe({ id: 111, name: 'Morning Set', type: 1, rec: [{ item: item.eggn, amount: 2 }, { item: item.brd, amount: 1 }], res: [{ item: item.lnch2, amount: 1 }], srect: ['Nearby firesource'], srec: [function () { if (you.mods.ckfre > 0) return true }] });
+rcp.lnch2 = new Recipe({ id: 111, name: 'Morning Set', type: 1, rec: [{ item: item.eggn, amount: 2 }, { item: item.brd, amount: 1 }], res: [{ item: item.lnch2, amount: 1 }], srect: ['Nearby firesource'], srec: [function () { if (you.mods.cookingFire > 0) return true }] });
 rcp.lnch2.onmake = function (this: any) { giveCrExp(skl.cook, 8, 3) }
 
 // @ts-ignore: constructor function
-rcp.lnch3 = new Recipe({ id: 112, name: 'Lunch Set', type: 1, rec: [{ item: item.eggn, amount: 2 }, { item: item.brd, amount: 1 }, { item: item.rwmt1, amount: 1 }], res: [{ item: item.lnch3, amount: 1 }], srect: ['Nearby firesource'], srec: [function () { if (you.mods.ckfre > 0) return true }] });
+rcp.lnch3 = new Recipe({ id: 112, name: 'Lunch Set', type: 1, rec: [{ item: item.eggn, amount: 2 }, { item: item.brd, amount: 1 }, { item: item.rwmt1, amount: 1 }], res: [{ item: item.lnch3, amount: 1 }], srect: ['Nearby firesource'], srec: [function () { if (you.mods.cookingFire > 0) return true }] });
 rcp.lnch3.onmake = function (this: any) { giveCrExp(skl.cook, 10, 4) }
 
 // @ts-ignore: constructor function
-rcp.orgs = new Recipe({ id: 113, name: 'Onion Rings', type: 1, rec: [{ item: item.flr, amount: 2 }, { item: item.onn, amount: 1 }], res: [{ item: item.orgs, amount: 1 }], srect: ['Nearby firesource'], srec: [function () { if (you.mods.ckfre > 0) return true }] });
+rcp.orgs = new Recipe({ id: 113, name: 'Onion Rings', type: 1, rec: [{ item: item.flr, amount: 2 }, { item: item.onn, amount: 1 }], res: [{ item: item.orgs, amount: 1 }], srect: ['Nearby firesource'], srec: [function () { if (you.mods.cookingFire > 0) return true }] });
 rcp.orgs.onmake = function (this: any) { giveCrExp(skl.cook, 8, 4) }
 
 // @ts-ignore: constructor function
-rcp.ffsh1 = new Recipe({ id: 114, name: 'Cooked Fish', type: 1, rec: [{ item: item.fsh1, amount: 1 }], res: [{ item: item.ffsh1, amount: 1 }], srect: ['Nearby firesource'], srec: [function () { if (you.mods.ckfre > 0) return true }] });
+rcp.ffsh1 = new Recipe({ id: 114, name: 'Cooked Fish', type: 1, rec: [{ item: item.fsh1, amount: 1 }], res: [{ item: item.ffsh1, amount: 1 }], srect: ['Nearby firesource'], srec: [function () { if (you.mods.cookingFire > 0) return true }] });
 rcp.ffsh1.onmake = function (this: any) { giveCrExp(skl.cook, 2, 2) }
 
 // @ts-ignore: constructor function
-rcp.ffsh2 = new Recipe({ id: 115, name: 'Batter Fried Fish', type: 1, rec: [{ item: item.fsh2, amount: 1 }, { item: item.flr, amount: 1 }, { item: item.eggn, amount: 1 }, { item: item.salt, amount: 1 }], res: [{ item: item.ffsh2, amount: 1 }], srect: ['Nearby firesource'], srec: [function () { if (you.mods.ckfre > 0) return true }] });
+rcp.ffsh2 = new Recipe({ id: 115, name: 'Batter Fried Fish', type: 1, rec: [{ item: item.fsh2, amount: 1 }, { item: item.flr, amount: 1 }, { item: item.eggn, amount: 1 }, { item: item.salt, amount: 1 }], res: [{ item: item.ffsh2, amount: 1 }], srect: ['Nearby firesource'], srec: [function () { if (you.mods.cookingFire > 0) return true }] });
 rcp.ffsh2.onmake = function (this: any) { giveCrExp(skl.cook, 12, 5) }
 
 // @ts-ignore: constructor function
-rcp.fnori = new Recipe({ id: 116, name: 'Fried Nori', type: 1, rec: [{ item: item.nori, amount: 1 }, { item: item.salt, amount: 1 }], res: [{ item: item.fnori, amount: 1 }], srect: ['Nearby firesource'], srec: [function () { if (you.mods.ckfre > 0) return true }] });
+rcp.fnori = new Recipe({ id: 116, name: 'Fried Nori', type: 1, rec: [{ item: item.nori, amount: 1 }, { item: item.salt, amount: 1 }], res: [{ item: item.fnori, amount: 1 }], srect: ['Nearby firesource'], srec: [function () { if (you.mods.cookingFire > 0) return true }] });
 rcp.fnori.onmake = function (this: any) { giveCrExp(skl.cook, 4, 4) }
 
 // @ts-ignore: constructor function
-rcp.cbun1 = new Recipe({ id: 117, name: 'Steamed Bun', type: 1, rec: [{ item: item.watr, amount: 1 }, { item: item.salt, amount: 1 }, { item: item.dgh, amount: 1 }], res: [{ item: item.cbun1, amount: 1 }], srect: ['Nearby firesource'], srec: [function () { if (you.mods.ckfre > 0) return true }] });
+rcp.cbun1 = new Recipe({ id: 117, name: 'Steamed Bun', type: 1, rec: [{ item: item.watr, amount: 1 }, { item: item.salt, amount: 1 }, { item: item.dgh, amount: 1 }], res: [{ item: item.cbun1, amount: 1 }], srect: ['Nearby firesource'], srec: [function () { if (you.mods.cookingFire > 0) return true }] });
 rcp.cbun1.onmake = function (this: any) { giveCrExp(skl.cook, 5, 3) }
 
 // @ts-ignore: constructor function
@@ -127,7 +127,7 @@ rcp.hptn1 = new Recipe({ id: 122, name: 'Lesser Healing Potion', type: 2, rec: [
 rcp.hptn1.onmake = function (this: any) { giveCrExp(skl.alch, 1, 2) }
 
 // @ts-ignore: constructor function
-rcp.hpck = new Recipe({ id: 123, name: 'Hippo Cookie', type: 1, rec: [{ item: item.flr, amount: 1 }, { item: item.hzlnt, amount: 1 }, { item: item.sgr, amount: 1 }, { item: item.mlkn, amount: 1 }], res: [{ item: item.hpck, amount: 1 }], srect: ['Nearby firesource'], srec: [function () { if (you.mods.ckfre > 0) return true }] });
+rcp.hpck = new Recipe({ id: 123, name: 'Hippo Cookie', type: 1, rec: [{ item: item.flr, amount: 1 }, { item: item.hzlnt, amount: 1 }, { item: item.sgr, amount: 1 }, { item: item.mlkn, amount: 1 }], res: [{ item: item.hpck, amount: 1 }], srect: ['Nearby firesource'], srec: [function () { if (you.mods.cookingFire > 0) return true }] });
 rcp.hpck.onmake = function (this: any) { giveCrExp(skl.cook, 7, 4) }
 
 // @ts-ignore: constructor function
@@ -155,27 +155,27 @@ rcp.tbrwd = new Recipe({ id: 128, name: 'Tea', type: 1, rec: [{ item: item.tlvs,
 rcp.tbrwd.onmake = function (this: any) { giveCrExp(skl.cook, 1) }
 
 // @ts-ignore: constructor function
-rcp.brd = new Recipe({ id: 129, name: 'Bread', type: 1, rec: [{ item: item.dgh, amount: 1 }], res: [{ item: item.brd, amount: 1 }], srect: ['Nearby firesource'], srec: [function () { if (you.mods.ckfre > 0) return true }] });
+rcp.brd = new Recipe({ id: 129, name: 'Bread', type: 1, rec: [{ item: item.dgh, amount: 1 }], res: [{ item: item.brd, amount: 1 }], srect: ['Nearby firesource'], srec: [function () { if (you.mods.cookingFire > 0) return true }] });
 rcp.brd.cmake = function (this: any) { let rn = random() + skl.cook.lvl * .05; if (rn >= .25) giveItem(rcp.brd.res[0].item); else { giveItem(item.brdb); msg('It didn\'t turn out very well...', 'black', null, null, 'lightgrey'); } giveCrExp(skl.cook, 2, 3) }
 
 // @ts-ignore: constructor function
-rcp.steak = new Recipe({ id: 130, name: 'Steak', type: 1, rec: [{ item: item.salt, amount: 1 }, { item: item.rwmt1, amount: 1 }, { item: item.spc1, amount: 1 }], res: [{ item: item.steak, amount: 1 }], srect: ['Nearby firesource', 'Cooking lvl: 3'], srec: [function () { if (you.mods.ckfre > 0) return true }, function () { if (skl.cook.lvl === 3) return true }] });
+rcp.steak = new Recipe({ id: 130, name: 'Steak', type: 1, rec: [{ item: item.salt, amount: 1 }, { item: item.rwmt1, amount: 1 }, { item: item.spc1, amount: 1 }], res: [{ item: item.steak, amount: 1 }], srect: ['Nearby firesource', 'Cooking lvl: 3'], srec: [function () { if (you.mods.cookingFire > 0) return true }, function () { if (skl.cook.lvl === 3) return true }] });
 rcp.steak.onmake = function (this: any) { giveCrExp(skl.cook, 7) }
 
 // @ts-ignore: constructor function
-rcp.cnmnb = new Recipe({ id: 131, name: 'Cinnamon Bun', type: 1, rec: [{ item: item.sgr, amount: 1 }, { item: item.bttr, amount: 1 }, { item: item.cnmn, amount: 1 }, { item: item.wht, amount: 1 }], res: [{ item: item.cnmnb, amount: 1 }], srect: ['Nearby firesource'], srec: [function () { if (you.mods.ckfre > 0) return true }] });
+rcp.cnmnb = new Recipe({ id: 131, name: 'Cinnamon Bun', type: 1, rec: [{ item: item.sgr, amount: 1 }, { item: item.bttr, amount: 1 }, { item: item.cnmn, amount: 1 }, { item: item.wht, amount: 1 }], res: [{ item: item.cnmnb, amount: 1 }], srect: ['Nearby firesource'], srec: [function () { if (you.mods.cookingFire > 0) return true }] });
 rcp.cnmnb.onmake = function (this: any) { giveCrExp(skl.cook, 6, 5) }
 
 // @ts-ignore: constructor function
-rcp.brth = new Recipe({ id: 132, name: 'Broth', type: 1, rec: [{ item: item.watr, amount: 2 }, { item: item.rwmt1, amount: 1 }], res: [{ item: item.brth, amount: 1 }], srect: ['Nearby firesource'], srec: [function () { if (you.mods.ckfre > 0) return true }] });
+rcp.brth = new Recipe({ id: 132, name: 'Broth', type: 1, rec: [{ item: item.watr, amount: 2 }, { item: item.rwmt1, amount: 1 }], res: [{ item: item.brth, amount: 1 }], srect: ['Nearby firesource'], srec: [function () { if (you.mods.cookingFire > 0) return true }] });
 rcp.brth.onmake = function (this: any) { giveCrExp(skl.cook, .5, 2) }
 
 // @ts-ignore: constructor function
-rcp.eggsp = new Recipe({ id: 133, name: 'Egg Soup', type: 1, rec: [{ item: item.brth, amount: 1 }, { item: item.eggn, amount: 2 }, { item: item.salt, amount: 1 }, { item: item.scln, amount: 1 }], res: [{ item: item.eggsp, amount: 1 }], srect: ['Nearby firesource'], srec: [function () { if (you.mods.ckfre > 0) return true }] });
+rcp.eggsp = new Recipe({ id: 133, name: 'Egg Soup', type: 1, rec: [{ item: item.brth, amount: 1 }, { item: item.eggn, amount: 2 }, { item: item.salt, amount: 1 }, { item: item.scln, amount: 1 }], res: [{ item: item.eggsp, amount: 1 }], srect: ['Nearby firesource'], srec: [function () { if (you.mods.cookingFire > 0) return true }] });
 rcp.eggsp.onmake = function (this: any) { giveCrExp(skl.cook, 5, 4) }
 
 // @ts-ignore: constructor function
-rcp.crmchd = new Recipe({ id: 134, name: 'Creamy Chowder', type: 1, rec: [{ item: item.mlkn, amount: 1 }, { item: item.ches, amount: 1 }, { item: item.rwmt1, amount: 1 }, { item: item.potat, amount: 1 }], res: [{ item: item.crmchd, amount: 1 }], srect: ['Nearby firesource'], srec: [function () { if (you.mods.ckfre > 0) return true }] });
+rcp.crmchd = new Recipe({ id: 134, name: 'Creamy Chowder', type: 1, rec: [{ item: item.mlkn, amount: 1 }, { item: item.ches, amount: 1 }, { item: item.rwmt1, amount: 1 }, { item: item.potat, amount: 1 }], res: [{ item: item.crmchd, amount: 1 }], srect: ['Nearby firesource'], srec: [function () { if (you.mods.cookingFire > 0) return true }] });
 rcp.crmchd.onmake = function (this: any) { giveCrExp(skl.cook, 15) }
 
 // @ts-ignore: constructor function
@@ -183,7 +183,7 @@ rcp.mink = new Recipe({ id: 135, name: 'Magic Ink', type: 4, rec: [{ item: acc.q
 rcp.mink.onmake = function (this: any) { giveCrExp(skl.crft, 2.5, 4) }
 
 // @ts-ignore: constructor function
-rcp.msoop = new Recipe({ id: 136, name: 'Mushroom Soup', type: 1, rec: [{ item: item.watr, amount: 2 }, { item: item.mshr, amount: 2 }, { item: item.potat, amount: 1 }, { item: item.onn, amount: 1 }], res: [{ item: item.msoop, amount: 1 }], srect: ['Nearby firesource'], srec: [function () { if (you.mods.ckfre > 0) return true }] });
+rcp.msoop = new Recipe({ id: 136, name: 'Mushroom Soup', type: 1, rec: [{ item: item.watr, amount: 2 }, { item: item.mshr, amount: 2 }, { item: item.potat, amount: 1 }, { item: item.onn, amount: 1 }], res: [{ item: item.msoop, amount: 1 }], srect: ['Nearby firesource'], srec: [function () { if (you.mods.cookingFire > 0) return true }] });
 rcp.msoop.onmake = function (this: any) { giveCrExp(skl.cook, 4, 3) }
 
 // @ts-ignore: constructor function
@@ -207,15 +207,15 @@ rcp.wvbkt = new Recipe({ id: 140, name: 'Straw Basket', type: 5, rec: [{ item: i
 rcp.wvbkt.onmake = function (this: any) { giveCrExp(skl.crft, 3, 2) }
 
 // @ts-ignore: constructor function
-rcp.hlstw = new Recipe({ id: 141, name: 'Healing Stew', type: 1, rec: [{ item: item.watr, amount: 2 }, { item: item.hrb1, amount: 28 }], res: [{ item: item.hlstw, amount: 1 }], srect: ['Nearby firesource'], srec: [function () { if (you.mods.ckfre > 0) return true }] });
+rcp.hlstw = new Recipe({ id: 141, name: 'Healing Stew', type: 1, rec: [{ item: item.watr, amount: 2 }, { item: item.hrb1, amount: 28 }], res: [{ item: item.hlstw, amount: 1 }], srect: ['Nearby firesource'], srec: [function () { if (you.mods.cookingFire > 0) return true }] });
 rcp.hlstw.onmake = function (this: any) { giveCrExp(skl.cook, 1, 2) }
 
 // @ts-ignore: constructor function
-rcp.bcrc = new Recipe({ id: 142, name: 'Bone Cracker', type: 1, rec: [{ item: item.sbone, amount: 25 }], res: [{ item: item.bcrc, amount: 1 }], srect: ['Nearby firesource'], srec: [function () { if (you.mods.ckfre > 0) return true }] });
+rcp.bcrc = new Recipe({ id: 142, name: 'Bone Cracker', type: 1, rec: [{ item: item.sbone, amount: 25 }], res: [{ item: item.bcrc, amount: 1 }], srect: ['Nearby firesource'], srec: [function () { if (you.mods.cookingFire > 0) return true }] });
 rcp.bcrc.onmake = function (this: any) { giveCrExp(skl.cook, 1.7, 3) }
 
 // @ts-ignore: constructor function
-rcp.bcrrt = new Recipe({ id: 143, name: 'Boiled Carrot', type: 1, rec: [{ item: item.crrt, amount: 1 }, { item: item.watr, amount: 1 }], res: [{ item: item.bcrrt, amount: 1 }], srect: ['Nearby firesource'], srec: [function () { if (you.mods.ckfre > 0) return true }] });
+rcp.bcrrt = new Recipe({ id: 143, name: 'Boiled Carrot', type: 1, rec: [{ item: item.crrt, amount: 1 }, { item: item.watr, amount: 1 }], res: [{ item: item.bcrrt, amount: 1 }], srect: ['Nearby firesource'], srec: [function () { if (you.mods.cookingFire > 0) return true }] });
 rcp.bcrrt.onmake = function (this: any) { giveCrExp(skl.cook, .3, 2) }
 
 // @ts-ignore: constructor function
@@ -295,7 +295,7 @@ rcp.appljc = new Recipe({ id: 159, name: 'Apple Juice', type: 1, rec: [{ item: i
 rcp.appljc.onmake = function (this: any) { giveCrExp(skl.cook, .5, 2) }
 
 // @ts-ignore: constructor function
-rcp.bdgh = new Recipe({ id: 160, name: 'Bandage', type: 2, rec: [{ item: item.cclth, amount: 1 }, { item: item.watr, amount: 3 }], res: [{ item: item.bdgh, amount: 1 }], srect: ['Nearby firesource'], srec: [function () { if (you.mods.ckfre > 0) return true }] });
+rcp.bdgh = new Recipe({ id: 160, name: 'Bandage', type: 2, rec: [{ item: item.cclth, amount: 1 }, { item: item.watr, amount: 3 }], res: [{ item: item.bdgh, amount: 1 }], srect: ['Nearby firesource'], srec: [function () { if (you.mods.cookingFire > 0) return true }] });
 rcp.bdgh.onmake = function (this: any) { giveCrExp(skl.crft, .5, 2) }
 
 // @ts-ignore: constructor function

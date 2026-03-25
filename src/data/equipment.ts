@@ -23,12 +23,12 @@ function Eqp(this: any, cfg?: any) {
   this.data = { dscv: false };
   this.cls = [0, 0, 0];
   // edge, pierce, blunt
-  //this.ccls=[0,0,0];
+  //this.combatClass=[0,0,0];
   this.aff = [0, 0, 0, 0, 0, 0, 0];
   //p, a, e, f, w, l, d
   //this.caff = [0,0,0,0,0,0,0];
   //this.maff=[0,0,0,0,0,0,0];
-  //this.cmaff=[0,0,0,0,0,0,0];
+  //this.combatMonsterAffinity=[0,0,0,0,0,0,0];
   this.atype = 0;
   this.ctype = 0;
   this.wtype = 0;
@@ -352,9 +352,9 @@ eqp.prsna = new Eqp({ id: 20026, name: 'Prison Apparel', desc: 'It looks just li
 eqp.strwks = new Eqp({ id: 20027, name: 'Straw Kasa', desc: 'A Sando-gasa is made by weaving straw together. Great for boys who are too embarrassed to use a parasol' + dom.dseparator, slot: 3, str: 6, aff: [3, 3, 2, 13, 2, 5, -5], cls: [2, 1, 1], stype: 3, dp: 18, dpmax: 18 });
 
 // @ts-ignore: constructor function
-eqp.knkls = new Eqp({ id: 20028, name: 'Knuckles', desc: 'Leather bands that cover fingers' + dom.dseparator + 'Unarmed STR: <span style="color:lime">+4</span><br>', slot: 5, str: 4, undc: 4, aff: [1, 0, 0, 0, 0, 0, 0], cls: [2, 1, 1], stype: 3, dp: 17, dpmax: 17,
-  oneq: function (player: Player) { player.mods.undc += this.undc },
-  onuneq: function (player: Player) { player.mods.undc -= this.undc }
+eqp.knkls = new Eqp({ id: 20028, name: 'Knuckles', desc: 'Leather bands that cover fingers' + dom.dseparator + 'Unarmed STR: <span style="color:lime">+4</span><br>', slot: 5, str: 4, unarmedDamage: 4, aff: [1, 0, 0, 0, 0, 0, 0], cls: [2, 1, 1], stype: 3, dp: 17, dpmax: 17,
+  oneq: function (player: Player) { player.mods.unarmedDamage += this.unarmedDamage },
+  onuneq: function (player: Player) { player.mods.unarmedDamage -= this.unarmedDamage }
 });
 
 // @ts-ignore: constructor function
@@ -422,8 +422,8 @@ sld.stksld = new Eqp({ id: 30017, name: 'Stake Shield', desc: 'Not actually a sh
 
 // @ts-ignore: constructor function
 acc.strawp = new Eqp({ id: 40001, name: 'Straw Pendant', desc: 'You made this yourself!' + dom.dseparator + '<span style=\'color:green\'><span style=\'color:lime\'> +50 </span> to max energy<br><span style="color: lime">SPD +1</span></span>', slot: 8, stype: 3,
-  oneq: function (player: Player) { player.sata += 50; player.sat += 50; player.spda += 1 },
-  onuneq: function (player: Player) { player.sata -= 50; player.sat -= 50; player.spda -= 1 },
+  oneq: function (player: Player) { player.sat_bonus += 50; player.sat += 50; player.spd_bonus += 1 },
+  onuneq: function (player: Player) { player.sat_bonus -= 50; player.sat -= 50; player.spd_bonus -= 1 },
   onGet: function () { if (acc.fmlim.have) { giveRcp(rcp.fmlim2); this.onGet = function () { } } }
 });
 
@@ -506,8 +506,8 @@ acc.gmdk2 = new Eqp({ id: 40024, name: 'Berial Blackpearl', desc: 'Blackpearl wi
 
 // @ts-ignore: constructor function
 acc.wfng = new Eqp({ id: 40025, name: 'Wolf Fang Necklace', desc: 'Menacing fang of the wolf, in the form of a pendant. Wearing this can help to repell and scare away minor beasts' + dom.dseparator + '<span style="color:orange">Beast Class DEF +15</span>', slot: 8, stype: 3,
-  oneq: function (player: Player) { player.cmaff[1] += 15 },
-  onuneq: function (player: Player) { player.cmaff[1] -= 15 },
+  oneq: function (player: Player) { player.combatMonsterAffinity[1] += 15 },
+  onuneq: function (player: Player) { player.combatMonsterAffinity[1] -= 15 },
   onGet: function () {
     if (!rcp.wfar.have) {
       let f = 0; for (let a in inv) if (inv[a].id === this.id) f++
@@ -518,8 +518,8 @@ acc.wfng = new Eqp({ id: 40025, name: 'Wolf Fang Necklace', desc: 'Menacing fang
 
 // @ts-ignore: constructor function
 acc.wfar = new Eqp({ id: 40026, name: 'Wolf Array', desc: 'Array composed of interlinked fangs of the wolf. Used by hunters as a mean of protection agains wildlife' + dom.dseparator + '<span style="color:orange">Beast Class DEF +30</span>', slot: 8, stype: 3, rar: 2,
-  oneq: function (player: Player) { player.cmaff[1] += 30 },
-  onuneq: function (player: Player) { player.cmaff[1] -= 30 }
+  oneq: function (player: Player) { player.combatMonsterAffinity[1] += 30 },
+  onuneq: function (player: Player) { player.combatMonsterAffinity[1] -= 30 }
 });
 
 // @ts-ignore: constructor function
@@ -530,8 +530,8 @@ acc.sshl = new Eqp({ id: 40027, name: 'Star Shell', desc: 'A little shell with a
 
 // @ts-ignore: constructor function
 acc.qill = new Eqp({ id: 40028, name: 'Quill', desc: 'Feather of a large bird, turned into a writing tool ' + dom.dseparator + '<span style="color:lime">AGL +5</span>', slot: 8, stype: 3,
-  oneq: function (player: Player) { player.agla += 5 },
-  onuneq: function (player: Player) { player.agla -= 5 },
+  oneq: function (player: Player) { player.agl_bonus += 5 },
+  onuneq: function (player: Player) { player.agl_bonus -= 5 },
   onGet: function () {
     if (acc.bink.have) { giveRcp(rcp.mink); this.onGet = function () { } }
   }
@@ -539,8 +539,8 @@ acc.qill = new Eqp({ id: 40028, name: 'Quill', desc: 'Feather of a large bird, t
 
 // @ts-ignore: constructor function
 acc.bink = new Eqp({ id: 40029, name: 'Black Ink', desc: 'Pitch black Ink, useful in writing. Stains left by it will never come off' + dom.dseparator + '<span style="color:lime">INT +3</span>', slot: 8, stype: 3,
-  oneq: function (player: Player) { player.inta += 3 },
-  onuneq: function (player: Player) { player.inta -= 3 },
+  oneq: function (player: Player) { player.int_bonus += 3 },
+  onuneq: function (player: Player) { player.int_bonus -= 3 },
   onGet: function () {
     if (acc.qill.have) { giveRcp(rcp.mink); this.onGet = function () { } }
   }
@@ -548,8 +548,8 @@ acc.bink = new Eqp({ id: 40029, name: 'Black Ink', desc: 'Pitch black Ink, usefu
 
 // @ts-ignore: constructor function
 acc.mink = new Eqp({ id: 40030, name: 'Magic Ink', desc: 'Glowing magic ink, used for writing magical and runic inscriptions. ' + dom.dseparator + '<span style="color:lime">INT +8</span><br><span style="color:lime">AGL +10</span>', slot: 8, stype: 3, rar: 2,
-  oneq: function (player: Player) { player.inta += 8; player.agla += 10; },
-  onuneq: function (player: Player) { player.inta -= 8; player.agla -= 10; }
+  oneq: function (player: Player) { player.int_bonus += 8; player.agl_bonus += 10; },
+  onuneq: function (player: Player) { player.int_bonus -= 8; player.agl_bonus -= 10; }
 });
 
 // @ts-ignore: constructor function
@@ -574,28 +574,28 @@ acc.lckcn = new Eqp({ id: 40033, name: 'Lucky Coin', desc: 'Special little coin,
 
 // @ts-ignore: constructor function
 acc.cfgn = new Eqp({ id: 40034, name: 'Cat Figurine', desc: 'Small figurine of a cat. It eminates powerful energy' + dom.dseparator + '<span style="color:deeppink">Energy Effectiveness +5%</span>', slot: 8, stype: 3,
-  oneq: function (player: Player) { player.mods.sbonus += .05 },
-  onuneq: function (player: Player) { player.mods.sbonus -= .05 },
+  oneq: function (player: Player) { player.mods.satiationBonus += .05 },
+  onuneq: function (player: Player) { player.mods.satiationBonus -= .05 },
   onGet: function () { if (acc.lckcn.have) { giveRcp(rcp.mnknk); this.onGet = function () { } } }
 });
 
 // @ts-ignore: constructor function
 acc.mnknk = new Eqp({ id: 40035, name: 'Maneki-Neko', desc: 'Little statue of a Divine Cat holding a Coin. This treasure is rumored to bring luck and prosperity to its owner' + dom.dseparator + '<span style="color:gold">LUCK +4</span><br><span style="color:deeppink">Energy Effectiveness +10%</span>', slot: 8, stype: 3, rar: 2,
-  oneq: function (player: Player) { player.luck += 4; player.mods.sbonus += .1; },
-  onuneq: function (player: Player) { player.luck -= 4; player.mods.sbonus -= .1; }
+  oneq: function (player: Player) { player.luck += 4; player.mods.satiationBonus += .1; },
+  onuneq: function (player: Player) { player.luck -= 4; player.mods.satiationBonus -= .1; }
 });
 
 // @ts-ignore: constructor function
-acc.wdl1 = new Eqp({ id: 40036, name: 'Wood Effigy', desc: 'Small wooden doll with flexible joints. This type can be used, with Dark enchantment, to take control of living things.' + dom.dseparator + '<span style="color:crimson">Piercing DEF +5</span><br><span style="color:crimson">Edged DEF +5</span><br><span style="color:crimson">Blunt DEF +5</span>', ccls: [5, 5, 5], slot: 8, stype: 3,
-  oneq: function (player: Player) { for (let afn = 0; afn < this.ccls.length; afn++)player.ccls[afn] += this.ccls[afn] },
-  onuneq: function (player: Player) { for (let afn = 0; afn < this.ccls.length; afn++)player.ccls[afn] -= this.ccls[afn] },
+acc.wdl1 = new Eqp({ id: 40036, name: 'Wood Effigy', desc: 'Small wooden doll with flexible joints. This type can be used, with Dark enchantment, to take control of living things.' + dom.dseparator + '<span style="color:crimson">Piercing DEF +5</span><br><span style="color:crimson">Edged DEF +5</span><br><span style="color:crimson">Blunt DEF +5</span>', combatClass: [5, 5, 5], slot: 8, stype: 3,
+  oneq: function (player: Player) { for (let afn = 0; afn < this.combatClass.length; afn++)player.combatClass[afn] += this.combatClass[afn] },
+  onuneq: function (player: Player) { for (let afn = 0; afn < this.combatClass.length; afn++)player.combatClass[afn] -= this.combatClass[afn] },
   onGet: function () { if (acc.sdl1.have && acc.bdl1.have) { giveRcp(rcp.gdl1); this.onGet = function () { } } }
 });
 
 // @ts-ignore: constructor function
-acc.gdl1 = new Eqp({ id: 40037, name: 'Soul Puppet', desc: 'Dolls that could be remotely controlled by one\'s soul. Employed by spies to infiltrate enemy lines unnoticed' + dom.dseparator + '<span style="color:crimson">Piercing DEF +4</span><br><span style="color:crimson">Edged DEF +4</span><br><span style="color:crimson">Blunt DEF +4</span><br><span style="color:thistle;text-shadow:blueviolet 0px 0px 5px">Dark RES +6</span><br><span style="color:royalblue;text-shadow:blueviolet 0px 0px 5px">Evil Class DEF +2</span><br><span style="color:hotpink">Physical DEF +3</span>', ccls: [4, 4, 4], slot: 8, stype: 3, rar: 2,
-  oneq: function (player: Player) { player.caff[0] += 3; player.caff[6] += 2; for (let afn = 0; afn < this.ccls.length; afn++)player.ccls[afn] += this.ccls[afn]; player.cmaff[3] += 6 },
-  onuneq: function (player: Player) { player.caff[0] -= 3; player.caff[6] -= 2; for (let afn = 0; afn < this.ccls.length; afn++)player.ccls[afn] -= this.ccls[afn]; player.cmaff[3] -= 6 }
+acc.gdl1 = new Eqp({ id: 40037, name: 'Soul Puppet', desc: 'Dolls that could be remotely controlled by one\'s soul. Employed by spies to infiltrate enemy lines unnoticed' + dom.dseparator + '<span style="color:crimson">Piercing DEF +4</span><br><span style="color:crimson">Edged DEF +4</span><br><span style="color:crimson">Blunt DEF +4</span><br><span style="color:thistle;text-shadow:blueviolet 0px 0px 5px">Dark RES +6</span><br><span style="color:royalblue;text-shadow:blueviolet 0px 0px 5px">Evil Class DEF +2</span><br><span style="color:hotpink">Physical DEF +3</span>', combatClass: [4, 4, 4], slot: 8, stype: 3, rar: 2,
+  oneq: function (player: Player) { player.caff[0] += 3; player.caff[6] += 2; for (let afn = 0; afn < this.combatClass.length; afn++)player.combatClass[afn] += this.combatClass[afn]; player.combatMonsterAffinity[3] += 6 },
+  onuneq: function (player: Player) { player.caff[0] -= 3; player.caff[6] -= 2; for (let afn = 0; afn < this.combatClass.length; afn++)player.combatClass[afn] -= this.combatClass[afn]; player.combatMonsterAffinity[3] -= 6 }
 });
 
 // @ts-ignore: constructor function
@@ -609,8 +609,8 @@ acc.dcpe = new Eqp({ id: 40040, name: 'Deception Eye', desc: 'A mysterious gem. 
 
 // @ts-ignore: constructor function
 acc.bdl1 = new Eqp({ id: 40041, name: 'Bone Doll', desc: 'A small doll carved from beast bone. It\'s a charm that protects the wearer from evil' + dom.dseparator + '<span style="color:thistle;text-shadow:blueviolet 0px 0px 5px">Dark RES +5</span><br><span style="color:royalblue;text-shadow:blueviolet 0px 0px 5px">Evil Class DEF +5</span>', slot: 8, stype: 3,
-  oneq: function (player: Player) { player.caff[6] += 5; player.cmaff[3] += 5 },
-  onuneq: function (player: Player) { player.caff[6] -= 5; player.cmaff[3] -= 5; },
+  oneq: function (player: Player) { player.caff[6] += 5; player.combatMonsterAffinity[3] += 5 },
+  onuneq: function (player: Player) { player.caff[6] -= 5; player.combatMonsterAffinity[3] -= 5; },
   onGet: function () { if (acc.sdl1.have && acc.wdl1.have) { giveRcp(rcp.gdl1); this.onGet = function () { } } }
 });
 
@@ -684,26 +684,26 @@ acc.gsfk = new Eqp({ id: 40052, name: 'Plague Flask', desc: 'Locked vessel conta
 
 // @ts-ignore: constructor function
 acc.jln1 = new Eqp({ id: 40053, name: 'Life Jelly', desc: 'Concentrated red jelly. Improves life force' + dom.dseparator + '<span style="color:chartreuse">MAX HP +400</span>', slot: 8, stype: 3,
-  oneq: function (player: Player) { player.hpa += 400 },
-  onuneq: function (player: Player) { player.hpa -= 400 }
+  oneq: function (player: Player) { player.hp_bonus += 400 },
+  onuneq: function (player: Player) { player.hp_bonus -= 400 }
 });
 
 // @ts-ignore: constructor function
 acc.jln2 = new Eqp({ id: 40054, name: 'Stamina Jelly', desc: 'Concentrated green jelly. Improves stamina' + dom.dseparator + '<span style="color:chartreuse">MAX SAT +100</span>', slot: 8, stype: 3,
-  oneq: function (player: Player) { player.sat += 100; player.sata += 100; },
-  onuneq: function (player: Player) { player.sat -= 100; player.sata -= 100; }
+  oneq: function (player: Player) { player.sat += 100; player.sat_bonus += 100; },
+  onuneq: function (player: Player) { player.sat -= 100; player.sat_bonus -= 100; }
 });
 
 // @ts-ignore: constructor function
 acc.jln3 = new Eqp({ id: 40055, name: 'Vital Jelly', desc: 'Concentrated blue jelly. Improves metabolism' + dom.dseparator + '<span style="color:chartreuse">SPD +2</span><br><span style="color:crimson">Energy Consumtion +0.2\/s</span>', slot: 8, stype: 3,
-  oneq: function (player: Player) { player.spda += 2; player.mods.sdrate += .2 },
-  onuneq: function (player: Player) { player.spda -= 2; player.mods.sdrate -= .2 }
+  oneq: function (player: Player) { player.spd_bonus += 2; player.mods.satiationDrainRate += .2 },
+  onuneq: function (player: Player) { player.spd_bonus -= 2; player.mods.satiationDrainRate -= .2 }
 });
 
 // @ts-ignore: constructor function
 acc.jln4 = new Eqp({ id: 40056, name: 'Grand Gelatin', desc: 'proc', slot: 8, stype: 3, rar: 2,
-  oneq: function (player: Player) { player.spda += 2; player.mods.sdrate += .2 },
-  onuneq: function (player: Player) { player.spda -= 2; player.mods.sdrate -= .2 }
+  oneq: function (player: Player) { player.spd_bonus += 2; player.mods.satiationDrainRate += .2 },
+  onuneq: function (player: Player) { player.spd_bonus -= 2; player.mods.satiationDrainRate -= .2 }
 });
 
 // @ts-ignore: constructor function
@@ -717,27 +717,27 @@ acc.cstone = new Eqp({ id: 40059, name: 'Celestial Stone', desc: 'proc', slot: 8
 
 // @ts-ignore: constructor function
 acc.coring = new Eqp({ id: 40060, name: 'Coin Ring', desc: 'Golden ring whith runic engraving of a coin on it. Rumored to attract wealth ' + dom.dseparator + '<span style="color:orange">Defeated enemies occasionally drop money</span>', slot: 8, stype: 3, rar: 2,
-  oneq: function (player: Player) { player.mods.enmondren += .01 },
-  onuneq: function (player: Player) { player.mods.enmondren -= .01 }
+  oneq: function (player: Player) { player.mods.enemyMoneyDropRateEnhance += .01 },
+  onuneq: function (player: Player) { player.mods.enemyMoneyDropRateEnhance -= .01 }
 });
 
 // @ts-ignore: constructor function
 acc.dticket = new Eqp({ id: 40061, name: 'Discount Ticket', desc: 'Small ticket that allows you to buy things for cheaper, if you show it to the shopkeeper. Sometimes given to random customers for promotional purposes ' + dom.dseparator + '<span style="color:thistle">Shop price reduction -1%</span>', slot: 8, stype: 3,
   onGet: function () { let b = 0; for (let a in inv) if (inv[a].id === this.id) b++; if (b >= 5) giveRcp(rcp.dcard1) },
-  oneq: function (player: Player) { player.mods.infsrate -= .01; recshop(); },
-  onuneq: function (player: Player) { player.mods.infsrate += .01; recshop(); }
+  oneq: function (player: Player) { player.mods.inflationRate -= .01; recshop(); },
+  onuneq: function (player: Player) { player.mods.inflationRate += .01; recshop(); }
 });
 
 // @ts-ignore: constructor function
 acc.dcard1 = new Eqp({ id: 40062, name: 'Discount Card', desc: 'A card given to the most loyal customers in popular shops' + dom.dseparator + '<span style="color:thistle">Shop price reduction -5%</span>', slot: 8, stype: 3, rar: 2,
-  oneq: function (player: Player) { player.mods.infsrate -= .05; recshop(); },
-  onuneq: function (player: Player) { player.mods.infsrate += .05; recshop(); }
+  oneq: function (player: Player) { player.mods.inflationRate -= .05; recshop(); },
+  onuneq: function (player: Player) { player.mods.inflationRate += .05; recshop(); }
 });
 
 // @ts-ignore: constructor function
 acc.rgreed = new Eqp({ id: 40063, name: 'Ring of Greed', desc: 'Expensive ring employed by rich merchants and gamblers. Makes you seem like a symbol of authority, brings tremendous luck and helps during negotiations' + dom.dseparator + '<span style="color:orange">Defeated enemies sometimes drop money</span><br><span style="color:gold">+15% dropped money</span><br><span style="color:thistle">Shop price reduction -10%</span>', slot: 8, stype: 3, rar: 3,
-  oneq: function (player: Player) { player.mods.infsrate -= .1; player.mods.enmondren += .03; recshop(); },
-  onuneq: function (player: Player) { player.mods.infsrate += .1; player.mods.enmondren -= .03; recshop(); }
+  oneq: function (player: Player) { player.mods.inflationRate -= .1; player.mods.enemyMoneyDropRateEnhance += .03; recshop(); },
+  onuneq: function (player: Player) { player.mods.inflationRate += .1; player.mods.enemyMoneyDropRateEnhance -= .03; recshop(); }
 });
 
 // @ts-ignore: constructor function
@@ -760,26 +760,26 @@ acc.medl6 = new Eqp({ id: 40069, name: 'White Jade Medal', desc: 'proc', slot: 8
 
 // @ts-ignore: constructor function
 acc.coindct = new Eqp({ id: 40070, name: 'Coin of Deceit', desc: 'Crooked tainted coin with seemingly evil aura floating about it' + dom.dseparator + '<span style="color:royalblue">Crit Chance +3%</span>', slot: 8, stype: 3,
-  oneq: function (player: Player) { player.mods.crflt += .03; },
-  onuneq: function (player: Player) { player.mods.crflt -= .03; }
+  oneq: function (player: Player) { player.mods.critChanceFlat += .03; },
+  onuneq: function (player: Player) { player.mods.critChanceFlat -= .03; }
 });
 
 // @ts-ignore: constructor function
 acc.slchth = new Eqp({ id: 40071, name: 'Silencing Sheath', desc: 'Light conciealed sheath for storing small knives and other assassin tools. Unconspicous and easy to use, it is favoured by the agents of the Underworld' + dom.dseparator + '<span style="color:mediumpurple">Crit Damage +15%</span>', slot: 8, stype: 3,
-  oneq: function (player: Player) { player.mods.cpwr += .15; },
-  onuneq: function (player: Player) { player.mods.cpwr -= .15; }
+  oneq: function (player: Player) { player.mods.critPower += .15; },
+  onuneq: function (player: Player) { player.mods.critPower -= .15; }
 });
 
 // @ts-ignore: constructor function
 acc.rmedlon = new Eqp({ id: 40072, name: 'Ruin Medallion', desc: 'Evil Medallion imbued with the curse of misforture. Brings terrible luck to everyone around its bearer' + dom.dseparator + '<span style="color:royalblue">Crit Chance +6%</span>', slot: 8, stype: 3, rar: 2,
-  oneq: function (player: Player) { player.mods.crflt += .06; },
-  onuneq: function (player: Player) { player.mods.crflt -= .06; }
+  oneq: function (player: Player) { player.mods.critChanceFlat += .06; },
+  onuneq: function (player: Player) { player.mods.critChanceFlat -= .06; }
 });
 
 // @ts-ignore: constructor function
 acc.mirgmirr = new Eqp({ id: 40073, name: 'Mirage Mirror', desc: 'Mirror of clouded darkness. It bends light around you.' + dom.dseparator + '<span style="color:royalblue">Reduces enemy aggression<br>Auto Dodge +10%</span>', slot: 8, stype: 3,
-  oneq: function (player: Player) { player.mods.ddgmod += .1; },
-  onuneq: function (player: Player) { player.mods.ddgmod -= .1; }
+  oneq: function (player: Player) { player.mods.dodgeModifier += .1; },
+  onuneq: function (player: Player) { player.mods.dodgeModifier -= .1; }
 });
 
 // @ts-ignore: constructor function
@@ -790,8 +790,8 @@ acc.aihomnt = new Eqp({ id: 40074, name: 'Airia Hair Ornament', desc: 'An orname
 
 // @ts-ignore: constructor function
 acc.gourd1 = new Eqp({ id: 40075, name: 'Gourd', desc: 'One of the oldest crop plants in existence. You can use it to store water... or sake' + dom.dseparator + '<span style="color:chartreuse">Max SAT +150</span>', slot: 8, stype: 3,
-  oneq: function (player: Player) { player.sat += 150; player.sata += 150; },
-  onuneq: function (player: Player) { player.sat -= 150; player.sata -= 150; }
+  oneq: function (player: Player) { player.sat += 150; player.sat_bonus += 150; },
+  onuneq: function (player: Player) { player.sat -= 150; player.sat_bonus -= 150; }
 });
 
 // @ts-ignore: constructor function
@@ -802,8 +802,8 @@ acc.stupa = new Eqp({ id: 40076, name: 'Stupa', desc: 'Stupa are long boards pla
 
 // @ts-ignore: constructor function
 acc.wpeny = new Eqp({ id: 40077, name: 'Penny of Wealth', desc: 'An extra shiny penny, that looks like it\'s made of gold. It probably isn\'t, but you feel richer just by holding it' + dom.dseparator + '<span style="color:orange">Picking a coin gives you an extra coin<br><span style="color:gold">Greed EXP gain +20%</span></span>', slot: 8, stype: 3,
-  oneq: function (player: Player) { skl.gred.p += .2; player.mods.wthexrt++ },
-  onuneq: function (player: Player) { skl.gred.p -= .2; player.mods.wthexrt-- }
+  oneq: function (player: Player) { skl.gred.p += .2; player.mods.wealthExtra++ },
+  onuneq: function (player: Player) { skl.gred.p -= .2; player.mods.wealthExtra-- }
 });
 
 // @ts-ignore: constructor function
@@ -811,8 +811,8 @@ acc.rngsgn = new Eqp({ id: 40078, name: 'Signet Ring', desc: 'A gold and silver 
 
 // @ts-ignore: constructor function
 acc.fmlim = new Eqp({ id: 40079, important: true, name: 'Family Heirloom', desc: 'A treasure passed down in your family. This plain looking medalion doesn\'t look anything special, it appears incomplete with an empty socket in the center. You fail to see any value in this piece of junk' + dom.dseparator + '<span style="color:chartreuse">MAX HP +2</span>', slot: 8, stype: 3,
-  oneq: function (player: Player) { player.hpa += 2 },
-  onuneq: function (player: Player) { player.hpa -= 2 },
+  oneq: function (player: Player) { player.hp_bonus += 2 },
+  onuneq: function (player: Player) { player.hp_bonus -= 2 },
   onGet: function () { if (acc.strawp.have) { giveRcp(rcp.fmlim2); this.onGet = function () { } } }
 });
 
@@ -824,26 +824,26 @@ acc.pbrs = new Eqp({ id: 40080, name: 'Pet Brush', desc: 'Special brush designed
 
 // @ts-ignore: constructor function
 acc.clrpin = new Eqp({ id: 40081, name: 'Clover Pin', desc: 'Small golden pin in a shape of a clover. Senior gamblers wear these pins to display their prestige and status' + dom.dseparator + '<span style="color:gold">Minor chance for an enemy dropped item to duplicate</span>', slot: 8, stype: 3, rar: 4,
-  oneq: function (player: Player) { player.mods.lkdbt += .01; },
-  onuneq: function (player: Player) { player.mods.lkdbt -= .01; }
+  oneq: function (player: Player) { player.mods.luckDoubleTry += .01; },
+  onuneq: function (player: Player) { player.mods.luckDoubleTry -= .01; }
 });
 
 // @ts-ignore: constructor function
 acc.prtckst = new Eqp({ id: 40082, name: 'Portable Cooking Set', desc: 'Box-sized kit containing every crucial cooking utencil you may need for comfortable and effortless foodmaking session anywhere at any time, complimented with variously sized knives, cutting boards, pots and even everlasting fire burner' + dom.dseparator + '<span style="color:deeppink">Cooking EXP gain +200%</span><br><span style="color:springgreen">Allows cooking everywhere</span>', slot: 8, stype: 3, rar: 3,
-  oneq: function (player: Player) { skl.cook.p += 2; player.mods.ckfre += 1 },
-  onuneq: function (player: Player) { skl.cook.p -= 2; player.mods.ckfre -= 1 }
+  oneq: function (player: Player) { skl.cook.p += 2; player.mods.cookingFire += 1 },
+  onuneq: function (player: Player) { skl.cook.p -= 2; player.mods.cookingFire -= 1 }
 });
 
 // @ts-ignore: constructor function
 acc.ubrlc = new Eqp({ id: 40083, name: 'Umbrella', desc: 'Light umbrella with a cloud pattern. Young masters and ladies carry these to display their carefree nature' + dom.dseparator + '<span style="color:cyan;background-color:blue">Prevents you from getting rained on</span>', slot: 8, stype: 3,
-  oneq: function (player: Player) { player.mods.rnprtk += 1; },
-  onuneq: function (player: Player) { player.mods.rnprtk -= 1; }
+  oneq: function (player: Player) { player.mods.rainProtect += 1; },
+  onuneq: function (player: Player) { player.mods.rainProtect -= 1; }
 });
 
 // @ts-ignore: constructor function
 acc.sltbg = new Eqp({ id: 40084, name: 'Bag of Salt', desc: 'Little canvas bag filled with salt. Commoners believe that spreading salt can repel evil, so you can keep some on yourself for protection' + dom.dseparator + '<span style="color:tomato;text-shadow:blueviolet 0px 0px 5px">Undead Class DEF +12</span><br><span style="color:tomato;text-shadow:blueviolet 0px 0px 5px">Undead Class ATK +8</span>', slot: 8, stype: 3,
-  oneq: function (player: Player) { player.cmaff[2] += 12; player.maff[2] += 8 },
-  onuneq: function (player: Player) { player.cmaff[2] -= 12; player.maff[2] -= 8 }
+  oneq: function (player: Player) { player.combatMonsterAffinity[2] += 12; player.maff[2] += 8 },
+  onuneq: function (player: Player) { player.combatMonsterAffinity[2] -= 12; player.maff[2] -= 8 }
 });
 
 // @ts-ignore: constructor function
@@ -864,14 +864,14 @@ acc.otpin = new Eqp({ id: 40086, name: 'Sword Medal', desc: 'Wearable ornament i
 
 // @ts-ignore: constructor function
 acc.fmlim2 = new Eqp({ id: 40087, important: true, name: 'Family Heirloom+', desc: 'You reinforced your family pendant\'s string with straw to prevent possible breaking. It looks even more lame like this' + dom.dseparator + '<span style="color:chartreuse">MAX HP +5<br>Max SAT +25<br>SPD +1</span>', slot: 8, stype: 3,
-  oneq: function (player: Player) { player.hpa += 5; player.sata += 25; player.spda += 1 },
-  onuneq: function (player: Player) { player.hpa -= 5; player.sata -= 25; player.spda -= 1 }
+  oneq: function (player: Player) { player.hp_bonus += 5; player.sat_bonus += 25; player.spd_bonus += 1 },
+  onuneq: function (player: Player) { player.hp_bonus -= 5; player.sat_bonus -= 25; player.spd_bonus -= 1 }
 });
 
 // @ts-ignore: constructor function
 acc.gpin = new Eqp({ id: 40088, name: 'Fighter Insignia', desc: 'Ring tempered by unending fighter spirit, was formerly owned by a rookie knight' + dom.dseparator + '<span style="color:chartreuse">STR +20<br>AGL +5</span>', slot: 8, stype: 3,
-  oneq: function (player: Player) { player.stra += 20; player.agla += 5 },
-  onuneq: function (player: Player) { player.stra -= 20; player.agla -= 5 }
+  oneq: function (player: Player) { player.str_bonus += 20; player.agl_bonus += 5 },
+  onuneq: function (player: Player) { player.str_bonus -= 20; player.agl_bonus -= 5 }
 });
 
 // @ts-ignore: constructor function

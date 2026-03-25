@@ -28,10 +28,10 @@ export function scoutGeneric(chs: any): void {
   chs.data.scout += 2 * (1 + skl.scout.lvl * .2);
   let m = 1;
   if (chs.data.scout >= chs.data.scoutm) { m = 5; chs.data.scout = 0 }
-  if ((!sct.cond || sct.cond() === true) && !chs.data.gets[idx] && random() <= sct.c * m * (1 + skl.scout.lvl * .15) * (1 + chs.data.gotmod * .2)) { stats.dsct++; chs.data.gotmod++; sct.f(); giveSkExp(skl.scout, (sct.exp ? sct.exp : .5 / sct.c)) }
+  if ((!sct.cond || sct.cond() === true) && !chs.data.gets[idx] && random() <= sct.c * m * (1 + skl.scout.lvl * .15) * (1 + chs.data.gotmod * .2)) { stats.discoveryTotal++; chs.data.gotmod++; sct.f(); giveSkExp(skl.scout, (sct.exp ? sct.exp : .5 / sct.c)) }
   let t = 2;
-  for (let a in combat.current_l.sector) { let m = canScout(combat.current_l.sector![a as any]); if (m === 1) t = m }
-  if (canScout(combat.current_l) >= 2 && t >= 2) { deactivateAct(act.scout); msg('There doesn\'t seem to be anything of interest left in this area') }
+  for (let a in combat.currentLocation.sector) { let m = canScout(combat.currentLocation.sector![a as any]); if (m === 1) t = m }
+  if (canScout(combat.currentLocation) >= 2 && t >= 2) { deactivateAct(act.scout); msg('There doesn\'t seem to be anything of interest left in this area') }
 }
 
 export function disassembleGeneric(obj: any): void {
@@ -43,7 +43,7 @@ export function disassembleGeneric(obj: any): void {
     if (obj.slot) c = obj.dp / obj.dpmax;
     am = Math.ceil(am / (2 - c));
     giveItem(obj.dss[a].item, am)
-  } giveSkExp(skl.dssmb, (2 ** obj.rar || 1) * 5 - 9.5); stats.dsst++;
+  } giveSkExp(skl.dssmb, (2 ** obj.rar || 1) * 5 - 9.5); stats.disassembleTotal++;
   if (obj.slot) removeItem(obj);
-  else { obj.amount--; if (obj.amount <= 0) removeItem(obj); else if (obj.stype === settings.sm) updateInv(global.sinv.indexOf(obj)); else if (settings.sm === 1) updateInv(inv.indexOf(obj)) }
+  else { obj.amount--; if (obj.amount <= 0) removeItem(obj); else if (obj.stype === settings.sortMode) updateInv(global.slottedInventory.indexOf(obj)); else if (settings.sortMode === 1) updateInv(inv.indexOf(obj)) }
 }
