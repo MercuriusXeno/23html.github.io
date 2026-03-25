@@ -4,6 +4,7 @@ import { random } from '../random';
 import { findbyid } from '../utils';
 import { dmg_calc } from '../game/combat';
 import { giveEff } from '../ui/effects';
+import abilitiesData from './abilities.json'
 
 // ==========================================================================
 // Ability constructor + instances
@@ -101,3 +102,6 @@ abl.bash.cls = 2;
 abl.bash.f = function (this: any, x: Combatant, y: Combatant) {
   return dmg_calc(x, y, this) * 1.3
 }
+
+init_collection(abilitiesData)
+add_custom_logic()

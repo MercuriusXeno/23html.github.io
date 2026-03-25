@@ -8,6 +8,14 @@
             "file": "${workspaceFolder}/index.html",
             "webRoot": "${workspaceFolder}",
             "preLaunchTask": "Build"
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Build & Launch Proto23 (server)",
+            "url": "http://localhost:8080/index.html",
+            "webRoot": "${workspaceFolder}",
+            "preLaunchTask": "Start Server"
         }
     ]
 }

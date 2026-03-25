@@ -1,0 +1,58 @@
+[
+   {
+      "abbr": "default"
+   },
+   {
+      "id": 1,
+      "abbr": "bite",
+      "name": "Bite",
+      "atrg": " <span style='color:hotpink'>bites you</span> -> "
+   },
+   {
+      "id": 2,
+      "abbr": "rstab",
+      "name": "Selfharm",
+      "atrg": " <span style='color:magenta'>stabs you with something rusty</span> -> ",
+      "cls": 1
+   },
+   {
+      "id": 3,
+      "abbr": "scrtch",
+      "name": "Scratch",
+      "atrg": " <span style='color:hotpink'>scratches you</span> -> ",
+      "cls": 0
+   },
+   {
+      "id": 4,
+      "abbr": "spark",
+      "name": "Spark",
+      "atrg": " <span style='color:yellow'>electrocutes you</span> -> ",
+      "btrg": " <span style='color:yellow'>electrocute the enemy</span> -> ",
+      "cls": 1,
+      "aff": 1,
+      "stt": 2,
+      "affp": 25
+   },
+   {
+      "id": 5,
+      "abbr": "dstab",
+      "name": "Double Stab",
+      "atrg": " <span style='color:pink'>doublestabs you</span> -> ",
+      "btrg": " <span style='color:pink'>You doublestab the enemy</span> -> ",
+      "cls": 1
+   },
+   {
+      "id": 6,
+      "abbr": "pbite",
+      "name": "Poison Bite",
+      "atrg": " <span style='color:magenta'>bites you</span> -> ",
+      "cls": 1
+   },
+   {
+      "id": 7,
+      "abbr": "bash",
+      "name": "Bash",
+      "atrg": " <span style='color:lightgrey'>bashes you</span> -> ",
+      "cls": 2
+   }
+]

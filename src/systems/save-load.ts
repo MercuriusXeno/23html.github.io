@@ -7,7 +7,8 @@ import {
   dom, global, settings, you, time, callback, w_manager, timers, chss, home, inv, furn, qsts, dar, acts, sectors,
   itemgroup, data, gameText, flags,
   setYou, setTime, setInv, setDar, setFurn, setQsts, setActs, setSectors, resetFlags,
-stats, combat, } from '../state';
+  stats, combat,
+} from '../state';
 const { effect, creature, wpn, eqp, acc, sld, item, rcp, area, sector, ttl, skl,
   furniture, vendor, quest, act, container, mastery } = data;
 import { wdrseason } from './weather';
@@ -93,7 +94,7 @@ export function save(lvr?: boolean) {
   // Remove type-5 effects before serializing
   flags.m_freeze = true;
   for (let a in you.eff) {
-    if (you.eff[a].type === 5) you.eff[a].onRemove();
+    if (you.eff[a].type === 5) you.eff[a].onRemove(you);
   }
 
   // --- Segment 0: Player stats ---
@@ -498,7 +499,7 @@ export function load(dt?: any) {
       for (let obj in effect) {
         if (effect[obj].id === a4[o].a) {
           if (effect[obj].save !== false) giveEff(you, effect[obj], a4[o].b, a4[o].c);
-          else { effect[obj].onRemove(); }
+          else { effect[obj].onRemove(you); }
           continue;
         }
       }
