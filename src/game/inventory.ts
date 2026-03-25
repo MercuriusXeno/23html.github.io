@@ -1,3 +1,4 @@
+import type { Item, Equipment, Creature, Container, Furniture } from '../types';
 import { random, rand } from '../random';
 import { copy, deepCopy, scan, scanbyid } from '../utils';
 import { addElement, empty } from '../dom-utils';
@@ -11,7 +12,7 @@ import { renderFurniture } from '../ui/panels';
 import { giveSkExp } from './progression';
 import { kill } from './utils-game';
 
-    export function giveItem(obj: any, am?: any, ignore?: any, flag?: any) {
+    export function giveItem(obj: Item | Equipment, am?: number, ignore?: boolean, flag?: { fl?: boolean; fi?: boolean }) {
       am = am || 1;
       if (!!obj.slot) {
         let nitm; for (let p = 0; p < am; p++) {
@@ -28,8 +29,8 @@ import { kill } from './utils-game';
           obj.onGet(you);
           if (settings.sm === nitm.stype) global.sinv.push(nitm);
           if (nitm.stype === settings.sm || settings.sm === 1) renderItem(nitm);
-          let g = obj.id / 10000 << 0;
-          if (!scan(dar[g], obj.id)) dar[g].push(obj.id);
+          let g = obj.id! / 10000 << 0;
+          if (!scan(dar[g], obj.id as any)) dar[g].push(obj.id as any);
           if (flag && flag.fl) iftrunkopen(1);
           else iftrunkopenc(1);
           if (!flags.loadstate && !ignore) stats.igtttl += am;
@@ -47,21 +48,21 @@ import { kill } from './utils-game';
         }
         obj.have = true;
         obj.data.dscv = true;
-        inv.push(obj);
+        inv.push(obj as any);
         obj.amount += am;
         msg('New item obtained: <span style="color:coral">' + obj.name + '</span><span style="color:lime"> x' + am + '</span>', 'cyan', obj);
         obj.onGet(you);
         if (settings.sm === obj.stype) global.sinv.push(obj);
-        if (obj.stype === settings.sm || settings.sm === 1) renderItem(obj);
+        if (obj.stype === settings.sm || settings.sm === 1) renderItem(obj as any);
       } else {
         obj.amount += am;
         msg('Item Acquired: <span style="color:chartreuse">' + obj.name + '</span><span style="color:lime"> x' + am + '</span>', 'cyan', obj);
-        if (settings.sm === 1) updateInv(inv.indexOf(obj));
+        if (settings.sm === 1) updateInv(inv.indexOf(obj as any));
         else if (settings.sm === obj.stype) updateInv(global.sinv.indexOf(obj));
         obj.onGet(you);
       }
-      let g = obj.id / 10000 << 0;
-      if (!scan(dar[g], obj.id)) dar[g].push(obj.id);
+      let g = obj.id! / 10000 << 0;
+      if (!scan(dar[g], obj.id as any)) dar[g].push(obj.id as any);
       if (obj.multif) for (let a = 0; a < am; a++) obj.multif()
       if (obj.rot) {
         let thave = false;
@@ -78,11 +79,11 @@ import { kill } from './utils-game';
       combat.keytarget = e.target;
       if (e.which === 46) {
         for (let obj in global.shortcuts) if (global.shortcuts[obj][0] === global.keyobj.data.skey) global.shortcuts.splice(global.shortcuts.indexOf(global.shortcuts[obj]), 1)
-        combat.keytarget.children[0].innerHTML = global.keyobj.name;
+        combat.keytarget!.children[0].innerHTML = global.keyobj.name;
         global.keyobj.data.skey = null;
       }
       else if ((e.which >= 47 && e.which <= 90) || (e.which >= 96 && e.which <= 105)) {
-        combat.keytarget.children[0].innerHTML = global.keyobj.name + '<small> {' + String.fromCharCode(global.keyobj.data.skey) + '}</small>';
+        combat.keytarget!.children[0].innerHTML = global.keyobj.name + '<small> {' + String.fromCharCode(global.keyobj.data.skey) + '}</small>';
         if (global.keyobj.data.skey > 0 && e.which !== global.keyobj.data.skey) { for (let obje in global.shortcuts) { if (global.shortcuts[obje][2].data.skey === global.keyobj.data.skey) { global.shortcuts[obje][2].data.skey = null; global.shortcuts.splice(global.shortcuts.indexOf(global.shortcuts[obje]), 1); } } }
         let tg;
         for (let obj in global.shortcuts) {
@@ -91,14 +92,14 @@ import { kill } from './utils-game';
       }
     }
 
-    export function removeItem(obj: any, flag?: any) {
-      if (obj.slot) if (wearing(obj)) unequip(obj)
+    export function removeItem(obj: Item | Equipment, flag?: { fl?: boolean }) {
+      if (obj.slot) if (wearing(obj)) unequip(obj as Equipment)
       if (obj.data.skey) {
         for (let s in global.shortcuts) if (obj.data.skey === global.shortcuts[s][0]) { global.shortcuts.splice(global.shortcuts.indexOf(obj.data.skey), 1); continue };
       }
       let idx;
       if (settings.sm === 1) {
-        idx = inv.indexOf(obj);
+        idx = inv.indexOf(obj as any);
         dom.inv_con.removeChild(dom.inv_con.children[idx])
       } else if (settings.sm === obj.stype) {
         idx = global.sinv.indexOf(obj);
@@ -106,7 +107,7 @@ import { kill } from './utils-game';
         global.sinv.splice(idx, 1);
       }
       global.dscr.style.display = 'none';
-      inv.splice(inv.indexOf(obj), 1);
+      inv.splice(inv.indexOf(obj as any), 1);
       obj.have = false;
       if (obj.rot) for (let a in planner.imorph.data.items) if (planner.imorph.data.items[a].id === obj.id) { planner.imorph.data.items.splice(planner.imorph.data.items.indexOf(obj)); }
       if (global.lw_op === 1) rsort(settings.rm)
@@ -183,7 +184,7 @@ import { kill } from './utils-game';
               if (trunk.c.length === 0) global.dscr.style.display = 'none'
             }
             else {
-              titem.amount += ni.nit.am;
+              titem!.amount += ni.nit.am;
               let fin;
               for (let a in trunk.c) { if (trunk.c[a].item.id === ni.nit.item.id) { fin = trunk.c[a]; break } }
               dom.invp2.removeChild(dom.invp2.children[trunk.c.indexOf(fin)]);
@@ -212,7 +213,7 @@ import { kill } from './utils-game';
               else if (settings.sm === item.stype) updateInv(global.sinv.indexOf(item));
 
             } else {
-              titem.am++;
+              titem!.am++;
               item.amount--;
               if (item.amount <= 0 || item.slot) { dom.invp1.removeChild(dom.invp1.children[inv.indexOf(item)]); removeItem(item, { fl: true }) } else if (settings.sm === 1) updateInv(inv.indexOf(item));
               else if (settings.sm === item.stype) updateInv(global.sinv.indexOf(item));
@@ -228,7 +229,7 @@ import { kill } from './utils-game';
               if (--fin.am <= 0) { dom.invp2.removeChild(dom.invp2.children[trunk.c.indexOf(fin)]); removeFromContainer(trunk, fin) } if (trunk.c.length === 0) global.dscr.style.display = 'none'
             }
             else {
-              titem.amount++;
+              titem!.amount++;
               let fin;
               for (let a in trunk.c) { if (trunk.c[a].item.id === ni.nit.item.id) { fin = trunk.c[a]; break } }
               if (--fin.am <= 0) { dom.invp2.removeChild(dom.invp2.children[trunk.c.indexOf(fin)]); removeFromContainer(trunk, fin) } if (trunk.c.length === 0) global.dscr.style.display = 'none';
@@ -295,22 +296,22 @@ import { kill } from './utils-game';
       else cont.c.splice(cont.c.indexOf(item), 1);
     }
 
-    export function dropC(crt: any, t?: any) {
+    export function dropC(crt: Creature, t?: number) {
       t = t || 1;
-      for (let j in crt.drop) if (!crt.drop[j].cond || (!!crt.drop[j].cond && crt.drop[j].cond() === true)) if (random() < crt.drop[j].chance + (crt.drop[j].chance / 100 * you.luck)) {
-        giveItem(crt.drop[j].item, !!crt.drop[j].min ? rand(crt.drop[j].min, crt.drop[j].max) : t); if (you.mods.lkdbt > 0 && random() < you.mods.lkdbt) giveItem(crt.drop[j].item);
+      for (let j in crt.drop) if (!crt.drop[j].cond || (!!crt.drop[j].cond && crt.drop[j].cond!() === true)) if (random() < crt.drop[j].chance! + (crt.drop[j].chance! / 100 * you.luck)) {
+        giveItem(crt.drop[j].item, !!crt.drop[j].min ? rand(crt.drop[j].min!, crt.drop[j].max!) : t); if (you.mods.lkdbt > 0 && random() < you.mods.lkdbt) giveItem(crt.drop[j].item);
         let d = global.drdata["d" + crt.id];
         if (!d) { d = global.drdata["d" + crt.id] = []; d[j] = 1 } else d[j] = 1;
       }
       for (let jj in global.wdrop) if (random() < global.wdrop[jj].c + (global.wdrop[jj].c / 100 * you.luck)) giveItem(global.wdrop[jj].item, t);
-      for (let obj in combat.current_z.drop) if (!combat.current_z.drop[obj].cond || (!!combat.current_z.drop[obj].cond && combat.current_z.drop[obj].cond() === true)) if (random() < combat.current_z.drop[obj].c + (combat.current_z.drop[obj].c / 100 * you.luck) + (combat.current_z.drop[obj].c / 75 * skl.hst.lvl)) { giveItem(combat.current_z.drop[obj].item, t); giveSkExp(skl.hst, .2) }
+      for (let obj in combat.current_z.drop) if (!combat.current_z.drop[obj].cond || (!!combat.current_z.drop[obj].cond && combat.current_z.drop[obj].cond!() === true)) if (random() < combat.current_z.drop[obj].c! + (combat.current_z.drop[obj].c! / 100 * you.luck) + (combat.current_z.drop[obj].c! / 75 * skl.hst.lvl)) { giveItem(combat.current_z.drop[obj].item, t); giveSkExp(skl.hst, .2) }
       if (crt.rnk < 22) { let ar = (crt.rnk - 1) / 3 << 0; for (let a in global.rdrop[ar]) if (random() < global.rdrop[ar][a].c + (global.rdrop[ar][a].c / 100 * you.luck)) giveItem(global.rdrop[ar][a].item, t) }
     }
 
-    export function wearing(itm: any) { for (let obj in you.eqp) if (itm.data.uid === you.eqp[obj].data.uid && you.eqp[obj].id !== 10000) return true }
-    export function wearingany(itm: any) { for (let obj in you.eqp) if (itm.id === you.eqp[obj].id && you.eqp[obj].id !== 10000) return true }
+    export function wearing(itm: Item | Equipment) { for (let obj in you.eqp) if (itm.data.uid === you.eqp[obj].data.uid && you.eqp[obj].id !== 10000) return true }
+    export function wearingany(itm: Item | Equipment) { for (let obj in you.eqp) if (itm.id === you.eqp[obj].id && you.eqp[obj].id !== 10000) return true }
 
-    export function giveFurniture(frt: any, l?: any, show?: any) {
+    export function giveFurniture(frt: Furniture, l?: boolean, show?: boolean) {
       let frn = l === true ? copy(frt) : frt;
       if (show !== false) msg('Furniture Acquired: <span style="color:orange">"' + frt.name + '"</span>', 'yellow', frt, 9);
       if (scanbyid(furn, frn.id)) frn.data.amount++;

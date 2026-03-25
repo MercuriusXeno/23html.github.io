@@ -207,12 +207,12 @@ import { renderRcp } from './panels';
       inv_slot.addEventListener('mouseleave', function () { if (obj.new === true) { obj.new = false; clearTimeout(timers.nsblk); inv_name.innerHTML = obj.name } });
     }
 
-    export function updateInv(slot: any) {
+    export function updateInv(slot: number) {
       if (settings.sm === 1) dom.inv_con.children[slot].children[0].children[1].innerHTML = ' x' + inv[slot].amount;
       else dom.inv_con.children[slot].children[0].children[1].innerHTML = ' x' + global.sinv[slot].amount;
     }
 
-    export function isort(type: any, flags?: any) {
+    export function isort(type: number, opts?: { tr?: boolean }) {
       empty(dom.inv_con);
       if (type === 1) for (let k = 0; k < inv.length; k++) renderItem(inv[k]);
       else {
@@ -220,10 +220,10 @@ import { renderRcp } from './panels';
         for (let k = 0; k < inv.length; k++) if (type === inv[k].stype) { global.sinv.push(inv[k]); renderItem(inv[k]); }
       }
       settings.sm = type;
-      if (flags && flags.tr) iftrunkopenc(1);
+      if (opts && opts.tr) iftrunkopenc(1);
     }
 
-    export function rsort(type: any) {
+    export function rsort(type: number) {
       empty(dom.ct_bt1_1);
       if (type === 0 || !type) for (let ind in global.rec_d) renderRcp(global.rec_d[ind]);
       else {
@@ -261,4 +261,4 @@ import { renderRcp } from './panels';
 
     export function rstcrtthg() { for (let a in global.spbtsr) global.spbtsr[a].style.color = 'inherit'; }
 
-    export function reduce(itm: any, am?: any) { if (am) { itm.amount = itm.amount - am <= 0 ? 0 : itm.amount - am } if (itm.amount <= 0) { removeItem(itm); updateTrunkLeftItem(itm, true) } else if (settings.sm === 1) updateInv(inv.indexOf(itm)); else if (settings.sm === itm.stype) updateInv(global.sinv.indexOf(itm)); updateTrunkLeftItem(itm) }
+    export function reduce(itm: any, am?: number) { if (am) { itm.amount = itm.amount - am <= 0 ? 0 : itm.amount - am } if (itm.amount <= 0) { removeItem(itm); updateTrunkLeftItem(itm, true) } else if (settings.sm === 1) updateInv(inv.indexOf(itm)); else if (settings.sm === itm.stype) updateInv(global.sinv.indexOf(itm)); updateTrunkLeftItem(itm) }

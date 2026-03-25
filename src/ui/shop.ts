@@ -1,3 +1,4 @@
+import type { Vendor } from '../types';
 import { GOLD, SILVER } from '../constants';
 import { random } from '../random';
 import { col } from '../utils';
@@ -40,7 +41,7 @@ import { giveSkExp } from '../game/progression';
       }
     }
 
-    export function rendershopitem(root: any, itm: any, vnd: any) {
+    export function rendershopitem(root: HTMLElement, itm: any[], vnd: Vendor) {
       dom.ch_etn = addElement(root, 'div', 'bst_entrh', 'list-row');
       dom.ch_etn.style.backgroundColor = 'rgb(10,30,54)';
       addDesc(dom.ch_etn, itm[0]);
@@ -56,7 +57,7 @@ import { giveSkExp } from '../game/progression';
       dom.ch_etn1b.style.right = 6;
       dom.ch_etn1b.style.textAlign = 'center';
       dom.ch_etn1b.style.backgroundColor = 'rgb(20,50,84)'
-      let p = Math.ceil(itm[2] * (you.mods.infsrate - skl.trad.use()) * vnd.infl * (1 - (Math.sqrt(vnd.data.rep) ** 1.3 + 0.05) * .01) * global.offline_evil_index);
+      let p = Math.ceil(itm[2] * (you.mods.infsrate - skl.trad.use()) * vnd.infl! * (1 - (Math.sqrt(vnd.data.rep) ** 1.3 + 0.05) * .01) * global.offline_evil_index);
       switch (itm[0].stype) {
         case 2: dom.ch_etn1n.style.color = 'rgb(255,192,5)';
           break;
@@ -95,7 +96,7 @@ import { giveSkExp } from '../game/progression';
         dom.ch_etn1b4.innerHTML = 'M';
         buycbs(itm, vnd)
         dom.ch_etn1b1.addEventListener('click', function (this: any) {
-          let el = this.parentElement.parentElement.parentElement; let p = Math.ceil(itm[2] * (you.mods.infsrate - skl.trad.use()) * vnd.infl * (1 - (Math.sqrt(vnd.data.rep) ** 1.3 + 0.05) * .01) * global.offline_evil_index);
+          let el = this.parentElement.parentElement.parentElement; let p = Math.ceil(itm[2] * (you.mods.infsrate - skl.trad.use()) * vnd.infl! * (1 - (Math.sqrt(vnd.data.rep) ** 1.3 + 0.05) * .01) * global.offline_evil_index);
           if (you.wealth >= p && itm[1] > 0) {
             itm[1]--; giveItem(itm[0]); spend(p); m_update(); giveSkExp(skl.gred, itm[2] * .05); giveSkExp(skl.trad, itm[2] ** (1 + itm[0].rar * .1) * .05)
             if (p >= GOLD) mf(-Math.ceil((p - GOLD) / GOLD), 3);
@@ -104,13 +105,13 @@ import { giveSkExp } from '../game/progression';
             stats.buyt++;
             if (random() < .0008) { giveItem(acc.dticket); msg('Thank you for your patronage!', 'gold', null, null, 'magenta') };
             stats.shppnt += p * .01;
-            vnd.data.rep += itm[2] * .0004 * vnd.repsc;
+            vnd.data.rep += itm[2] * .0004 * vnd.repsc!;
             if (vnd.data.rep > 100) vnd.data.rep = 100
             if (itm[1] === 0) { el.children[2].innerHTML = '<small>sold out</small>'; el.children[2].style.color = el.children[0].children[0].style.color = el.children[1].style.color = 'grey' } else el.children[2].innerHTML = itm[1];
           } buycbs(itm, vnd)
         });
         dom.ch_etn1b2.addEventListener('click', function (this: any) {
-          let el = this.parentElement.parentElement.parentElement; let p = Math.ceil(itm[2] * (you.mods.infsrate - skl.trad.use()) * vnd.infl * (1 - (Math.sqrt(vnd.data.rep) ** 1.3 + 0.05) * .01) * global.offline_evil_index);
+          let el = this.parentElement.parentElement.parentElement; let p = Math.ceil(itm[2] * (you.mods.infsrate - skl.trad.use()) * vnd.infl! * (1 - (Math.sqrt(vnd.data.rep) ** 1.3 + 0.05) * .01) * global.offline_evil_index);
           if (you.wealth >= p * 5 && itm[1] >= 5) {
             itm[1] -= 5; giveItem(itm[0], 5); spend(p * 5); m_update(); giveSkExp(skl.gred, itm[2] * 5 * .05); giveSkExp(skl.trad, itm[2] ** (1 + itm[0].rar * .1) * .05 * 5)
             if (p * 5 >= GOLD) mf(-Math.ceil((p * 5 - GOLD) / GOLD), 3);
@@ -119,13 +120,13 @@ import { giveSkExp } from '../game/progression';
             stats.buyt += 5;
             if (random() < .004) { giveItem(acc.dticket); msg('Thank you for your patronage!', 'gold', null, null, 'magenta') };
             stats.shppnt += p * .01;
-            vnd.data.rep += itm[2] * (5 * (1 + .05)) * .0004 * vnd.repsc;
+            vnd.data.rep += itm[2] * (5 * (1 + .05)) * .0004 * vnd.repsc!;
             if (vnd.data.rep > 100) vnd.data.rep = 100
             if (itm[1] === 0) { el.children[2].innerHTML = '<small>sold out</small>'; el.children[2].style.color = el.children[0].children[0].style.color = el.children[1].style.color = 'grey' } else el.children[2].innerHTML = itm[1];
           } buycbs(itm, vnd)
         });
         dom.ch_etn1b3.addEventListener('click', function (this: any) {
-          let el = this.parentElement.parentElement.parentElement; let p = Math.ceil(itm[2] * (you.mods.infsrate - skl.trad.use()) * vnd.infl * (1 - (Math.sqrt(vnd.data.rep) ** 1.3 + 0.05) * .01) * global.offline_evil_index);
+          let el = this.parentElement.parentElement.parentElement; let p = Math.ceil(itm[2] * (you.mods.infsrate - skl.trad.use()) * vnd.infl! * (1 - (Math.sqrt(vnd.data.rep) ** 1.3 + 0.05) * .01) * global.offline_evil_index);
           if (you.wealth >= p * 10 && itm[1] >= 10) {
             itm[1] -= 10; giveItem(itm[0], 10); spend(p * 10); m_update(); giveSkExp(skl.gred, itm[2] * 10 * .05); giveSkExp(skl.trad, itm[2] ** (1 + itm[0].rar * .1) * .05 * 10)
             if (p * 10 >= GOLD) mf(-Math.ceil((p * 10 - GOLD) / GOLD), 3);
@@ -134,13 +135,13 @@ import { giveSkExp } from '../game/progression';
             stats.buyt += 10;
             if (random() < .008) { giveItem(acc.dticket); msg('Thank you for your patronage!', 'gold', null, null, 'magenta') };
             stats.shppnt += p * .01;
-            vnd.data.rep += itm[2] * (10 * (1 + .1)) * .0004 * vnd.repsc;
+            vnd.data.rep += itm[2] * (10 * (1 + .1)) * .0004 * vnd.repsc!;
             if (vnd.data.rep > 100) vnd.data.rep = 100
             if (itm[1] === 0) { el.children[2].innerHTML = '<small>sold out</small>'; el.children[2].style.color = el.children[0].children[0].style.color = el.children[1].style.color = 'grey' } else el.children[2].innerHTML = itm[1];
           } buycbs(itm, vnd)
         });
         dom.ch_etn1b4.addEventListener('click', function (this: any) {
-          let el = this.parentElement.parentElement.parentElement; let p = Math.ceil(itm[2] * (you.mods.infsrate - skl.trad.use()) * vnd.infl * (1 - (Math.sqrt(vnd.data.rep) ** 1.3 + 0.05) * .01) * global.offline_evil_index); let max = (you.wealth / p) << 0; if (max > itm[1]) max = itm[1];
+          let el = this.parentElement.parentElement.parentElement; let p = Math.ceil(itm[2] * (you.mods.infsrate - skl.trad.use()) * vnd.infl! * (1 - (Math.sqrt(vnd.data.rep) ** 1.3 + 0.05) * .01) * global.offline_evil_index); let max = (you.wealth / p) << 0; if (max > itm[1]) max = itm[1];
           if (you.wealth >= p && itm[1] > 0) {
             itm[1] -= max; giveItem(itm[0], max); spend(p * max); m_update(); giveSkExp(skl.gred, itm[2] * max * .05); giveSkExp(skl.trad, itm[2] ** (1 + itm[0].rar * .1) * .05 * max)
             if (p * max >= GOLD) mf(-Math.ceil((p * max - GOLD) / GOLD), 3);
@@ -149,7 +150,7 @@ import { giveSkExp } from '../game/progression';
             stats.buyt += max;
             if (random() < .0008 * max) { giveItem(acc.dticket); msg('Thank you for your patronage!', 'gold', null, null, 'magenta') };
             stats.shppnt += p * .01;
-            vnd.data.rep += itm[2] * (max * (1 + max * .01)) * .0004 * vnd.repsc;
+            vnd.data.rep += itm[2] * (max * (1 + max * .01)) * .0004 * vnd.repsc!;
             if (vnd.data.rep > 100) vnd.data.rep = 100
             if (itm[1] === 0) { el.children[2].innerHTML = '<small>sold out</small>'; el.children[2].style.color = el.children[0].children[0].style.color = el.children[1].style.color = 'grey'; } else el.children[2].innerHTML = itm[1];
           } buycbs(itm, vnd)
@@ -159,7 +160,7 @@ import { giveSkExp } from '../game/progression';
         empty(this.children[0].children[1]);
       });
       dom.ch_etn1n.addEventListener('click', function (this: any) {
-        let el = this.parentElement.parentElement; let p = Math.ceil(itm[2] * (you.mods.infsrate - skl.trad.use()) * vnd.infl * (1 - (Math.sqrt(vnd.data.rep) ** 1.3 + 0.05) * .01) * global.offline_evil_index);
+        let el = this.parentElement.parentElement; let p = Math.ceil(itm[2] * (you.mods.infsrate - skl.trad.use()) * vnd.infl! * (1 - (Math.sqrt(vnd.data.rep) ** 1.3 + 0.05) * .01) * global.offline_evil_index);
         if (you.wealth >= p && itm[1] > 0) {
           itm[1]--; giveItem(itm[0]); spend(p); m_update(); giveSkExp(skl.gred, itm[2] * .05); giveSkExp(skl.trad, itm[2] ** (1 + itm[0].rar * .1) * .05)
           if (p >= GOLD) mf(-Math.ceil((p - GOLD) / GOLD), 3);
@@ -168,22 +169,22 @@ import { giveSkExp } from '../game/progression';
           stats.buyt++;
           if (random() < .0008) { giveItem(acc.dticket); msg('Thank you for your patronage!', 'gold', null, null, 'magenta') };
           stats.shppnt += p * .01;
-          vnd.data.rep += itm[2] * .0004 * vnd.repsc;
+          vnd.data.rep += itm[2] * .0004 * vnd.repsc!;
           if (vnd.data.rep > 100) vnd.data.rep = 100
           if (itm[1] === 0) { el.children[2].innerHTML = '<small>sold out</small>'; el.children[2].style.color = this.style.color = el.children[1].style.color = 'grey' } else el.children[2].innerHTML = itm[1];
         } buycbs(itm, vnd)
       });
     }
 
-    function buycbs(itm: any, vnd: any) {
-      let p = Math.ceil(itm[2] * (you.mods.infsrate - skl.trad.use()) * vnd.infl * (1 - (Math.sqrt(vnd.data.rep) ** 1.3 + 0.05) * .01) * global.offline_evil_index);
+    function buycbs(itm: any[], vnd: Vendor) {
+      let p = Math.ceil(itm[2] * (you.mods.infsrate - skl.trad.use()) * vnd.infl! * (1 - (Math.sqrt(vnd.data.rep) ** 1.3 + 0.05) * .01) * global.offline_evil_index);
       if (you.wealth < p || itm[1] <= 0) dom.ch_etn1b1.style.color = 'grey';
       if (you.wealth < p * 5 || itm[1] < 5) dom.ch_etn1b2.style.color = 'grey';
       if (you.wealth < p * 10 || itm[1] < 10) dom.ch_etn1b3.style.color = 'grey';
       if (you.wealth < p || itm[1] <= 0) dom.ch_etn1b4.style.color = 'grey';
-      dom.ch_1e.innerHTML = '&nbspBuying price: <span style="color:lime">' + Math.round(((you.mods.infsrate - skl.trad.use()) * vnd.infl * (1 - (Math.sqrt(vnd.data.rep) ** 1.3 + 0.05) * .01) * global.offline_evil_index) * 10000) / 100 + '%</span>'
+      dom.ch_1e.innerHTML = '&nbspBuying price: <span style="color:lime">' + Math.round(((you.mods.infsrate - skl.trad.use()) * vnd.infl! * (1 - (Math.sqrt(vnd.data.rep) ** 1.3 + 0.05) * .01) * global.offline_evil_index) * 10000) / 100 + '%</span>'
       dom.ch_2e.innerHTML = '&nbspReputation: ' + col('' + (vnd.data.rep << 0), 'lime');
-      for (let i = 0; i < vnd.stock.length; i++) { if (you.wealth < Math.ceil(vnd.stock[i][2] * (you.mods.infsrate - skl.trad.use()) * vnd.infl * (1 - (Math.sqrt(vnd.data.rep) ** 1.3 + 0.05) * .01) * global.offline_evil_index)) { dom.ch_1h.children[i].children[1].style.color = 'red'; dom.ch_1h.children[i].style.backgroundColor = 'rgb(68,26,38)' } }
+      for (let i = 0; i < vnd.stock.length; i++) { if (you.wealth < Math.ceil(vnd.stock[i][2] * (you.mods.infsrate - skl.trad.use()) * vnd.infl! * (1 - (Math.sqrt(vnd.data.rep) ** 1.3 + 0.05) * .01) * global.offline_evil_index)) { dom.ch_1h.children[i].children[1].style.color = 'red'; dom.ch_1h.children[i].style.backgroundColor = 'rgb(68,26,38)' } }
       for (let x in global.shptchk) global.shptchk[x]();
       //put it here for now
     }

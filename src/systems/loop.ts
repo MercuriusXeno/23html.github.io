@@ -19,8 +19,8 @@ import { addDesc } from '../ui/descriptions';
       dom.d_time.innerHTML = '<small>' + getDay(flags.tmmode || 2) + '</small> ' + timeDisp(time);
       //stats.seed1=(random()*7e+7<<7)%7&7
       combat.current_l.onStay(you);
-      runEffectors(combat.current_l.effectors)
-      for (let a in sectors) { sectors[a].onStay(you); runEffectors(sectors[a].effectors) }
+      runEffectors(combat.current_l.effectors as any)
+      for (let a in sectors) { sectors[a].onStay(you); runEffectors(sectors[a].effectors as any) }
       giveSkExp(skl.aba, .004);
       let timeh = (time.minute / DAY) << 0;
       if (global.timehold !== timeh) {

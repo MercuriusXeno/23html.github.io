@@ -31,7 +31,7 @@ import { You } from './player';
 // Save/Load Helpers
 // ==========================================================================
 
-function serializeIdData(collection: any, filter?: any) {
+function serializeIdData(collection: any, filter?: (o: any) => boolean) {
   let arr = [];
   for (let obj in collection) {
     if (filter && !filter(collection[obj])) continue;
@@ -67,7 +67,7 @@ function restoreDiscovery(savedIds: any, namespace: any) {
 // Save
 // ==========================================================================
 
-export function save(lvr?: any) {
+export function save(lvr?: boolean) {
   let storage = window.localStorage;
   flags.savestate = true;
   stats.gsvs++;
@@ -147,7 +147,7 @@ export function save(lvr?: any) {
   let a6: any[] = [];
   for (let obj in you.skls) {
     a6[obj as any] = { id: you.skls[obj].id, lvl: you.skls[obj].lvl, mst: [] as any[] };
-    for (let m in you.skls[obj].mlstn) a6[obj as any].mst[m as any] = you.skls[obj].mlstn[m].g;
+    for (let m in you.skls[obj].mlstn) a6[obj as any].mst[m as any] = you.skls[obj].mlstn![m as any].g;
   }
   str += JSON.stringify(a6);
   str += '|';
@@ -195,7 +195,7 @@ export function save(lvr?: any) {
   for (let obj in o) equip(o[obj as any], { save: true });
   you.stat_r();
   for (let obj in inv) {
-    let expectedIndex = Math.max(0, Math.min(4, Math.floor(inv[obj].id / 10000)));
+    let expectedIndex = Math.max(0, Math.min(4, Math.floor(inv[obj as any].id! / 10000)));
     if (expectedIndex === 0) {
       a3[0].push({ id: inv[obj].id, am: inv[obj].amount, data: inv[obj].data });
     } else {
@@ -457,14 +457,14 @@ export function load(dt?: any) {
     for (let a in global.rec_d) global.rec_d[a].have = false;
     global.rec_d = [];
     for (let i in skl)
-      for (let ii in skl[i].mlstn) skl[i].mlstn[ii].g = false;
+      for (let ii in skl[i].mlstn) (skl[i].mlstn as any)[ii].g = false;
 
     for (let a in a6) {
       for (let b in skl) {
         if (a6[a].id === skl[b].id) {
           you.skls.push(skl[b]);
           skl[b].lvl = a6[a].lvl;
-          for (let c in a6[a].mst) skl[b].mlstn[c].g = a6[a].mst[c];
+          for (let c in a6[a].mst) (skl[b].mlstn as any)[c].g = a6[a].mst[c];
           if (skl[b].mlstn) {
             for (let d in skl[b].mlstn) {
               if (skl[b].mlstn[d].g === false && skl[b].mlstn[d].lv <= skl[b].lvl) {
@@ -549,8 +549,8 @@ export function load(dt?: any) {
     let tempt = new Date();
     if (stats.sttime === 0)
       stats.sttime = tempt.getFullYear() + '/' + (tempt.getMonth() + 1) + '/' + tempt.getDate() + ' ' + tempt.getHours() + ':' + (tempt.getMinutes() >= 10 ? tempt.getMinutes() : '0' + tempt.getMinutes()) + ':' + (tempt.getSeconds() > 10 ? tempt.getSeconds() : '0' + tempt.getSeconds());
-    if (stats.msts === 0) stats.msts = [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]];
-    if (stats.msks === 0) stats.msks = [0, 0, 0, 0, 0, 0, 0];
+    if (stats.msts as any === 0) stats.msts = [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]];
+    if (stats.msks as any === 0) stats.msks = [0, 0, 0, 0, 0, 0, 0];
 
     // Restore UI settings
     dom.ct_bt4_21b.value = settings.bg_r;

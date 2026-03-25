@@ -1,3 +1,4 @@
+import type { Combatant, Creature, Ability } from '../types';
 import { random, rand, randf } from '../random';
 import { select } from '../utils';
 import { addElement } from '../dom-utils';
@@ -9,7 +10,7 @@ import { giveSkExp } from './progression';
 import { giveItem } from './inventory';
 import { cansee, formatw } from './utils-game';
 
-function allbuff(who: any) {
+function allbuff(who: Combatant) {
   who.stat_r();
   for (let g in who.eff) if (who.eff[g].type === 1) who.eff[g].use(you, who.eff[g].y, who.eff[g].z);
   if (who.id === you.id) {
@@ -21,7 +22,7 @@ function allbuff(who: any) {
   }
 }
 
-export function fght(att: any, def: any) {
+export function fght(att: Combatant, def: Combatant) {
   /*if(flags.btlinterrupt===true){
     msg('battle interrupted');
     if(combat.current_z.size>0) {area_init(combat.current_z);combat.current_z.size--;}else if(combat.current_z.size===-1)area_init(combat.current_z);
@@ -55,7 +56,7 @@ export function fght(att: any, def: any) {
       flags.multih = true;
       for (let ii = 0; ii < Math.ceil(global.s_l / sc.spd); ii++) {
         hts++;
-        acc_dmg += inn.battle_ai(inn, sc);
+        acc_dmg += inn.battle_ai!(inn, sc);
         if (sc.hp <= 0) break;
       }
       flags.multih = false;
@@ -84,7 +85,7 @@ export function fght(att: any, def: any) {
   }, 500 / settings.fps);
 }
 
-export function attack(att: any, def: any, atk?: any, power?: any) {
+export function attack(att: Combatant, def: Combatant, atk?: Ability, power?: number) {
   if (!flags.btl) return
   allbuff(att);
   allbuff(def);
@@ -93,7 +94,7 @@ export function attack(att: any, def: any, atk?: any, power?: any) {
   global.mabl = atk;
   let dmg: any;
   let hit: any;
-  let dk = false
+  let dk: any = false
   let a = 2 + rand(4);
   if (isyou === true) {
     wpnhitstt();
@@ -159,7 +160,7 @@ export function attack(att: any, def: any, atk?: any, power?: any) {
   return dmg || 0;
 }
 
-export function tattack(pow: any, type: any, e: any) {
+export function tattack(pow: number, type: number, e: number) {
   let dmg;
   let ddat = skl.thr.use();
   let m = combat.current_m;
@@ -185,10 +186,10 @@ export function tattack(pow: any, type: any, e: any) {
   }
 }
 
-export function dmg_calc(att: any, def: any, atk: any) {
+export function dmg_calc(att: Combatant, def: Combatant, atk: Ability) {
   let isyou = att.id === you.id;
-  let atea = atk.aff || isyou ? att.eqp[0].atype : att.atype;
-  let atcs = atk.class || isyou ? att.eqp[0].ctype : att.ctype;
+  let atea: any = atk.aff || isyou ? att.eqp[0].atype : att.atype;
+  let atcs: any = atk.class || isyou ? att.eqp[0].ctype : att.ctype;
   global.atype_d = atk.aff || att.atype;
   let ta = effect.tarnish.active === true ? .7 : (effect.prostasia.active === true ? 1.3 : 1);
   let eff = you.efficiency();
@@ -202,7 +203,7 @@ export function dmg_calc(att: any, def: any, atk: any) {
       if (you.eqp[0].id === 10000) undc = you.mods.undc;
       dmg = (att.str * eff + (((att.eqp[0].str + undc) * (att.eqp[0].dp / att.eqp[0].dpmax) * .9 + .1) * (att.eqp[0].id === 10000 ? 1 : ta))) * (100 + (att.eqp[0].aff[atea] * 10 + atk.affp * 10 + att.eqp[0].cls[atcs] * 10 + att.maff[combat.current_m.type] * 10 + att.aff[atea] * 10) * (att.eqp[0].id === 10000 ? 1 : ta)) / 100 - (def.str * (100 + def.aff[atea] * 5 + def.cls[atcs] * 5) / 100) + 1;
     } else {
-      dmg = (att.str * (100 + att.eqp[0].aff[att.atype] * 10 + atk.affp * 10 + att.eqp[0].cls[att.ctype] * 10) / 100 - ((def.str * eff + (global.target.str * ((global.target.dp / global.target.dpmax) * .85 + .15) * ta)) * (100 + global.target.aff[att.atype] * 5 * ta + global.target.cls[att.ctype] * 5 * ta + you.caff[att.atype] * 10 + you.cmaff[combat.current_m.type] * 10 + you.ccls[att.ctype] * 10) / 100 + ((you.eqp[1].str * (1 + skl.shdc.lvl / 20) * (you.eqp[1].dp / you.eqp[1].dpmax) * .6 + .4) * ta) / 2) * (100 - (you.eqp[1].aff[att.atype] * 5 * (1 + skl.shdc.lvl / 20) + global.target.cls[att.ctype] * 5 * (1 + skl.shdc.lvl / 20) * ta)) / 100);
+      dmg = (att.str * (100 + att.eqp[0].aff[att.atype!] * 10 + atk.affp * 10 + att.eqp[0].cls[att.ctype!] * 10) / 100 - ((def.str * eff + (global.target.str * ((global.target.dp / global.target.dpmax) * .85 + .15) * ta)) * (100 + global.target.aff[att.atype!] * 5 * ta + global.target.cls[att.ctype!] * 5 * ta + you.caff[att.atype!] * 10 + you.cmaff[combat.current_m.type] * 10 + you.ccls[att.ctype!] * 10) / 100 + ((you.eqp[1].str * (1 + skl.shdc.lvl / 20) * (you.eqp[1].dp / you.eqp[1].dpmax) * .6 + .4) * ta) / 2) * (100 - (you.eqp[1].aff[att.atype!] * 5 * (1 + skl.shdc.lvl / 20) + global.target.cls[att.ctype!] * 5 * (1 + skl.shdc.lvl / 20) * ta)) / 100);
       b = 1;
     }
   }
@@ -212,7 +213,7 @@ export function dmg_calc(att: any, def: any, atk: any) {
       let b = you.luck / 20 + 1;
       dmg = (att.int * eff + ((att.eqp[0].int * (att.eqp[0].dp / att.eqp[0].dpmax) * .9 + .1) * (att.eqp[0].id === 10000 ? 1 : ta))) * (100 + (att.eqp[0].aff[atea] * 10 + atk.affp * 10 + att.eqp[0].cls[atcs] * 10 + att.maff[combat.current_m.type] * 10 + att.aff[atea] * 10) * (att.eqp[0].id === 10000 ? 1 : ta)) / 100 - (def.int * (100 + def.aff[atea] * 5 + def.cls[atcs] * 5) / 100) + 1;
     } else {
-      dmg = (att.int * (100 + att.eqp[0].aff[att.atype] * 15 + atk.affp * 15 + att.eqp[0].cls[att.ctype] * 5) / 100 - ((def.int * eff + (global.target.int * ((global.target.dp / global.target.dpmax) * .85 + .15) * ta)) * (100 + global.target.aff[att.atype] * 5 * ta + global.target.cls[att.ctype] * 5 * ta + you.caff[att.atype] * 10 + you.cmaff[combat.current_m.type] * 10 + you.ccls[att.ctype] * 10) / 100 + ((you.eqp[1].int * (1 + skl.shdc.lvl / 20) * (you.eqp[1].dp / you.eqp[1].dpmax) * .6 + .4) * ta) / 2) * (100 - (you.eqp[1].aff[att.atype] * 5 * (1 + skl.shdc.lvl / 20) + global.target.cls[att.ctype] * 5 * (1 + skl.shdc.lvl / 20) * ta)) / 100);
+      dmg = (att.int * (100 + att.eqp[0].aff[att.atype!] * 15 + atk.affp * 15 + att.eqp[0].cls[att.ctype!] * 5) / 100 - ((def.int * eff + (global.target.int * ((global.target.dp / global.target.dpmax) * .85 + .15) * ta)) * (100 + global.target.aff[att.atype!] * 5 * ta + global.target.cls[att.ctype!] * 5 * ta + you.caff[att.atype!] * 10 + you.cmaff[combat.current_m.type] * 10 + you.ccls[att.ctype!] * 10) / 100 + ((you.eqp[1].int * (1 + skl.shdc.lvl / 20) * (you.eqp[1].dp / you.eqp[1].dpmax) * .6 + .4) * ta) / 2) * (100 - (you.eqp[1].aff[att.atype!] * 5 * (1 + skl.shdc.lvl / 20) + global.target.cls[att.ctype!] * 5 * (1 + skl.shdc.lvl / 20) * ta)) / 100);
       b = 1;
     }
   }
@@ -260,7 +261,7 @@ export function dmg_calc(att: any, def: any, atk: any) {
   } else return dmg > 0 ? Math.ceil(dmg * att.dmlt * randf(.9, 1.1)) : 0;
 }
 
-export function dumb(x: any) {
+export function dumb(x: MouseEvent) {
   if (x) {
     let arr: any[] = [];
     for (let m = 0; m < 5; m++) {
@@ -291,7 +292,7 @@ export function dumb(x: any) {
   }
 }
 
-export function hit_calc(tp: any) {
+export function hit_calc(tp: number) {
   if (tp === 1) {
     let agl_bonus = 0;
     let spd = combat.current_m.spd > 0 ? combat.current_m.spd : 0;
@@ -329,7 +330,7 @@ function wpnhitstt() {
   }
 }
 
-export function wpndiestt(killer: any, me: any) {
+export function wpndiestt(killer: Combatant, me: Creature) {
   switch (killer.eqp[0].wtype) {
     case 0: stats.msts[0][1]++;
       break
@@ -383,7 +384,7 @@ function usePlayerWeaponSkill() {
   }
 }
 
-function printBodyPartHit(partNumber: any) {
+function printBodyPartHit(partNumber: number) {
   switch (partNumber) {
     case 2: msg_add(' (head)', 'orange');
       break;
@@ -402,7 +403,7 @@ function printCritIfCrit() {
   if (flags.crti) { msg_add(' CRIT! ', 'yellow'); flags.crti = false }
 }
 
-function printDamageNumber(ddmg: any) {
+function printDamageNumber(ddmg: number) {
   let col;
   let bcol = '';
   let shd = '';
@@ -425,29 +426,29 @@ function printDamageNumber(ddmg: any) {
       shd = "blueviolet 0px 0px 5px";
       break;
   }
-  if (ddmg > 9999) formatw(ddmg);
-  msg_add(ddmg, col, bcol, shd);
+  if (ddmg > 9999) formatw(ddmg as any);
+  msg_add(ddmg as any, col, bcol, shd);
 }
 
-function printHitMessage(attackerName: any, ddmg: any, targetsPlayer: any) {
+function printHitMessage(attackerName: string, ddmg: number, targetsPlayer: boolean) {
   if (global.mabl.id === 0) msg(attackerName + (targetsPlayer === true ? global.mabl.atrg : global.mabl.btrg));
   else msg((targetsPlayer === true ? attackerName : '') + (targetsPlayer === true ? global.mabl.atrg : ('You ' + global.mabl.btrg)));
   printHitMessageResult(ddmg, targetsPlayer);
 }
 
-function printMultihitMessage(times: any, attackerName: any, acc_dmg: any, targetsPlayer: any) {
+function printMultihitMessage(times: number, attackerName: string, acc_dmg: number, targetsPlayer: boolean) {
   msg(attackerName + ' -> x' + (times - global.miss) + '(<span style="color:lightgrey">' + times + '</span>) for ');
   printHitMessageResult(acc_dmg, targetsPlayer);
   if (time - global.miss > 0) printBodyPartHit(global.target_g)
 }
 
-function printHitMessageResult(ddmg: any, targetsPlayer: any) {
+function printHitMessageResult(ddmg: number, targetsPlayer: boolean) {
   printDamageNumber(ddmg);
   printCritIfCrit();
   if (targetsPlayer === true && !flags.msd) printBodyPartHit(global.t_n)
 }
 
-function doSingleAttack(attacker: any, defender: any, isPlayerAttacking: any) {
+function doSingleAttack(attacker: Combatant, defender: Combatant, isPlayerAttacking: boolean) {
   if (isPlayerAttacking) {
     let dm = skl.fgt.use();
     if (you.eqp[0].twoh === true) dm += skl.twoh.use();
@@ -455,5 +456,5 @@ function doSingleAttack(attacker: any, defender: any, isPlayerAttacking: any) {
     you.int += dm;
     usePlayerWeaponSkill();
   }
-  attacker.battle_ai(attacker, defender);
+  attacker.battle_ai!(attacker, defender);
 }

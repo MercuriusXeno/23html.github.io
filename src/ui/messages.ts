@@ -2,7 +2,7 @@ import { addElement } from '../dom-utils';
 import { dom, global, settings, flags } from '../state';
 import { addDesc } from './descriptions';
 
-    export function msg(txt: string, c?: string, dsc?: any, type?: any, bc?: string, chck?: any): void {
+    export function msg(txt: string, c?: string, dsc?: any, type?: number | null, bc?: string, chck?: any): void {
       if (flags.m_freeze === false && flags.loadstate === false) {
         while (dom.gmsgs.children[1].children.length > settings.msgs_max - 1) dom.gmsgs.children[1].removeChild(dom.gmsgs.children[1].children[0]);
         let msg = addElement(dom.mscont, 'div', null, 'msg');
@@ -25,7 +25,7 @@ import { addDesc } from './descriptions';
       }
     }
 
-    export function _msg(txt: string, c?: string, dsc?: any, type?: any, bc?: string, chck?: any): void {
+    export function _msg(txt: string, c?: string, dsc?: any, type?: number | null, bc?: string, chck?: any): void {
       while (dom.gmsgs.children[1].children.length > settings.msgs_max - 1) dom.gmsgs.children[1].removeChild(dom.gmsgs.children[1].children[0]);
       let msg = addElement(dom.mscont, 'div', null, 'msg');
       if (dsc) { if (type) addDesc(msg, dsc, type); else addDesc(msg, dsc); }
@@ -35,7 +35,7 @@ import { addDesc } from './descriptions';
     }
 
 
-    export function msg_add(txt: string, c?: string, bc?: string, shd?: any): void {
+    export function msg_add(txt: string, c?: string, bc?: string, shd?: string): void {
       if (flags.m_freeze === false && flags.loadstate === false) {
         let bac = '';
         let b = '';

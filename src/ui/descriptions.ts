@@ -1,10 +1,11 @@
+import type { Item, Equipment, Effect, Skill, Title, Creature, Furniture, Action } from '../types';
 import { addElement, empty } from '../dom-utils';
 import { col } from '../utils';
 import { dom, global, you, timers, furn, data, stats, combat, } from '../state';
 const { skl } = data;
 import { giveSkExp } from '../game/progression';
 
-    export function dscr(c: any, what: any, type?: any, ttl?: any, dsc?: any, id?: any) {
+    export function dscr(c: MouseEvent, what: any, type?: number, ttl?: any, dsc?: any, id?: number) {
       let self: any = {};
       id = id || 0;
       global.dscr.style.display = '';
@@ -388,13 +389,13 @@ import { giveSkExp } from '../game/progression';
       }
     }
 
-    export function addDesc(this: any, dm: any, what: any, type?: any, ttl?: any, dsc?: any, f?: any, id?: any) {
-      dm.addEventListener('mouseenter', (a: any) => { dscr(a, what, type, ttl, f === true ? (dsc)() : dsc, id); giveSkExp(skl.rdg, .002); stats.popt++; global.curwds = this; global.shiftid = id; if (global.kkey === 1) descsinfo(global.shiftid) });
+    export function addDesc(this: any, dm: HTMLElement, what: any, type?: number | null, ttl?: string | boolean | null, dsc?: string | (() => string) | null, f?: boolean | null, id?: number | null) {
+      dm.addEventListener('mouseenter', (a: any) => { dscr(a, what, type ?? undefined, ttl, f === true ? (dsc as () => string)() : dsc, id ?? undefined); giveSkExp(skl.rdg, .002); stats.popt++; global.curwds = this; global.shiftid = id; if (global.kkey === 1) descsinfo(global.shiftid) });
       dm.addEventListener('mousemove', (a: any) => { global.dscr.style.top = global.dscr.clientHeight + 60 + a.clientY > document.body.clientHeight ? (a.clientY + 30 + global.dscr.clientHeight) - ((a.clientY + 30 + global.dscr.clientHeight) - document.body.clientHeight) - global.dscr.clientHeight - 30 : a.clientY + 30; global.dscr.style.left = global.dscr.clientWidth + 60 + a.clientX > document.body.clientWidth ? (a.clientX + 30 + global.dscr.clientWidth) - ((a.clientX + 30 + global.dscr.clientWidth) - document.body.clientWidth) - global.dscr.clientWidth - 30 : a.clientX + 30; });
       dm.addEventListener('mouseleave', () => { global.shiftid = 0; empty(global.dscr); global.dscr.style.display = 'none'; clearInterval(timers.inup); clearInterval(timers.dp_tmr); clearInterval(timers.wpnkilsch); if (dom.dscshe) dom.dscshe.innerHTML = '' });
     }
 
-    export function descsinfo(id: any) {
+    export function descsinfo(id: number) {
       if (id === 100) if (global.shiftitem.item.rot && you.mods.survinf > 0) {
         let itm = global.shiftitem.item;
         let ds, rs, dt, rt, c

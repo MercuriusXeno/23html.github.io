@@ -51,10 +51,10 @@ export function scan(arr: any[], val: any, am?: number): boolean | undefined {
   else for (let obj in arr) if (arr[obj] === val) return true;
 }
 
-export function scanbyid(arr: any[], val: string): boolean | undefined { for (let obj in arr) if (arr[obj].id === val) return true }
+export function scanbyid(arr: any[], val: string | number | undefined): boolean | undefined { for (let obj in arr) if (arr[obj].id === val) return true }
 export function scanbyuid(arr: any[], val: any): boolean | undefined { for (let obj in arr) if (arr[obj].data.uid === val) return true }
 export function find(arr: any[], val: any): any { for (let obj in arr) if (arr[obj] === val) return arr[obj] }
-export function findbyid(arr: any[], val: string): any { for (let obj in arr) if (arr[obj].id === val) return arr[obj] }
+export function findbyid(arr: any[], val: string | number): any { for (let obj in arr) if (arr[obj].id === val) return arr[obj] }
 export function findbest(arr: any[], itm: any): any[] {
   let temp: any[] = [];
   for (let a in arr) if (arr[a].id === itm.id) temp.push(arr[a]);

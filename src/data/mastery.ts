@@ -1,4 +1,5 @@
 import { mastery, dom } from '../state';
+import type { Player } from '../types';
 
 // ==========================================================================
 // Mastery constructor + instances
@@ -17,7 +18,7 @@ function Mastery(this: any, id: any) {
   this.linkto;
   this.linkfrom;
   this.cond = function () { return true }
-  this.onlevel = function (_player: any) { }
+  this.onlevel = function (_player: Player) { }
 }
 
 // @ts-ignore: constructor function
@@ -25,7 +26,7 @@ mastery.str1 = new Mastery(1);
 mastery.str1.name = 'Physical Training'
 mastery.str1.desc = function () { return 'Simple improvements to body physique' + dom.dseparator + '<div style="color:cyan;background-color:midnightblue;font-size:small">Effects:</div><div style="color:yellow;background-color:#123;font-size:small"><br>STR +0.5  |  HP +5  |  SAT +1<br><br></div><div style="color:cyan;background-color:midnightblue;font-size:small">Current:</div><div style="color:lime;background-color:#123;font-size:small"><br>STR +' + mastery.str1.data.lvl * .5 + '  |  HP +' + mastery.str1.data.lvl * 5 + '  |  SAT +' + mastery.str1.data.lvl + '<br><br></div>' }
 mastery.str1.have = true;
-mastery.str1.onlevel = function (player: any) { player.stra += .5; player.sata += 1; player.hpa += 5 }
+mastery.str1.onlevel = function (player: Player) { player.stra += .5; player.sata += 1; player.hpa += 5 }
 mastery.str1.icon = [6, 3];
 
 // @ts-ignore: constructor function

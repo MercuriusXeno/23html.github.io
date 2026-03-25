@@ -10,7 +10,7 @@ import { msg } from '../ui/messages';
 // Weather System
 // ==========================================================================
 
-export function Weather(this: any, id: any) {
+export function Weather(this: any, id: number) {
   this.name = '?';
   this.id = id || -1
   this.ontick = function () { };
@@ -114,7 +114,7 @@ weather.thunder.ontick = function () {
 // Callback System
 // ==========================================================================
 
-function callbackManager(this: any, id: any) {
+function callbackManager(this: any, id: number) {
   this.id = id || 0
   this.hooks = [{ f: function (victim: any, killer: any) { }, id: 0, data: {} }]
   this.fire = function () { }
@@ -156,26 +156,26 @@ gameText.d_j = ["月", "火", "水", "木", "金", "土", "日"];
 // --- Time accessor functions ---
 export function getMinute() { return time.minute % 60 }
 export function getHour() { return time.hour % 24; }
-export function getDay(n: any) { return n === 1 ? gameText.d_l[time.day % 7] : (n === 2 ? gameText.d_s[time.day % 7] : gameText.d_j[time.day % 7]) }
+export function getDay(n: number) { return n === 1 ? gameText.d_l[time.day % 7] : (n === 2 ? gameText.d_s[time.day % 7] : gameText.d_j[time.day % 7]) }
 export function getMonth() { return time.month % 12 + 1; }
 export function getYear() { return time.year; }
 export function getLunarPhase() { return (time.day % 62.64 / 7.83) << 0 }
 
-export function getSeason(flag?: any) {
+export function getSeason(flag?: boolean) {
   if (getMonth() > 2 && getMonth() <= 5) return !flag ? 1 : "Spring";
   else if (getMonth() > 5 && getMonth() <= 8) return !flag ? 2 : "Summer";
   else if (getMonth() > 8 && getMonth() <= 11) return !flag ? 3 : "Autumn";
   else return !flag ? 4 : "Winter";
 }
 
-export function timeConv(chrono: any) {
+export function timeConv(chrono: { minute: number; year: number; month: number; day: number; hour: number }) {
   chrono.year = (chrono.minute / (518400)) << 0;
   chrono.month = (chrono.minute / (43200)) << 0;
   chrono.day = (chrono.minute / (1440)) << 0;
   chrono.hour = (chrono.minute / 60) << 0;
 }
 
-export function timeDisp(time: any, future?: any) {
+export function timeDisp(time: any, future?: number) {
   let time_t = time;
   if (future) { time_t = copy(time); time_t.minute += future; }
   timeConv(time_t);
@@ -186,7 +186,7 @@ export function timeDisp(time: any, future?: any) {
 
 // --- Weather state machine ---
 
-export function setWeather(w: any, d: any) {
+export function setWeather(w: any, d: number) {
   w_manager.curr = w;
   w_manager.duration = d;
   dom.d_weathert.style.backgroundColor = dom.d_weathert.style.color = 'inherit';
@@ -200,7 +200,7 @@ export function isWeather(w: any) {
   return w_manager.curr.id === w.id
 }
 
-function onSeasonTick(season: any) {
+function onSeasonTick(season: number | string) {
   switch (season) {
     case 4:
       if (stats.wsnrest > 0) { stats.wsnrest--; return }
@@ -620,7 +620,7 @@ export function wManager() {
 // NOTE: Eval-time init (setWeather, wManager, dom.d_time update) moved to main.ts
 // because DOM elements (d_weathert, d_anomaly, d_time) must exist first.
 
-    export function wdrseason(flag: any) {
+    export function wdrseason(flag: boolean) {
       let s;
       s = !flag ? getSeason(true) : gameText.ssns[(getSeason() as number) - 1];
       dom.d_weathers.innerHTML = '[' + s + ']';

@@ -483,30 +483,30 @@ declare var InstallTrigger: any;
           this.skwm_e_btn_3_b.style.border = '1px solid #46a';
           this.skwm_e_btn_1_b.addEventListener('click', function (this: any) {
             if (flags.ssort_a === true) {
-              you.skls.sort(function (a: any, b: any) { if (a.name < b.name) return -1; if (a.name > b.name) return 1; return 0 });
+              you.skls.sort(function (a, b) { if (a.name < b.name) return -1; if (a.name > b.name) return 1; return 0 });
               flags.ssort_a = false;
             } else {
-              you.skls.sort(function (a: any, b: any) { if (a.name > b.name) return -1; if (a.name < b.name) return 1; return 0 });
+              you.skls.sort(function (a, b) { if (a.name > b.name) return -1; if (a.name < b.name) return 1; return 0 });
               flags.ssort_a = true;
             } empty(dom.skcon)
             for (let m = 0; m < you.skls.length; m++) { renderSkl(you.skls[m]); if (m === you.skls.length - 1) dom.skcon.children[m].style.borderBottom = '1px solid #46a'; }
           });
           this.skwm_e_btn_2_b.addEventListener('click', function (this: any) {
             if (flags.ssort_b === true) {
-              you.skls.sort(function (a: any, b: any) { if (a.type < b.type) return -1; if (a.type > b.type) return 1; if (a.id < b.id) return -1; if (a.id > b.id) return 1; return 0 });
+              you.skls.sort(function (a, b) { if (a.type < b.type) return -1; if (a.type > b.type) return 1; if (a.id! < b.id!) return -1; if (a.id! > b.id!) return 1; return 0 });
               flags.ssort_b = false;
             } else {
-              you.skls.sort(function (a: any, b: any) { if (a.type > b.type) return -1; if (a.type < b.type) return 1; if (a.id > b.id) return -1; if (a.id < b.id) return 1; return 0 });
+              you.skls.sort(function (a, b) { if (a.type > b.type) return -1; if (a.type < b.type) return 1; if (a.id! > b.id!) return -1; if (a.id! < b.id!) return 1; return 0 });
               flags.ssort_b = true;
             } empty(dom.skcon)
             for (let m = 0; m < you.skls.length; m++) { renderSkl(you.skls[m]); if (m === you.skls.length - 1) dom.skcon.children[m].style.borderBottom = '1px solid #46a'; }
           });
           this.skwm_e_btn_3_b.addEventListener('click', function (this: any) {
             if (flags.ssort_b === true) {
-              you.skls.sort(function (a: any, b: any) { if (a.lvl < b.lvl) return -1; if (a.lvl > b.lvl) return 1; if (a.exp < b.exp) return -1; if (a.exp > b.exp) return 1; return 0 });
+              you.skls.sort(function (a, b) { if (a.lvl < b.lvl) return -1; if (a.lvl > b.lvl) return 1; if (a.exp < b.exp) return -1; if (a.exp > b.exp) return 1; return 0 });
               flags.ssort_b = false;
             } else {
-              you.skls.sort(function (a: any, b: any) { if (a.lvl > b.lvl) return -1; if (a.lvl < b.lvl) return 1; if (a.exp > b.exp) return -1; if (a.exp < b.exp) return 1; return 0 });
+              you.skls.sort(function (a, b) { if (a.lvl > b.lvl) return -1; if (a.lvl < b.lvl) return 1; if (a.exp > b.exp) return -1; if (a.exp < b.exp) return 1; return 0 });
               flags.ssort_b = true;
             } empty(dom.skcon)
             for (let m = 0; m < you.skls.length; m++) { renderSkl(you.skls[m]); if (m === you.skls.length - 1) dom.skcon.children[m].style.borderBottom = '1px solid #46a'; }
@@ -566,7 +566,7 @@ declare var InstallTrigger: any;
         this.jlbrw2s2.innerHTML = 'S T A T I S T I C S';
         dom.jlbrw1s1.addEventListener('click', () => {
           empty(dom.ctrwin6); global.lw_op = -1;
-          qsts.sort(function (a: any, b: any) { if ((a.id > b.id) && a.data.started === true) return -1; if ((a.id < b.id) && a.data.done === true && a.data.started === false) return 1; return 0 });
+          qsts.sort(function (a, b) { if ((a.id > b.id) && a.data.started === true) return -1; if ((a.id < b.id) && a.data.done === true && a.data.started === false) return 1; return 0 });
           dom.qstbody = addElement(dom.ctrwin6, 'div');
           this.qstlbl = addElement(dom.qstbody, 'div');
           this.qstlbl.innerHTML = 'Q U E S T　　L I S T'
@@ -657,7 +657,7 @@ declare var InstallTrigger: any;
           this.bst_entr_head3 = addElement(this.bst_entr_head, 'div', null, 'list-col-stat');
           this.bst_entr_head3.innerHTML = 'kills'
           for (let ii = 1; ii < global.bestiary.length; ii++) {
-            let mon;
+            let mon: any;
             for (let id in creature) if (creature[id].id === global.bestiary[ii].id) mon = creature[id];
             this.bst_entr_m_case = addElement(bst_entr_case, 'div', 'bst_entrh', 'list-row');
             this.bst_entr_m_case.style.backgroundColor = 'rgb(10,30,54)';
@@ -678,7 +678,7 @@ declare var InstallTrigger: any;
           timers.bstmonupdate = setInterval(function (this: any) {
             if (monsize < global.bestiary.length) {
               for (let ii = monsize; ii < global.bestiary.length; ii++) {
-                let mon;
+                let mon: any;
                 for (let id in creature) if (creature[id].id === global.bestiary[ii].id) mon = creature[id];
                 this.bst_entr_m_case = addElement(bst_entr_case, 'div', 'bst_entrh', 'list-row');
                 this.bst_entr_m_case.style.backgroundColor = 'rgb(10,30,54)';
@@ -1609,30 +1609,30 @@ declare var InstallTrigger: any;
     dom.inv_btn_5.addEventListener('click', function (this: any) { isort(5); invbtsrst() });
     dom.inv_btn_1_b.addEventListener('click', function (this: any) {
       if (flags.sort_a === true) {
-        inv.sort(function (a: any, b: any) { if (a.name < b.name) return -1; if (a.name > b.name) return 1; return 0 });
+        inv.sort(function (a, b) { if (a.name < b.name) return -1; if (a.name > b.name) return 1; return 0 });
         flags.sort_a = false;
       } else {
-        inv.sort(function (a: any, b: any) { if (a.name > b.name) return -1; if (a.name < b.name) return 1; return 0 });
+        inv.sort(function (a, b) { if (a.name > b.name) return -1; if (a.name < b.name) return 1; return 0 });
         flags.sort_a = true;
       } iftrunkopenc(1);
       isort(settings.sm)
     });
     dom.inv_btn_2_b.addEventListener('click', function (this: any) {
       if (flags.sort_b === true) {
-        inv.sort(function (a: any, b: any) { if (a.amount < b.amount) return -1; if (a.amount > b.amount) return 1; if (a.name < b.name) return -1; if (a.name > b.name) return 1; return 0 });
+        inv.sort(function (a, b) { if (a.amount < b.amount) return -1; if (a.amount > b.amount) return 1; if (a.name < b.name) return -1; if (a.name > b.name) return 1; return 0 });
         flags.sort_b = false;
       } else {
-        inv.sort(function (a: any, b: any) { if (a.amount > b.amount) return -1; if (a.amount < b.amount) return 1; if (a.name > b.name) return -1; if (a.name < b.name) return 1; return 0 });
+        inv.sort(function (a, b) { if (a.amount > b.amount) return -1; if (a.amount < b.amount) return 1; if (a.name > b.name) return -1; if (a.name < b.name) return 1; return 0 });
         flags.sort_b = true;
       } iftrunkopenc(1);
       isort(settings.sm)
     });
     dom.inv_btn_3_b.addEventListener('click', function (this: any) {
       if (flags.sort_c === true) {
-        inv.sort(function (a: any, b: any) { if (a.id < b.id) return -1; if (a.id > b.id) return 1; if (a.name < b.name) return -1; if (a.name > b.name) return 1; return 0 });
+        inv.sort(function (a, b) { if (a.id! < b.id!) return -1; if (a.id! > b.id!) return 1; if (a.name < b.name) return -1; if (a.name > b.name) return 1; return 0 });
         flags.sort_c = false;
       } else {
-        inv.sort(function (a: any, b: any) { if (a.id > b.id) return -1; if (a.id < b.id) return 1; if (a.name > b.name) return -1; if (a.name < b.name) return 1; return 0 });
+        inv.sort(function (a, b) { if (a.id! > b.id!) return -1; if (a.id! < b.id!) return 1; if (a.name > b.name) return -1; if (a.name < b.name) return 1; return 0 });
         flags.sort_c = true;
       } iftrunkopenc(1);
       isort(settings.sm)
@@ -1790,7 +1790,7 @@ declare var InstallTrigger: any;
     gameText.cln = ['Sleeping', 'Playing', 'Catching fireflies', 'Eating', 'Fish', 'People', 'Running outside', 'Warm places', 'Water', 'Fighting', 'Meowing', 'Singing', 'Catching mice', 'Its Master', 'Climbing trees', 'Toppling objects', 'Hiding', 'Safe places', 'Rooftops', 'Sitting by the window', 'Watching others', 'Master\'s bed', 'Being petted', 'Being brushed', 'Sitting on laps', 'Other cats', 'Dogs', 'Warm weather', 'Watching stars', 'Toys', 'Meat', 'Rain', 'Snow'];
 
 
-    function chs_spec(type: any, x?: any) {
+    function chs_spec(type: number, x?: any) {
       switch (type) {
         case 1: {
           clr_chs(); let c = findbyid(furn, furniture.cat.id); let br = time.minute - c.data.age;
@@ -1921,8 +1921,8 @@ declare var InstallTrigger: any;
     if (flags.gameone === false) {
       combat.current_l = chss.t1;
       smove(chss.t1);
-      giveFurniture(furniture.frplc, null, false);
-      let _b = giveFurniture(furniture.bed1, null, false);
+      giveFurniture(furniture.frplc, null as any, false);
+      let _b = giveFurniture(furniture.bed1, null as any, false);
       home.bed = _b;
     }
 
@@ -2897,7 +2897,7 @@ declare var InstallTrigger: any;
           flags.work = false;
           clearInterval(this);
           smove(chss.home);
-          flags.jcom++;
+          (flags as any).jcom++;
         } else {
           giveSkExp(skl.ptnc, .08);
           if (random() <= .01) msg(select(['Right...', 'This is boring', '*whistle*', 'Ah...', '...', 'Yeah...', 'Mhm...', 'Yawn...']), 'lightgrey')
@@ -3182,7 +3182,7 @@ declare var InstallTrigger: any;
     chss.tstauto.sl = () => {
       d_loc('Test auto'); global.lst_loc = -1;
       dom.testauto = chs('TEST', true);
-      if (!flags.testauto_1 || flags.testauto_1 === false) chs('Run', false).addEventListener('click', () => {
+      if (!flags.testauto_1 || (flags.testauto_1 as any) === false) chs('Run', false).addEventListener('click', () => {
         flags.testauto_1 = true;
         timers.testauto1 = setInterval(() => { dom.testauto.innerHTML = rand(9999999) }, 1000);
         chss.tstauto.sl();
@@ -3671,9 +3671,9 @@ declare var InstallTrigger: any;
       d_loc('Your Home, Fireplace'); let fire = findbyid(furn, furniture.frplc.id); global.lst_loc = 117;
       //dom.d_lctt.innerHTML+='<span style="color:orange;font-size:1.2em">&nbspⓞ<span>'
       let its = []
-      if (findbyid(inv, item.fwd1.id)) its.push([findbyid(inv, item.fwd1.id), 'some firewood', 30])
-      if (findbyid(inv, item.coal1.id)) its.push([findbyid(inv, item.coal1.id), 'some coal', 300])
-      if (findbyid(inv, item.coal2.id)) its.push([findbyid(inv, item.coal2.id), 'some charcoal', 300])
+      if (findbyid(inv, item.fwd1.id!)) its.push([findbyid(inv, item.fwd1.id!), 'some firewood', 30])
+      if (findbyid(inv, item.coal1.id!)) its.push([findbyid(inv, item.coal1.id!), 'some coal', 300])
+      if (findbyid(inv, item.coal2.id!)) its.push([findbyid(inv, item.coal2.id!), 'some charcoal', 300])
       if (findbyid(inv, wpn.stk1.id)) its.push([findbyid(inv, wpn.stk1.id), 'a stick', 15])
       if (!gameText.fplcextra) gameText.fplcextra = ['You\'ll need fire if you want to get some cooking done', 'You can warm up here if you light it up'];
       if (!gameText.frplcfrextra) gameText.frplcfrextra = ["You notice the fire flickering slightly", "Tiny fire is warming up the room", "Comfy fire lights up the surroundings", "Bright flame is roaring inside the Fireplace"];
@@ -4131,7 +4131,7 @@ declare var InstallTrigger: any;
 
     // format3() imported from ./utils
 
-    function d_loc(text: any) {
+    function d_loc(text: string) {
       let txt;
       if (flags.inside === true) txt = '|' + text + '|';
       else txt = text
@@ -4158,7 +4158,7 @@ declare var InstallTrigger: any;
 
     // select() imported from ./utils
 
-    function nograd(s: any) {
+    function nograd(s: boolean) {
       if (s === true) {
         for (let i = 0; i < document.getElementsByClassName('d2').length; i++) (document.getElementsByClassName('d2')[i] as HTMLElement).style.background = '#0e574b';
         for (let i = 0; i < document.getElementsByClassName('d3').length; i++) (document.getElementsByClassName('d3')[i] as HTMLElement).style.background = '#0e574b';
@@ -4236,12 +4236,12 @@ declare var InstallTrigger: any;
       }
     }
 
-    function draggable(root: any, target: any) {
-      root.addEventListener('mousedown', function (this: any, x: any) { global.ctarget = target; this.boxoffsetx = x.clientX - parseInt(target.style.left); this.boxoffsety = x.clientY - parseInt(target.style.top); global.croot = root; document.body.addEventListener('mousemove', draggablemove) });
-      root.addEventListener('mouseup', function (x: any) { global.ctarget = null; global.croot = null; document.body.removeEventListener('mousemove', draggablemove) });
+    function draggable(root: HTMLElement, target: HTMLElement) {
+      root.addEventListener('mousedown', function (this: any, x: MouseEvent) { global.ctarget = target; this.boxoffsetx = x.clientX - parseInt(target.style.left); this.boxoffsety = x.clientY - parseInt(target.style.top); global.croot = root; document.body.addEventListener('mousemove', draggablemove) });
+      root.addEventListener('mouseup', function (x: MouseEvent) { global.ctarget = null; global.croot = null; document.body.removeEventListener('mousemove', draggablemove) });
     }
 
-    function draggablemove(x: any) {
+    function draggablemove(x: MouseEvent) {
       if (global.ctarget) { global.ctarget.style.left = x.clientX - global.croot.boxoffsetx; global.ctarget.style.top = x.clientY - global.croot.boxoffsety }
     }
 
@@ -4266,7 +4266,7 @@ declare var InstallTrigger: any;
       console.log('::END::')
     }
 
-    function _dbggibberish(w: any, l: any) {
+    function _dbggibberish(w: number, l: number) {
       let a = new String();
       for (let b = 0; b < w; b++) {
         let lr = rand(1, l);

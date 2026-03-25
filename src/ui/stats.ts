@@ -19,7 +19,7 @@ import { dom, global, you, gameText, combat, } from '../state';
     export function update_m() {
       dom.d2m.innerHTML = combat.current_m.name;
       let mtp = gameText.mtp[combat.current_m.type];
-      if (combat.current_m.id >= 1) mtp += combat.current_m.sex === true ? ' ♂' : ' ♀';
+      if (combat.current_m.id >= 1) mtp += (combat.current_m.sex as any) === true ? ' ♂' : ' ♀';
       dom.d3m.innerHTML = ' lvl:' + combat.current_m.lvl + ' \'' + mtp + '\'';
       dom.d4_1m.innerHTML = 'STR: ' + Math.round(combat.current_m.str);
       dom.d4_2m.innerHTML = 'AGL: ' + Math.round(combat.current_m.agl);

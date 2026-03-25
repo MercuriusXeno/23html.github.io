@@ -1,4 +1,5 @@
 import { ttl, act } from '../state'
+import type { Player } from '../types';
 import titleData from './titles.json'
 // ==========================================================================
 // Title constructor + instances
@@ -15,7 +16,7 @@ class Title {
     public rar = 1,
     public rars = false
   ) { }
-  onGet(_player: any) { }
+  onGet(_player: Player) { }
 }
 
 function init_collection(data: any) {
@@ -26,12 +27,12 @@ function init_collection(data: any) {
 }
 
 function add_custom_logic() {
-  ttl.wlk.talent = function (player: any) { player.mods.runerg -= .05 }
-  ttl.jgg.talent = function (player: any) { player.mods.runerg -= .15 }
-  ttl.rfpn2.talent = function (player: any) { player.mods.survinf++ }
+  ttl.wlk.talent = function (player: Player) { player.mods.runerg -= .05 }
+  ttl.jgg.talent = function (player: Player) { player.mods.runerg -= .15 }
+  ttl.rfpn2.talent = function (player: Player) { player.mods.survinf++ }
   ttl.tqtm.talent = function () {/*(:*/ }
-  ttl.wlk.onGet = function (player: any) { if (act.demo.active) player.mods.sdrate -= .005 }
-  ttl.jgg.onGet = function (player: any) { if (act.demo.active) player.mods.sdrate -= .015 }
+  ttl.wlk.onGet = function (player: Player) { if (act.demo.active) player.mods.sdrate -= .005 }
+  ttl.jgg.onGet = function (player: Player) { if (act.demo.active) player.mods.sdrate -= .015 }
 }
 
 init_collection(titleData)

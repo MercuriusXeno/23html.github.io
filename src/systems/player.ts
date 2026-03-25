@@ -1,3 +1,4 @@
+import type { Combatant } from '../types';
 import { you, callback, global, dom, timers, chss, setYou, data, flags, stats, combat, } from '../state';
 const { ttl, eqp, item, skl, creature, act, sector, area } = data;
 import { random } from '../random';
@@ -56,7 +57,7 @@ export function You(this: any) {
   this.eff = [];
   this.skls = [];
   this.drop = [{ item: item.death_b, chance: 1 }];
-  this.onDeath = function (this: any, killer: any) {
+  this.onDeath = function (this: any, killer: Combatant) {
     if (you.res.death < 1 && random() >= you.res.death) { msg('You avoid death...', 'lightgrey'); you.hp = Math.ceil(you.hpmax * .1) } else {
       callback.onDeath.fire(this, killer)
       this.alive = false;
@@ -88,7 +89,7 @@ export function You(this: any) {
   }
   this.onDeathE = function () { }
   this.ai = function () { }
-  this.battle_ai = function (x: any, y: any, z: any) { return attack(x, y) }
+  this.battle_ai = function (x: Combatant, y: Combatant, z?: any) { return attack(x, y) }
   this.stat_r = function (this: any) {
     this.stre = this.inte = this.agle = this.spde = this.sate = this.hpe = 1;
     for (let idx in this.eff) this.eff[idx].mods(you);
