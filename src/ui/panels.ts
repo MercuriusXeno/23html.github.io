@@ -12,28 +12,28 @@ import { giveSkExp } from '../game/progression';
 import { smove } from '../game/movement';
 import { formatw } from '../game/utils-game';
 
-    export function renderRcp(rcp: Recipe) {
+    export function renderRcp(recipe: Recipe) {
       let self: any = {};
       dom.ct_bt1_1_mc = addElement(dom.ct_bt1_1, 'div', null, 'craft-log-entry');
       dom.ct_bt1_1_mc.style.position = 'relative';
       self.ct_bt1_1_m = addElement(dom.ct_bt1_1_mc, 'span');
-      rcp._t = self.ct_bt1_1_m;
+      recipe._t = self.ct_bt1_1_m;
       if (typeof InstallTrigger !== 'undefined') { self.ct_bt1_1_m.style.paddingTop = 0; self.ct_bt1_1_m.style.paddingBottom = 0 }
-      self.ct_bt1_1_m.innerHTML = rcp.name;
-      let test = make(rcp, true);
+      self.ct_bt1_1_m.innerHTML = recipe.name;
+      let test = make(recipe, true);
       let safe = false;
-      if (test.y.length != rcp.rec.length || test.o[0] === 2) self.ct_bt1_1_m.style.color = 'grey';
-      if (dom.spcldom && rcp.id === dom.spcldom.rcp.id) {
+      if (test.y.length != recipe.rec.length || test.o[0] === 2) self.ct_bt1_1_m.style.color = 'grey';
+      if (dom.spcldom && recipe.id === dom.spcldom.selectedRecipe.id) {
         dom.rcpcurar = addElement(dom.ct_bt1_1_mc, 'span');
         dom.rcpcurar.innerHTML = '⋗⋗';
         dom.spcldom = dom.ct_bt1_1_mc;
-        dom.spcldom.rcp = rcp;
+        dom.spcldom.selectedRecipe = recipe;
         dom.rcpcurar.style.position = 'absolute';
         dom.rcpcurar.style.right = 2;
         dom.rcpcurar.style.color = 'rgb(188,254,254)';
       }
       dom.ct_bt1_1_mc.addEventListener('mouseenter', function () {
-        test = make(rcp, true); global.curr_r = rcp
+        test = make(recipe, true); global.curr_r = recipe
         empty(dom.ct_bt1_2);
         self.ct_bt1_2a = addElement(dom.ct_bt1_2, 'div');
         self.ct_bt1_2a.innerHTML = 'reagents required';
@@ -59,27 +59,27 @@ import { formatw } from '../game/utils-game';
             }
             flags.repeatableCrafting = !flags.repeatableCrafting
           });
-        } rcp._t2 = [];
-        for (let g = 0; g < rcp.rec.length; g++) {
+        } recipe._t2 = [];
+        for (let g = 0; g < recipe.rec.length; g++) {
           self.ct_bt1_2bc = addElement(dom.ct_bt1_2, 'small');
           self.ct_bt1_2bc.style.display = 'flex';
           self.ct_bt1_2bc1 = addElement(self.ct_bt1_2bc, 'div', null, 'recipe-cell');
           self.ct_bt1_2bc2 = addElement(self.ct_bt1_2bc, 'div', null, 'recipe-cell');
-          rcp._t2[g] = self.ct_bt1_2bc2
-          if (rcp.rec[g].item.data.dscv === true) { self.ct_bt1_2bc1.innerHTML = rcp.rec[g].item.name; addDesc(self.ct_bt1_2bc, rcp.rec[g].item) } else self.ct_bt1_2bc1.innerHTML = '?????????';
+          recipe._t2[g] = self.ct_bt1_2bc2
+          if (recipe.rec[g].item.data.dscv === true) { self.ct_bt1_2bc1.innerHTML = recipe.rec[g].item.name; addDesc(self.ct_bt1_2bc, recipe.rec[g].item) } else self.ct_bt1_2bc1.innerHTML = '?????????';
           self.ct_bt1_2bc1.style.paddingLeft = '8px';
           let num = 0;
           if (test.z.length > 0) num = test.z[g];
-          if ((test.z[g] >= rcp.rec[g].amount) || test.b[g] === true) { self.ct_bt1_2bc2.style.color = 'lime'; num = rcp.rec[g].item.slot ? test.z[g] : rcp.rec[g].item.amount }
-          else { self.ct_bt1_2bc2.style.color = 'grey'; num = rcp.rec[g].item.slot ? test.z[g] : rcp.rec[g].item.amount }
+          if ((test.z[g] >= recipe.rec[g].amount) || test.b[g] === true) { self.ct_bt1_2bc2.style.color = 'lime'; num = recipe.rec[g].item.slot ? test.z[g] : recipe.rec[g].item.amount }
+          else { self.ct_bt1_2bc2.style.color = 'grey'; num = recipe.rec[g].item.slot ? test.z[g] : recipe.rec[g].item.amount }
           let n = '';
-          if (test.z[g] > 0 && rcp.rec[g].item.slot) {
+          if (test.z[g] > 0 && recipe.rec[g].item.slot) {
             for (let r in test.r) for (let b in you.eqp) if (you.eqp[b].data.uid === test.r[r].data.uid && you.eqp[b].id !== 10000) { n = '<small style="color:orange">[E]</small>'; continue }
           }
-          if ((test.z[g] >= rcp.rec[g].amount) || test.b[g] === true) self.ct_bt1_2bc2.style.color = 'lime';
+          if ((test.z[g] >= recipe.rec[g].amount) || test.b[g] === true) self.ct_bt1_2bc2.style.color = 'lime';
           else self.ct_bt1_2bc2.style.color = 'grey';
-          if (rcp.rec[g].return === true) self.ct_bt1_2bc2.innerHTML = '∞';
-          else self.ct_bt1_2bc2.innerHTML = rcp.rec[g].amount + ' / ' + num + ' ' + n;
+          if (recipe.rec[g].return === true) self.ct_bt1_2bc2.innerHTML = '∞';
+          else self.ct_bt1_2bc2.innerHTML = recipe.rec[g].amount + ' / ' + num + ' ' + n;
           self.ct_bt1_2bc2.style.borderRight = 'none';
           self.ct_bt1_2bc2.style.textAlign = 'center';
         }
@@ -91,7 +91,7 @@ import { formatw } from '../game/utils-game';
         self.ct_bt1_2c.style.borderBottom = '1px solid #3e4092';
         self.ct_bt1_2c.style.bottom = 71;
         self.ct_bt1_2c.style.textAlign = 'center';
-        for (let g in rcp.res) {
+        for (let g in recipe.res) {
           self.ct_bt1_2cc = addElement(dom.ct_bt1_2, 'small');
           self.ct_bt1_2cc.style.display = 'flex';
           self.ct_bt1_2cc.style.position = 'absolute';
@@ -99,9 +99,9 @@ import { formatw } from '../game/utils-game';
           self.ct_bt1_2cc.style.width = '55%';
           self.ct_bt1_2cc1 = addElement(self.ct_bt1_2cc, 'div', 'toh', 'recipe-cell');
           self.ct_bt1_2cc2 = addElement(self.ct_bt1_2cc, 'div', null, 'recipe-cell');
-          if (rcp.allow === true) {
-            self.ct_bt1_2cc1.innerHTML = rcp.res[g].item.name; if (!!rcp.res[g].amount_max) { self.ct_bt1_2cc2.innerHTML = rcp.res[g].amount + '~' + rcp.res[g].amount_max; } else self.ct_bt1_2cc2.innerHTML = rcp.res[g].amount;
-            addDesc(self.ct_bt1_2cc1, rcp.res[g].item);
+          if (recipe.allow === true) {
+            self.ct_bt1_2cc1.innerHTML = recipe.res[g].item.name; if (!!recipe.res[g].amount_max) { self.ct_bt1_2cc2.innerHTML = recipe.res[g].amount + '~' + recipe.res[g].amount_max; } else self.ct_bt1_2cc2.innerHTML = recipe.res[g].amount;
+            addDesc(self.ct_bt1_2cc1, recipe.res[g].item);
             self.ct_bt1_2cc2.style.color = 'lime';
           } else {
             self.ct_bt1_2cc1.innerHTML = '?????????';
@@ -114,7 +114,7 @@ import { formatw } from '../game/utils-game';
           self.ct_bt1_2cc2.style.width = '27.5%';
           self.ct_bt1_2cc1.style.width = '75%';
         }
-        if (rcp.srect != null) {
+        if (recipe.srect != null) {
           let l = test.o.length;
           self.ct_bt1_3c = addElement(dom.ct_bt1_2, 'div');
           self.ct_bt1_3c.innerHTML = 'tools needed';
@@ -134,10 +134,10 @@ import { formatw } from '../game/utils-game';
           self.ct_bt1_3cc.style.left = '255px';
           if (l > 1) {
             for (let nu in test.o) {
-              if ((test.o as any)[nu] === 1) self.ct_bt1_3cc.innerHTML += '<span style="color:lime">' + (rcp.srect as any)[nu] + '</span>' + (l - 1 == Number(nu) ? '' : ', ');
-              else if ((test.o as any)[nu] === 2) self.ct_bt1_3cc.innerHTML += '<span style="color:red">' + (rcp.srect as any)[nu] + '</span>' + (l - 1 == Number(nu) ? '' : ', ');
+              if ((test.o as any)[nu] === 1) self.ct_bt1_3cc.innerHTML += '<span style="color:lime">' + (recipe.srect as any)[nu] + '</span>' + (l - 1 == Number(nu) ? '' : ', ');
+              else if ((test.o as any)[nu] === 2) self.ct_bt1_3cc.innerHTML += '<span style="color:red">' + (recipe.srect as any)[nu] + '</span>' + (l - 1 == Number(nu) ? '' : ', ');
             }
-          } else { if (test.o[0] === 1) self.ct_bt1_3cc.style.color = 'lime'; else if (test.o[0] === 2) self.ct_bt1_3cc.style.color = 'red'; self.ct_bt1_3cc.innerHTML += rcp.srect[0] }
+          } else { if (test.o[0] === 1) self.ct_bt1_3cc.style.color = 'lime'; else if (test.o[0] === 2) self.ct_bt1_3cc.style.color = 'red'; self.ct_bt1_3cc.innerHTML += recipe.srect[0] }
         }
       });
       dom.ct_bt1_1_mc.addEventListener('mouseenter', function (this: any) {
@@ -145,16 +145,16 @@ import { formatw } from '../game/utils-game';
         dom.rcpcurar = addElement(this, 'span');
         dom.rcpcurar.innerHTML = '⋗⋗';
         dom.spcldom = this;
-        dom.spcldom.rcp = rcp;
+        dom.spcldom.selectedRecipe = recipe;
         dom.rcpcurar.style.position = 'absolute';
         dom.rcpcurar.style.right = 2;
         dom.rcpcurar.style.color = 'rgb(188,254,254)';
       })
       dom.ct_bt1_1_mc.addEventListener('click', function () {
-        test = make(rcp, true); if (rcp.rec.length === test.y.length && test.o[0] !== 2) safe = true
-        if (flags.repeatableCrafting) { _fcraft(rcp, safe); global.crrpsat = rcp; clearInterval(timers.repeatableCrafting); flags.rptbncgtf = true; if (safe) timers.repeatableCrafting = setInterval(() => { _fcraft(global.crrpsat, safe); giveSkExp(skl.ptnc, .05); refreshRcp(global.curr_r) }, (5000 - (skl.crft.lvl * 350 + skl.ptnc.lvl * 150) < 300 ? 300 : (5000 - (skl.crft.lvl * 350 + skl.ptnc.lvl * 150)))) }
-        else _fcraft(rcp, safe);
-        refreshRcp(rcp);
+        test = make(recipe, true); if (recipe.rec.length === test.y.length && test.o[0] !== 2) safe = true
+        if (flags.repeatableCrafting) { _fcraft(recipe, safe); global.crrpsat = recipe; clearInterval(timers.repeatableCrafting); flags.rptbncgtf = true; if (safe) timers.repeatableCrafting = setInterval(() => { _fcraft(global.crrpsat, safe); giveSkExp(skl.ptnc, .05); refreshRcp(global.curr_r) }, (5000 - (skl.crft.lvl * 350 + skl.ptnc.lvl * 150) < 300 ? 300 : (5000 - (skl.crft.lvl * 350 + skl.ptnc.lvl * 150)))) }
+        else _fcraft(recipe, safe);
+        refreshRcp(recipe);
       });
     }
 
@@ -190,17 +190,17 @@ import { formatw } from '../game/utils-game';
       if (safe) { safe = false; if (flags.sleepmode === true) { msg('You may want to wake up first', 'red'); return }; if (flags.btl === true) { msg('You\'re too busy fighting', 'red'); return }; if (flags.rdng === true) { msg('You\'re too occupied with reading', 'red'); return }; if (flags.busy === true) { msg('You\'re too busy with something else', 'red'); return }; let ntest = make(what, true); for (let g = 0; g < what.rec.length; g++) { if (what.rec.length === ntest.y.length && ntest.o[0] !== 2) safe = true } if (safe) { make(what); stats.craftTotal++; iftrunkopen(1) } else { if (flags.rptbncgtf) { clearInterval(timers.repeatableCrafting); flags.rptbncgtf = false; } } }
     }
 
-    export function renderSkl(skl: Skill) {
+    export function renderSkl(skill: Skill) {
       let self: any = {};
       self.skwmmc = addElement(dom.skcon, 'div', null, 'skill-entry');
-      addDesc(self.skwmmc, skl, 6);
+      addDesc(self.skwmmc, skill, 6);
       self.skwmm1 = addElement(self.skwmmc, 'small');
-      if (skl.sp) self.skwmm1.style.fontSize = skl.sp;
+      if (skill.sp) self.skwmm1.style.fontSize = skill.sp;
       self.skwmm1.style.width = '32%';
-      self.skwmm1.innerHTML = skl.name + ' lvl: ' + skl.lvl;
+      self.skwmm1.innerHTML = skill.name + ' lvl: ' + skill.lvl;
       self.skwmm1.style.borderRight = '1px solid #46a';
       self.skwmm2 = addElement(self.skwmmc, 'small');
-      self.skwmm2.innerHTML = '　exp: ' + formatw(Math.round(skl.exp)) + '/' + formatw(skl.expnext_t) + '　';
+      self.skwmm2.innerHTML = '　exp: ' + formatw(Math.round(skill.exp)) + '/' + formatw(skill.expnext_t) + '　';
       self.skwmm2.style.borderRight = '1px solid #46a';
       self.skwmm2.style.fontSize = '.8em';
       self.skwmm2.style.width = '170px';
@@ -209,29 +209,29 @@ import { formatw } from '../game/utils-game';
       self.skwmm3c.style.width = '197px';
       self.skwmm3.innerHTML = '　';
       self.skwmm3.style.marginLeft = '2px';
-      self.skwmm3.style.width = skl.exp / skl.expnext_t * 100 + '%';
-      //if(skl.lastupd&&skl.lastupd-time.minute>=1) self.skwmm3.style.backgroundColor='limegreen'; else self.skwmm3.style.backgroundColor='yellow';
+      self.skwmm3.style.width = skill.exp / skill.expnext_t * 100 + '%';
+      //if(skill.lastupd&&skill.lastupd-time.minute>=1) self.skwmm3.style.backgroundColor='limegreen'; else self.skwmm3.style.backgroundColor='yellow';
       self.skwmm3.style.backgroundColor = 'yellow';
     }
 
-    export function renderAct(a: Action) {
+    export function renderAct(action: Action) {
       let self: any = {};
       self.accm = addElement(dom.acccon, 'div', null, 'skill-entry');
-      a.t = self.accm;
-      addDesc(self.accm, null, 2, a.name, (a.desc as () => string)());
-      self.accm.innerHTML = a.name;
+      action.t = self.accm;
+      addDesc(self.accm, null, 2, action.name, (action.desc as () => string)());
+      self.accm.innerHTML = action.name;
       self.accm.style.textAlign = 'center';
       self.accm.style.display = 'block'
-      if (acts.length - 1 === acts.indexOf(a)) self.accm.style.borderBottom = '1px solid #46a';
-      if (a.cond(false) !== true) self.accm.style.color = 'grey';
-      if (a.active === true) self.accm.style.color = 'lime';
+      if (acts.length - 1 === acts.indexOf(action)) self.accm.style.borderBottom = '1px solid #46a';
+      if (action.cond(false) !== true) self.accm.style.color = 'grey';
+      if (action.active === true) self.accm.style.color = 'lime';
       self.accm.addEventListener('click', function () {
-        switch (a.type) {
+        switch (action.type) {
           case 1:
-            if (a.cond() === true && a.id !== global.current_a.id) { activateAct(a); self.style.color = 'lime' } else
-              if (a.id === global.current_a.id) { deactivateAct(global.current_a); self.style.color = 'inherit' }
+            if (action.cond() === true && action.id !== global.current_a.id) { activateAct(action); self.style.color = 'lime' } else
+              if (action.id === global.current_a.id) { deactivateAct(global.current_a); self.style.color = 'inherit' }
             break;
-          case 2: if (a.cond() === true) a.use(you);
+          case 2: if (action.cond() === true) action.use(you);
             break;
           case 3: break;
         }

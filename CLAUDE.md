@@ -49,9 +49,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `ctst.png` — sprite sheet, `laugh6.wav` — sound effect, `favicon.ico`
 
 ### Refactoring artifacts
-- `ROADMAP.md` — refactoring plan with checkboxes (Phases 1-3 complete, Phase 4.1-4.3+4.5-4.6 complete, Phase 5 IoC complete, Phase 6-7 future)
+- `ROADMAP.md` — refactoring plan with checkboxes (Phases 1-5 complete, Phase 6.1+6.3-6.5 complete, Phase 6.2+7-8 future)
 - `CLASS_MAP.md` — CSS class rename mapping (cryptic → semantic, pending application)
 - `frontend-refactoring.md` — CSS design token and component class analysis (future work)
+- `src/types.ts` — 23 entity interfaces + 8 state interfaces (Player, Item, Creature, Effect, Skill, Area, Equipment, Flags, Stats, CombatState, Settings, etc.)
 
 ### Global namespace objects
 The game uses plain JS objects as namespaces (not modules). Key globals defined at the top of the script:
@@ -62,10 +63,10 @@ The game uses plain JS objects as namespaces (not modules). Key globals defined 
 | `global` | Miscellaneous game-wide state (~62 remaining properties) |
 | `data` | Grouped registry export: `{ creature, item, wpn, eqp, acc, sld, rcp, skl, effect, area, sector, furniture, vendor, quest, act, abl, container, ttl, mastery }` |
 | `gameText` | Read-only display constants: `nt` (number suffixes), `wecs` (rarity colors), `lunarp` (moon phases), `eranks` (ranking labels) |
-| `flags` | Game state flags: `btl`, `m_freeze`, `civil`, `sleepmode`, `loadstate`, etc. (26 boolean/numeric flags) |
-| `stats` | Gameplay statistics: `tick`, `akills`, `fooda`, `moneyg`, `die_p`, etc. (~50 counters) |
-| `combat` | Ephemeral combat state: `current_m`, `current_l`, `current_z`, `atkdftm`, `hit_a`, `keytarget`, etc. (not serialized) |
-| `settings` | User-configurable preferences: `sm`, `rm`, `msgs_max`, `fps`, `timescale`, `home_loc`, `bg_r/g/b` |
+| `flags` | Game state flags: `btl`, `monsterFreeze`, `civil`, `sleepmode`, `pauseNextBattle`, `criticalHit`, etc. (26 boolean/numeric flags) |
+| `stats` | Gameplay statistics: `tick`, `allKills`, `foodAttempts`, `moneyGained`, `deathsInCombat`, etc. (~50 counters) |
+| `combat` | Ephemeral combat state: `currentMonster`, `currentLocation`, `currentZone`, `attackDamageFromMonster`, `hitAccuracy`, `keyTarget`, etc. (not serialized) |
+| `settings` | User-configurable preferences: `sortMode`, `recipeSortMode`, `msgs_max`, `fps`, `timescale`, `home_loc`, `bg_r/g/b` |
 | `dom` | DOM element references |
 | `creature` | Monster/NPC definitions |
 | `area` / `sector` | Map zones and sector groupings |
@@ -89,13 +90,13 @@ Game entities use constructor functions (e.g., `Item()`, `Eqp()`, `Creature()`, 
 ### Delegate IoC pattern (Phase 5)
 Most data module delegates that previously imported and mutated the `you` singleton now receive the player as a parameter instead:
 - **Equipment** (`oneq`, `onuneq`, `onDegrade`): `function(player: any) { player.mods.X += val }`
-- **Skills** (milestone `f`, `onLevel`, `onGive`): `(player: any) => { player.stra += 1 }`
+- **Skills** (milestone `f`, `onLevel`, `onGive`): `(player: any) => { player.str_bonus += 1 }`
 - **Effects** (`use`, `un`, `mods`, `onGive`, `onRemove`, `onClick`): player is first param
 - **Items** (`use`, `onGet`): `function(player: any) { ... }`
 - **Creatures** (`onDeath`): uses existing `killer` param (which IS the player) instead of importing `you`
 - **Actions/Furniture/Titles/Mastery/Abilities**: delegates receive `player` as first param
 
-Call sites pass `you` as the argument (e.g., `w.oneq(you)`, `skl.mlstn[ss].f(you)`). Constructor defaults use `_player: any` for unused params. This removes `you` from imports in 8 of 13 data modules (equipment, effects, items, world, actions, furniture, mastery, titles, abilities).
+Call sites pass `you` as the argument (e.g., `w.oneq(you)`, `skl.mlstn[ss].f(you)`). Constructor defaults use `_player: any` for unused params. This removes `you` from imports in 9 of 13 data modules (equipment, effects, items, world, actions, furniture, mastery, titles, abilities).
 
 ### State module imports (Phase 4.3)
 Consuming modules (game/, ui/, systems/, main.ts) import grouped exports and destructure:
@@ -114,6 +115,7 @@ Setter functions are used for objects that need full reassignment in save/load: 
 - `load()` reverses the process — segments are split on `|` and parsed in order
 - Adding new save fields requires appending to both `save()` and `load()` in matching order
 - Helpers: `serializeIdData()` for save, `loadEquipCategory()` and `restoreDiscovery()` for load
+- **Rename migration**: After Phase 6.1, save keys use new names but old saves still have old keys. `load()` uses key-mapping objects (`PLAYER_KEY_MAP`, `STATS_KEY_MAP`, `FLAGS_KEY_MAP`, `MODS_KEY_MAP`) to translate old serialized keys to new runtime property names. When renaming a serialized property, add the old→new mapping to the appropriate map
 
 ### Key systems
 - **Combat** (`game/combat.ts`): `fght()`, `attack()`, `tattack()`, `dmg_calc()`, `hit_calc()` — turn-based with stats, equipment, and effects

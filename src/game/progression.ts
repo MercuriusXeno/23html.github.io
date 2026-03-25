@@ -10,29 +10,29 @@ import { rsort } from '../ui/inventory';
 import { renderAct } from '../ui/panels';
 import { formatw } from './utils-game';
 
-    export function lvlup(p: Combatant, t?: number) {
-      if (t === 0) {
-        p.hp = p.hp_base;
-        p.str = p.str_base;
-        p.agl = p.agl_base;
-        p.spd = p.spd_base;
+    export function lvlup(combatant: Combatant, levels?: number) {
+      if (levels === 0) {
+        combatant.hp = combatant.hp_base;
+        combatant.str = combatant.str_base;
+        combatant.agl = combatant.agl_base;
+        combatant.spd = combatant.spd_base;
       } else {
-        t = t || 1
-        p.lvl += t;
-        let sb = randf(t * p.statPotential[1], 2 * t * p.statPotential[1]);
-        p.str_base += sb;
-        let sa = randf(t * p.statPotential[2], 2 * t * p.statPotential[2]);
-        p.agl_base += sa;
-        let si = randf(t * p.statPotential[3], 2 * t * p.statPotential[3]);
-        p.int_base += si;
+        levels = levels || 1
+        combatant.lvl += levels;
+        let sb = randf(levels * combatant.statPotential[1], 2 * levels * combatant.statPotential[1]);
+        combatant.str_base += sb;
+        let sa = randf(levels * combatant.statPotential[2], 2 * levels * combatant.statPotential[2]);
+        combatant.agl_base += sa;
+        let si = randf(levels * combatant.statPotential[3], 2 * levels * combatant.statPotential[3]);
+        combatant.int_base += si;
         let hpp;
-        if (p.id === you.id) hpp = Math.round(rand(1.4 * Math.log(p.lvl) * t * p.statPotential[0], 1.8 * p.lvl * t * p.statPotential[0]));
-        else hpp = Math.round(rand(1.8 * Math.log(p.lvl) * t * p.statPotential[0], 2.2 * p.lvl * t * p.statPotential[0]));
-        p.hp_base += hpp;
-        p.hpmax += hpp;
-        p.hp += hpp;
-        if (p.id !== you.id) p.hp = p.hpmax = p.hp_base;
-        if (p.id != you.id) p.exp = p.exp * (1 + t / 5) + 1 << 0;
+        if (combatant.id === you.id) hpp = Math.round(rand(1.4 * Math.log(combatant.lvl) * levels * combatant.statPotential[0], 1.8 * combatant.lvl * levels * combatant.statPotential[0]));
+        else hpp = Math.round(rand(1.8 * Math.log(combatant.lvl) * levels * combatant.statPotential[0], 2.2 * combatant.lvl * levels * combatant.statPotential[0]));
+        combatant.hp_base += hpp;
+        combatant.hpmax += hpp;
+        combatant.hp += hpp;
+        if (combatant.id !== you.id) combatant.hp = combatant.hpmax = combatant.hp_base;
+        if (combatant.id != you.id) combatant.exp = combatant.exp * (1 + levels / 5) + 1 << 0;
         else {
           dom.d3.update();
           msg("Leveled Up " + you.lvl, 'orange');
@@ -44,25 +44,25 @@ import { formatw } from './utils-game';
           if (you.eqp[0].id === 10000) { you.eqp[0].cls[2] = you.lvl / 4 << 0; you.eqp[0].aff[0] = you.lvl / 5 << 0; you.eqp[0].ctype = 2 }
           if (stats.deathTotal < 1 && you.lvl >= 20) giveTitle(ttl.ndthextr)
         }
-      } p.stat_r(); update_d();
+      } combatant.stat_r(); update_d();
     }
 
-    export function giveExp(exp: number, r?: boolean, g?: boolean, b?: boolean) {
-      if (!r) exp = Math.round((exp * you.exp_t * (0.4 + you.efficiency() * 0.6))) - (you.lvl - 1);
+    export function giveExp(exp: number, raw?: boolean, gift?: boolean, battleShow?: boolean) {
+      if (!raw) exp = Math.round((exp * you.exp_t * (0.4 + you.efficiency() * 0.6))) - (you.lvl - 1);
       exp = exp <= 0 ? 1 : exp;
-      if (!b) { if (flags.monsterBattleHide === false) if (!g) { msg('EXP: +' + formatw(exp), 'hotpink'); stats.expTotal += exp } } else { msg('EXP: +' + formatw(exp), 'hotpink'); stats.expTotal += exp }
+      if (!battleShow) { if (flags.monsterBattleHide === false) if (!gift) { msg('EXP: +' + formatw(exp), 'hotpink'); stats.expTotal += exp } } else { msg('EXP: +' + formatw(exp), 'hotpink'); stats.expTotal += exp }
       if (you.exp + exp < you.expnext_t) you.exp += exp;
       else {
         let extra = (you.exp + exp) - you.expnext_t;
         you.exp = 0;
         lvlup(you);
-        giveExp(extra, true, true);
+        giveExp(extra, true, true, false);
       }
       dom.d5_2_1.update();
     }
 
-    export function giveSkExp(skl: Skill, exp: number, res?: boolean) {
-      exp = res === false ? exp : exp * skl.p; //skl.lastupd = time.minute+2;
+    export function giveSkExp(skl: Skill, exp: number, raw?: boolean) {
+      exp = raw === false ? exp : exp * skl.p; //skl.lastupd = time.minute+2;
       if (skl.exp + exp < skl.expnext_t) skl.exp += exp;
       else {
         let extra = (skl.exp + exp) - skl.expnext_t;
@@ -77,7 +77,7 @@ import { formatw } from './utils-game';
       } skl.onGive(you, exp);
     }
 
-    export function giveTitle(title: Title, lv?: boolean) {
+    export function giveTitle(title: Title, silent?: boolean) {
       if (title.have === false) {
         global.titles.push(title);
         if (title.id !== 0) global.titlesEarned.push(title);
@@ -86,7 +86,7 @@ import { formatw } from './utils-game';
         if (!title.tget && title.talent) { title.talent(you); title.tget = true }
         title.onGet(you);
         for (let x in global.ttlschk) global.ttlschk[x]();
-        if (!lv) { msg('New Title Earned! ' + col('"' + title.name + '"', 'orange'), 'cyan', title, 5); dom.d3.update(); }
+        if (!silent) { msg('New Title Earned! ' + col('"' + title.name + '"', 'orange'), 'cyan', title, 5); dom.d3.update(); }
       } else return;
     }
 
@@ -102,16 +102,16 @@ import { formatw } from './utils-game';
       } else return 0;
     }
 
-    export function giveCrExp(skl: Skill, am: number, lvl?: number) {
-      if (!lvl || skl.lvl < lvl) giveSkExp(skl, am);
+    export function giveCrExp(skl: Skill, amount: number, lvl?: number) {
+      if (!lvl || skl.lvl < lvl) giveSkExp(skl, amount);
     }
 
-    export function giveAction(a: Action) {
-      if (a.have === false) {
+    export function giveAction(action: Action) {
+      if (action.have === false) {
         if (!flags.actsu) { flags.actsu = true; dom.ct_bt3.innerHTML = 'actions' }
-        msg('You learned a new action: <span style="color:tomato">"' + a.name + '"</span>', 'lime', a, 9);
-        a.have = true;
-        acts.push(a);
+        msg('You learned a new action: <span style="color:tomato">"' + action.name + '"</span>', 'lime', action, 9);
+        action.have = true;
+        acts.push(action);
         if (acts.length >= 1 && dom.acccon) { empty(dom.acccon); for (let a in acts) renderAct(acts[a]) }
       }
     }

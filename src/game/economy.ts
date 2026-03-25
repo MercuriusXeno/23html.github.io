@@ -10,15 +10,15 @@ import { m_update } from '../ui/stats';
 import { giveSkExp } from './progression';
 import { recshop } from '../ui/shop';
 
-    export function giveWealth(val: number, mes?: boolean, f?: boolean): void {
-      if (you.mods.wealthExtra !== 0 && f) val += 1;
+    export function giveWealth(val: number, showMessage?: boolean, extraWealth?: boolean): void {
+      if (you.mods.wealthExtra !== 0 && extraWealth) val += 1;
       you.wealth += val;
       stats.moneyGained += val;
       for (let x in global.monchk) global.monchk[x]();
       if (!stats.mndrgnu && you.wealth >= 100000000) { stats.mndrgnu = true; appear(dom.mn_1) }
       m_update();
       giveSkExp(skl.gred, val * .01);
-      if (mes !== false) {
+      if (showMessage !== false) {
         msg('+', 'gold');
         if (val >= GOLD) msg_add(' ●' + ((val / GOLD) << 0), 'rgb(255, 215, 0)');
         if (val >= SILVER && val % GOLD >= SILVER) msg_add(' ●' + ((val / SILVER % SILVER) << 0), 'rgb(192, 192, 192)');
@@ -26,10 +26,10 @@ import { recshop } from '../ui/shop';
       } recshop();
     }
 
-    export function spend(m: number): void {
-      if (you.wealth < m) return
-      you.wealth -= m;
-      stats.moneySpent += m;
+    export function spend(amount: number): void {
+      if (you.wealth < amount) return
+      you.wealth -= amount;
+      stats.moneySpent += amount;
       m_update()
     }
 

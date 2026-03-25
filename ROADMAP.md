@@ -65,7 +65,7 @@
 ## Phase 6: Naming & Types (Future)
 **Goal:** Replace cryptic variable/field/property names with meaningful names throughout the codebase. Replace `any` types with accurate types that reflect each argument's purpose.
 
-- [ ] **Step 6.1:** Rename state properties — `global.s_l`, `global.lw_op`, `you.str_d`, `w.wc`, `w.rar`, etc. to self-documenting names
+- [x] **Step 6.1:** Rename state properties — player stats (`str_r`→`str_base`, `stra`→`str_bonus`, `strm`→`str_mult`, `stre`→`str_eff`), player mods (all 20 fields), combat state, stats counters (~50 fields), flags, global misc, settings. Save-load uses `PLAYER_KEY_MAP`/`STATS_KEY_MAP`/`FLAGS_KEY_MAP`/`MODS_KEY_MAP` to migrate old saves
 - [ ] **Step 6.2:** Rename function parameters — replace `w`, `c`, `bc`, `dsc`, `l`, `f`, `a`, `k` with descriptive names
 - [x] **Step 6.3:** Define interfaces/types for core entities — `Player`, `Item`, `Creature`, `Effect`, `Skill`, `Area`, `Equipment` etc. (23 entity types + 8 state types in `src/types.ts`)
 - [x] **Step 6.4:** Replace `any` in function signatures with accurate types — constructor configs, delegate callbacks, utility params (all game/, ui/, systems/ modules typed)

@@ -6,38 +6,38 @@ import { addDesc } from './descriptions';
 
     let node: number;
 
-    export function giveEff(target: Combatant, e: Effect, d?: number, y?: any, z?: any): Effect | undefined {
+    export function giveEff(target: Combatant, effect: Effect, duration?: number, y?: any, z?: any): Effect | undefined {
       if (target.id !== 0) {
-        let ef: Effect = e;
-        if (target.id !== you.id) { ef = new Object() as Effect; for (let g in e) (ef as any)[g] = (e as any)[g]; }
+        let ef: Effect = effect;
+        if (target.id !== you.id) { ef = new Object() as Effect; for (let g in effect) (ef as any)[g] = (effect as any)[g]; }
         if (target.id === you.id || flags.btl) {
-          let p = findbyid(target.eff, e.id);
+          let p = findbyid(target.eff, effect.id);
           if (!p || !p.active) {
-            if (d) ef.duration = d; ef.y = y; ef.z = z; if (ef.x) eff_d(ef, ef.x, ef.c!, ef.b!, target);
+            if (duration) ef.duration = duration; ef.y = y; ef.z = z; if (ef.x) eff_d(ef, ef.x, ef.c!, ef.b!, target);
             ef.target = target;
             target.eff.push(ef);
-          } ef.onGive(you, d, y, z); ef.active = true;
+          } ef.onGive(you, duration, y, z); ef.active = true;
         } effdfix();
         target.stat_r();
-        return e
+        return effect
       }
     }
 
 
-    export function removeEff(e: Effect, t?: any): void {
-      if (e.active === true) {
-        if (e.x) {
-          if (e.target!.id === you.id) {
-            node = global.effects.indexOf(e); dom.d101.removeChild(dom.d101.children[node]); global.effects.splice(node, 1);
+    export function removeEff(effect: Effect, _target?: any): void {
+      if (effect.active === true) {
+        if (effect.x) {
+          if (effect.target!.id === you.id) {
+            node = global.effects.indexOf(effect); dom.d101.removeChild(dom.d101.children[node]); global.effects.splice(node, 1);
             if (dom.d101.children.length > you.eff.length) empty(dom.d101);
           }
           else {
-            node = global.enemyEffects.indexOf(e); dom.d101m.removeChild(dom.d101m.children[node]); global.enemyEffects.splice(node, 1);
-            if (dom.d101m.children.length > e.target!.eff.length) empty(dom.d101m);
-          } e.onRemove(you); global.dscr.style.display = 'none';
-        } e.target!.eff.splice(e.target!.eff.indexOf(e), 1); e.active = false; clearInterval(timers.inup); effdfix()
+            node = global.enemyEffects.indexOf(effect); dom.d101m.removeChild(dom.d101m.children[node]); global.enemyEffects.splice(node, 1);
+            if (dom.d101m.children.length > effect.target!.eff.length) empty(dom.d101m);
+          } effect.onRemove(you); global.dscr.style.display = 'none';
+        } effect.target!.eff.splice(effect.target!.eff.indexOf(effect), 1); effect.active = false; clearInterval(timers.inup); effdfix()
       }
-      e.target!.stat_r();
+      effect.target!.stat_r();
     }
 
     function effdfix(): void {
@@ -52,22 +52,22 @@ import { addDesc } from './descriptions';
       }
     }
 
-    function eff_d(e: Effect, s: string, c: string, b: string, tgt: Combatant): void {
+    function eff_d(effect: Effect, symbol: string, color: string, bgColor: string, tgt: Combatant): void {
       if (tgt.id === you.id) {
         let ic = addElement(dom.d101, 'div', null, 'sprite-cell');
-        ic.innerHTML = s;
-        ic.style.color = c;
-        ic.style.backgroundColor = b;
-        ic.addEventListener('click', () => { e.onClick(you) })
-        addDesc(ic, e, 4, e.name, e.desc);
-        if (e.duration !== 0) global.effects.push(e);
+        ic.innerHTML = symbol;
+        ic.style.color = color;
+        ic.style.backgroundColor = bgColor;
+        ic.addEventListener('click', () => { effect.onClick(you) })
+        addDesc(ic, effect, 4, effect.name, effect.desc);
+        if (effect.duration !== 0) global.effects.push(effect);
       }
       else {
         let ic = addElement(dom.d101m, 'div', null, 'sprite-cell');
-        ic.innerHTML = s;
-        ic.style.color = c;
-        ic.style.backgroundColor = b;
-        addDesc(ic, e, 4, e.name, e.desc);
-        if (e.duration !== 0) global.enemyEffects.push(e);
+        ic.innerHTML = symbol;
+        ic.style.color = color;
+        ic.style.backgroundColor = bgColor;
+        addDesc(ic, effect, 4, effect.name, effect.desc);
+        if (effect.duration !== 0) global.enemyEffects.push(effect);
       }
     }

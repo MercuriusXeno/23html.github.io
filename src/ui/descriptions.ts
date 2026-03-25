@@ -5,13 +5,13 @@ import { dom, global, you, timers, furn, data, stats, combat, } from '../state';
 const { skl } = data;
 import { giveSkExp } from '../game/progression';
 
-    export function dscr(c: MouseEvent, what: any, type?: number, ttl?: any, dsc?: any, id?: number) {
+    export function dscr(event: MouseEvent, what: any, type?: number, ttl?: any, dsc?: any, id?: number) {
       let self: any = {};
       id = id || 0;
       global.dscr.style.display = '';
       empty(global.dscr);
-      global.dscr.style.top = c.clientY + 30;
-      global.dscr.style.left = c.clientX + 30;
+      global.dscr.style.top = event.clientY + 30;
+      global.dscr.style.left = event.clientX + 30;
       if (!type || type === 1) {
         self.label = addElement(global.dscr, 'div', 'd_l');
         self.label.innerHTML = what.name;

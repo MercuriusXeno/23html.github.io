@@ -5,15 +5,15 @@ const { skl } = data;
 import { msg } from '../ui/messages';
 import { giveItem } from './inventory';
 
-    export function roll(itm: Item | Equipment, c: number, mi?: number, ma?: number): void {
+    export function roll(itm: Item | Equipment, chance: number, mi?: number, ma?: number): void {
       mi = mi || 1;
       let r = random();
-      if (r < c + (c / 100 * you.luck)) giveItem(itm, (!!ma ? rand(mi, ma) : rand(mi)));
+      if (r < chance + (chance / 100 * you.luck)) giveItem(itm, (!!ma ? rand(mi, ma) : rand(mi)));
     }
 
-    export function formatw(a: number): string | number {
-      let b = (Math.log(Math.abs(a + 1)) * 0.43429448190325178 | 0) + 1;
-      if (b > 3) { let n = a / 1000 ** ((b - 1) / 3 << 0) * 10; return ((n - ~~n >= 0.5 ? 1 : 0) + ~~n) / 10 + gameText.nt[((b - 4) / 3 << 0)] } return a;
+    export function formatw(amount: number): string | number {
+      let b = (Math.log(Math.abs(amount + 1)) * 0.43429448190325178 | 0) + 1;
+      if (b > 3) { let n = amount / 1000 ** ((b - 1) / 3 << 0) * 10; return ((n - ~~n >= 0.5 ? 1 : 0) + ~~n) / 10 + gameText.nt[((b - 4) / 3 << 0)] } return amount;
     }
 
     export function kill(obj: any): void { obj = null; }

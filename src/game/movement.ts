@@ -38,19 +38,19 @@ effector.shop.deactivate = function () { flags.isshop = false }
 effector.shop.x = '$';
 effector.shop.c = 'gold';
 
-export function activateEffectors(e: any[]) {
-  if (!e) return;
-  for (let a in e) if (!e[a].e.active && (!e[a].c || e[a].c() === true)) { e[a].e.activate(); e[a].e.active = true }
+export function activateEffectors(effectors: any[]) {
+  if (!effectors) return;
+  for (let a in effectors) if (!effectors[a].e.active && (!effectors[a].c || effectors[a].c() === true)) { effectors[a].e.activate(); effectors[a].e.active = true }
 }
 
-export function deactivateEffectors(e: any[]) {
-  if (!e) return
-  for (let a in e) if (e[a].e.active) { e[a].e.deactivate(); e[a].e.active = false }
+export function deactivateEffectors(effectors: any[]) {
+  if (!effectors) return
+  for (let a in effectors) if (effectors[a].e.active) { effectors[a].e.deactivate(); effectors[a].e.active = false }
 }
 
-export function runEffectors(e: any[]) {
-  if (!e) return
-  for (let a in e) e[a].e.use();
+export function runEffectors(effectors: any[]) {
+  if (!effectors) return
+  for (let a in effectors) effectors[a].e.use();
 }
 
 export function inSector(sec: Sector) {
@@ -111,10 +111,10 @@ function rfeff(what: Area) {
   dom.d_lctte.innerHTML = t;
 }
 
-export function smove(where: Area, lv?: boolean | number) {
+export function smove(where: Area, gainExp?: boolean | number) {
   flags.busy = false; flags.work = false; global.windowIndex = 0;
   if (flags.loadstate) return;
-  if (!flags.wkdis) { flags.wkdis = true; if (lv !== false) giveSkExp(skl.walk, .25); setTimeout(() => { flags.wkdis = false }, 500) }
+  if (!flags.wkdis) { flags.wkdis = true; if (gainExp !== false) giveSkExp(skl.walk, .25); setTimeout(() => { flags.wkdis = false }, 500) }
   you.eqp[6].dp = you.eqp[6].dp - .08 < 0 ? 0 : you.eqp[6].dp - .08;
   let flg = false;
   let und = []

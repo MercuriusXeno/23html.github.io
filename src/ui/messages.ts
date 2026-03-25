@@ -2,7 +2,7 @@ import { addElement } from '../dom-utils';
 import { dom, global, settings, flags } from '../state';
 import { addDesc } from './descriptions';
 
-    export function msg(txt: string, c?: string, dsc?: any, type?: number | null, bc?: string, chck?: any): void {
+    export function msg(txt: string, color?: string, dsc?: any, type?: number | null, bgColor?: string, chck?: any): void {
       if (flags.monsterFreeze === false && flags.loadstate === false) {
         while (dom.gmsgs.children[1].children.length > settings.msgs_max - 1) dom.gmsgs.children[1].removeChild(dom.gmsgs.children[1].children[0]);
         let msg = addElement(dom.mscont, 'div', null, 'msg');
@@ -16,7 +16,7 @@ import { addDesc } from './descriptions';
         let mtxt = addElement(msg, 'span');
         if (dsc) { if (type) addDesc(msg, dsc, type); else addDesc(msg, dsc); }
         //let nt = new String(); for(let a in txt){nt+=txt[a].charCodeAt()!==32?String.fromCharCode(41216-txt[a].charCodeAt()):' '}; txt=nt;
-        if (c) mtxt.innerHTML = '<span style=color:' + c + (bc ? (';background-color:' + bc) : '') + '>' + txt + '</span>';
+        if (color) mtxt.innerHTML = '<span style=color:' + color + (bgColor ? (';background-color:' + bgColor) : '') + '>' + txt + '</span>';
         else mtxt.innerHTML = txt;
         dom.mscont.scrollTop = dom.mscont.scrollHeight;
         global.lastmsg = msg.innerHTML;
@@ -25,24 +25,24 @@ import { addDesc } from './descriptions';
       }
     }
 
-    export function _msg(txt: string, c?: string, dsc?: any, type?: number | null, bc?: string, chck?: any): void {
+    export function _msg(txt: string, color?: string, dsc?: any, type?: number | null, bgColor?: string, chck?: any): void {
       while (dom.gmsgs.children[1].children.length > settings.msgs_max - 1) dom.gmsgs.children[1].removeChild(dom.gmsgs.children[1].children[0]);
       let msg = addElement(dom.mscont, 'div', null, 'msg');
       if (dsc) { if (type) addDesc(msg, dsc, type); else addDesc(msg, dsc); }
-      if (c) msg.innerHTML = '<span style=color:' + c + (bc ? (';background-color:' + bc) : '') + '>' + txt + '</span>';
+      if (color) msg.innerHTML = '<span style=color:' + color + (bgColor ? (';background-color:' + bgColor) : '') + '>' + txt + '</span>';
       else msg.innerHTML = txt;
       dom.mscont.scrollTop = dom.mscont.scrollHeight;
     }
 
 
-    export function msg_add(txt: string, c?: string, bc?: string, shd?: string): void {
+    export function msg_add(txt: string, color?: string, bgColor?: string, shadow?: string): void {
       if (flags.monsterFreeze === false && flags.loadstate === false) {
         let bac = '';
         let b = '';
-        if (bc) bac = 'background-color:' + bc;
-        if (shd) b = 'text-shadow:' + shd.toString();
+        if (bgColor) bac = 'background-color:' + bgColor;
+        if (shadow) b = 'text-shadow:' + shadow.toString();
         else b = '';
-        if (c) (dom.gmsgs.children[1].children[dom.gmsgs.children[1].children.length - 1] as HTMLElement).innerHTML += '<span style=\"color:' + c + ';' + bac + ';' + b + '\">' + txt + '</span>';
+        if (color) (dom.gmsgs.children[1].children[dom.gmsgs.children[1].children.length - 1] as HTMLElement).innerHTML += '<span style=\"color:' + color + ';' + bac + ';' + b + '\">' + txt + '</span>';
         else (dom.gmsgs.children[1].children[dom.gmsgs.children[1].children.length - 1] as HTMLElement).innerHTML += txt;
         dom.mscont.scrollTop = dom.mscont.scrollHeight;
       }

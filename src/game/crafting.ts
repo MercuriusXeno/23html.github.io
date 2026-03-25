@@ -29,29 +29,29 @@ function scan2(arr: any[], val: { id?: number }, am: number): { a: boolean; b: a
   }
 }
 
-export function canMake(rc: Recipe, times: number): { x: any[]; y: any[]; z: number[]; o: (0 | 1 | 2)[]; success: boolean; b: boolean[]; r: any[] } {
+export function canMake(recipe: Recipe, times: number): { x: any[]; y: any[]; z: number[]; o: (0 | 1 | 2)[]; success: boolean; b: boolean[]; r: any[] } {
   let missing: any[] = [];
   let has: any[] = [];
   let z: any[] = [];
   let b: any[] = [];
   let r: any[] = [];
-  let o = evaluateSpecialRequirementsForRecipe(rc);
-  for (let i = 0; i < rc.rec.length; i++) {
+  let o = evaluateSpecialRequirementsForRecipe(recipe);
+  for (let i = 0; i < recipe.rec.length; i++) {
     let sc: any = new Object();
-    if (!rc.rec[i].item.slot) {
-      sc = scan2(inv, rc.rec[i].item, rc.rec[i].amount * times);
-      z.push(rc.rec[i].item.amount * times);
+    if (!recipe.rec[i].item.slot) {
+      sc = scan2(inv, recipe.rec[i].item, recipe.rec[i].amount * times);
+      z.push(recipe.rec[i].item.amount * times);
     } else {
-      let ar = findworst(inv, rc.rec[i].item);
-      if (ar.length >= rc.rec[i].amount * times) sc.a = true;
+      let ar = findworst(inv, recipe.rec[i].item);
+      if (ar.length >= recipe.rec[i].amount * times) sc.a = true;
       z.push(ar.length);
       r = ar;
     }
     if (!sc.a) {
-      missing.push(rc.rec[i].item);
+      missing.push(recipe.rec[i].item);
       b.push(false)
     } else {
-      has.push(rc.rec[i].item);
+      has.push(recipe.rec[i].item);
       b.push(true)
     }
   } for (let a in global.testCorc) global.testCorc[a].testc = false;
@@ -59,32 +59,32 @@ export function canMake(rc: Recipe, times: number): { x: any[]; y: any[]; z: num
 }
 
 
-export function make(rc: Recipe, rp?: boolean, times?: number): any {
+export function make(recipe: Recipe, preview?: boolean, times?: number): any {
   times = times || 1
-  let check = canMake(rc, times);
-  if (rp || !check.success) {
+  let check = canMake(recipe, times);
+  if (preview || !check.success) {
     return check;
   } for (let k = 0; k < times; k++) {
-    for (let j = 0; j < rc.rec.length; j++) {
-      if (rc.rec[j].return) continue;
-      if (!rc.rec[j].item.slot) {
-        let itemToAlter = scan2(inv, rc.rec[j].item, rc.rec[j].amount)!.b;
-        itemToAlter.amount -= rc.rec[j].amount;
+    for (let j = 0; j < recipe.rec.length; j++) {
+      if (recipe.rec[j].return) continue;
+      if (!recipe.rec[j].item.slot) {
+        let itemToAlter = scan2(inv, recipe.rec[j].item, recipe.rec[j].amount)!.b;
+        itemToAlter.amount -= recipe.rec[j].amount;
         if (itemToAlter.amount === 0) removeItem(itemToAlter);
       } else {
-        let ar = findworst(inv, rc.rec[j].item);
+        let ar = findworst(inv, recipe.rec[j].item);
         let finar: any[] = [];
-        for (let m = 0; m < rc.rec[j].amount; m++) finar.push(ar[m]);
+        for (let m = 0; m < recipe.rec[j].amount; m++) finar.push(ar[m]);
         for (let m in finar) removeItem(finar[m]);
       }
     }
-    if (!!rc.cmake) { rc.cmake(); }
+    if (!!recipe.cmake) { recipe.cmake(); }
     else {
-      for (let itm in rc.res) {
-        if (!rc.res[itm].amount_max) giveItem(rc.res[itm].item, rc.res[itm].amount);
-        else { giveItem(rc.res[itm].item, rand(rc.res[itm].amount, rc.res[itm].amount_max)); }
+      for (let itm in recipe.res) {
+        if (!recipe.res[itm].amount_max) giveItem(recipe.res[itm].item, recipe.res[itm].amount);
+        else { giveItem(recipe.res[itm].item, rand(recipe.res[itm].amount, recipe.res[itm].amount_max)); }
       }
-      rc.onmake();
+      recipe.onmake();
     }
   }
   isort(settings.sortMode);

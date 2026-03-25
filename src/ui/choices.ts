@@ -51,16 +51,16 @@ import { giveSkExp } from '../game/progression';
       this.sector = []
     }
 
-    export function activatef(f: Furniture) {
-      if (!f.active) {
-        f.activate(you);
-        f.active = true;
+    export function activatef(furniture: Furniture) {
+      if (!furniture.active) {
+        furniture.activate(you);
+        furniture.active = true;
       }
     }
 
-    export function deactivatef(f: Furniture) {
-      if (f.active) {
-        f.deactivate(you);
-        f.active = false;
+    export function deactivatef(furniture: Furniture) {
+      if (furniture.active) {
+        furniture.deactivate(you);
+        furniture.active = false;
       }
     }
