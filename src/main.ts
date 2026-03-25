@@ -243,16 +243,11 @@ declare var InstallTrigger: any;
     dom.d8_2.style.fontSize = '.7em';
     if (typeof InstallTrigger == 'undefined') dom.d8_2.style.paddingTop = '5px';
     dom.d8_2.innerHTML = 'Critical chance: ' + ((you.mods.critChanceFlat + you.critChance) * 100) + '%';
-    dom.d7_slot_3.addEventListener('mouseenter', function (this: any) { global._tad = this.innerHTML; this.innerHTML = 'DEF: ' + Math.round(you.eqp[2].str * (you.eqp[2].dp / you.eqp[2].dpmax) + you.str_base + you.eqp[1].str * (you.eqp[1].dp / you.eqp[1].dpmax)) });
-    dom.d7_slot_3.addEventListener('mouseleave', function (this: any) { this.innerHTML = global._tad; });
-    dom.d7_slot_4.addEventListener('mouseenter', function (this: any) { global._tad = this.innerHTML; this.innerHTML = 'DEF: ' + Math.round(you.eqp[3].str * (you.eqp[3].dp / you.eqp[3].dpmax) + you.str_base + you.eqp[1].str * (you.eqp[1].dp / you.eqp[1].dpmax)) });
-    dom.d7_slot_4.addEventListener('mouseleave', function (this: any) { this.innerHTML = global._tad; });
-    dom.d7_slot_5.addEventListener('mouseenter', function (this: any) { global._tad = this.innerHTML; this.innerHTML = 'DEF: ' + Math.round(you.eqp[4].str * (you.eqp[4].dp / you.eqp[4].dpmax) + you.str_base + you.eqp[1].str * (you.eqp[1].dp / you.eqp[1].dpmax)) });
-    dom.d7_slot_5.addEventListener('mouseleave', function (this: any) { this.innerHTML = global._tad; });
-    dom.d7_slot_6.addEventListener('mouseenter', function (this: any) { global._tad = this.innerHTML; this.innerHTML = 'DEF: ' + Math.round(you.eqp[5].str * (you.eqp[5].dp / you.eqp[5].dpmax) + you.str_base + you.eqp[1].str * (you.eqp[1].dp / you.eqp[1].dpmax)) });
-    dom.d7_slot_6.addEventListener('mouseleave', function (this: any) { this.innerHTML = global._tad; });
-    dom.d7_slot_7.addEventListener('mouseenter', function (this: any) { global._tad = this.innerHTML; this.innerHTML = 'DEF: ' + Math.round(you.eqp[6].str * (you.eqp[6].dp / you.eqp[6].dpmax) + you.str_base + you.eqp[1].str * (you.eqp[1].dp / you.eqp[1].dpmax)) });
-    dom.d7_slot_7.addEventListener('mouseleave', function (this: any) { this.innerHTML = global._tad; });
+    [dom.d7_slot_3, dom.d7_slot_4, dom.d7_slot_5, dom.d7_slot_6, dom.d7_slot_7].forEach((el: any, i: number) => {
+      let eqpIdx = i + 2;
+      el.addEventListener('mouseenter', function (this: any) { global._tad = this.innerHTML; this.innerHTML = 'DEF: ' + Math.round(you.eqp[eqpIdx].str * (you.eqp[eqpIdx].dp / you.eqp[eqpIdx].dpmax) + you.str_base + you.eqp[1].str * (you.eqp[1].dp / you.eqp[1].dpmax)) });
+      el.addEventListener('mouseleave', function (this: any) { this.innerHTML = global._tad; });
+    });
     dom.d1m = addElement(document.body, 'div', 'd1', 'd');
     if (!flags.aw_u) dom.d1m.style.display = 'none';
     dom.d101m = addElement(dom.d1m, 'div', 'se_i');
@@ -481,35 +476,24 @@ declare var InstallTrigger: any;
           this.skwm_e_btn_3_b = addElement(this.skwm_e, 'div', null, 'nav-button');
           this.skwm_e_btn_3_b.innerHTML = 'LVL';
           this.skwm_e_btn_3_b.style.border = '1px solid #46a';
-          this.skwm_e_btn_1_b.addEventListener('click', function (this: any) {
-            if (flags.ssort_a === true) {
-              you.skls.sort(function (a, b) { if (a.name < b.name) return -1; if (a.name > b.name) return 1; return 0 });
-              flags.ssort_a = false;
-            } else {
-              you.skls.sort(function (a, b) { if (a.name > b.name) return -1; if (a.name < b.name) return 1; return 0 });
-              flags.ssort_a = true;
-            } empty(dom.skcon)
+          function rerenderSkills() {
+            empty(dom.skcon);
             for (let m = 0; m < you.skls.length; m++) { renderSkl(you.skls[m]); if (m === you.skls.length - 1) dom.skcon.children[m].style.borderBottom = '1px solid #46a'; }
+          }
+          this.skwm_e_btn_1_b.addEventListener('click', function () {
+            if (flags.ssort_a === true) { you.skls.sort(function (a, b) { if (a.name < b.name) return -1; if (a.name > b.name) return 1; return 0 }); flags.ssort_a = false; }
+            else { you.skls.sort(function (a, b) { if (a.name > b.name) return -1; if (a.name < b.name) return 1; return 0 }); flags.ssort_a = true; }
+            rerenderSkills();
           });
-          this.skwm_e_btn_2_b.addEventListener('click', function (this: any) {
-            if (flags.ssort_b === true) {
-              you.skls.sort(function (a, b) { if (a.type < b.type) return -1; if (a.type > b.type) return 1; if (a.id! < b.id!) return -1; if (a.id! > b.id!) return 1; return 0 });
-              flags.ssort_b = false;
-            } else {
-              you.skls.sort(function (a, b) { if (a.type > b.type) return -1; if (a.type < b.type) return 1; if (a.id! > b.id!) return -1; if (a.id! < b.id!) return 1; return 0 });
-              flags.ssort_b = true;
-            } empty(dom.skcon)
-            for (let m = 0; m < you.skls.length; m++) { renderSkl(you.skls[m]); if (m === you.skls.length - 1) dom.skcon.children[m].style.borderBottom = '1px solid #46a'; }
+          this.skwm_e_btn_2_b.addEventListener('click', function () {
+            if (flags.ssort_b === true) { you.skls.sort(function (a, b) { if (a.type < b.type) return -1; if (a.type > b.type) return 1; if (a.id! < b.id!) return -1; if (a.id! > b.id!) return 1; return 0 }); flags.ssort_b = false; }
+            else { you.skls.sort(function (a, b) { if (a.type > b.type) return -1; if (a.type < b.type) return 1; if (a.id! > b.id!) return -1; if (a.id! < b.id!) return 1; return 0 }); flags.ssort_b = true; }
+            rerenderSkills();
           });
-          this.skwm_e_btn_3_b.addEventListener('click', function (this: any) {
-            if (flags.ssort_b === true) {
-              you.skls.sort(function (a, b) { if (a.lvl < b.lvl) return -1; if (a.lvl > b.lvl) return 1; if (a.exp < b.exp) return -1; if (a.exp > b.exp) return 1; return 0 });
-              flags.ssort_b = false;
-            } else {
-              you.skls.sort(function (a, b) { if (a.lvl > b.lvl) return -1; if (a.lvl < b.lvl) return 1; if (a.exp > b.exp) return -1; if (a.exp < b.exp) return 1; return 0 });
-              flags.ssort_b = true;
-            } empty(dom.skcon)
-            for (let m = 0; m < you.skls.length; m++) { renderSkl(you.skls[m]); if (m === you.skls.length - 1) dom.skcon.children[m].style.borderBottom = '1px solid #46a'; }
+          this.skwm_e_btn_3_b.addEventListener('click', function () {
+            if (flags.ssort_b === true) { you.skls.sort(function (a, b) { if (a.lvl < b.lvl) return -1; if (a.lvl > b.lvl) return 1; if (a.exp < b.exp) return -1; if (a.exp > b.exp) return 1; return 0 }); flags.ssort_b = false; }
+            else { you.skls.sort(function (a, b) { if (a.lvl > b.lvl) return -1; if (a.lvl < b.lvl) return 1; if (a.exp > b.exp) return -1; if (a.exp < b.exp) return 1; return 0 }); flags.ssort_b = true; }
+            rerenderSkills();
           });
           addDesc(this.skwm_e_btn_1_b, null, 2, 'Filter', 'Alphabetically');
           addDesc(this.skwm_e_btn_2_b, null, 2, 'Filter', 'by Type');
@@ -1235,12 +1219,9 @@ declare var InstallTrigger: any;
     dom.ct_bt1_1_cont_d.style.backgroundColor = '#b73c0d';
     dom.ct_bt1_1_cont_e.style.backgroundColor = '#313254';
     dom.ct_bt1_1_cont_f.style.backgroundColor = '#5155d6';
-    dom.ct_bt1_1_cont_a.addEventListener('click', function (this: any) { rstcrtthg(); this.style.color = 'yellow'; rsort(0) });
-    dom.ct_bt1_1_cont_b.addEventListener('click', function (this: any) { rstcrtthg(); this.style.color = 'yellow'; rsort(1) });
-    dom.ct_bt1_1_cont_c.addEventListener('click', function (this: any) { rstcrtthg(); this.style.color = 'yellow'; rsort(2) });
-    dom.ct_bt1_1_cont_d.addEventListener('click', function (this: any) { rstcrtthg(); this.style.color = 'yellow'; rsort(3) });
-    dom.ct_bt1_1_cont_e.addEventListener('click', function (this: any) { rstcrtthg(); this.style.color = 'yellow'; rsort(4) });
-    dom.ct_bt1_1_cont_f.addEventListener('click', function (this: any) { rstcrtthg(); this.style.color = 'yellow'; rsort(5) });
+    [dom.ct_bt1_1_cont_a, dom.ct_bt1_1_cont_b, dom.ct_bt1_1_cont_c, dom.ct_bt1_1_cont_d, dom.ct_bt1_1_cont_e, dom.ct_bt1_1_cont_f].forEach((el: any, i: number) => {
+      el.addEventListener('click', function (this: any) { rstcrtthg(); this.style.color = 'yellow'; rsort(i) });
+    });
     global.spbtsr = [dom.ct_bt1_1_cont_a, dom.ct_bt1_1_cont_b, dom.ct_bt1_1_cont_c, dom.ct_bt1_1_cont_d, dom.ct_bt1_1_cont_e, dom.ct_bt1_1_cont_f]
     dom.ct_bt1_1_cont_a.innerHTML = 'ALL';
     dom.ct_bt1_1_cont_b.innerHTML = 'FOD';
@@ -1602,11 +1583,9 @@ declare var InstallTrigger: any;
     /*dom.inv_con.addEventListener('scroll',function(){
       for(a in this.children) {if(this.children[a].offsetTop-this.scrollTop+19<0) this.children[a].style.display='none'; else dom.inv_con[a].style.display='';}
     });*/
-    dom.inv_btn_1.addEventListener('click', function (this: any) { isort(1); invbtsrst() });
-    dom.inv_btn_2.addEventListener('click', function (this: any) { isort(2); invbtsrst() });
-    dom.inv_btn_3.addEventListener('click', function (this: any) { isort(3); invbtsrst() });
-    dom.inv_btn_4.addEventListener('click', function (this: any) { isort(4); invbtsrst() });
-    dom.inv_btn_5.addEventListener('click', function (this: any) { isort(5); invbtsrst() });
+    [dom.inv_btn_1, dom.inv_btn_2, dom.inv_btn_3, dom.inv_btn_4, dom.inv_btn_5].forEach((el: any, i: number) => {
+      el.addEventListener('click', function () { isort(i + 1); invbtsrst() });
+    });
     dom.inv_btn_1_b.addEventListener('click', function (this: any) {
       if (flags.sort_a === true) {
         inv.sort(function (a, b) { if (a.name < b.name) return -1; if (a.name > b.name) return 1; return 0 });
