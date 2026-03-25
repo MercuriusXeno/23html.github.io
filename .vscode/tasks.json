@@ -1,29 +1,42 @@
 {
-    "version": "2.0.0",
-    "tasks": [
-      {
-        "label": "Build",
-        "type": "npm",
-        "script": "build",
-        "group": {
-          "kind": "build",
-          "isDefault": true
-        },
-        "problemMatcher": []
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build",
+      "type": "npm",
+      "script": "build",
+      "group": {
+        "kind": "build",
+        "isDefault": true
       },
-      {
-        "label": "Watch",
-        "type": "npm",
-        "script": "watch",
-        "isBackground": true,
-        "problemMatcher": []
-      },
-      {
-        "label": "Build and Launch",
-        "dependsOn": ["Build"],
-        "presentation": {
-          "reveal": "silent"
-        }
+      "problemMatcher": []
+    },
+    {
+      "label": "Watch",
+      "type": "npm",
+      "script": "watch",
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "Build and Launch",
+      "dependsOn": ["Build"],
+      "presentation": {
+        "reveal": "silent"
       }
-    ]
-  }
+    },
+    {
+      "label": "Start Server",
+      "type": "shell",
+      "command": "npx",
+      "args": [
+        "http-server",
+        "-p",
+        "8080",
+        "-c-1"
+      ],
+      "isBackground": true,
+      "problemMatcher": []
+    }
+  ]
+}
