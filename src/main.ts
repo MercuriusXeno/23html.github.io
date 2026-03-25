@@ -23,7 +23,7 @@ import { updateStatDisplay, updateCombatDisplay, updateMonsterDisplay, updateWea
 import { giveEff, removeEff } from './ui/effects';
 import { equip, unequip, resetEquipDisplay } from './ui/equipment';
 import { renderItem, updateInv, isort, rsort, invbtsrst, rstcrtthg, reduce } from './ui/inventory';
-import { chs, clr_chs, icon, Chs, activatef, deactivatef } from './ui/choices';
+import { chs, choiceNav, choiceAction, clr_chs, icon, Chs, activatef, deactivatef } from './ui/choices';
 import { renderRcp, refreshRcp, renderSkl, renderAct, refreshAct, activateAct, deactivateAct, renderFurniture, showFurniturePanel } from './ui/panels';
 import { recshop, rendershopitem, coinAnimation } from './ui/shop';
 import { formatw, cansee, kill, roll } from './game/utils-game';
@@ -1986,12 +1986,12 @@ declare var InstallTrigger: any;
       else {
         if (!flags.dj1end) {
           chs('"Instructor: Your training is over for today, you did well. As a reward, select one of these skill manuals to practice. The better your understanding, the stronger you will be in battle"', true);
-          chs('"Practitioner Skillbook (Swords)"', false).addEventListener('click', () => { giveItem(item.skl1); flags.dj1end = true; smove(chss.lsmain1); });
-          chs('"Practitioner Skillbook (Knives)"', false).addEventListener('click', () => { giveItem(item.skl2); flags.dj1end = true; smove(chss.lsmain1); });
-          chs('"Practitioner Skillbook (Axes)"', false).addEventListener('click', () => { giveItem(item.skl3); flags.dj1end = true; smove(chss.lsmain1); });
-          chs('"Practitioner Skillbook (Spears)"', false).addEventListener('click', () => { giveItem(item.skl4); flags.dj1end = true; smove(chss.lsmain1); });
-          chs('"Practitioner Skillbook (Hammers)"', false).addEventListener('click', () => { giveItem(item.skl5); flags.dj1end = true; smove(chss.lsmain1); });
-          chs('"Practitioner Skillbook (Martial)"', false).addEventListener('click', () => { giveItem(item.skl6); flags.dj1end = true; smove(chss.lsmain1); });
+          choiceAction('"Practitioner Skillbook (Swords)"', () => { giveItem(item.skl1); flags.dj1end = true; smove(chss.lsmain1); });
+          choiceAction('"Practitioner Skillbook (Knives)"', () => { giveItem(item.skl2); flags.dj1end = true; smove(chss.lsmain1); });
+          choiceAction('"Practitioner Skillbook (Axes)"', () => { giveItem(item.skl3); flags.dj1end = true; smove(chss.lsmain1); });
+          choiceAction('"Practitioner Skillbook (Spears)"', () => { giveItem(item.skl4); flags.dj1end = true; smove(chss.lsmain1); });
+          choiceAction('"Practitioner Skillbook (Hammers)"', () => { giveItem(item.skl5); flags.dj1end = true; smove(chss.lsmain1); });
+          choiceAction('"Practitioner Skillbook (Martial)"', () => { giveItem(item.skl6); flags.dj1end = true; smove(chss.lsmain1); });
         }
         else if (flags.trnex1 === true && !flags.trnex2) {
           chs('"Instructor: Hahahhha! What a great disciple! That\'s not the dedication most of the other disciples have! Take this, it\'ll help you in your future endeavours"', true, 'yellow');
@@ -2003,39 +2003,27 @@ declare var InstallTrigger: any;
         }
         else {
           chs(select(['"Instructor: Back already?"', 'You notice other dojo disciples diligently train', 'Pieces of broken training dummies are scattered on the floor']), true);
-          chs('"Dojo infoboard"', false).addEventListener('click', () => {
-            smove(chss.djinf, false);
-          });
-          chs('"Destroy more dummies"', false).addEventListener('click', () => {
-            smove(chss.return1, false);
-          });
+          choiceNav('"Dojo infoboard"', chss.djinf, false);
+          choiceNav('"Destroy more dummies"', chss.return1, false);
           if (flags.dj1end === true && you.lvl >= 10 && !flags.trne1e1) chs('"Challenge a stronger opponent"', false).addEventListener('click', () => {
             chs('"You are facing a golem"', true);
             area_init(area.trne1);
-            chs('"<= Escape"', false).addEventListener('click', () => {
-              smove(chss.t3, false);
-            });
+            choiceNav('"<= Escape"', chss.t3, false);
           });
           if (flags.trne1e1 && !flags.trne2e1) chs('"Challenge an even stronger opponent"', false, 'cornflowerblue').addEventListener('click', () => {
             chs('"You are facing a golem"', true);
             area_init(area.trne2);
-            chs('"<= Escape"', false).addEventListener('click', () => {
-              smove(chss.t3, false);
-            });
+            choiceNav('"<= Escape"', chss.t3, false);
           });
           if (flags.trne2e1 && !flags.trne3e1) chs('"Challenge a dangerous opponent"', false, 'crimson').addEventListener('click', () => {
             chs('"You are facing a golem"', true);
             area_init(area.trne3);
-            chs('"<= Escape"', false).addEventListener('click', () => {
-              smove(chss.t3, false);
-            });
+            choiceNav('"<= Escape"', chss.t3, false);
           });
           if (flags.trne3e1 && !flags.trne4e1) chs('"Challenge a powerful opponent"', false, 'red').addEventListener('click', () => {
             chs('"You are facing a golem"', true);
             area_init(area.trne4);
-            chs('"<= Escape"', false).addEventListener('click', () => {
-              smove(chss.t3, false);
-            });
+            choiceNav('"<= Escape"', chss.t3, false);
           });
           if (flags.dj1end) chs('"Turn in dojo gear"', false).addEventListener('click', () => {
             chs('"Instructor: You can return whatever you punched off of dummies and get coin for it, it\'s dojo\'s equipment after all. Or you can keep and use for it yourself, the choice is yours"', true);
@@ -2061,13 +2049,9 @@ declare var InstallTrigger: any;
                   smove(chss.t3, false);
                 });
               }
-              chs('"<= Go back"', false).addEventListener('click', () => {
-                smove(chss.t3, false);
-              });
+              choiceNav('"<= Go back"', chss.t3, false);
             });
-            chs('"<= Go back"', false).addEventListener('click', () => {
-              smove(chss.t3, false);
-            });
+            choiceNav('"<= Go back"', chss.t3, false);
           });
           if (flags.djmlet && getDay(1) == 'Sunday') {
             chs('"Grab a serving of free food"', false, 'lime').addEventListener('click', () => {
@@ -2163,9 +2147,7 @@ declare var InstallTrigger: any;
                 });
               });
             }
-            chs('"<= Return"', false).addEventListener('click', () => {
-              smove(chss.t3, false);
-            });
+            choiceNav('"<= Return"', chss.t3, false);
           });
           if (item.htrdvr.have) chs('"Deliver the crate"', false, 'lightblue').addEventListener('click', () => {
             chs('"Instructor: Yamato sent something? Great timing on that, we were getting very close to running out already. This will be turned into rations for you lads, you better don\'t forget to thank our hunters properly next time you see them, as they work hard to bring food to people\'s tables. Here, small compensation for your timely delivery"', true);
@@ -2179,17 +2161,15 @@ declare var InstallTrigger: any;
               });
             });
           });
-          chs('"<= Go outside"', false).addEventListener('click', () => {
-            smove(chss.lsmain1);
-          });
+          choiceNav('"<= Go outside"', chss.lsmain1);
           if (flags.trne4e1 && !flags.trne4e1b) {
             chs('"Instructor: Once again, choose the skillbook of specialization you are interested in. Doesn\'t mean you have to stick with it to the bitter end, but it will help you train"', true);
-            chs('"Bladesman Manual"', false).addEventListener('click', () => { giveItem(item.skl1a); flags.trne4e1b = true; smove(chss.lsmain1); });
-            chs('"Assassin Manual"', false).addEventListener('click', () => { giveItem(item.skl2a); flags.trne4e1b = true; smove(chss.lsmain1); });
-            chs('"Axeman Manual"', false).addEventListener('click', () => { giveItem(item.skl3a); flags.trne4e1b = true; smove(chss.lsmain1); });
-            chs('"Lancer Manual"', false).addEventListener('click', () => { giveItem(item.skl4a); flags.trne4e1b = true; smove(chss.lsmain1); });
-            chs('"Clubber Manual"', false).addEventListener('click', () => { giveItem(item.skl5a); flags.trne4e1b = true; smove(chss.lsmain1); });
-            chs('"Brawler Manual"', false).addEventListener('click', () => { giveItem(item.skl6a); flags.trne4e1b = true; smove(chss.lsmain1); });
+            choiceAction('"Bladesman Manual"', () => { giveItem(item.skl1a); flags.trne4e1b = true; smove(chss.lsmain1); });
+            choiceAction('"Assassin Manual"', () => { giveItem(item.skl2a); flags.trne4e1b = true; smove(chss.lsmain1); });
+            choiceAction('"Axeman Manual"', () => { giveItem(item.skl3a); flags.trne4e1b = true; smove(chss.lsmain1); });
+            choiceAction('"Lancer Manual"', () => { giveItem(item.skl4a); flags.trne4e1b = true; smove(chss.lsmain1); });
+            choiceAction('"Clubber Manual"', () => { giveItem(item.skl5a); flags.trne4e1b = true; smove(chss.lsmain1); });
+            choiceAction('"Brawler Manual"', () => { giveItem(item.skl6a); flags.trne4e1b = true; smove(chss.lsmain1); });
           }
         }
       }
@@ -2206,27 +2186,19 @@ declare var InstallTrigger: any;
       chs('Useful information regarding dojo is written here. What will you read?', true);
       chs('"Get stronger!"', false).addEventListener('click', () => {
         chs('Fight dummies provided by dojo to improve your physique and weapon skills! Destroy them and grab their stuff, or vanquish thousands for a special reward! The doors of our dojo is open for everyone willing to lead the path of a warrior', true);
-        chs('"<= Return"', false).addEventListener('click', () => {
-          smove(chss.djinf, false);
-        });
+        choiceNav('"<= Return"', chss.djinf, false);
       });
       chs('"Graduate!"', false).addEventListener('click', () => {
         chs('When you are confident in your skills, try your fist at fighting powerful golems! How much beating can you withstand?', true);
-        chs('"<= Return"', false).addEventListener('click', () => {
-          smove(chss.djinf, false);
-        });
+        choiceNav('"<= Return"', chss.djinf, false);
       });
       chs('"Claim your rewards!"', false).addEventListener('click', () => {
         chs('As long as you keep gaining experience and train hard, dojo will provide you with gifts and money! Don\'t miss out!', true);
-        chs('"<= Return"', false).addEventListener('click', () => {
-          smove(chss.djinf, false);
-        });
+        choiceNav('"<= Return"', chss.djinf, false);
       });
       chs('"Get your grub at the canteen!"', false).addEventListener('click', () => {
         chs('Our generous dojo provides ' + col('Free Meals', 'lime') + ' to every attending low-class disciple every ' + col('Sunday', 'yellow') + '! Get in time for your weekly menu!', true);
-        chs('"<= Return"', false).addEventListener('click', () => {
-          smove(chss.djinf, false);
-        });
+        choiceNav('"<= Return"', chss.djinf, false);
       });
       chs('"Measure your power!"', false).addEventListener('click', () => {
         let v = chs('Try out punching this ' + col('Indestructable Dummy', 'orange') + ' to measure the power of your fist!', true);
@@ -2236,13 +2208,9 @@ declare var InstallTrigger: any;
           v.innerHTML = select(['Wham!', 'Slap!', 'Hit!', 'Punch!', 'Hack!']) + ' Your approximate hand strength is measured in: <br><br><span style="border:1px dashed yellow;padding:6px">' + col((format3(hs.toString()) + 'kg'), 'springgreen') + '</span><br><br>';
           for (let x in global.htrchl) global.htrchl[x](hs);
         });
-        chs('"<= Return"', false).addEventListener('click', () => {
-          smove(chss.djinf, false);
-        });
+        choiceNav('"<= Return"', chss.djinf, false);
       });
-      chs('"<= Return"', false).addEventListener('click', () => {
-        smove(chss.t3, false);
-      });
+      choiceNav('"<= Return"', chss.t3, false);
     }
 
 // @ts-ignore: constructor function
@@ -2305,9 +2273,7 @@ declare var InstallTrigger: any;
       chs('Punch as many as you want', true);
       if (!flags.trnex2) area_init(area.trn);
       else area_init(area.trnf);
-      chs('"<= Return back into lobby"', false).addEventListener('click', () => {
-        smove(chss.t3);
-      });
+      choiceNav('"<= Return back into lobby"', chss.t3);
     }
 
 // @ts-ignore: constructor function
@@ -2316,18 +2282,10 @@ declare var InstallTrigger: any;
     chss.frstn1main.sl = () => {
       flags.inside = false; d_loc('Western Woods, The Wooden Gate'); global.lst_loc = 113;
       chs('You\'re out in the forest. You can hunt here', true);
-      chs('"=> Enter the Hunter\'s lodge"', false).addEventListener('click', () => {
-        smove(chss.frstn1b1);
-      });
-      chs('"=> Delve inside the forest"', false).addEventListener('click', () => {
-        smove(chss.frstn1a1);
-      });
-      if (flags.frstn1a3u) chs('"=> Hunt indefinitely"', false).addEventListener('click', () => {
-        smove(chss.frstn1a3);
-      });
-      chs('"<= Return back"', false).addEventListener('click', () => {
-        smove(chss.lsmain1);
-      });
+      choiceNav('"=> Enter the Hunter\'s lodge"', chss.frstn1b1);
+      choiceNav('"=> Delve inside the forest"', chss.frstn1a1);
+      if (flags.frstn1a3u) choiceNav('"=> Hunt indefinitely"', chss.frstn1a3);
+      choiceNav('"<= Return back"', chss.lsmain1);
     }
 
 // @ts-ignore: constructor function
@@ -2337,9 +2295,7 @@ declare var InstallTrigger: any;
     chss.frstn1a3.sl = () => {
       flags.inside = false; d_loc('Western Woods, They\'re Nearby'); global.lst_loc = 130;
       chs('The woods are silent', true);
-      chs('"<= Return back"', false).addEventListener('click', () => {
-        smove(chss.frstn1main);
-      });
+      choiceNav('"<= Return back"', chss.frstn1main);
     }
     chss.frstn1a3.onEnter = function (this: any) {
       area_init(area.frstn1a3);
@@ -2353,9 +2309,7 @@ declare var InstallTrigger: any;
       flags.inside = false; d_loc('Western Woods, Round Branches');
       if (area.frstn1a4.size > 0) {
         chs('Something ambushes you!', true, 'red');
-        chs('"<= Escape"', false).addEventListener('click', () => {
-          smove(chss.frstn1main);
-        });
+        choiceNav('"<= Escape"', chss.frstn1main);
       } else {
         chs('You never knew this secluded area was here', true);
         if (!flags.frstnskltg) chs('"Look around"', false).addEventListener('click', () => {
@@ -2433,9 +2387,7 @@ declare var InstallTrigger: any;
         smove(chss.htrtch0, false)
       });
       if (quest.fwd1.data.done === true) {
-        chs('"Sell firewood ' + dom.coincopper + '"', false).addEventListener('click', () => {
-          smove(chss.frstn1b1s, false);
-        });
+        choiceNav('"Sell firewood ' + dom.coincopper + '"', chss.frstn1b1s, false);
       }
       if (item.hbtsvr.have) chs('"Deliver the satchel"', false, 'lightblue').addEventListener('click', () => {
         chs('<span style="color:limegreen">Head Hunter Yamato</span>: Delivery back? That\'s unexpected! Put this here, let me examine it... I see, we\'re going east soon, then... Well, that\'s not for you to worry about, hhah! There is another thing. You wait here a moment<br>.......<br><br> Heeere we go! Get this crate to the dojo since you\'re going in that direction anyway. They\'ll know what to do with it. Go now, go', true);
@@ -2445,9 +2397,7 @@ declare var InstallTrigger: any;
           smove(chss.frstn1main);
         });
       });
-      chs('"<= Exit"', false).addEventListener('click', () => {
-        smove(chss.frstn1main);
-      });
+      choiceNav('"<= Exit"', chss.frstn1main);
       if (quest.fwd1.data.done === true && quest.hnt1.data.done === true && !flags.frstn1b1g1) {
         chs('<span style="color:limegreen">Head Hunter Yamato</span>: You\'re still going around without a proper weapon? That won\'t do, catch this. It isn\'t much, but a bit better than you being nearly emptyhanded. Once you return back you should check the ' + col('Notice Board', 'lime') + ' by the village center, you never know if something important is happening in the ouskirts that you aren\'t aware of, but it will almost certainly be written there. You may find a job offer or two, or see pleads of fellow villagers asking for help with mundane things, consider those as well', true);
         chs('"Thanks!"', false).addEventListener('click', () => {
@@ -2469,12 +2419,12 @@ declare var InstallTrigger: any;
     chss.htrtch0.sl = () => {
       flags.inside = true;
       chs('<span style="color:limegreen">Head Hunter Yamato</span>: What do you want to ask, kid? Want to know how to butcher a carcass? Khahhahhah! *cough*', true);
-      chs('"About monsters"', false).addEventListener('click', () => { smove(chss.htrtch1, false) });
+      choiceNav('"About monsters"', chss.htrtch1, false);
       chs('"What are monster ranks?"', false).addEventListener('click', () => {
         chs('<div style="line-height:16px"><span style="color:limegreen">Head Hunter Yamato</span>: Ranking is a way to separate monsters by their relative danger level, they go as following:<div style="border: darkblue 1px solid;background-color:#0b1c3c;margin:10px;"><div><span style="color:lighgrey">G - Can be dealth with by able people</span></div><div><span style="color:white">F - Can be dealth with by male adults</span></div><div><span style="color:lightgreen">E - Village Crisis</span></div><div><span style="color:lime">D - Townside Crisis</span></div><div><span style="color:yellow">C - Citywide Crisis</span></div><div><span style="color:orange">B - National Crisis</span></div><div><span style="color:crimson">A - Continental Threat</span></div><div><span style="color:gold;text-shadow: 0px 0px 2px red,0px 0px 2px red,0px 0px 2px red">S - Global Crisis</span></div><div><span style="color:black;text-shadow:hotpink 1px 1px .1em,cyan -1px -1px .1em">SS - World Disaster</span></div><div><span style="color:white;text-shadow:2px 0px 2px red,-2px 0px 2px magenta,0px 2px 2px cyan,0px -2px 2px yellow,0px 0px 2px gold">SSS - Universal Calamity</div></div>We haven\'t experienced anything stronger than the E rank in all history of our village. Whatever is above the A rank is completely unheard of, and only partially mentioned in ancient texts. That\'s the realm of gods, world destroyers and higher beings that our mortal souls are unlikely to ever face</div>', true, 0, 0, 0, 0, '.9em');
-        chs('"<= Return"', false).addEventListener('click', () => { smove(chss.htrtch0, false) });
+        choiceNav('"<= Return"', chss.htrtch0, false);
       });
-      chs('"<= Return"', false).addEventListener('click', () => { smove(chss.frstn1b1, false) });
+      choiceNav('"<= Return"', chss.frstn1b1, false);
     }
 
 // @ts-ignore: constructor function
@@ -2485,29 +2435,29 @@ declare var InstallTrigger: any;
       chs('<div style="line-height:14px"><span style="color:limegreen">Head Hunter Yamato</span>: Monsters, you say? There are many and they are around, terrorizing peaceful folk in the outside world. Our remote parts don\'t see much of that, these lands are tame. Not without dangers, of course, you meet a wild boar in the forest - a single wrong move and its tusks are in your guts and that is it, end of the fool. Or those pesky slimes, while don\'t look menacing and pose little danger, they sometimes gather and destroy the fields by melting crops and soil. We have it good but starvation is worse than any monster, at times. *cough* anyway, anything living and non-living you meet can be separated into 6 categories:<br>Human, Beast, Undead, Evil, Phantom, Dragon</div>', true, 0, 0, 0, 0, '.8em');
       chs('"About Humans"', false, 0, 0, 0, 0, '.8em', 0, '15px').addEventListener('click', () => {
         chs('<span style="color:limegreen">Head Hunter Yamato</span>: Humans and Demihumans fall into the same class. People like you and me, beastmen, orcs, goblins... Mostly creatures intelligent enough to walk on their two, use tools, form societies, make settlements, trade and speak on their own violition. You will encounter and perhaps fight them as bandits, criminals, members of the opposing factions and armies, whoever you disagree with. Always be on your guard, humanoids are cunning and skilled, versatile and very adaptive. Yet, they have mushy bodies. One correct strike and you get an advantage', true);
-        chs('"<= Return"', false).addEventListener('click', () => { smove(chss.htrtch1, false) });
+        choiceNav('"<= Return"', chss.htrtch1, false);
       });
       chs('"About Beasts"', false, 0, 0, 0, 0, '.8em', 0, '15px').addEventListener('click', () => {
         chs('<span style="color:limegreen">Head Hunter Yamato</span>: Beasts are your usual, normal wildlife like wolves, slimes, mimics, or prone to being evil Demihumans with low intelligence and high level of aggression like ogres, harpies, minotaurs. While animals are dumb, never underestimate a wild beast. With their thick skin and natural weapons like fangs and claws, they pose a major threat when driven into a desperate state. Fire works very well against the most, especially those with fur and feathers, keep that in mind next time you go hunting', true);
-        chs('"<= Return"', false).addEventListener('click', () => { smove(chss.htrtch1, false) });
+        choiceNav('"<= Return"', chss.htrtch1, false);
       });
       chs('"About Undead"', false, 0, 0, 0, 0, '.8em', 0, '15px').addEventListener('click', () => {
         chs('<span style="color:limegreen">Head Hunter Yamato</span>: Undead, as you could already tell, are living dead. Reanimated remains of humans and beasts by the influence of natural forces or a skilled necromancer. Even if they completely lack intelligence and wander around aimlessly, controlled bodies of the dead get strenghtened by Dark magic and gain unnatural resilience and power as a result. It doesn\'t prevent them from being hurt by fire or Holy powers, hovewer. You can deal with lesser fragile skeletal beings quickly if you bash them with something blunt', true);
-        chs('"<= Return"', false).addEventListener('click', () => { smove(chss.htrtch1, false) });
+        choiceNav('"<= Return"', chss.htrtch1, false);
       });
       chs('"About Evil"', false, 0, 0, 0, 0, '.8em', 0, '15px').addEventListener('click', () => {
         chs('<span style="color:limegreen">Head Hunter Yamato</span>: Beings that are artificially made or existences who are inherently evil, can be classified as such. Demons, imps, golems, possessed weapons and armor, gremlins, devils and much of anything else that comes out from the Underworld. They are extremely dangerous and seek destruction all that they come across', true);
-        chs('"<= Return"', false).addEventListener('click', () => { smove(chss.htrtch1, false) });
+        choiceNav('"<= Return"', chss.htrtch1, false);
       });
       chs('"About Phantoms"', false, 0, 0, 0, 0, '.8em', 0, '15px').addEventListener('click', () => {
         chs('<span style="color:limegreen">Head Hunter Yamato</span>: Souls of the dead, ethereal beings, manifestations of powers or other apparitions can all be called Phantoms. They take forms of wisp and sprites, benevolent or twisted elementals or spirits and wraiths that terrorize the living. They are difficult or sometimes outright impossible to hurt using normal physical means, magic or exorcism would be a preferred way of dealing with such enemies', true);
-        chs('"<= Return"', false).addEventListener('click', () => { smove(chss.htrtch1, false) });
+        choiceNav('"<= Return"', chss.htrtch1, false);
       });
       chs('"About Dragons"', false, 0, 0, 0, 0, '.8em', 0, '15px').addEventListener('click', () => {
         chs('<span style="color:limegreen">Head Hunter Yamato</span>: Dragons are legendary creatures that possess evil and cunning intellect. Through some unknown means many dragons in ancient times were reduced to subspecies of wyverns and wyrms, or outright bastard draconids like lizardmen, and other beings with Dragon bloodline. The power of said bloodline grants them superior defence against magic and energy abilities, their physical toughness is also no joke', true);
-        chs('"<= Return"', false).addEventListener('click', () => { smove(chss.htrtch1, false) });
+        choiceNav('"<= Return"', chss.htrtch1, false);
       });
-      chs('"<= Return"', false).addEventListener('click', () => { smove(chss.htrtch0, false) });
+      choiceNav('"<= Return"', chss.htrtch0, false);
     }
 
 
@@ -2576,9 +2526,7 @@ declare var InstallTrigger: any;
         } else if (quest.lcoinAnimationstkil1.data.started) {
           if (quest.lcoinAnimationstkil1.data.mkilled < 35) {
             chs('<span style="color:limegreen">Head Hunter Yamato</span>: Having troubles with the task?', true);
-            chs('"<= Return"', false).addEventListener('click', () => {
-              smove(chss.frstn1b1, false);
-            }); return
+            choiceNav('"<= Return"', chss.frstn1b1, false); return;
           }
           else chs('<span style="color:limegreen">Head Hunter Yamato</span>: What is that fire in your eyes? Can it be you are done already?', true);
           chs('"Report the sounds you heard"', false, 'lime').addEventListener('click', () => {
@@ -2651,17 +2599,13 @@ declare var InstallTrigger: any;
                 });
               });
             }
-            chs('"<= Return"', false).addEventListener('click', () => {
-              smove(chss.frstn1b1, false);
-            });
+            choiceNav('"<= Return"', chss.frstn1b1, false);
           }
         });
       }
       //blabla
 
-      chs('"<= Return"', false).addEventListener('click', () => {
-        smove(chss.frstn1b1, false);
-      });
+      choiceNav('"<= Return"', chss.frstn1b1, false);
     }
 
 // @ts-ignore: constructor function
@@ -2671,9 +2615,7 @@ declare var InstallTrigger: any;
     chss.frstn1a1.sl = () => {
       flags.inside = false; d_loc('Western Woods, The Yellow Path');
       chs('The woods are silent', true);
-      chs('"<= Return back"', false).addEventListener('click', () => {
-        smove(chss.frstn1main);
-      });
+      choiceNav('"<= Return back"', chss.frstn1main);
     }
     chss.frstn1a1.onEnter = function (this: any) {
       area_init(area.frstn1a2);
@@ -2686,15 +2628,11 @@ declare var InstallTrigger: any;
     chss.frstn1a2.sl = () => {
       global.lst_loc = 115; flags.inside = false; d_loc('Western Woods, The Underbushes');
       chs('You scavenged some goods from this forest area', true);
-      chs('"=> Go further into the forest"', false).addEventListener('click', () => {
-        smove(chss.frstn2a1);
-      });
+      choiceNav('"=> Go further into the forest"', chss.frstn2a1);
       if (flags.frstnscgr) chs('"\-\-> Enter the hidden path"', false, 'grey').addEventListener('click', () => {
         smove(chss.frstn1a4);
       });
-      chs('"<= Return back"', false).addEventListener('click', () => {
-        smove(chss.frstn1main);
-      });
+      choiceNav('"<= Return back"', chss.frstn1main);
     }
     chss.frstn1a2.data = { scoutm: 320, scout: 0, scoutf: false, gets: [false], gotmod: 0 }
     chss.frstn1a2.scout = [
@@ -2710,9 +2648,7 @@ declare var InstallTrigger: any;
     chss.frstn2a1.sl = () => {
       flags.inside = false; d_loc('Western Woods, The Shaded Path');
       chs('The woods are silent', true);
-      chs('"<= Return back"', false).addEventListener('click', () => {
-        smove(chss.frstn1main);
-      });
+      choiceNav('"<= Return back"', chss.frstn1main);
     }
     chss.frstn2a1.onEnter = function (this: any) {
       area_init(area.frstn2a2);
@@ -2724,12 +2660,8 @@ declare var InstallTrigger: any;
     chss.frstn3main.sl = () => {
       flags.inside = false; d_loc('Southern Forest, The Oaken Gate'); global.lst_loc = 168;
       chs('The air here feels intimidating', true);
-      chs('"=> Explore the depths"', false).addEventListener('click', () => {
-        smove(chss.frstn9a1m);
-      });
-      chs('"<= Return back"', false).addEventListener('click', () => {
-        smove(chss.lsmain1);
-      });
+      choiceNav('"=> Explore the depths"', chss.frstn9a1m);
+      choiceNav('"<= Return back"', chss.lsmain1);
     }
 
 // @ts-ignore: constructor function
@@ -2738,9 +2670,7 @@ declare var InstallTrigger: any;
     chss.frstn9a1m.sl = () => {
       flags.inside = false; d_loc('Southern Forest, The Foliage'); global.lst_loc = 169;
       chs('This place looks dark', true);
-      chs('"<= Return back"', false).addEventListener('click', () => {
-        smove(chss.frstn3main);
-      });
+      choiceNav('"<= Return back"', chss.frstn3main);
     }
     chss.frstn9a1m.onEnter = function (this: any) {
       area_init(area.frstn9a1);
@@ -2759,12 +2689,8 @@ declare var InstallTrigger: any;
       else if (isWeather(weather.storm) || isWeather(weather.rain) || isWeather(weather.drizzle)) chs('The rain feels surprisingly refreshing', true);
       else if (isWeather(weather.heavyrain) || isWeather(weather.thunder)) chs('It\'s pouring so hard the streets are completely flooded. There\'s noone around ' + (getHour() > 6 && getHour() < 21 ? 'except for a few kids' : ''), true);
       else if (isWeather(weather.misty) || isWeather(weather.foggy)) chs('Can\'t see a meter in front of you with all this fog', true);
-      chs('"=> Check the Message Board"', false).addEventListener('click', () => {
-        smove(chss.mbrd, false);
-      });
-      chs('"=> Enter Dojo"', false).addEventListener('click', () => {
-        smove(chss.t3);
-      });
+      choiceNav('"=> Check the Message Board"', chss.mbrd, false);
+      choiceNav('"=> Enter Dojo"', chss.t3);
       chs('"=> Enter Southern forest"', false).addEventListener('click', () => {
         if (!flags.frst1u) msg('Gate Guard: "Nothing for you to do there. Scram!"', 'yellow');
         else {
@@ -2778,9 +2704,7 @@ declare var InstallTrigger: any;
       //  chs('"=> Visit Pill Tower"',false).addEventListener('click',()=>{
       //    smove(chss.pltwr1);
       //  });
-      if (flags.mkplc1u === true) chs('"=> Visit Marketplace"', false).addEventListener('click', () => {
-        smove(chss.mrktvg1);
-      });
+      if (flags.mkplc1u === true) choiceNav('"=> Visit Marketplace"', chss.mrktvg1);
       chs('"=> Go home"', false, 'green').addEventListener('click', () => {
         smove(chss.home);
       });
@@ -2811,7 +2735,7 @@ declare var InstallTrigger: any;
       if (!flags.mkplc1u) {
         if (flags.dj1end === true && flags.pcoinAnimationspmkm1 !== true && random() < .4) {
           chs('Paper Boy: Hey, this is for you!', true);
-          chs('?', false).addEventListener('click', () => { giveItem(item.shppcoinAnimation); smove(chss.lsmain1, false) });
+          choiceAction('?', () => { giveItem(item.shppcoinAnimation); smove(chss.lsmain1, false) });
         }
       }
     }
@@ -2832,9 +2756,7 @@ declare var InstallTrigger: any;
       if (flags.phai1udt) chs('"Herbalist =>"', false, 'gold').addEventListener('click', () => {
         smove(chss.pha1);
       });
-      chs('"Nervous Guy =>"', false).addEventListener('click', () => {
-        smove(chss.fdwrg1qt);
-      });
+      choiceNav('"Nervous Guy =>"', chss.fdwrg1qt);
 
       if (flags.grddtjb) chs('"Checkpoint"', false, 'hotpink').addEventListener('click', () => {
         if (getHour() >= 7 && getHour() <= 10) {
@@ -2845,22 +2767,16 @@ declare var InstallTrigger: any;
               smove(chss.jbgd1);
             } else {
               chs('Lookout Guard: Too damn late, next time don\'t stand there like a decoration wasting everyone\'s time', true);
-              chs('"Ah..."', false).addEventListener('click', () => { smove(chss.lsmain1) });
+              choiceNav('"Ah..."', chss.lsmain1);
             }
           });
-          chs('"<= Maybe not"', false).addEventListener('click', () => {
-            smove(chss.mrktvg1);
-          });
+          choiceNav('"<= Maybe not"', chss.mrktvg1);
         } else {
           chs('Lookout Guard: If you want work come at the time that\'s stated in the notice and not a minute late!', true);
-          chs('"<= Return"', false).addEventListener('click', () => {
-            smove(chss.mrktvg1);
-          });
+          choiceNav('"<= Return"', chss.mrktvg1);
         }
       });
-      chs('"<= Return back to the village Center"', false).addEventListener('click', () => {
-        smove(chss.lsmain1);
-      });
+      choiceNav('"<= Return back to the village Center"', chss.lsmain1);
     }
     chss.mrktvg1.onEnter = function (this: any) {
       if (!timers.mktwawa1) timers.mktwawa1 = setInterval(function (this: any) {
@@ -2920,9 +2836,7 @@ declare var InstallTrigger: any;
     chss.fdwrg1qt.sl = () => {
       d_loc('Marketplace, Stalls');
       chs('"<span style="color:cyan">Nervous Guy:</span> Argh, what am I gonna do now! How could this... Uh? S-sorry, can\'t talk right now, please leave me be. Ahh damn it..."<div style="color: darkgrey">The man then proceeds to fidget in unrest</div>', true)
-      chs('"<= Walk away"', false).addEventListener('click', () => {
-        smove(chss.mrktvg1, false);
-      });
+      choiceNav('"<= Walk away"', chss.mrktvg1, false);
     }
 
 
@@ -2943,9 +2857,7 @@ declare var InstallTrigger: any;
           clearInterval(timers.vndrstkchk);
         });
       });
-      chs('"<= Return back"', false).addEventListener('click', () => {
-        smove(chss.mrktvg1);
-      });
+      choiceNav('"<= Return back"', chss.mrktvg1);
     }
     chss.grc1.data = { scoutm: 200, scout: 0, scoutf: false, gets: [false], gotmod: 0 }
     chss.grc1.scout = [
@@ -2984,9 +2896,7 @@ declare var InstallTrigger: any;
             msg('?')
           }
         });
-        chs('"<= Maybe next time"', false).addEventListener('click', () => {
-          smove(chss.gens1, false);
-        });
+        choiceNav('"<= Maybe next time"', chss.gens1, false);
       });
       if (area.hmbsmnt.size >= 1000 && flags.hbs1 && !flags.bmntsmkgt) chs('Infestation problem', false, 'grey').addEventListener('click', () => {
         chs('Sleeping Old Man: Your basement is in bad shape? Same been happening to the other folks lately, it\'s not just you. Something is drilling through the underground right into people\'s homes! And then you get a cellar full of rats. A complete travesty! Some speculate there\'s a monster cave nearby, but nothing was found yet. But don\'t fret, there is a solution for you - you smoke the pests out. Light this bag and toss it in, the deeper the better. Your entire place will be filled with smog, so you will have to leave and stay out for a few hours, then you\'ll have a clean and monster free basement at your disposal. 5 ' + dom.coinsilver + ' silver the price', true);
@@ -2997,13 +2907,9 @@ declare var InstallTrigger: any;
           flags.bmntsmkgt = true;
           smove(chss.gens1, false)
         });
-        chs('"<= Too expensive"', false).addEventListener('click', () => {
-          smove(chss.gens1, false);
-        });
+        choiceNav('"<= Too expensive"', chss.gens1, false);
       });
-      chs('"<= Return back"', false).addEventListener('click', () => {
-        smove(chss.mrktvg1);
-      });
+      choiceNav('"<= Return back"', chss.mrktvg1);
     }
     chss.gens1.data = { scoutm: 200, scout: 0, scoutf: false, gets: [false], gotmod: 0 }
     chss.gens1.scout = [
@@ -3050,9 +2956,7 @@ declare var InstallTrigger: any;
             }; if (item.hrb1.amount < 50) smove(chss.pha1, false)
           } else { smove(chss.pha1, false); msg('?') }
         });
-        chs('"<= Rather not"', false).addEventListener('click', () => {
-          smove(chss.pha1, false);
-        });
+        choiceNav('"<= Rather not"', chss.pha1, false);
       });
       if (item.htrsvr.have) chs('"Deliver the bag"', false, 'lightblue').addEventListener('click', () => {
         chs('Herbalist: And who might you be? Ohhhh, aren\'t you that dojo kid who\'s learning the art of hunting from the head himself? Come in come in, welcome! What is it you wish to deliver? Ah! Wonderful, excellent, this will last for plenty of time. Thank you for coming all this way in timely manner, you\'ve been a great help. I will give you these to sample, as a reward, they will be useful to you. Oh, and one simple request, if you don\'t mind. Give this to him when you meet next time, it is very important that he gets it.', true);
@@ -3061,9 +2965,7 @@ declare var InstallTrigger: any;
         });
       });
 
-      chs('"<= Return back"', false).addEventListener('click', () => {
-        smove(chss.mrktvg1);
-      });
+      choiceNav('"<= Return back"', chss.mrktvg1);
     }
     chss.pha1.data = { scoutm: 200, scout: 0, scoutf: false, gets: [false], gotmod: 0 }
     chss.pha1.scout = [
@@ -3128,21 +3030,15 @@ declare var InstallTrigger: any;
             flags.vndrkd1sp1 = true;
             giveItem(item.fgtsb1);
             spend(300)
-            chs('"Sweet purchase!"', false).addEventListener('click', () => {
-              smove(chss.lsmain1, false);
-            });
+            choiceNav('"Sweet purchase!"', chss.lsmain1, false);
           } else {
             chs('No money - no goods! Don\'t waste my time!', true);
-            chs('"<= Go back"', false).addEventListener('click', () => {
-              smove(chss.lsmain1, false);
-            });
+            choiceNav('"<= Go back"', chss.lsmain1, false);
           }
         });
         chs('"<= Nah"', false, 'Red').addEventListener('click', () => {
           chs('No worries, I\'ll keep it for you', true);
-          chs('"<= Go back"', false).addEventListener('click', () => {
-            smove(chss.lsmain1, false);
-          });
+          choiceNav('"<= Go back"', chss.lsmain1, false);
         });
       });
       else if (stats.moneyGained >= 1000 && !flags.vndrkd1sp2 && flags.vndrkd1sp1) chs('"Show me something better"', false, 'darkgrey').addEventListener('click', () => {
@@ -3153,26 +3049,18 @@ declare var InstallTrigger: any;
             flags.vndrkd1sp2 = true;
             giveItem(item.bfsnwt);
             spend(500)
-            chs('"Score!"', false).addEventListener('click', () => {
-              smove(chss.lsmain1, false);
-            });
+            choiceNav('"Score!"', chss.lsmain1, false);
           } else {
             chs('No money - no goods! Don\'t waste my time!', true);
-            chs('"<= Go back"', false).addEventListener('click', () => {
-              smove(chss.lsmain1, false);
-            });
+            choiceNav('"<= Go back"', chss.lsmain1, false);
           }
         });
         chs('"<= Nah"', false, 'Red').addEventListener('click', () => {
           chs('No worries, I\'ll keep it for you', true);
-          chs('"<= Go back"', false).addEventListener('click', () => {
-            smove(chss.lsmain1, false);
-          });
+          choiceNav('"<= Go back"', chss.lsmain1, false);
         });
       });
-      chs('"<= Go back"', false).addEventListener('click', () => {
-        smove(chss.lsmain1, false);
-      });
+      choiceNav('"<= Go back"', chss.lsmain1, false);
     }
     chss.vndrkd1.onLeave = function (this: any) { clearInterval(timers.vndrstkchk) }
 
@@ -3263,9 +3151,7 @@ declare var InstallTrigger: any;
                 msg('The cat decided to move into your house!', 'lime');
                 smove(chss.lsmain1);
               });
-              chs('"Leave it as is"', false).addEventListener('click', () => {
-                smove(chss.lsmain1);
-              });
+              choiceNav('"Leave it as is"', chss.lsmain1);
             });
             chs('"<= Return"', false).addEventListener('click', () => {
               smove(chss.lsmain1);
@@ -3289,14 +3175,10 @@ declare var InstallTrigger: any;
             msg('The cat decided to move into your house!', 'lime');
             smove(chss.lsmain1);
           });
-          chs('"Leave it as is"', false).addEventListener('click', () => {
-            smove(chss.lsmain1);
-          });
+          choiceNav('"Leave it as is"', chss.lsmain1);
         });
       }
-      chs('"<= Return"', false).addEventListener('click', () => {
-        smove(chss.lsmain1);
-      });
+      choiceNav('"<= Return"', chss.lsmain1);
     }
 
     gameText.mbrdtt = ['"If you do not work your hours daily, you will not get any dessert"', '"Do your job well and you will be rewarded"', 'There is a report of a missing cat', 'There is a section of useless gossip', 'This is an  advertisement for fresh vegetables', 'This is an advertisement for dojo membership', 'This is an advertisement for wooden furniture', 'This is an advertisement for dried meat', 'This is an advertisement for joining the militia', '"The Hunter Association offers you a large variety of boxes full of smoked meat and furs"', 'This is an advertisement for herbal medicine', 'This is an advertisement for wine kegs', 'This is an advertisement for farming equipment', 'This is an advertisement for carpentery supplies', '"All the children must return home by 8PM!"', 'This is an advertisement for smithing orders', 'This is an advertisement for cooking courses', 'This is an advertisement for bottled water', 'This is an advertisement for knitting advices', 'This is an advertisement for cleaning services', 'This is a warning to stay away from fortune tellers', 'This is an advertisement for woven straw baskets', 'This is an advertisement for hemp clothing']
@@ -3326,9 +3208,7 @@ declare var InstallTrigger: any;
       chs('Message Board<br>You can find jobs or other stuff here', true);
       chs('"Explore the posts"', false).addEventListener('click', () => {
         chs(select(gameText.mbrdtt), true);
-        chs('"<= Return"', false).addEventListener('click', () => {
-          smove(chss.mbrd, false);
-        });
+        choiceNav('"<= Return"', chss.mbrd, false);
       });
       if (flags.frstn1b1g1) {
         chs('"Notice #4"', false).addEventListener('click', () => {
@@ -3340,15 +3220,13 @@ declare var InstallTrigger: any;
         });
         chs('"Warning!"', false).addEventListener('click', () => {
           chs('Dangerous beasts were sighted in vicinity of the Southern Forest. These reports are likely linked to the cause of livestock and locals getting injured, therefore, to avoid further casualties, entry into the forest is prohibited to those without permit or high enough self-defence ability until the situation is resolved<br><br><div style="text-align:right">一Head of The Guard, Hitoshi</div>', true);
-          chs('"I see"', false).addEventListener('click', () => { smove(chss.mbrd); });
+          choiceNav('"I see"', chss.mbrd);
         });
       }
       if (flags.glqtdltn && !flags.glqtdldn && (getHour() < 20 && getHour() > 8)) {
-        chs('"Xiao Xiao =>"', false).addEventListener('click', () => { smove(chss.xpgdqt1, false) });
+        choiceNav('"Xiao Xiao =>"', chss.xpgdqt1, false);
       }
-      chs('"<= Go back"', false).addEventListener('click', () => {
-        smove(chss.lsmain1, false);
-      });
+      choiceNav('"<= Go back"', chss.lsmain1, false);
     }
 
 // @ts-ignore: constructor function
@@ -3366,25 +3244,25 @@ declare var InstallTrigger: any;
       if (dl1) {
         chs('"Show Xiao Xiao a wooden doll"', false).addEventListener('click', () => {
           chs('<span style="color:lime">Xiao Xiao</span>: "Nooooo it\'s ugly!!"', true);
-          chs('"<= Take it back"', false).addEventListener('click', () => { smove(chss.xpgdqt1, false) })
+          choiceNav('"<= Take it back"', chss.xpgdqt1, false)
         });
       }
       if (dl2) {
         chs('"Show Xiao Xiao a straw doll"', false).addEventListener('click', () => {
           chs('<span style="color:lime">Xiao Xiao</span>: "Nooooo it\'s creepy!!"', true);
-          chs('"<= Take it back"', false).addEventListener('click', () => { smove(chss.xpgdqt1, false) })
+          choiceNav('"<= Take it back"', chss.xpgdqt1, false)
         });
       }
       if (dl3) {
         chs('"Show Xiao Xiao a bone doll"', false).addEventListener('click', () => {
           chs('<span style="color:lime">Xiao Xiao</span>: "Nooooo it\'s scary!!"', true);
-          chs('"<= Take it back"', false).addEventListener('click', () => { smove(chss.xpgdqt1, false) })
+          choiceNav('"<= Take it back"', chss.xpgdqt1, false)
         });
       }
       if (dl4) {
         chs('"Show Xiao Xiao a soul doll"', false).addEventListener('click', () => {
           chs('<span style="color:lime">Xiao Xiao</span>: "Waai thank you! I love it! I\'ll give you this! Here, take!"<br><br><span style="color:lightgrey">The girl happily runs away with her new toy</span>', true);
-          chs('"Claim your hardearned reward"', false).addEventListener('click', () => { removeItem(dl4); flags.glqtdldn = true; global.offlineEvilIndex -= .002; msg('You feel more peaceful', 'gold'); giveItem(acc.ubrlc); smove(chss.mbrd, false) })
+          choiceAction('"Claim your hardearned reward"', () => { removeItem(dl4); flags.glqtdldn = true; global.offlineEvilIndex -= .002; msg('You feel more peaceful', 'gold'); giveItem(acc.ubrlc); smove(chss.mbrd, false) })
         });
       }
       chs('"<= Return"', false).addEventListener('click', () => {
@@ -3474,19 +3352,13 @@ declare var InstallTrigger: any;
       if (flags.hsedchk) chs(' "Furniture list"', false, 'orange', '', 1, 8).addEventListener('click', () => {
         chs_spec(2);
         global.windowIndex = 1;
-        chs('"<= Return"', false).addEventListener('click', () => {
-          smove(chss.home, false);
-        });
+        choiceNav('"<= Return"', chss.home, false);
       });
       if (scanbyid(furn, furniture.frplc.id)) {
-        chs('"Examine Fireplace"', false).addEventListener('click', () => {
-          smove(chss.ofrplc, false);
-        });
+        choiceNav('"Examine Fireplace"', chss.ofrplc, false);
       }
       if (scanbyid(furn, furniture.strgbx.id)) {
-        chs('"Access Storagebox"', false).addEventListener('click', () => {
-          smove(chss.sboxhm, false);
-        });
+        choiceNav('"Access Storagebox"', chss.sboxhm, false);
       }
       if (flags.catget) {
         let tcat = findbyid(furn, furniture.cat.id);
@@ -3544,9 +3416,7 @@ declare var InstallTrigger: any;
           });
         });
       }
-      chs('"<= Go outside"', false).addEventListener('click', () => {
-        smove(chss.lsmain1);
-      });
+      choiceNav('"<= Go outside"', chss.lsmain1);
     }
 
     chss.home.data = { scoutm: 1200, scout: 0, scoutf: false, gets: [false, false], gotmod: 0 }
@@ -3576,9 +3446,7 @@ declare var InstallTrigger: any;
           if (!flags.bsmntchck) chs('"Examine your surroundings"', false).addEventListener('click', () => {
             if (!cansee()) {
               chs('Your light went off..', true, 'darkgrey');
-              chs('"<= Return"', false).addEventListener('click', () => {
-                smove(chss.home, false);
-              });
+              choiceNav('"<= Return"', chss.home, false);
             } else {
               chs("You glance around and find mountains of broken crates, shelves, boxes, furniture and other decaying goods. Don't expect to find anything of great value amongst this trash. Perhaps you can salvage at least something if you look careful enough" + (!flags.bsmntchstgt ? ', like that giant chest over there' : ''), true, 'orange');
               if (!flags.bsmntchstgt) chs('"Seek significance of a massive container"', false).addEventListener('click', () => {
@@ -3605,16 +3473,12 @@ declare var InstallTrigger: any;
                   smove(chss.bsmnthm1, false)
                 });
               });
-              chs('"<= Return"', false).addEventListener('click', () => {
-                smove(chss.bsmnthm1, false);
-              });
+              choiceNav('"<= Return"', chss.bsmnthm1, false);
             }
           });
         }
       }
-      chs('"<= Return"', false).addEventListener('click', () => {
-        smove(chss.home, false);
-      });
+      choiceNav('"<= Return"', chss.home, false);
     }
     chss.bsmnthm1.data = { scoutm: 900, scout: 0, scoutf: false, gets: [false, false], gotmod: 0 }
     chss.bsmnthm1.scout = [
@@ -3623,7 +3487,7 @@ declare var InstallTrigger: any;
       {
         c: .03, f: () => {
           chs('Among the rabble and remains of collapsed bookshelves you decide to confirm if anything survived. Rotten and soaked in basement juices books seems unsalvagable, bookshelves as well, you can\'t even tell if they are made of wood anymore. One of the books was incased into a small mound formed by rocks and sand, it seems surprisingly fine', true);
-          chs('"<= I\'m taking this"', false).addEventListener('click', () => { chss.bsmnthm1.data.gets[2] = true; giveItem(item.jnlbk); deactivateAct(global.current_a); smove(chss.bsmnthm1, false) })
+          choiceAction('"<= I\'m taking this"', () => { chss.bsmnthm1.data.gets[2] = true; giveItem(item.jnlbk); deactivateAct(global.current_a); smove(chss.bsmnthm1, false) })
         }, exp: 15
       },
     ];
@@ -3709,9 +3573,7 @@ declare var InstallTrigger: any;
           else { afire.data.fuel--; fire.data.fuel += 16 }
         });
       }
-      chs('"<= Step away"', false).addEventListener('click', () => {
-        smove(chss.home, false);
-      });
+      choiceNav('"<= Step away"', chss.home, false);
     }
 
 // @ts-ignore: constructor function
@@ -3738,12 +3600,8 @@ declare var InstallTrigger: any;
     chss.catamn.sl = () => {
       d_loc('Catacombs, The Entryway'); global.lst_loc = 132;
       chs('"You have entered the Catacombs"', true, 'lightgrey', 'black')
-      chs('"↑ Move North"', false).addEventListener('click', () => {
-        smove(chss.cata1);
-      });
-      chs('"<= Exit"', false).addEventListener('click', () => {
-        smove(chss.lsmain1);
-      });
+      choiceNav('"↑ Move North"', chss.cata1);
+      choiceNav('"<= Exit"', chss.lsmain1);
     }
 
 // @ts-ignore: constructor function
@@ -3753,15 +3611,9 @@ declare var InstallTrigger: any;
     chss.cata1.sl = () => {
       d_loc('Catacombs, The Casket Service'); global.lst_loc = 133;
       chs(select(gameText.catasound), true, 'lightgrey', 'black');
-      chs('"← Move West"', false).addEventListener('click', () => {
-        smove(chss.cata13);
-      });
-      chs('"→ Move East"', false).addEventListener('click', () => {
-        smove(chss.cata2);
-      });
-      chs('"↓ Move South"', false).addEventListener('click', () => {
-        smove(chss.catamn);
-      });
+      choiceNav('"← Move West"', chss.cata13);
+      choiceNav('"→ Move East"', chss.cata2);
+      choiceNav('"↓ Move South"', chss.catamn);
     }
 
 // @ts-ignore: constructor function
@@ -3771,12 +3623,8 @@ declare var InstallTrigger: any;
     chss.cata2.sl = () => {
       d_loc('Catacombs, The Mourning Hall'); global.lst_loc = 134;
       chs(select(gameText.catasound), true, 'lightgrey', 'black');
-      chs('"← Move West"', false).addEventListener('click', () => {
-        smove(chss.cata1);
-      });
-      chs('"→ Move East"', false).addEventListener('click', () => {
-        smove(chss.cata3);
-      });
+      choiceNav('"← Move West"', chss.cata1);
+      choiceNav('"→ Move East"', chss.cata3);
     }
 
 // @ts-ignore: constructor function
@@ -3786,12 +3634,8 @@ declare var InstallTrigger: any;
     chss.cata3.sl = () => {
       d_loc('Catacombs, The Last Breath'); global.lst_loc = 135;
       chs(select(gameText.catasound), true, 'lightgrey', 'black');
-      chs('"↑ Move North"', false).addEventListener('click', () => {
-        smove(chss.cata4);
-      });
-      chs('"← Move West"', false).addEventListener('click', () => {
-        smove(chss.cata2);
-      });
+      choiceNav('"↑ Move North"', chss.cata4);
+      choiceNav('"← Move West"', chss.cata2);
     }
 
 // @ts-ignore: constructor function
@@ -3801,12 +3645,8 @@ declare var InstallTrigger: any;
     chss.cata4.sl = () => {
       d_loc('Catacombs, Tunnel of the Dead'); global.lst_loc = 136;
       chs(select(gameText.catasound), true, 'lightgrey', 'black');
-      chs('"↑ Move North"', false).addEventListener('click', () => {
-        smove(chss.cata5);
-      });
-      chs('"↓ Move South"', false).addEventListener('click', () => {
-        smove(chss.cata3);
-      });
+      choiceNav('"↑ Move North"', chss.cata5);
+      choiceNav('"↓ Move South"', chss.cata3);
     }
 
 // @ts-ignore: constructor function
@@ -3816,15 +3656,9 @@ declare var InstallTrigger: any;
     chss.cata5.sl = () => {
       d_loc('Catacombs, Movement Below'); global.lst_loc = 137;
       chs(select(gameText.catasound), true, 'lightgrey', 'black');
-      chs('"↑ Move North"', false).addEventListener('click', () => {
-        smove(chss.cata6, false);
-      });
-      chs('"← Move West"', false).addEventListener('click', () => {
-        smove(chss.cata12);
-      });
-      chs('"↓ Move South"', false).addEventListener('click', () => {
-        smove(chss.cata4);
-      });
+      choiceNav('"↑ Move North"', chss.cata6, false);
+      choiceNav('"← Move West"', chss.cata12);
+      choiceNav('"↓ Move South"', chss.cata4);
     }
 
 // @ts-ignore: constructor function
@@ -3834,12 +3668,8 @@ declare var InstallTrigger: any;
     chss.cata6.sl = () => {
       d_loc('Catacombs, The Web Corridor'); global.lst_loc = 138;
       chs(select(gameText.catasound), true, 'lightgrey', 'black');
-      chs('"↑ Move North"', false).addEventListener('click', () => {
-        smove(chss.cata7);
-      });
-      chs('"↓ Move South"', false).addEventListener('click', () => {
-        smove(chss.cata5);
-      });
+      choiceNav('"↑ Move North"', chss.cata7);
+      choiceNav('"↓ Move South"', chss.cata5);
     }
 
 // @ts-ignore: constructor function
@@ -3849,12 +3679,8 @@ declare var InstallTrigger: any;
     chss.cata7.sl = () => {
       d_loc('Catacombs, Grievance'); global.lst_loc = 139;
       chs(select(gameText.catasound), true, 'lightgrey', 'black');
-      chs('"← Move West"', false).addEventListener('click', () => {
-        smove(chss.cata8);
-      });
-      chs('"↓ Move South"', false).addEventListener('click', () => {
-        smove(chss.cata6);
-      });
+      choiceNav('"← Move West"', chss.cata8);
+      choiceNav('"↓ Move South"', chss.cata6);
     }
 
 // @ts-ignore: constructor function
@@ -3864,12 +3690,8 @@ declare var InstallTrigger: any;
     chss.cata8.sl = () => {
       d_loc('Catacombs, Forgotten Post'); global.lst_loc = 140;
       chs(select(gameText.catasound), true, 'lightgrey', 'black');
-      chs('"← Move West"', false).addEventListener('click', () => {
-        smove(chss.cata9);
-      });
-      chs('"→ Move East"', false).addEventListener('click', () => {
-        smove(chss.cata7);
-      });
+      choiceNav('"← Move West"', chss.cata9);
+      choiceNav('"→ Move East"', chss.cata7);
     }
 
 // @ts-ignore: constructor function
@@ -3879,12 +3701,8 @@ declare var InstallTrigger: any;
     chss.cata9.sl = () => {
       d_loc('Catacombs, Withered Hand'); global.lst_loc = 141;
       chs(select(gameText.catasound), true, 'lightgrey', 'black');
-      chs('"→ Move East"', false).addEventListener('click', () => {
-        smove(chss.cata8);
-      });
-      chs('"↓ Move South"', false).addEventListener('click', () => {
-        smove(chss.cata10);
-      });
+      choiceNav('"→ Move East"', chss.cata8);
+      choiceNav('"↓ Move South"', chss.cata10);
     }
 
 // @ts-ignore: constructor function
@@ -3894,12 +3712,8 @@ declare var InstallTrigger: any;
     chss.cata10.sl = () => {
       d_loc('Catacombs, The Rusted Arc'); global.lst_loc = 142;
       chs(select(gameText.catasound), true, 'lightgrey', 'black');
-      chs('"↑ Move North"', false).addEventListener('click', () => {
-        smove(chss.cata9);
-      });
-      chs('"↓ Move South"', false).addEventListener('click', () => {
-        smove(chss.cata11);
-      });
+      choiceNav('"↑ Move North"', chss.cata9);
+      choiceNav('"↓ Move South"', chss.cata11);
     }
 
 // @ts-ignore: constructor function
@@ -3909,12 +3723,8 @@ declare var InstallTrigger: any;
     chss.cata11.sl = () => {
       d_loc('Catacombs, Old One\'s Destination'); global.lst_loc = 143;
       chs(select(gameText.catasound), true, 'lightgrey', 'black');
-      chs('"↑ Move North"', false).addEventListener('click', () => {
-        smove(chss.cata10);
-      });
-      chs('"→ Move East"', false).addEventListener('click', () => {
-        smove(chss.cata12);
-      });
+      choiceNav('"↑ Move North"', chss.cata10);
+      choiceNav('"→ Move East"', chss.cata12);
     }
 
 // @ts-ignore: constructor function
@@ -3924,12 +3734,8 @@ declare var InstallTrigger: any;
     chss.cata12.sl = () => {
       d_loc('Catacombs, Thawing Candles'); global.lst_loc = 144;
       chs(select(gameText.catasound), true, 'lightgrey', 'black');
-      chs('"← Move West"', false).addEventListener('click', () => {
-        smove(chss.cata11);
-      });
-      chs('"→ Move East"', false).addEventListener('click', () => {
-        smove(chss.cata5);
-      });
+      choiceNav('"← Move West"', chss.cata11);
+      choiceNav('"→ Move East"', chss.cata5);
     }
 
 // @ts-ignore: constructor function
@@ -3939,12 +3745,8 @@ declare var InstallTrigger: any;
     chss.cata13.sl = () => {
       d_loc('Catacombs, The Endless Echoes'); global.lst_loc = 145;
       chs(select(gameText.catasound), true, 'lightgrey', 'black');
-      chs('"← Move West"', false).addEventListener('click', () => {
-        smove(chss.cata14);
-      });
-      chs('"→ Move East"', false).addEventListener('click', () => {
-        smove(chss.cata1);
-      });
+      choiceNav('"← Move West"', chss.cata14);
+      choiceNav('"→ Move East"', chss.cata1);
     }
 
 // @ts-ignore: constructor function
@@ -3954,12 +3756,8 @@ declare var InstallTrigger: any;
     chss.cata14.sl = () => {
       d_loc('Catacombs, The Dusty Underpass'); global.lst_loc = 146;
       chs(select(gameText.catasound), true, 'lightgrey', 'black');
-      chs('"↑ Move North"', false).addEventListener('click', () => {
-        smove(chss.cata15);
-      });
-      chs('"→ Move East"', false).addEventListener('click', () => {
-        smove(chss.cata13);
-      });
+      choiceNav('"↑ Move North"', chss.cata15);
+      choiceNav('"→ Move East"', chss.cata13);
     }
 
 // @ts-ignore: constructor function
@@ -3969,12 +3767,8 @@ declare var InstallTrigger: any;
     chss.cata15.sl = () => {
       d_loc('Catacombs, Light\'s Corner'); global.lst_loc = 147;
       chs(select(gameText.catasound), true, 'lightgrey', 'black');
-      chs('"↑ Move North"', false).addEventListener('click', () => {
-        smove(chss.cata16);
-      });
-      chs('"↓ Move South"', false).addEventListener('click', () => {
-        smove(chss.cata14);
-      });
+      choiceNav('"↑ Move North"', chss.cata16);
+      choiceNav('"↓ Move South"', chss.cata14);
     }
 
 // @ts-ignore: constructor function
@@ -3984,12 +3778,8 @@ declare var InstallTrigger: any;
     chss.cata16.sl = () => {
       d_loc('Catacombs, Son\'s Last Visit'); global.lst_loc = 148;
       chs(select(gameText.catasound), true, 'lightgrey', 'black');
-      chs('"↑ Move North"', false).addEventListener('click', () => {
-        smove(chss.cata17);
-      });
-      chs('"↓ Move South"', false).addEventListener('click', () => {
-        smove(chss.cata15);
-      });
+      choiceNav('"↑ Move North"', chss.cata17);
+      choiceNav('"↓ Move South"', chss.cata15);
     }
 
 // @ts-ignore: constructor function
@@ -3999,12 +3789,8 @@ declare var InstallTrigger: any;
     chss.cata17.sl = () => {
       d_loc('Catacombs, The Stone Plate'); global.lst_loc = 149;
       chs(select(gameText.catasound), true, 'lightgrey', 'black');
-      chs('"↑ Move North"', false).addEventListener('click', () => {
-        smove(chss.cata18);
-      });
-      chs('"↓ Move South"', false).addEventListener('click', () => {
-        smove(chss.cata16);
-      });
+      choiceNav('"↑ Move North"', chss.cata18);
+      choiceNav('"↓ Move South"', chss.cata16);
     }
 
 // @ts-ignore: constructor function
@@ -4014,12 +3800,8 @@ declare var InstallTrigger: any;
     chss.cata18.sl = () => {
       d_loc('Catacombs, Cracked Passageway'); global.lst_loc = 150;
       chs(select(gameText.catasound), true, 'lightgrey', 'black');
-      chs('"← Move West"', false).addEventListener('click', () => {
-        smove(chss.cata19);
-      });
-      chs('"↓ Move South"', false).addEventListener('click', () => {
-        smove(chss.cata17);
-      });
+      choiceNav('"← Move West"', chss.cata19);
+      choiceNav('"↓ Move South"', chss.cata17);
     }
 
 // @ts-ignore: constructor function
@@ -4029,12 +3811,8 @@ declare var InstallTrigger: any;
     chss.cata19.sl = () => {
       d_loc('Catacombs, The Limited Leeway'); global.lst_loc = 151;
       chs(select(gameText.catasound), true, 'lightgrey', 'black');
-      chs('"← Move West"', false).addEventListener('click', () => {
-        smove(chss.cata20);
-      });
-      chs('"→ Move East"', false).addEventListener('click', () => {
-        smove(chss.cata18);
-      });
+      choiceNav('"← Move West"', chss.cata20);
+      choiceNav('"→ Move East"', chss.cata18);
     }
 
 // @ts-ignore: constructor function
@@ -4044,12 +3822,8 @@ declare var InstallTrigger: any;
     chss.cata20.sl = () => {
       d_loc('Catacombs, The Brittle Turn'); global.lst_loc = 152;
       chs(select(gameText.catasound), true, 'lightgrey', 'black');
-      chs('"→ Move East"', false).addEventListener('click', () => {
-        smove(chss.cata19);
-      });
-      chs('"↓ Move South"', false).addEventListener('click', () => {
-        smove(chss.cata21);
-      });
+      choiceNav('"→ Move East"', chss.cata19);
+      choiceNav('"↓ Move South"', chss.cata21);
     }
 
 // @ts-ignore: constructor function
@@ -4059,12 +3833,8 @@ declare var InstallTrigger: any;
     chss.cata21.sl = () => {
       d_loc('Catacombs, Bright Ray Above'); global.lst_loc = 153;
       chs(select(gameText.catasound), true, 'lightgrey', 'black');
-      chs('"↑ Move North"', false).addEventListener('click', () => {
-        smove(chss.cata20);
-      });
-      chs('"↓ Move South"', false).addEventListener('click', () => {
-        smove(chss.cata22);
-      });
+      choiceNav('"↑ Move North"', chss.cata20);
+      choiceNav('"↓ Move South"', chss.cata22);
     }
 
 // @ts-ignore: constructor function
@@ -4074,12 +3844,8 @@ declare var InstallTrigger: any;
     chss.cata22.sl = () => {
       d_loc('Catacombs, Nowhere To Run'); global.lst_loc = 154;
       chs(select(gameText.catasound), true, 'lightgrey', 'black');
-      chs('"↑ Move North"', false).addEventListener('click', () => {
-        smove(chss.cata21);
-      });
-      chs('"↓ Move South"', false).addEventListener('click', () => {
-        smove(chss.cata23);
-      });
+      choiceNav('"↑ Move North"', chss.cata21);
+      choiceNav('"↓ Move South"', chss.cata23);
     }
 
 // @ts-ignore: constructor function
@@ -4089,12 +3855,8 @@ declare var InstallTrigger: any;
     chss.cata23.sl = () => {
       d_loc('Catacombs, The Aging Room'); global.lst_loc = 155;
       chs(select(gameText.catasound), true, 'lightgrey', 'black');
-      chs('"↑ Move North"', false).addEventListener('click', () => {
-        smove(chss.cata22);
-      });
-      chs('"↓ Move South"', false).addEventListener('click', () => {
-        smove(chss.cata24);
-      });
+      choiceNav('"↑ Move North"', chss.cata22);
+      choiceNav('"↓ Move South"', chss.cata24);
     }
 
 // @ts-ignore: constructor function
@@ -4104,12 +3866,8 @@ declare var InstallTrigger: any;
     chss.cata24.sl = () => {
       d_loc('Catacombs, Eleven Wisemen'); global.lst_loc = 156;
       chs(select(gameText.catasound), true, 'lightgrey', 'black');
-      chs('"↑ Move North"', false).addEventListener('click', () => {
-        smove(chss.cata23);
-      });
-      chs('"← Move West"', false).addEventListener('click', () => {
-        smove(chss.cata25);
-      });
+      choiceNav('"↑ Move North"', chss.cata23);
+      choiceNav('"← Move West"', chss.cata25);
     }
 
 // @ts-ignore: constructor function
@@ -4119,9 +3877,7 @@ declare var InstallTrigger: any;
     chss.cata25.sl = () => {
       d_loc('Catacombs, The End Of Journey'); global.lst_loc = 157;
       chs(select(gameText.catasound), true, 'lightgrey', 'black');
-      chs('"→ Move East"', false).addEventListener('click', () => {
-        smove(chss.cata24);
-      });
+      choiceNav('"→ Move East"', chss.cata24);
     }
 
 

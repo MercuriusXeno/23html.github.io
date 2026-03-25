@@ -3,6 +3,7 @@ import { addElement, empty } from '../dom-utils';
 import { dom, global, you, timers, data, flags } from '../state';
 const { skl } = data;
 import { giveSkExp } from '../game/progression';
+import { smove } from '../game/movement';
 
     export function chs(txt: string, f?: boolean, c?: string | number, bc?: string | number, iconx?: number, icony?: number, size?: string | number, ignore?: boolean | number, slimsize?: string) {
       if (f === true) { clr_chs(); dom.ch_1 = addElement(dom.ctr_2, 'div', 'chs'); dom.ch_1.innerHTML = txt; }
@@ -38,6 +39,16 @@ import { giveSkExp } from '../game/progression';
         //    div.getContext('2d').drawImage(temp,0,0,sx,sy,0,0,sx*sz,sy*sz);
       } else div = addElement(root, 'span');
       return div;
+    }
+
+    export function choiceNav(text: string, target: any, gainExp?: boolean | number) {
+      chs(text, false).addEventListener('click', () => { smove(target, gainExp) });
+    }
+
+    export function choiceAction(text: string, action: () => void, opts?: { color?: string; bg?: string }) {
+      let el = chs(text, false, opts?.color, opts?.bg);
+      el.addEventListener('click', action);
+      return el;
     }
 
     export function Chs(this: any) {
