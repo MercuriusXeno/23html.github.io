@@ -5,7 +5,7 @@ import { empty } from '../dom-utils';
 import { dom, global, settings, you, acts, data, flags, stats, } from '../state';
 const { skl: sklState, ttl } = data;
 import { msg, msg_add } from '../ui/messages';
-import { update_d } from '../ui/stats';
+import { updateCombatDisplay } from '../ui/stats';
 import { rsort } from '../ui/inventory';
 import { renderAct } from '../ui/panels';
 import { formatw } from './utils-game';
@@ -44,7 +44,7 @@ import { formatw } from './utils-game';
           if (you.eqp[0].id === 10000) { you.eqp[0].cls[2] = you.lvl / 4 << 0; you.eqp[0].aff[0] = you.lvl / 5 << 0; you.eqp[0].ctype = 2 }
           if (stats.deathTotal < 1 && you.lvl >= 20) giveTitle(ttl.ndthextr)
         }
-      } combatant.stat_r(); update_d();
+      } combatant.stat_r(); updateCombatDisplay();
     }
 
     export function giveExp(exp: number, raw?: boolean, gift?: boolean, battleShow?: boolean) {

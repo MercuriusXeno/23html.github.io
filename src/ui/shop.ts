@@ -7,12 +7,12 @@ import { dom, global, you, data, stats, } from '../state';
 const { skl, acc } = data;
 import { msg } from './messages';
 import { addDesc } from './descriptions';
-import { m_update } from './stats';
+import { updateWealthDisplay } from './stats';
 import { giveItem } from '../game/inventory';
 import { spend } from '../game/economy';
 import { giveSkExp } from '../game/progression';
 
-    export function mf(num: number, index: number) {
+    export function coinAnimation(num: number, index: number) {
       let d = addElement(document.body, 'small');
       let c = ['rgb(255, 116, 63)', 'rgb(192, 192, 192)', 'rgb(255, 215, 0)'];
       d.style.position = 'absolute';
@@ -98,10 +98,10 @@ import { giveSkExp } from '../game/progression';
         dom.ch_etn1b1.addEventListener('click', function (this: any) {
           let el = this.parentElement.parentElement.parentElement; let p = Math.ceil(itm[2] * (you.mods.inflationRate - skl.trad.use()) * vnd.infl! * (1 - (Math.sqrt(vnd.data.rep) ** 1.3 + 0.05) * .01) * global.offlineEvilIndex);
           if (you.wealth >= p && itm[1] > 0) {
-            itm[1]--; giveItem(itm[0]); spend(p); m_update(); giveSkExp(skl.gred, itm[2] * .05); giveSkExp(skl.trad, itm[2] ** (1 + itm[0].rar * .1) * .05)
-            if (p >= GOLD) mf(-Math.ceil((p - GOLD) / GOLD), 3);
-            if (p >= SILVER) mf(-Math.ceil((p - SILVER) / SILVER % 100), 2);
-            mf(-p % 100, 1);
+            itm[1]--; giveItem(itm[0]); spend(p); updateWealthDisplay(); giveSkExp(skl.gred, itm[2] * .05); giveSkExp(skl.trad, itm[2] ** (1 + itm[0].rar * .1) * .05)
+            if (p >= GOLD) coinAnimation(-Math.ceil((p - GOLD) / GOLD), 3);
+            if (p >= SILVER) coinAnimation(-Math.ceil((p - SILVER) / SILVER % 100), 2);
+            coinAnimation(-p % 100, 1);
             stats.buyTotal++;
             if (random() < .0008) { giveItem(acc.dticket); msg('Thank you for your patronage!', 'gold', null, null, 'magenta') };
             stats.shopPoints += p * .01;
@@ -113,10 +113,10 @@ import { giveSkExp } from '../game/progression';
         dom.ch_etn1b2.addEventListener('click', function (this: any) {
           let el = this.parentElement.parentElement.parentElement; let p = Math.ceil(itm[2] * (you.mods.inflationRate - skl.trad.use()) * vnd.infl! * (1 - (Math.sqrt(vnd.data.rep) ** 1.3 + 0.05) * .01) * global.offlineEvilIndex);
           if (you.wealth >= p * 5 && itm[1] >= 5) {
-            itm[1] -= 5; giveItem(itm[0], 5); spend(p * 5); m_update(); giveSkExp(skl.gred, itm[2] * 5 * .05); giveSkExp(skl.trad, itm[2] ** (1 + itm[0].rar * .1) * .05 * 5)
-            if (p * 5 >= GOLD) mf(-Math.ceil((p * 5 - GOLD) / GOLD), 3);
-            if (p * 5 >= SILVER) mf(-Math.ceil((p * 5 - SILVER) / SILVER % 100), 2);
-            mf(-p * 5 % 100, 1);
+            itm[1] -= 5; giveItem(itm[0], 5); spend(p * 5); updateWealthDisplay(); giveSkExp(skl.gred, itm[2] * 5 * .05); giveSkExp(skl.trad, itm[2] ** (1 + itm[0].rar * .1) * .05 * 5)
+            if (p * 5 >= GOLD) coinAnimation(-Math.ceil((p * 5 - GOLD) / GOLD), 3);
+            if (p * 5 >= SILVER) coinAnimation(-Math.ceil((p * 5 - SILVER) / SILVER % 100), 2);
+            coinAnimation(-p * 5 % 100, 1);
             stats.buyTotal += 5;
             if (random() < .004) { giveItem(acc.dticket); msg('Thank you for your patronage!', 'gold', null, null, 'magenta') };
             stats.shopPoints += p * .01;
@@ -128,10 +128,10 @@ import { giveSkExp } from '../game/progression';
         dom.ch_etn1b3.addEventListener('click', function (this: any) {
           let el = this.parentElement.parentElement.parentElement; let p = Math.ceil(itm[2] * (you.mods.inflationRate - skl.trad.use()) * vnd.infl! * (1 - (Math.sqrt(vnd.data.rep) ** 1.3 + 0.05) * .01) * global.offlineEvilIndex);
           if (you.wealth >= p * 10 && itm[1] >= 10) {
-            itm[1] -= 10; giveItem(itm[0], 10); spend(p * 10); m_update(); giveSkExp(skl.gred, itm[2] * 10 * .05); giveSkExp(skl.trad, itm[2] ** (1 + itm[0].rar * .1) * .05 * 10)
-            if (p * 10 >= GOLD) mf(-Math.ceil((p * 10 - GOLD) / GOLD), 3);
-            if (p * 10 >= SILVER) mf(-Math.ceil((p * 10 - SILVER) / SILVER % 100), 2);
-            mf(-p * 10 % 100, 1);
+            itm[1] -= 10; giveItem(itm[0], 10); spend(p * 10); updateWealthDisplay(); giveSkExp(skl.gred, itm[2] * 10 * .05); giveSkExp(skl.trad, itm[2] ** (1 + itm[0].rar * .1) * .05 * 10)
+            if (p * 10 >= GOLD) coinAnimation(-Math.ceil((p * 10 - GOLD) / GOLD), 3);
+            if (p * 10 >= SILVER) coinAnimation(-Math.ceil((p * 10 - SILVER) / SILVER % 100), 2);
+            coinAnimation(-p * 10 % 100, 1);
             stats.buyTotal += 10;
             if (random() < .008) { giveItem(acc.dticket); msg('Thank you for your patronage!', 'gold', null, null, 'magenta') };
             stats.shopPoints += p * .01;
@@ -143,10 +143,10 @@ import { giveSkExp } from '../game/progression';
         dom.ch_etn1b4.addEventListener('click', function (this: any) {
           let el = this.parentElement.parentElement.parentElement; let p = Math.ceil(itm[2] * (you.mods.inflationRate - skl.trad.use()) * vnd.infl! * (1 - (Math.sqrt(vnd.data.rep) ** 1.3 + 0.05) * .01) * global.offlineEvilIndex); let max = (you.wealth / p) << 0; if (max > itm[1]) max = itm[1];
           if (you.wealth >= p && itm[1] > 0) {
-            itm[1] -= max; giveItem(itm[0], max); spend(p * max); m_update(); giveSkExp(skl.gred, itm[2] * max * .05); giveSkExp(skl.trad, itm[2] ** (1 + itm[0].rar * .1) * .05 * max)
-            if (p * max >= GOLD) mf(-Math.ceil((p * max - GOLD) / GOLD), 3);
-            if (p * max >= SILVER) mf(-Math.ceil((p * max - SILVER) / SILVER % 100), 2);
-            mf(-p * max % 100, 1);
+            itm[1] -= max; giveItem(itm[0], max); spend(p * max); updateWealthDisplay(); giveSkExp(skl.gred, itm[2] * max * .05); giveSkExp(skl.trad, itm[2] ** (1 + itm[0].rar * .1) * .05 * max)
+            if (p * max >= GOLD) coinAnimation(-Math.ceil((p * max - GOLD) / GOLD), 3);
+            if (p * max >= SILVER) coinAnimation(-Math.ceil((p * max - SILVER) / SILVER % 100), 2);
+            coinAnimation(-p * max % 100, 1);
             stats.buyTotal += max;
             if (random() < .0008 * max) { giveItem(acc.dticket); msg('Thank you for your patronage!', 'gold', null, null, 'magenta') };
             stats.shopPoints += p * .01;
@@ -162,10 +162,10 @@ import { giveSkExp } from '../game/progression';
       dom.ch_etn1n.addEventListener('click', function (this: any) {
         let el = this.parentElement.parentElement; let p = Math.ceil(itm[2] * (you.mods.inflationRate - skl.trad.use()) * vnd.infl! * (1 - (Math.sqrt(vnd.data.rep) ** 1.3 + 0.05) * .01) * global.offlineEvilIndex);
         if (you.wealth >= p && itm[1] > 0) {
-          itm[1]--; giveItem(itm[0]); spend(p); m_update(); giveSkExp(skl.gred, itm[2] * .05); giveSkExp(skl.trad, itm[2] ** (1 + itm[0].rar * .1) * .05)
-          if (p >= GOLD) mf(-Math.ceil((p - GOLD) / GOLD), 3);
-          if (p >= SILVER) mf(-Math.ceil((p - SILVER) / SILVER % 100), 2);
-          mf(-p % 100, 1);
+          itm[1]--; giveItem(itm[0]); spend(p); updateWealthDisplay(); giveSkExp(skl.gred, itm[2] * .05); giveSkExp(skl.trad, itm[2] ** (1 + itm[0].rar * .1) * .05)
+          if (p >= GOLD) coinAnimation(-Math.ceil((p - GOLD) / GOLD), 3);
+          if (p >= SILVER) coinAnimation(-Math.ceil((p - SILVER) / SILVER % 100), 2);
+          coinAnimation(-p % 100, 1);
           stats.buyTotal++;
           if (random() < .0008) { giveItem(acc.dticket); msg('Thank you for your patronage!', 'gold', null, null, 'magenta') };
           stats.shopPoints += p * .01;

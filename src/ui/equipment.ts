@@ -2,7 +2,7 @@ import type { Equipment } from '../types';
 import { dom, global, settings, you, planner, data, gameText, flags } from '../state';
 const { eqp } = data;
 import { giveEff, removeEff } from './effects';
-import { update_d } from './stats';
+import { updateCombatDisplay } from './stats';
 import { msg } from './messages';
 import { isort } from './inventory';
 
@@ -57,7 +57,7 @@ import { isort } from './inventory';
         if (gear.twoh === true) { dom.d7_slot_2.innerHTML = you.eqp[0].name; dom.d7_slot_2.removeAttribute('style'); dom.d7_slot_2.style.color = 'lightgrey' } else {
           if (you.eqp[1].id === 10000) { dom.d7_slot_2.innerHTML = 'Shield'; dom.d7_slot_2.removeAttribute('style'); dom.d7_slot_2.style.color = 'grey' }
         }
-        if (!opts || !opts.save) { you.stat_r(); update_d(); isort(settings.sortMode) }
+        if (!opts || !opts.save) { you.stat_r(); updateCombatDisplay(); isort(settings.sortMode) }
       }
     }
 
@@ -79,10 +79,10 @@ import { isort } from './inventory';
         case 8: { dom.d7_slot_9.innerHTML = 'Accessory'; dom.d7_slot_9.removeAttribute('style'); dom.d7_slot_9.style.color = 'grey' } break;
         case 9: { dom.d7_slot_10.innerHTML = 'Accessory'; dom.d7_slot_10.removeAttribute('style'); dom.d7_slot_10.style.color = 'grey' } break;
       }
-      if (!opts || !opts.save) { you.stat_r(); update_d() }
+      if (!opts || !opts.save) { you.stat_r(); updateCombatDisplay() }
     }
 
-    export function eqpres() {
+    export function resetEquipDisplay() {
       dom.d7_slot_1.innerHTML = 'Weapon';
       dom.d7_slot_1.removeAttribute('style');
       dom.d7_slot_1.style.color = 'grey';

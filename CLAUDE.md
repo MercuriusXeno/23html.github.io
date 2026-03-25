@@ -23,13 +23,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `src/ui/` — 9 UI modules (~1,540 lines):
   - `messages.ts` — Game log (`msg`, `_msg`, `msg_add`)
   - `descriptions.ts` — Tooltip/description popups (`dscr`, `addDesc`, `descsinfo`)
-  - `stats.ts` — Stat display updates (`update_db`, `update_d`, `update_m`, `m_update`)
+  - `stats.ts` — Stat display updates (`updateStatDisplay`, `updateCombatDisplay`, `updateMonsterDisplay`, `updateWealthDisplay`)
   - `effects.ts` — Effect display (`giveEff`, `removeEff`)
-  - `equipment.ts` — Equipment slot display (`equip`, `unequip`, `eqpres`)
+  - `equipment.ts` — Equipment slot display (`equip`, `unequip`, `resetEquipDisplay`)
   - `inventory.ts` — Inventory rendering/sorting (`renderItem`, `isort`, `rsort`, `reduce`)
   - `choices.ts` — Choice buttons and icons (`chs`, `clr_chs`, `icon`, `Chs`)
   - `panels.ts` — Crafting/skill/action/furniture panels (`renderRcp`, `renderSkl`, `renderAct`, `deactivateAct`, `renderFurniture`, `showFurniturePanel`)
-  - `shop.ts` — Shop UI rendering (`recshop`, `rendershopitem`, `buycbs`, `mf`)
+  - `shop.ts` — Shop UI rendering (`recshop`, `rendershopitem`, `buycbs`, `coinAnimation`)
 - `src/data/` — 13 data definition modules (~5,870 lines): titles, effects, furniture, skills, items, equipment, abilities, creatures, world, crafting, vendors, actions, mastery
 - `src/systems/` — 4 system modules (~1,710 lines):
   - `weather.ts` — Weather/time/calendar system, callbacks, season display (`wdrseason`) (~620 lines)

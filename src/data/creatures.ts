@@ -8,7 +8,7 @@ import { dropC } from '../game/inventory';
 import { giveWealth } from '../game/economy';
 import { giveExp } from '../game/progression';
 import { kill } from '../game/utils-game';
-import { update_m } from '../ui/stats';
+import { updateMonsterDisplay } from '../ui/stats';
 import { msg } from '../ui/messages';
 
 // ==========================================================================
@@ -57,7 +57,7 @@ function Creature(this: any, cfg?: any) {
     this.damageMultiplier = 1;
     for (let idx in this.eff) {
       if (this.eff[idx].type === 2) { this.eff[idx].un(you); this.eff[idx].use(you, this.eff[idx].y, this.eff[idx].z) };
-    } update_m(); if (this.hp > this.hpmax) this.hp = this.hpmax
+    } updateMonsterDisplay(); if (this.hp > this.hpmax) this.hp = this.hpmax
   }
   this.alive = true;
   this.eff = [];

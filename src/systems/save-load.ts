@@ -18,9 +18,9 @@ import { giveTitle, giveRcp, giveSkExp } from '../game/progression';
 import { restock } from '../game/economy';
 import { msg } from '../ui/messages';
 import { addDesc } from '../ui/descriptions';
-import { update_db, update_d, update_m, m_update } from '../ui/stats';
+import { updateStatDisplay, updateCombatDisplay, updateMonsterDisplay, updateWealthDisplay } from '../ui/stats';
 import { giveEff } from '../ui/effects';
-import { equip, unequip, eqpres } from '../ui/equipment';
+import { equip, unequip, resetEquipDisplay } from '../ui/equipment';
 import { rsort, invbtsrst, rstcrtthg, isort } from '../ui/inventory';
 import { activatef, deactivatef } from '../ui/choices';
 import { weather, setWeather, wManager, timeConv, timeDisp, getDay, getLunarPhase, getHour } from './weather';
@@ -643,7 +643,7 @@ export function load(dt?: any) {
       }
     }
     dom.d2.innerHTML = you.name;
-    eqpres();
+    resetEquipDisplay();
     unequip(you.eqp[4], { save: true });
     unequip(you.eqp[5], { save: true });
     you.stat_r();
@@ -722,7 +722,7 @@ export function load(dt?: any) {
     flags.btl = false;
     combat.currentZone = area.nwh;
     combat.currentMonster = creature.default;
-    update_m();
+    updateMonsterDisplay();
     dom.d7m.update();
     flags.wkdis = false;
     flags.jdgdis = false;
@@ -882,10 +882,10 @@ export function load(dt?: any) {
     dom.d5_1_1.update();
     dom.d5_2_1.update();
     dom.d6.update();
-    update_d();
+    updateCombatDisplay();
     dom.d3.update();
-    update_m();
-    m_update();
+    updateMonsterDisplay();
+    updateWealthDisplay();
     dom.d7m.update();
     dom.d5_3_1.update();
 
@@ -902,7 +902,7 @@ export function load(dt?: any) {
       dom.mn_4.style.display = '';
       dom.mn_3.style.display = '';
       if (stats.mndrgnu) dom.mn_1.style.display = '';
-      m_update();
+      updateWealthDisplay();
     }
 
     wManager();

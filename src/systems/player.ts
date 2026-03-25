@@ -9,7 +9,7 @@ import { giveSkExp, giveTitle } from '../game/progression';
 import { msg } from '../ui/messages';
 import { removeEff } from '../ui/effects';
 import { deactivateAct } from '../ui/panels';
-import { update_db } from '../ui/stats';
+import { updateStatDisplay } from '../ui/stats';
 
 // ==========================================================================
 // Player Constructor
@@ -112,6 +112,6 @@ export function You(this: any) {
     }
     for (let idx in this.eff) {
       if (this.eff[idx].type === 2) { this.eff[idx].un(you); this.eff[idx].use(you, this.eff[idx].y, this.eff[idx].z) };
-    } dom.d6.update(); update_db(); if (you.hp > you.hpmax) you.hp = you.hpmax; dom.d5_1_1.update();
+    } dom.d6.update(); updateStatDisplay(); if (you.hp > you.hpmax) you.hp = you.hpmax; dom.d5_1_1.update();
   }
 }

@@ -5,7 +5,7 @@ import { addElement } from '../dom-utils';
 import { dom, global, settings, you, timers, time, data, flags, stats, combat, } from '../state';
 const { abl, skl, effect, creature } = data;
 import { msg, msg_add } from '../ui/messages';
-import { update_d } from '../ui/stats';
+import { updateCombatDisplay } from '../ui/stats';
 import { giveSkExp } from './progression';
 import { giveItem } from './inventory';
 import { cansee, formatw } from './utils-game';
@@ -155,7 +155,7 @@ export function attack(att: Combatant, def: Combatant, atk?: Ability, power?: nu
     flags.missed = true;
     if (dk) giveSkExp(skl.ntst, .01);
     if (!isyou) stats.dodgesTotal++;
-  } update_d();
+  } updateCombatDisplay();
   if (!flags.multih) { if (isyou && dmg >= def.hpmax) stats.oneShotKills++; if (def.hp <= 0 && def.alive === true) { combat.attackDamageFromYou = [3, combat.attackDamageFromYouDamageType]; def.onDeath(att); def.onDeathE(att); } }
   return dmg || 0;
 }

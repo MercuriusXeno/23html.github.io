@@ -6,7 +6,7 @@ import { dom, global, you, data, stats, } from '../state';
 const { skl, vendor } = data;
 import { SILVER, GOLD } from '../constants';
 import { msg, msg_add } from '../ui/messages';
-import { m_update } from '../ui/stats';
+import { updateWealthDisplay } from '../ui/stats';
 import { giveSkExp } from './progression';
 import { recshop } from '../ui/shop';
 
@@ -16,7 +16,7 @@ import { recshop } from '../ui/shop';
       stats.moneyGained += val;
       for (let x in global.monchk) global.monchk[x]();
       if (!stats.mndrgnu && you.wealth >= 100000000) { stats.mndrgnu = true; appear(dom.mn_1) }
-      m_update();
+      updateWealthDisplay();
       giveSkExp(skl.gred, val * .01);
       if (showMessage !== false) {
         msg('+', 'gold');
@@ -30,7 +30,7 @@ import { recshop } from '../ui/shop';
       if (you.wealth < amount) return
       you.wealth -= amount;
       stats.moneySpent += amount;
-      m_update()
+      updateWealthDisplay()
     }
 
     export function restock(vnd: Vendor): void {

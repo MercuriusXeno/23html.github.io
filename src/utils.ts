@@ -11,43 +11,43 @@ export function shuffle(arr: any[]): void {
   while (copy.length != 0) { let val = rand(copy.length - 1); arr[index++] = copy[val]; copy.splice(val, 1) }
 }
 
-export function deepCopy(o: any): any {
-  let copy = o, k;
-  if (o && typeof o === 'object') {
-    copy = Object.prototype.toString.call(o) === '[object Array]' ? [] : {};
-    for (let k in o) {
-      copy[k] = deepCopy(o[k]);
+export function deepCopy(obj: any): any {
+  let copy = obj, k;
+  if (obj && typeof obj === 'object') {
+    copy = Object.prototype.toString.call(obj) === '[object Array]' ? [] : {};
+    for (let k in obj) {
+      copy[k] = deepCopy(obj[k]);
     }
   }
   return copy;
 }
 
-export function copy(o: any): any {
+export function copy(obj: any): any {
   let res: any = new Object();
-  for (let a in o) res[a] = o[a];
+  for (let a in obj) res[a] = obj[a];
   return res;
 }
 
 export function objempty(obj: any): boolean | undefined { for (let a in obj) return false }
 
-export function format3(a: string): string {
-  if (a.length > 3) {
+export function format3(str: string): string {
+  if (str.length > 3) {
     let b = new String();
-    for (let i = 0; i < a.length; i++) { if ((a.length - i) % 3 == 0 && i > (Number(a) > 0 ? 0 : 1)) b += ','; b += a[i] }
+    for (let i = 0; i < str.length; i++) { if ((str.length - i) % 3 == 0 && i > (Number(str) > 0 ? 0 : 1)) b += ','; b += str[i] }
     return b.toString();
-  } return a;
+  } return str;
 }
 
-export function col(txt: any, c?: string, bc?: string): string {
+export function col(txt: any, color?: string, bgColor?: string): string {
   let cc;
   let bcc;
-  if (c) cc = 'color:' + c + ';';
-  if (bc) bcc = 'background-color:' + bc + ';';
-  return '<span' + (c ? (' style="' + cc + (bc ? bcc : '') + '"') : '') + '>' + txt + '</span>'
+  if (color) cc = 'color:' + color + ';';
+  if (bgColor) bcc = 'background-color:' + bgColor + ';';
+  return '<span' + (color ? (' style="' + cc + (bgColor ? bcc : '') + '"') : '') + '>' + txt + '</span>'
 }
 
-export function scan(arr: any[], val: any, am?: number): boolean | undefined {
-  if (am) { for (let obj in arr) if (arr[obj].id === val.id && arr[obj].amount >= am) return true }
+export function scan(arr: any[], val: any, amount?: number): boolean | undefined {
+  if (amount) { for (let obj in arr) if (arr[obj].id === val.id && arr[obj].amount >= amount) return true }
   else for (let obj in arr) if (arr[obj] === val) return true;
 }
 

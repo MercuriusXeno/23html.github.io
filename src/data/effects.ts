@@ -6,7 +6,7 @@ import { findbyid } from '../utils';
 import { giveSkExp, giveExp } from '../game/progression';
 import { msg } from '../ui/messages';
 import { giveEff, removeEff } from '../ui/effects';
-import { update_d } from '../ui/stats';
+import { updateCombatDisplay } from '../ui/stats';
 import { rsort } from '../ui/inventory';
 
 // ==========================================================================
@@ -196,13 +196,13 @@ effect.snch = new Effect({ id: 6, name: 'Sun blessing', desc: 'You are blessed b
           player.agl += 5;
           player.int_display += 5;
           flags.snch = true;
-          update_d();
+          updateCombatDisplay();
         }
       } else {
         if (flags.snch === true) {
           effect.snch.un(player);
           player.stat_r();
-          update_d();
+          updateCombatDisplay();
         }
       }
     }, 1000)
@@ -261,13 +261,13 @@ effect.mnch = new Effect({ id: 7, name: 'Moon blessing', desc: 'You are blessed 
           player.agl += 5;
           player.int_display += 5;
           flags.mnch = true;
-          update_d();
+          updateCombatDisplay();
         }
       } else {
         if (flags.mnch === true) {
           effect.mnch.un(player);
           player.stat_r();
-          update_d();
+          updateCombatDisplay();
         }
       }
     }, 1000)

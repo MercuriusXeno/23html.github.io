@@ -10,7 +10,7 @@ import { dom, global, you, sectors, effector, data, flags, stats, combat, } from
 const { creature, area, effect, act, skl } = data;
 import { msg } from '../ui/messages';
 import { clr_chs } from '../ui/choices';
-import { update_m } from '../ui/stats';
+import { updateMonsterDisplay } from '../ui/stats';
 import { giveEff } from '../ui/effects';
 import { giveSkExp, lvlup } from './progression';
 
@@ -90,7 +90,7 @@ export function area_init(ar: Area) {
         lvlup(newobj, rand(temp.lvlmin - 1, temp.lvlmax - 1));
         //newobj.data.lasthp=newobj.hp;
         combat.currentMonster = newobj;
-        update_m();
+        updateMonsterDisplay();
         dom.d5_1_1m.update();
         if (!!dom.d7m) dom.d7m.update();
         //dom.d5m.update();
@@ -99,7 +99,7 @@ export function area_init(ar: Area) {
     }
   } else msg('nobody\'s here');
   if (!!dom.d7m) dom.d7m.update();
-  update_m();
+  updateMonsterDisplay();
   dom.d5_1_1m.update();
 }
 
@@ -153,6 +153,6 @@ export function smove(where: Area, gainExp?: boolean | number) {
     combat.currentMonster.eff = [];
     empty(dom.d101m);
     dom.d5_1_1m.update();
-    update_m();
+    updateMonsterDisplay();
   }
 }

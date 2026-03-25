@@ -19,13 +19,13 @@ import { save, load } from './systems/save-load';
 import { ontick } from './systems/loop';
 import { msg, _msg, msg_add } from './ui/messages';
 import { dscr, addDesc, descsinfo } from './ui/descriptions';
-import { update_db, update_d, update_m, m_update } from './ui/stats';
+import { updateStatDisplay, updateCombatDisplay, updateMonsterDisplay, updateWealthDisplay } from './ui/stats';
 import { giveEff, removeEff } from './ui/effects';
-import { equip, unequip, eqpres } from './ui/equipment';
+import { equip, unequip, resetEquipDisplay } from './ui/equipment';
 import { renderItem, updateInv, isort, rsort, invbtsrst, rstcrtthg, reduce } from './ui/inventory';
 import { chs, clr_chs, icon, Chs, activatef, deactivatef } from './ui/choices';
 import { renderRcp, refreshRcp, renderSkl, renderAct, refreshAct, activateAct, deactivateAct, renderFurniture, showFurniturePanel } from './ui/panels';
-import { recshop, rendershopitem, mf } from './ui/shop';
+import { recshop, rendershopitem, coinAnimation } from './ui/shop';
 import { formatw, cansee, kill, roll } from './game/utils-game';
 import { giveExp, giveSkExp, giveCrExp, giveTitle, giveRcp, lvlup, giveAction } from './game/progression';
 import { giveWealth, spend, restock } from './game/economy';
@@ -1724,8 +1724,8 @@ declare var InstallTrigger: any;
     dom.sl_kill.style.bottom = '1px';
     dom.sl_kill.addEventListener('click', () => { localStorage.clear(); msg('Save deleted', '') });
 
-    update_db()
-    update_d()
+    updateStatDisplay()
+    updateCombatDisplay()
 
     gameText.mtp = ['Human', 'Beast', 'Undead', 'Evil', 'Phantom', 'Dragon'];
 
@@ -1758,7 +1758,7 @@ declare var InstallTrigger: any;
     global.t_n = 0;
 
 
-    // mf — moved to ui/shop.ts
+    // coinAnimation — moved to ui/shop.ts
 
     document.body.addEventListener('keydown', function (e) {
       if (flags.kfocus !== true) {
@@ -2554,13 +2554,13 @@ declare var InstallTrigger: any;
       flags.inside = true;
       chs('<span style="color:limegreen">Head Hunter Yamato</span>: Here is what\'s available, take a look', true);
       if (quest.fwd1.data.done && quest.hnt1.data.done) {
-        if (!quest.lmfstkil1.data.started && !quest.lmfstkil1.data.done) {
+        if (!quest.lcoinAnimationstkil1.data.started && !quest.lcoinAnimationstkil1.data.done) {
           chs('"Monster eradication"', false).addEventListener('click', () => {
             if (you.lvl < 20 || !flags.trne4e1) { msg('<span style="color:limegreen">Head Hunter Yamato</span>: Don\'t even think about it, you will not be sent to your death. Go back and train, dojo has everything you need'); return }
-            if (!quest.lmfstkil1.data.started) {
+            if (!quest.lcoinAnimationstkil1.data.started) {
               chs('<span style="color:limegreen">Head Hunter Yamato</span>: What\'s this? Your aura has changed since we last met! All the martial training you went through certainly hasn\'t gone to waste, this kid is definitely isn\'t a pushover anymore, hah! If you have the guts to take on the next task, listen well - southern forest is becoming more and more dangerous, lethal beasts keep crawling in from the farther plains, making it very difficult to do any sort of work in the south. Looks like wolves this time. Some fear, at this rate, they might reach and assault the village, and that will have need to be dealth with. This is a dangerous issue, and you will have to have courage to take it on, but in turn it will serve you as great real battle experience. Other lads have already signed up, as well. Are you willing?', true, 'yellow', 0, 0, 0, '.9em');
               chs('"Accept"', false, 'lime').addEventListener('click', () => {
-                giveQst(quest.lmfstkil1);
+                giveQst(quest.lcoinAnimationstkil1);
                 flags.frst1u = true;
                 giveItem(item.bstr)
                 chs('<span style="color:limegreen">Head Hunter Yamato</span>: Hunt down all the wolves you find and return once you destroy at least 35 of them. You will also want this, every hunter should keep his personal notes close. And prepare medicinal bandages, just in case. Be careful, and good luck', true);
@@ -2573,8 +2573,8 @@ declare var InstallTrigger: any;
               });
             }
           });
-        } else if (quest.lmfstkil1.data.started) {
-          if (quest.lmfstkil1.data.mkilled < 35) {
+        } else if (quest.lcoinAnimationstkil1.data.started) {
+          if (quest.lcoinAnimationstkil1.data.mkilled < 35) {
             chs('<span style="color:limegreen">Head Hunter Yamato</span>: Having troubles with the task?', true);
             chs('"<= Return"', false).addEventListener('click', () => {
               smove(chss.frstn1b1, false);
@@ -2584,7 +2584,7 @@ declare var InstallTrigger: any;
           chs('"Report the sounds you heard"', false, 'lime').addEventListener('click', () => {
             chs('<span style="color:limegreen">Head Hunter Yamato</span>: That isn\'t good, sounds like trouble... Might have been the leader of the pack, furious about death of his underlings. This matter will need to be resolved quickly. As for you, go and have a good hard earned rest, you have done very well. Expect to be contacted later for further monster subjugation', true);
             chs('"Accept the reward"', false, 'lime').addEventListener('click', () => {
-              finishQst(quest.lmfstkil1);
+              finishQst(quest.lcoinAnimationstkil1);
               smove(chss.frstn1main);
             });
           });
@@ -2809,9 +2809,9 @@ declare var InstallTrigger: any;
         if (!stats.catCount) stats.catCount = 0;
       });
       if (!flags.mkplc1u) {
-        if (flags.dj1end === true && flags.pmfspmkm1 !== true && random() < .4) {
+        if (flags.dj1end === true && flags.pcoinAnimationspmkm1 !== true && random() < .4) {
           chs('Paper Boy: Hey, this is for you!', true);
-          chs('?', false).addEventListener('click', () => { giveItem(item.shppmf); smove(chss.lsmain1, false) });
+          chs('?', false).addEventListener('click', () => { giveItem(item.shppcoinAnimation); smove(chss.lsmain1, false) });
         }
       }
     }
@@ -3089,7 +3089,7 @@ declare var InstallTrigger: any;
         let itm = vendor.stvr1.stock[ost];
         dom.vndrs = chs(itm[0].name + ' <small style="color:rgb(255, 116, 63)">' + itm[2] + '●</small> x' + itm[1], false);
         dom.vndrs.addEventListener('click', function (this: any) {
-          if (you.wealth - itm[2] >= 0) { spend(itm[2]); mf(-itm[2], 1); m_update(); giveItem(itm[0]); stats.buyTotal++; if (--itm[1] === 0) { clr_chs(vendor.stvr1.stock.indexOf(itm) + 1); vendor.stvr1.stock.splice(vendor.stvr1.stock.indexOf(itm), 1); empty(global.dscr); global.dscr.style.display = 'none' } else this.innerHTML = itm[0].name + ' <small style="color:rgb(255, 116, 63)">' + itm[2] + '●</small> x' + itm[1]; } else { clearTimeout(timers.shopcant); dom.vndr1.innerHTML = 'Sorry you can\'t afford that!'; timers.shopcant = setTimeout(() => { dom.vndr1.innerHTML = hi }, 1000) }
+          if (you.wealth - itm[2] >= 0) { spend(itm[2]); coinAnimation(-itm[2], 1); updateWealthDisplay(); giveItem(itm[0]); stats.buyTotal++; if (--itm[1] === 0) { clr_chs(vendor.stvr1.stock.indexOf(itm) + 1); vendor.stvr1.stock.splice(vendor.stvr1.stock.indexOf(itm), 1); empty(global.dscr); global.dscr.style.display = 'none' } else this.innerHTML = itm[0].name + ' <small style="color:rgb(255, 116, 63)">' + itm[2] + '●</small> x' + itm[1]; } else { clearTimeout(timers.shopcant); dom.vndr1.innerHTML = 'Sorry you can\'t afford that!'; timers.shopcant = setTimeout(() => { dom.vndr1.innerHTML = hi }, 1000) }
         });
         addDesc(dom.vndrs, itm[0]);
       }
@@ -3116,7 +3116,7 @@ declare var InstallTrigger: any;
         let itm = vendor.kid1.stock[ost];
         dom.vndrs = chs(itm[0].name + ' <small style="color:rgb(255, 116, 63)">' + itm[2] + '●</small> x' + itm[1], false);
         dom.vndrs.addEventListener('click', function (this: any) {
-          if (you.wealth - itm[2] >= 0) { spend(itm[2]); mf(-itm[2], 1); m_update(); giveItem(itm[0]); stats.buyTotal++; if (--itm[1] === 0) { clr_chs(vendor.kid1.stock.indexOf(itm) + 1); vendor.kid1.stock.splice(vendor.kid1.stock.indexOf(itm), 1); empty(global.dscr); global.dscr.style.display = 'none' } else this.innerHTML = itm[0].name + ' <small style="color:rgb(255, 116, 63)">' + itm[2] + '●</small> x' + itm[1]; } else { clearTimeout(timers.shopcant); dom.vndr1.innerHTML = 'Bring money next time'; timers.shopcant = setTimeout(() => { dom.vndr1.innerHTML = hi }, 1000) }
+          if (you.wealth - itm[2] >= 0) { spend(itm[2]); coinAnimation(-itm[2], 1); updateWealthDisplay(); giveItem(itm[0]); stats.buyTotal++; if (--itm[1] === 0) { clr_chs(vendor.kid1.stock.indexOf(itm) + 1); vendor.kid1.stock.splice(vendor.kid1.stock.indexOf(itm), 1); empty(global.dscr); global.dscr.style.display = 'none' } else this.innerHTML = itm[0].name + ' <small style="color:rgb(255, 116, 63)">' + itm[2] + '●</small> x' + itm[1]; } else { clearTimeout(timers.shopcant); dom.vndr1.innerHTML = 'Bring money next time'; timers.shopcant = setTimeout(() => { dom.vndr1.innerHTML = hi }, 1000) }
         });
         addDesc(dom.vndrs, itm[0]);
       }
@@ -3676,14 +3676,14 @@ declare var InstallTrigger: any;
       if (findbyid(inv, item.coal2.id!)) its.push([findbyid(inv, item.coal2.id!), 'some charcoal', 300])
       if (findbyid(inv, wpn.stk1.id)) its.push([findbyid(inv, wpn.stk1.id), 'a stick', 15])
       if (!gameText.fplcextra) gameText.fplcextra = ['You\'ll need fire if you want to get some cooking done', 'You can warm up here if you light it up'];
-      if (!gameText.frplcfrextra) gameText.frplcfrextra = ["You notice the fire flickering slightly", "Tiny fire is warming up the room", "Comfy fire lights up the surroundings", "Bright flame is roaring inside the Fireplace"];
+      if (!gameText.frplcfrextra) gameText.frplcfrextra = ["You notice the fire flickering slightly", "Tiny fire is warming up the room", "CocoinAnimationy fire lights up the surroundings", "Bright flame is roaring inside the Fireplace"];
       let textra0;
       if (fire.data.fuel === 0) textra0 = '';
       else if (fire.data.fuel <= 60) textra0 = gameText.frplcfrextra[0]
       else if (fire.data.fuel >= 130 && fire.data.fuel <= 300) textra0 = gameText.frplcfrextra[1];
       else if (fire.data.fuel >= 300 && fire.data.fuel <= 540) textra0 = gameText.frplcfrextra[2];
       else if (fire.data.fuel >= 540) textra0 = gameText.frplcfrextra[3];
-      dom.frpls = chs('Comfy fireplace. ' + (select(gameText.fplcextra) + '<br>' + textra0), true);
+      dom.frpls = chs('CocoinAnimationy fireplace. ' + (select(gameText.fplcextra) + '<br>' + textra0), true);
       if (!flags.fplcgtwd) chs('"Retrieve spare firewood. You have a feeling you\'ll need it"', false).addEventListener('click', function (this: any) {
         msg("You have some lying around nearby", 'orange');
         flags.fplcgtwd = true;

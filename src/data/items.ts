@@ -15,7 +15,7 @@ import { giveEff, removeEff } from '../ui/effects';
 import { dscr } from '../ui/descriptions';
 import { chs, activatef } from '../ui/choices';
 import { reduce } from '../ui/inventory';
-import { update_d } from '../ui/stats';
+import { updateCombatDisplay } from '../ui/stats';
 import { ontick } from '../systems/loop';
 import { giveFurniture } from '../game/inventory';
 
@@ -235,7 +235,7 @@ item.amshrm = new Item({ id: 3014, name: 'Asura Mushroom', desc: 'The ultimate m
     msg('You feel the surge of strength!', 'crimson');
     msg('STR +5!', 'lime');
     player.stat_r();
-    update_d();
+    updateCombatDisplay();
     this.amount--;
   }
 });
@@ -408,7 +408,7 @@ item.stthbm1 = new Item({ id: 3031, name: 'Morgia', desc: 'Herb of might. This f
     msg('You feel the surge of strength!', 'crimson');
     msg('STR +1', 'lime');
     player.stat_r();
-    update_d();
+    updateCombatDisplay();
     this.amount--;
   }
 });
@@ -420,7 +420,7 @@ item.stthbm2 = new Item({ id: 3032, name: 'Springsweed', desc: 'Herb of swiftnes
     msg('You feel the surge of strength!', 'crimson');
     msg('SPD +1', 'lime');
     player.stat_r();
-    update_d();
+    updateCombatDisplay();
     this.amount--;
   }
 });
@@ -432,7 +432,7 @@ item.stthbm3 = new Item({ id: 3033, name: 'Clearbane', desc: 'Herb of clarity. T
     msg('You feel the surge of strength!', 'crimson');
     msg('INT +1', 'lime');
     player.stat_r();
-    update_d();
+    updateCombatDisplay();
     this.amount--;
   }
 });
@@ -444,7 +444,7 @@ item.stthbm4 = new Item({ id: 3034, name: 'Drakevine', desc: 'Herb of flexibilit
     msg('You feel the surge of strength!', 'crimson');
     msg('AGL +1', 'lime');
     player.stat_r();
-    update_d();
+    updateCombatDisplay();
     this.amount--;
   }
 });
