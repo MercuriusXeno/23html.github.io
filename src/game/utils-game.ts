@@ -18,6 +18,10 @@ import { giveItem } from './inventory';
 
     export function kill(obj: any): void { obj = null; }
 
+    export function handStr(): number {
+      return (5000 + (you.str * 800)) * (1 + you.lvl * .03) * (1 + skl.unc.lvl * .1 + skl.fgt.lvl * .08 + skl.tghs.lvl * .11) / 1000 << 0
+    }
+
     export function cansee(): boolean | undefined { if ((flags.isdark && you.mods.light > 0) || skl.ntst.lvl >= 12) return true }
 
     export function canRead(): boolean {

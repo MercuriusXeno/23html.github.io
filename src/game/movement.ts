@@ -111,6 +111,14 @@ function rfeff(what: Area) {
   dom.d_lctte.innerHTML = t;
 }
 
+export function d_loc(text: string) {
+  let txt;
+  if (flags.inside === true) txt = '|' + text + '|';
+  else txt = text
+  dom.d_lctt.innerHTML = txt;
+  combat.currentLocation.locn = text;
+}
+
 export function smove(where: Area, gainExp?: boolean | number) {
   flags.busy = false; flags.work = false; global.windowIndex = 0;
   if (flags.loadstate) return;
