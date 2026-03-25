@@ -10,6 +10,52 @@ import { removeItem, giveItem, listen_k,
 import { giveSkExp } from '../game/progression';
 import { renderRcp } from './panels';
 
+    function showConfirmDialog(message: string, onConfirm: () => void) {
+      let prm = addElement(document.body, 'div');
+      prm.style.backgroundColor = 'grey';
+      prm.style.width = document.body.clientWidth + 'px';
+      prm.style.height = document.body.clientHeight + 'px';
+      prm.style.position = 'absolute';
+      prm.style.left = '0';
+      prm.style.top = '0';
+      prm.style.opacity = '0.4';
+      let prm2 = addElement(document.body, 'div');
+      prm2.style.position = 'absolute';
+      prm2.style.top = (document.body.clientHeight / 2 - 40) + 'px';
+      prm2.style.left = (1300 / 2 - 195) + 'px';
+      prm2.style.width = '390px';
+      prm2.style.border = '4px black solid';
+      prm2.style.padding = '5px';
+      prm2.style.backgroundColor = 'lightgrey';
+      let pin = addElement(prm2, 'div');
+      pin.innerHTML = message;
+      pin.style.textAlign = 'center';
+      pin.style.width = '100%';
+      pin.style.borderBottom = '2px solid black';
+      pin.style.paddingTop = '10px';
+      let pcon = addElement(prm2, 'div');
+      pcon.style.display = 'flex';
+      pcon.style.textAlign = 'center';
+      pcon.style.backgroundColor = 'darkgrey';
+      let dismiss = () => { document.body.removeChild(prm); document.body.removeChild(prm2) };
+      let phai = addElement(pcon, 'div');
+      phai.style.width = '50%';
+      phai.innerHTML = 'YES';
+      phai.style.paddingTop = '9px';
+      phai.style.paddingBottom = '9px';
+      let piie = addElement(pcon, 'div');
+      piie.style.width = '50%';
+      piie.innerHTML = 'NO';
+      piie.style.paddingTop = '9px';
+      piie.style.paddingBottom = '9px';
+      phai.addEventListener('mouseenter', function (this: any) { this.style.backgroundColor = '#666' });
+      piie.addEventListener('mouseenter', function (this: any) { this.style.backgroundColor = '#666' });
+      phai.addEventListener('mouseleave', function (this: any) { this.style.backgroundColor = 'darkgrey' });
+      piie.addEventListener('mouseleave', function (this: any) { this.style.backgroundColor = 'darkgrey' });
+      phai.addEventListener('click', () => { onConfirm(); dismiss() });
+      piie.addEventListener('click', dismiss);
+    }
+
     export function renderItem(obj: any) {
       let inv_slot_c = addElement(dom.inv_con, 'div', null, 'no-outline');
       let inv_slot = addElement(inv_slot_c, 'div', null, 'inventory-slot no-outline');
@@ -40,50 +86,7 @@ import { renderRcp } from './panels';
           addDesc(dom.inv_del, null, 2, 'Throw away', 'Deletes <span style="color:cyan">\"' + obj.name + '\"</span> permanently');
           dom.inv_del.addEventListener('click', () => {
             if (obj.data.uid === you.eqp[obj.slot - 1].data.uid) {
-              let prm = addElement(document.body, 'div');
-              prm.style.backgroundColor = 'grey';
-              prm.style.width = document.body.clientWidth + 'px';
-              prm.style.height = document.body.clientHeight + 'px';
-              prm.style.position = 'absolute';
-              prm.style.left = '0';
-              prm.style.top = '0';
-              prm.style.opacity = '0.4';
-              let prm2 = addElement(document.body, 'div');
-              prm2.style.position = 'absolute';
-              prm2.style.top = (document.body.clientHeight / 2 - 40) + 'px';
-              prm2.style.left = (1300 / 2 - 195) + 'px';
-              prm2.style.width = '390px';
-              prm2.style.height = '80px';
-              prm2.style.border = '4px black solid';
-              prm2.style.padding = '5px';
-              prm2.style.backgroundColor = 'lightgrey';
-              let pin = addElement(prm2, 'div');
-              pin.style.height = '32px';
-              pin.innerHTML = 'Really destroy \"' + obj.name + '\"\?';
-              pin.style.textAlign = 'center';
-              pin.style.width = '100%';
-              pin.style.borderBottom = '2px solid black';
-              pin.style.paddingTop = '10px';
-              let pcon = addElement(prm2, 'div');
-              pcon.style.display = 'flex';
-              pcon.style.textAlign = 'center';
-              pcon.style.backgroundColor = 'darkgrey';
-              let phai = addElement(pcon, 'div');
-              phai.style.width = '50%';
-              phai.innerHTML = 'YES';
-              phai.style.paddingTop = '9px';
-              phai.style.paddingBottom = '9px';
-              let piie = addElement(pcon, 'div');
-              piie.style.width = '50%';
-              piie.innerHTML = 'NO';
-              piie.style.paddingTop = '9px';
-              piie.style.paddingBottom = '9px';
-              phai.addEventListener('mouseenter', function (this: any) { this.style.backgroundColor = '#666' });
-              piie.addEventListener('mouseenter', function (this: any) { this.style.backgroundColor = '#666' });
-              phai.addEventListener('mouseleave', function (this: any) { this.style.backgroundColor = 'darkgrey' });
-              piie.addEventListener('mouseleave', function (this: any) { this.style.backgroundColor = 'darkgrey' });
-              phai.addEventListener('click', () => { giveSkExp(skl.rccln, (2 ** obj.rar) * 5 - 9.5); giveSkExp(skl.thr, .5); stats.thrownTotal++; removeItem(obj); document.body.removeChild(prm); document.body.removeChild(prm2) });
-              piie.addEventListener('click', () => { document.body.removeChild(prm); document.body.removeChild(prm2) });
+              showConfirmDialog('Really destroy \"' + obj.name + '\"?', () => { giveSkExp(skl.rccln, (2 ** obj.rar) * 5 - 9.5); giveSkExp(skl.thr, .5); stats.thrownTotal++; removeItem(obj) });
             }
             else { giveSkExp(skl.rccln, (2 ** obj.rar) * 5 - 9.5); removeItem(obj); giveSkExp(skl.thr, .5); stats.thrownTotal++; empty(global.dscr); }
           }
@@ -119,50 +122,7 @@ import { renderRcp } from './panels';
           addDesc(dom.inv_dss, null, 2, 'Disassemble', 'Deconstruct <span style="color:cyan">\"' + obj.name + '\"</span> into:<br>' + t);
           dom.inv_dss.addEventListener('click', () => {
             if (obj.slot && obj.data.uid === you.eqp[obj.slot - 1].data.uid) {
-              let prm = addElement(document.body, 'div');
-              prm.style.backgroundColor = 'grey';
-              prm.style.width = document.body.clientWidth + 'px';
-              prm.style.height = document.body.clientHeight + 'px';
-              prm.style.position = 'absolute';
-              prm.style.left = '0';
-              prm.style.top = '0';
-              prm.style.opacity = '0.4';
-              let prm2 = addElement(document.body, 'div');
-              prm2.style.position = 'absolute';
-              prm2.style.top = (document.body.clientHeight / 2 - 40) + 'px';
-              prm2.style.left = (1300 / 2 - 195) + 'px';
-              prm2.style.width = '390px';
-              prm2.style.height = '90px';
-              prm2.style.border = '4px black solid';
-              prm2.style.padding = '5px';
-              prm2.style.backgroundColor = 'lightgrey';
-              let pin = addElement(prm2, 'div');
-              pin.style.height = '42px';
-              pin.innerHTML = 'You are currently wearing \"<span style="color:crimson">' + obj.name + '</span>\"<br>Really deconstruct?';
-              pin.style.textAlign = 'center';
-              pin.style.width = '100%';
-              pin.style.borderBottom = '2px solid black';
-              pin.style.paddingTop = '10px';
-              let pcon = addElement(prm2, 'div');
-              pcon.style.display = 'flex';
-              pcon.style.textAlign = 'center';
-              pcon.style.backgroundColor = 'darkgrey';
-              let phai = addElement(pcon, 'div');
-              phai.style.width = '50%';
-              phai.innerHTML = 'YES';
-              phai.style.paddingTop = '9px';
-              phai.style.paddingBottom = '9px';
-              let piie = addElement(pcon, 'div');
-              piie.style.width = '50%';
-              piie.innerHTML = 'NO';
-              piie.style.paddingTop = '9px';
-              piie.style.paddingBottom = '9px';
-              phai.addEventListener('mouseenter', function (this: any) { this.style.backgroundColor = '#666' });
-              piie.addEventListener('mouseenter', function (this: any) { this.style.backgroundColor = '#666' });
-              phai.addEventListener('mouseleave', function (this: any) { this.style.backgroundColor = 'darkgrey' });
-              piie.addEventListener('mouseleave', function (this: any) { this.style.backgroundColor = 'darkgrey' });
-              phai.addEventListener('click', () => { disassembleGeneric(obj); document.body.removeChild(prm); document.body.removeChild(prm2) });
-              piie.addEventListener('click', () => { document.body.removeChild(prm); document.body.removeChild(prm2) });
+              showConfirmDialog('You are currently wearing \"<span style="color:crimson">' + obj.name + '</span>\"<br>Really deconstruct?', () => { disassembleGeneric(obj) });
             }
             else disassembleGeneric(obj)
           }
