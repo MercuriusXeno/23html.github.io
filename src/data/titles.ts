@@ -1,136 +1,26 @@
 import { ttl, act } from '../state'
+import titleData from './titles.json'
 // ==========================================================================
 // Title constructor + instances
 // ==========================================================================
 
-let title_data = [
-  { id: 0, abbr: 'new', name: 'Nobody', desc: 'Unremarkable someone trying to find his purpose in life' },
-  { id: 1, abbr: 'inn', name: 'Initiate', desc: 'Dojo disciple who managed to finish the first training stages. Woo!' },
-  { id: 2, abbr: 'thr', name: 'Thrasher', desc: 'The one who destroyed dojo\'s precious equipment. Were you a bit older you\'d pay the expences, but you made your teacher proud.', rars: true },
-  { id: 3, abbr: 'wsl', name: 'Wolf Slayer', desc: 'You went alone against a pack of feral wolves. That amounts to something!' },
-  { id: 4, abbr: 'knf', name: 'Butterfly', desc: 'You always thought knives were cool. You aren\'t nearly precise with your knifework yet, But you will learn', rar: 2 },
-  { id: 5, abbr: 'bll', name: 'Bully', desc: 'You have graduated from being a mere Weakling. You feel powerful! You still find it difficult to stand your own in a fight', rar: 2 },
-  { id: 6, abbr: 'cvl', name: 'Civilian', desc: 'You\'re not very suitable for combat. But you think you\'re out of options' },
-  { id: 7, abbr: 'stk', name: 'Stick Kid', desc: 'You always liked swinging that thing around. You think you\'re beginning to understand how to land hits properly. Or not' },
-  { id: 8, abbr: 'fgt', name: 'Fighter', desc: 'You begin to start liking to fight! At the very least you can now somewhat defend yourself against mild threats and not just die in one hit', rar: 2 },
-  { id: 9, abbr: 'pbg', name: 'Weakling', desc: 'You can\'t really hit anything with these frail arms of yours' },
-  { id: 10, abbr: 'brw', name: 'Brawler', desc: 'You feel like you can pack a punch! And recieve one. You\'re starting to feel a bit more comfortable with your bare fists' },
-  { id: 11, abbr: 'stb', name: 'Stabber', desc: 'Even if it\'s a smaller tool compared to any other weapon, you\'ve learned how to make knives useful for self-defence, since they are somewhat easier to handle than the rest. You can hit vitals better too', rar: 3 },
-  { id: 12, abbr: 'slp1', name: 'Sleeper', desc: 'You really like sleeping don\'t you? You spend a lot of time in your bed' },
-  { id: 13, abbr: 'slp2', name: 'Heavy Sleeper', desc: 'You learned to sleep very soundly, without any care for the outside world. Your body begins to adapt and grow stronger with every break you take', rar: 2 },
-  { id: 14, abbr: 'slp3', name: 'Dreamwatcher', desc: '3', rar: 3 },
-  { id: 15, abbr: 'tcvl', name: 'Trained Civilian', desc: 'You\'re still nearly useless in a real fight, but you have learned to at least move out of the way of danger', rar: 2 },
-  { id: 16, abbr: 'plm', name: 'Prick', desc: 'You found it fun to make little holes in plant leaves and look through them at the Sun. You think this could be morbidly useful in a fight' },
-  { id: 17, abbr: 'wlk', name: 'Walker', desc: 'All this walking around feels very beneficial for your body', tdesc: 'Running consumes 5% less energy' },
-  { id: 18, abbr: 'eat1', name: 'Starving Child', desc: 'You\'ve been all skin and bones as long as you can remember. You will need to start eating properly if you wish to survive' },
-  { id: 19, abbr: 'eat2', name: 'Hungry Child', desc: 'You begin to gain some weight eating all this boring and dry food. But you\'re not complaining, at least you live', rar: 2 },
-  { id: 20, abbr: 'eat4', name: 'Satiated', desc: 'Being full is good, but you start to wonder what kinds of different dishes exist in the world', rar: 4 },
-  { id: 21, abbr: 'eat5', name: 'Mini-Gourmand', desc: 'You begin to understand the importance of tasty food! You crave the larger variety', rar: 5 },
-  { id: 22, abbr: 'cck', name: 'Campfire Cook', desc: 'Not something to brag about, but you won\'t completely starve to death if you find yourself in the wilds without a proper meal' },
-  { id: 23, abbr: 'rok', name: 'Rookie', rar: 3, desc: 'A novice fighter. You have a knack for martial arts but it doesn\'t amount to much yet' },
-  { id: 24, abbr: 'rnr', name: 'Runner', desc: 'Your body is in much better shape, so is your stamina. Moving around fast doesn\'t bother you as much anymore, but you spend your energy and get kind of hungry from it', rar: 3 },
-  { id: 25, abbr: 'jgg', name: 'Jogger', desc: 'Simply walking doesn\'t cut it anymore, maybe you should speed up a bit while travelling on foot?', tdesc: 'Running consumes 15% less energy', rar: 2 },
-  { id: 26, abbr: 'spn', name: 'Sprinter', desc: 's', rar: 4 },
-  { id: 27, abbr: 'ilt', name: 'Illiterate', desc: 'You have a really difficult time understanding even the basic writings. Even the signs outside the shops give you trouble' },
-  { id: 28, abbr: 'und', name: 'Uneducated', desc: 'You are not very friendly with books, your entire literature knowledge is nothing but simple kiddie stories and fairy tales', rar: 2 },
-  { id: 29, abbr: 'aaa', name: 'aaa', desc: 'They say that in the hands of a gosu with great inner ki, even a dead leaf can become a weapon that can pierce iron plates' },
-  { id: 30, abbr: 'eat3', name: 'Malnourished', desc: 'You are clearly undereating, yet, eating something other than bland untasty bread leaves you in a positive mood ', rar: 3 },
-  { id: 31, abbr: 'srd1', name: 'Aspiring Ronin', desc: 'Watching swordplay of elder swordmasters always fascinated you, yet even trying to hold the sword properly is apparently extremely difficult. You are not the type to give up though' },
-  { id: 32, abbr: 'srd2', name: 'Sword Trainee', desc: 'You have only just began learning the Way of the Sword, which clearly shows. You still find it hard to wield the sword properly, let alone attempting to hit something with it', rar: 2 },
-  { id: 33, abbr: 'srd3', name: 'Squire', desc: 'All those thousand swings training sessions weren\'t for nothing. Now you can hold your sword somewhat straight and your posture got better. Hovewer, slashing things didn\'t get any easier', rar: 3 },
-  { id: 34, abbr: 'srd4', name: 'Blade for Hire', desc: 'Your swordplay has reached the rank of a common foot soldier. Or so you thought. Maybe you can match a lowest level mercenary, which isn\'t something to be proud of. You are still ways away from calling yourself a proper swordsman', rar: 4 },
-  { id: 35, abbr: 'lnc1', name: 'Spearholder', desc: 'You have learned how the art of Spearmanship can be used for both offensive and defensive combat, which you think suits you pretty well. Hovewer, handling a spear with skill is much more difficult than you initially thought' },
-  { id: 36, abbr: 'lnc2', name: 'Village Militia', desc: 'Your reflexes wielding a polearm got slightly better, at the very least you aren\'t dropping your weapon after every second swing anymore. You could be considered a part of a peasant spear group with your measly skills', rar: 2 },
-  { id: 37, abbr: 'lnc3', name: 'Phlanger', desc: 'You\'re getting a hold of your primitive spearmanship, which is reasurring considering how much effort went into your training. You could be a part of the second-rate frontline military squad with your ability, but you will aim higher', rar: 3 },
-  { id: 38, abbr: 'hmr2', name: 'Basher', desc: 'Squashing things with a hammer or a club may seem simple, but it does require some skill to do so properly and effectively. You understand the basics but lack the strength for it, though', rar: 2 },
-  { id: 39, abbr: 'hmr3', name: 'Heavy Hand', desc: 'You favor strong blunt weaponry, which shows by how sturdy and hard your hands have become. This is good for your overall strength. You still lack any skill or technique, hovewer', rar: 3 },
-  { id: 40, abbr: 'kill1', name: 'Pest Control', desc: 'You have wiped out about 10000 creatures on your way. Most of them weren\'t living things though... right?' },
-  { id: 41, abbr: 'rspn1', name: 'Punching Bag', desc: 'Getting beat up like this hurts like hell. You better think of a way out of this misery!' },
-  { id: 42, abbr: 'rfpn1', name: 'Garbage Eater', desc: 'All the time you had to consume disgusting rotten stuff is finally paying off... Kind of. You would rather avoid doing that in the future, if possible' },
-  { id: 43, abbr: 'rfpn2', name: 'Iron Stomach', desc: 'Going through these desperate times of having such an unsafe diet, your stomach doesn\'t feel as awful anymore. You really shouldn\'t be doing that', tdesc: 'Allows you to roughly guess when perishable food rots (shift key)', rar: 2 },
-  { id: 44, abbr: 'rfpn3', name: 'Omnivore', desc: 'It seems like you can eat a lot of awful stuff and feel fine afterwards. Is that really worth it? You think it is. The taste doesn\'t get any better though...', rar: 3 },
-  { id: 45, abbr: 'tqtm', name: 'Quartermaster', desc: 'You have returned more than 300 pieces of dojo supplies. How much of that stuff do they have?', tdesc: 'Dummies may drop something special', rars: true },
-  { id: 46, abbr: 'ddw', name: 'Glass Bones', desc: 'Bizzarely, you got yourself knocked out by the weakest enemy in existence. How did that happen? You feel like you have achieved somewhat absurd understanding of how frail your body actually is. Perhaps violence isn\'t for you', rar: 0, rars: true },
-  { id: 47, abbr: 'neet', name: 'Hikikomori', desc: 'You have spent an entire year at your house without going out even once. You were somewhat productive in your seclusion, but the time spent didn\'t even feel like a year, however...', rars: true },
-  { id: 48, abbr: 'aptc', name: 'Apprentice', desc: 'You have succesfully completed the second part of dojo\'s training courses. You are impressed by your own achievements!', rar: 2 },
-  { id: 49, abbr: 'sld1', name: 'Wimp', desc: 'The fear of pain has forced you to begin taking cover behind whatever you take your hands on. Shields fall within this category nicely, you think you should try learning how to handle them properly' },
-  { id: 50, abbr: 'sld2', name: 'Defender', desc: 'Even if you\'re still full of openings and have a terrible time adjusting to the weight of a shield you\'re holding, you can still manage to reflect the slowest, stupidest and the most direct attack you\'re facing. Sometimes', rar: 2 },
-  { id: 51, abbr: 'sld3', name: 'Protector', desc: 'You understand better how shields work, and your reaction time against frontal attacks has improved as well. Your openings are still plentiful, but you manage to stay alive', rar: 3 },
-  { id: 52, abbr: 'sld4', name: 'Sentry', rar: 4 },
-  { id: 53, abbr: 'seye1', name: 'Bat Eyes', desc: 'Sometimes when you hit an enemy the certain way your attack feels somewhat stronger, you noticed. What\'s that about?' },
-  { id: 54, abbr: 'seye2', name: 'Suspicious Eyes', desc: 'You have confirmed it, bashing the enemy on the head makes your battles end slightly quicker. Is it only the head that does that?', rar: 2 },
-  { id: 55, abbr: 'pet1', name: 'Valley Cat', desc: 'Stray animals don\'t seem to be wary of you that much, for some reason. You are able to hug a random cat without it running away' },
-  { id: 56, abbr: 'pet2', name: 'Animal Friend', desc: 'Minor predators don\'t view you as a threat, which is good, but you don\'t want to bother them when they\'re hungry, though. You think you have a way to avoid the dangers of wild life, at least', rar: 2 },
-  { id: 57, abbr: 'dngs1', name: 'Wary', desc: 'Sometimes when you\'re hit it hurts much more then usual. You hate this, but why does that happen? You have to figure out how to avoid this' },
-  { id: 58, abbr: 'dngs2', name: 'Careful', desc: 'Avoiding hits to the vitals is much harder, as you found out. You must think of a way to take precautions to guarantee your own safety', rar: 2 },
-  { id: 59, abbr: 'rtr1', name: 'Coward', desc: 'You can\'t stomach the thought of getting seriously injured at all. Running away from danger is where it\'s at', rar: 1 },
-  { id: 60, abbr: 'ddcd', name: 'null', desc: 'null', rar: 0, rars: true },
-  { id: 61, abbr: 'neet2', name: 'Shut In', desc: 'Staying home for a year was nothing, this time you went half a decade staying put in your comfortable living space, caring not for the outside world. You are not sure how you feel about nobody ever checking on you..', rar: 2, rars: true },
-  { id: 62, abbr: 'neet3', name: 'Hermit', desc: 'Tenth of century at home, you did it. What were you even doing in there? Sleeping? Cultivating? It doesn\'t matter, you can proudly call yourself a hermit and stay forgotten until you decide to show yourself in light again', rar: 3, rars: true },
-  { id: 63, abbr: 'coo1', name: 'Kitchen Nightmare', desc: 'Either cooking is a very difficult art, or you\'re just very bad at it. Leaving you alone in the kitchen is a recipe for disaster. But you won\'t become good without making some mistakes first' },
-  { id: 64, abbr: 'kill2', name: 'Sweeper', desc: 'Eliminating 50000 creatures like it was nothing made you wonder whether this realm is filled with weaklings or it is you who are simply too strong to handle. It is probably the former', rar: 2 },
-  { id: 65, abbr: 'kill3', name: 'Bone Collector', desc: 'Hack and slash! 200000 foes have fallen under mighty arm! You\'re getting a little too comfortable on your path of destruction', rar: 3 },
-  { id: 66, abbr: 'kill4', name: 'Decamate', desc: 'Million down, billions to go...', rar: 4 },
-  { id: 67, abbr: 'kill5', name: 'Sentinel', desc: '5 million deaths! You managed to undo the population of the small city. That\'s quiet a feat given your low power level', rar: 5 },
-  { id: 68, abbr: 'axc1', name: 'Hack', desc: 'Axes are difficult to handle, you learned. This isn\'t simply chpping firewood on a log, you a need hard grip and proper hand flexibility to fight with them efficiently' },
-  { id: 69, abbr: 'axc2', name: 'Chopper', desc: 'You feel strong when using axes in battles! You only feel that way, you are not any strong with it yet. It is difficut for you to find the right balance to swing that thing' },
-  { id: 70, abbr: 'axc3', name: 'Axejack', rar: 3 },
-  { id: 71, abbr: 'dth1', name: 'Fallen', desc: 'Somehow you always escape life threatening situations even after being hit and bruised a lot, hovewer you still lose conciousness. Newbie\'s luck?' },
-  { id: 72, abbr: 'dth2', name: 'Decadent', desc: 'Often you manage to avoid death even after being heavily injured. Perhaps you have a very resilient body, or Heavens aren\'t willing to accept you yet', rar: 2 },
-  { id: 73, abbr: 'dth3', name: 'Cadaver', rar: 3 },
-  { id: 74, abbr: 'sld5', name: 'Bastion', rar: 5 },
-  { id: 75, abbr: 'seye3', name: 'Dissector', desc: 'By slaying foes as much as you did, you learned how to quickly notice your enemies\' weak points. This knowledge will allow you quickly and effectively dispose of those standing in your way', rar: 3 },
-  { id: 76, abbr: 'fmn1', name: 'Scrawny', desc: 'You feel terrible. You might want to eat something or you\'ll end up being nothing more than a skeleton' },
-  { id: 77, abbr: 'fmn2', name: 'Bag Of Bones', rar: 2, desc: 'Days of hunger took a toll on your body, yet made you learn to conserve your energy by other means, which shows. Just a bit' },
-  { id: 78, abbr: 'fmn3', name: 'Emaciated', desc: 'Yesterdays\'s weakness is today\'s strength. Or so you\'ve heard. You are not feeling as awful and weak by starving yourself, but there\'s still nothing to be proud of', rar: 3 },
-  { id: 79, abbr: 'shpt1', name: 'Third-Rate Shopper', desc: 'You left the shop with half a thousand goods total. It\'s a tiny amount if you think about it - food, cooking ingredients, household tools' },
-  { id: 80, abbr: 'shpt2', rar: 2 },
-  { id: 81, abbr: 'shpt3', rar: 3 },
-  { id: 82, abbr: 'mone1', name: 'Beggar', desc: 'Acquiring a whole 1 Gold coin worth of money is a lot for someone as pathetic you. You could survive with that amount for a year!' },
-  { id: 83, abbr: 'mone2', name: 'Peasant', rar: 2 },
-  { id: 84, abbr: 'mone3', rar: 3 },
-  { id: 85, abbr: 'geti1', name: 'Collector' },
-  { id: 86, abbr: 'geti2', name: 'Packmule', rar: 2 },
-  { id: 87, abbr: 'geti3', name: 'Hoarder', rar: 3 },
-  { id: 88, abbr: 'geti4', name: 'Treasure Hunter', rar: 4 },
-  { id: 89, abbr: 'tghs1', name: 'Scarred' },
-  { id: 90, abbr: 'tghs2', name: 'Thickskinned', rar: 2 },
-  { id: 91, abbr: 'tghs3', name: 'Brute', rar: 3 },
-  { id: 92, abbr: 'dth4', name: 'Carcass', rar: 4 },
-  { id: 93, abbr: 'ttsttl1', name: 'Unknown', desc: 'You barely took a single minor step into the world by gathering 10 titles. Nobody takes notice of you or your ambition, you are but a filler existence that doesn\'t amount to anything yet' },
-  { id: 94, abbr: 'ttsttl2', name: 'Nameless', desc: '25 titles would be something an average working man would aquire effortlessly by simply living his life. You shouldn\'t feel proud by only reaching this high', rar: 2 },
-  { id: 95, abbr: 'ttsttl3', name: 'Ordinary', desc: 'You\'re finally getting somewhere, having a basic set of skills and minor achievements. You could even be called reliable by some. But once again, you are feeling like a part of the mass', rar: 3 },
-  { id: 96, abbr: 'ttsttl4', name: 'Accomplished', desc: '100', rar: 4 },
-  { id: 97, abbr: 'hstr1', name: 'Pathetic', desc: 'Your weak punch can barely exert a power of 100kg, which is a measly amount in the martial world. A simple farmer can hit harder than this' },
-  { id: 98, abbr: 'hstr2', name: 'Softhitter', desc: 'You got somewhat stronger in reaching 250kg worth of punch power. You can manage some physical labor with that strength, but nothing noteworthy', rar: 2 },
-  { id: 99, abbr: 'hstr3', name: 'Jawbreaker', desc: 'Half ton punch isn\'t bad, you can successfully push a body a few meters back if you hit correctly in the right spot. This only applies to entities without strong physical protection, you are no match to anything with real strength', rar: 3 },
-  { id: 100, abbr: 'hstr4', name: 'Nameless', desc: '1000', rar: 4 },
-  { id: 101, abbr: 'cpet1', name: 'Cat Lover', desc: 'You really love that kitty', rar: 2 },
-  { id: 102, abbr: 'jbs1', name: 'Errand Boy' },
-  { id: 103, abbr: 'jbs2', name: 'Part-Timer', rar: 2 },
-  { id: 104, abbr: 'jbs3', name: 'Hired Hand', rar: 3 },
-  { id: 105, abbr: 'pet3', name: 'Wild Kid', desc: 'All that time you spent with your cat made you understand a whole lot about the habits and behaviour of vicious predators. You feel that knowledge might prove to be useful one day', rar: 3 },
-  { id: 106, abbr: 'ndthextr', name: 'Safehouse', desc: 'You kept yourself well and protected, avoiding danger and moving out of harm\'s way for quiet some time. Almost like any other person who fears for his life', rar: 0, rars: true },
-  { id: 107, abbr: 'indkill', name: 'Indirect Killer', rar: 2, rars: true }
-]
-
 class Title {
   constructor(
-    id: number,
-    name: string = '',
-    desc: string = '',
-    tdesc: string = '',
-    have = false,
-    tget = false,
-    rar = 1,
-    rars = false
+    public id: number,
+    public name: string = '',
+    public desc: string = '',
+    public tdesc: string = '',
+    public have = false,
+    public tget = false,
+    public rar = 1,
+    public rars = false
   ) { }
   onGet(_player: any) { }
 }
 
 function init_title_collection(title_data: any) {
   for (let title_spec of title_data) {
-    const { id, abbr, name = '', desc = '', tdesc = '', rar = 1, rars = false } = title_spec;
+    const { id, abbr, name, desc, tdesc, rar, rars } = title_spec;
     ttl[abbr] = new Title(id, name, desc, tdesc, rar, rars)
   }
 }
@@ -144,5 +34,5 @@ function add_title_custom_logic() {
   ttl.jgg.onGet = function (player: any) { if (act.demo.active) player.mods.sdrate -= .015 }
 }
 
-init_title_collection(title_data)
+init_title_collection(titleData)
 add_title_custom_logic()
