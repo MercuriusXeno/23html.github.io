@@ -1,15 +1,14 @@
 import type { Combatant } from '../types';
-import { you, callback, global, dom, timers, chss, setYou, data, flags, stats, combat, } from '../state';
+import { you, callback, global, timers, chss, setYou, data, flags, stats, combat, } from '../state';
 const { ttl, eqp, item, skl, creature, act, sector, area } = data;
 import { random } from '../random';
 import { smove } from '../game/movement';
 import { attack } from '../game/combat';
 import { giveItem } from '../game/inventory';
 import { giveSkExp, giveTitle } from '../game/progression';
-import { msg } from '../ui/messages';
 import { removeEff } from '../ui/effects';
 import { deactivateAct } from '../ui/panels';
-import { updateStatDisplay } from '../ui/stats';
+import { emit } from '../events';
 
 // ==========================================================================
 // Player Constructor
@@ -58,7 +57,7 @@ export function You(this: any) {
   this.skls = [];
   this.drop = [{ item: item.death_b, chance: 1 }];
   this.onDeath = function (this: any, killer: Combatant) {
-    if (you.res.death < 1 && random() >= you.res.death) { msg('You avoid death...', 'lightgrey'); you.hp = Math.ceil(you.hpmax * .1) } else {
+    if (you.res.death < 1 && random() >= you.res.death) { emit('msg', 'You avoid death...', 'lightgrey'); you.hp = Math.ceil(you.hpmax * .1) } else {
       callback.onDeath.fire(this, killer)
       this.alive = false;
       this.hp = 1;
@@ -68,7 +67,7 @@ export function You(this: any) {
       you.sat / you.satmax > .3 ? giveSkExp(skl.dth, killer.rnk * 10 + 1) : giveSkExp(skl.dth, killer.rnk + 1);
       if (this.sat > 0) this.sat *= (.55 * (1 - skl.dth.use()));
       giveItem(item.death_b);
-      dom.d5_1_1.update();
+      emit('hp:update');
       global.speedLevel = 0;
       stats.deathTotal++;
       for (let x in global.achchk[0]) global.achchk[0][x](killer);
@@ -81,10 +80,10 @@ export function You(this: any) {
       flags.btl = false;
       flags.civil = true;
       combat.currentZone.onDeath();
-      if (sector.home.data.smkp > 0) { smove(chss.lsmain1, false); msg('You ran out of your smoked up house', 'grey') } else smove(chss.hbed, false);
+      if (sector.home.data.smkp > 0) { smove(chss.lsmain1, false); emit('msg', 'You ran out of your smoked up house', 'grey') } else smove(chss.hbed, false);
       combat.currentZone = area.nwh;
-      dom.hit_c();
-      dom.d7m.update()
+      emit('hit:reset');
+      emit('monster:update');
     }
   }
   this.onDeathE = function () { }
@@ -112,6 +111,6 @@ export function You(this: any) {
     }
     for (let idx in this.eff) {
       if (this.eff[idx].type === 2) { this.eff[idx].un(you); this.eff[idx].use(you, this.eff[idx].y, this.eff[idx].z) };
-    } dom.d6.update(); updateStatDisplay(); if (you.hp > you.hpmax) you.hp = you.hpmax; dom.d5_1_1.update();
+    } emit('stats:recalc'); if (you.hp > you.hpmax) you.hp = you.hpmax; emit('hp:update');
   }
 }

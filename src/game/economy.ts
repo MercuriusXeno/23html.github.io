@@ -1,36 +1,30 @@
 import type { Vendor } from '../types';
 import { random, rand } from '../random';
 import { shuffle } from '../utils';
-import { appear } from '../dom-utils';
-import { dom, global, you, data, stats, } from '../state';
-const { skl, vendor } = data;
+import { global, you, data, stats, } from '../state';
+const { skl } = data;
 import { SILVER, GOLD } from '../constants';
-import { msg, msg_add } from '../ui/messages';
-import { updateWealthDisplay } from '../ui/stats';
 import { giveSkExp } from './progression';
-import { recshop } from '../ui/shop';
+import { emit } from '../events';
 
     export function giveWealth(val: number, showMessage?: boolean, extraWealth?: boolean): void {
       if (you.mods.wealthExtra !== 0 && extraWealth) val += 1;
       you.wealth += val;
       stats.moneyGained += val;
       for (let x in global.monchk) global.monchk[x]();
-      if (!stats.mndrgnu && you.wealth >= 100000000) { stats.mndrgnu = true; appear(dom.mn_1) }
-      updateWealthDisplay();
+      if (!stats.mndrgnu && you.wealth >= 100000000) { stats.mndrgnu = true; emit('achievement:unlocked', 'mn_1') }
+      emit('wealth:changed');
       giveSkExp(skl.gred, val * .01);
       if (showMessage !== false) {
-        msg('+', 'gold');
-        if (val >= GOLD) msg_add(' ●' + ((val / GOLD) << 0), 'rgb(255, 215, 0)');
-        if (val >= SILVER && val % GOLD >= SILVER) msg_add(' ●' + ((val / SILVER % SILVER) << 0), 'rgb(192, 192, 192)');
-        if (val < SILVER || (val > SILVER && val % SILVER > 0)) msg_add(' ●' + ((val % SILVER) << 0), 'rgb(255, 116, 63)');
-      } recshop();
+        emit('wealth:gained', val);
+      } emit('shop:refresh');
     }
 
     export function spend(amount: number): void {
       if (you.wealth < amount) return
       you.wealth -= amount;
       stats.moneySpent += amount;
-      updateWealthDisplay()
+      emit('wealth:changed');
     }
 
     export function restock(vnd: Vendor): void {

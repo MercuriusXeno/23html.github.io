@@ -54,12 +54,50 @@ import './data/crafting';
 import './data/vendors';
 import './data/actions';
 import './data/mastery';
+import { on } from './events';
 
 // Mark as ES module (prevents esbuild CommonJS shim overhead)
 export {};
 
 // Firefox detection global
 declare var InstallTrigger: any;
+
+    // ==========================================================================
+    // Event subscriptions — UI reacts to game logic events
+    // ==========================================================================
+    // economy
+    on('wealth:changed', () => updateWealthDisplay());
+    on('wealth:gained', (val: number) => {
+      msg('+', 'gold');
+      if (val >= GOLD) msg_add(' ●' + ((val / GOLD) << 0), 'rgb(255, 215, 0)');
+      if (val >= SILVER && val % GOLD >= SILVER) msg_add(' ●' + ((val / SILVER % SILVER) << 0), 'rgb(192, 192, 192)');
+      if (val < SILVER || (val > SILVER && val % SILVER > 0)) msg_add(' ●' + ((val % SILVER) << 0), 'rgb(255, 116, 63)');
+    });
+    on('achievement:unlocked', (_id: string) => appear(dom.mn_1));
+    on('shop:refresh', () => recshop());
+    // progression
+    on('msg', (text: string, color?: string, ref?: any, type?: number) => msg(text, color, ref, type));
+    on('msg:add', (text: string, color?: string) => msg_add(text, color));
+    on('stat:update', () => dom.d3.update());
+    on('exp:update', () => dom.d5_2_1.update());
+    on('combat:update', () => updateCombatDisplay());
+    on('tab:unlock', (label: string) => {
+      if (label === 'skills') dom.ct_bt2.innerHTML = label;
+      else if (label === 'assemble') dom.ct_bt1.innerHTML = label;
+      else if (label === 'actions') dom.ct_bt3.innerHTML = label;
+    });
+    on('recipe:sort', () => rsort(settings.recipeSortMode));
+    on('actions:refresh', () => { if (dom.acccon) { empty(dom.acccon); for (let a in acts) renderAct(acts[a]) } });
+    // player
+    on('hp:update', () => dom.d5_1_1.update());
+    on('hit:reset', () => dom.hit_c());
+    on('monster:update', () => dom.d7m.update());
+    on('stats:recalc', () => { dom.d6.update(); updateStatDisplay(); });
+    // loop
+    on('time:update', (html: string) => { dom.d_time.innerHTML = html });
+    on('moon:update', (lunar: string[]) => { empty(dom.d_moon); dom.d_moon.innerHTML = lunar[0]; addDesc(dom.d_moon, null, 2, 'Lunar Phase', lunar[1]) });
+    on('moon:visibility', (visible: boolean) => { dom.d_moon.style.display = visible ? '' : 'none' });
+    on('satiation:update', () => dom.d5_3_1.update());
 
     // ==========================================================================
     // Bootstrap

@@ -1,22 +1,20 @@
 import { DAY, WEEK } from '../constants';
 import { random } from '../random';
-import { empty } from '../dom-utils';
-import { dom, global, settings, you, time, timers, furn, plans, sectors, data, gameText, flags, stats, combat, } from '../state';
+import { global, settings, you, time, timers, furn, plans, sectors, data, gameText, flags, stats, combat, } from '../state';
 const { skl, vendor, effect, item } = data;
 import { wManager, getDay, timeDisp, getLunarPhase, getHour, getSeason, wdrseason } from './weather';
 import { runEffectors } from '../game/movement';
 import { giveSkExp } from '../game/progression';
 import { giveItem } from '../game/inventory';
 import { fght } from '../game/combat';
-import { msg } from '../ui/messages';
-import { addDesc } from '../ui/descriptions';
+import { emit } from '../events';
 
     export function ontick() {
       stats.tick++;
       time.minute += settings.timescale;
       wManager();
       for (let a in plans[0]) plans[0][a].f();
-      dom.d_time.innerHTML = '<small>' + getDay(flags.timeMode || 2) + '</small> ' + timeDisp(time);
+      emit('time:update', '<small>' + getDay(flags.timeMode || 2) + '</small> ' + timeDisp(time));
       //stats.seed1=(random()*7e+7<<7)%7&7
       combat.currentLocation.onStay(you);
       runEffectors(combat.currentLocation.effectors as any)
@@ -27,9 +25,7 @@ import { addDesc } from '../ui/descriptions';
         global.timehold = timeh; //proc when day passes
         for (let a in plans[1]) plans[1][a].f();
         for (let vnd in vendor) vendor[vnd].onDayPass();
-        empty(dom.d_moon);
-        dom.d_moon.innerHTML = gameText.lunarp[getLunarPhase()][0];
-        addDesc(dom.d_moon, null, 2, 'Lunar Phase', gameText.lunarp[getLunarPhase()][1])
+        emit('moon:update', gameText.lunarp[getLunarPhase()]);
         wdrseason(flags.seasonGaijin);
         if (getSeason() === 4) flags.iscold = true;
         else flags.iscold = false;
@@ -42,7 +38,7 @@ import { addDesc } from '../ui/descriptions';
         }
       }
       let h = getHour();
-      if (h > 5 && h < 22) { flags.isday = true; dom.d_moon.style.display = 'none' } else { if (flags.inside === false && random() < .00002 * you.mods.stardustParticleSpawn) { msg('A star particle landed on you!', 'gold', null, null, 'darkblue'); giveItem(item.stdst) } flags.isday = false; dom.d_moon.style.display = '' }
+      if (h > 5 && h < 22) { flags.isday = true; emit('moon:visibility', false) } else { if (flags.inside === false && random() < .00002 * you.mods.stardustParticleSpawn) { emit('msg', 'A star particle landed on you!', 'gold', null, null, 'darkblue'); giveItem(item.stdst) } flags.isday = false; emit('moon:visibility', true) }
       for (let g = 0; g < you.eff.length; g++) if (you.eff[g].type === 3 || you.eff[g].type === 5 || you.eff[g].type === 6) you.eff[g].use(you, you.eff[g].y, you.eff[g].z);
       for (let g = 0; g < combat.currentMonster.eff.length; g++) if (combat.currentMonster.eff[g].type === 3 || combat.currentMonster.eff[g].type === 5 || combat.currentMonster.eff[g].type === 6) combat.currentMonster.eff[g].use(you, combat.currentMonster.eff[g].y, combat.currentMonster.eff[g].z);
       // @ts-ignore fght() called immediately; setTimeout with void handler is intentional (no-op timer)
@@ -58,5 +54,5 @@ import { addDesc } from '../ui/descriptions';
       } else giveSkExp(skl.fmn, .1);
       if (flags.sleepmode) stats.timeSlept += settings.timescale;
       if (random() < .00000001) { let au = new Audio("laugh6.wav"); au.play() }
-      dom.d5_3_1.update();
+      emit('satiation:update');
     }

@@ -1,14 +1,10 @@
 import type { Action, Combatant, Recipe, Skill, Title } from '../types';
 import { randf, rand } from '../random';
 import { col, scanbyid } from '../utils';
-import { empty } from '../dom-utils';
-import { dom, global, settings, you, acts, data, flags, stats, } from '../state';
+import { global, settings, you, acts, data, flags, stats, } from '../state';
 const { skl: sklState, ttl } = data;
-import { msg, msg_add } from '../ui/messages';
-import { updateCombatDisplay } from '../ui/stats';
-import { rsort } from '../ui/inventory';
-import { renderAct } from '../ui/panels';
 import { formatw } from './utils-game';
+import { emit } from '../events';
 
     export function lvlup(combatant: Combatant, levels?: number) {
       if (levels === 0) {
@@ -34,23 +30,23 @@ import { formatw } from './utils-game';
         if (combatant.id !== you.id) combatant.hp = combatant.hpmax = combatant.hp_base;
         if (combatant.id != you.id) combatant.exp = combatant.exp * (1 + levels / 5) + 1 << 0;
         else {
-          dom.d3.update();
-          msg("Leveled Up " + you.lvl, 'orange');
-          msg('STR +' + Math.round(sb), 'darkturquoise');
-          msg_add(' | AGL +' + Math.round(sa), 'darkturquoise');
-          msg_add(' | INT +' + Math.round(si), 'darkturquoise');
-          msg_add(' | HP +' + hpp, 'darkturquoise');
+          emit('stat:update');
+          emit('msg', "Leveled Up " + you.lvl, 'orange');
+          emit('msg', 'STR +' + Math.round(sb), 'darkturquoise');
+          emit('msg:add', ' | AGL +' + Math.round(sa), 'darkturquoise');
+          emit('msg:add', ' | INT +' + Math.round(si), 'darkturquoise');
+          emit('msg:add', ' | HP +' + hpp, 'darkturquoise');
           you.expnext_t = you.expnext();
           if (you.eqp[0].id === 10000) { you.eqp[0].cls[2] = you.lvl / 4 << 0; you.eqp[0].aff[0] = you.lvl / 5 << 0; you.eqp[0].ctype = 2 }
           if (stats.deathTotal < 1 && you.lvl >= 20) giveTitle(ttl.ndthextr)
         }
-      } combatant.stat_r(); updateCombatDisplay();
+      } combatant.stat_r(); emit('combat:update');
     }
 
     export function giveExp(exp: number, raw?: boolean, gift?: boolean, battleShow?: boolean) {
       if (!raw) exp = Math.round((exp * you.exp_t * (0.4 + you.efficiency() * 0.6))) - (you.lvl - 1);
       exp = exp <= 0 ? 1 : exp;
-      if (!battleShow) { if (flags.monsterBattleHide === false) if (!gift) { msg('EXP: +' + formatw(exp), 'hotpink'); stats.expTotal += exp } } else { msg('EXP: +' + formatw(exp), 'hotpink'); stats.expTotal += exp }
+      if (!battleShow) { if (flags.monsterBattleHide === false) if (!gift) { emit('msg', 'EXP: +' + formatw(exp), 'hotpink'); stats.expTotal += exp } } else { emit('msg', 'EXP: +' + formatw(exp), 'hotpink'); stats.expTotal += exp }
       if (you.exp + exp < you.expnext_t) you.exp += exp;
       else {
         let extra = (you.exp + exp) - you.expnext_t;
@@ -58,7 +54,7 @@ import { formatw } from './utils-game';
         lvlup(you);
         giveExp(extra, true, true, false);
       }
-      dom.d5_2_1.update();
+      emit('exp:update');
     }
 
     export function giveSkExp(skl: Skill, exp: number, raw?: boolean) {
@@ -69,10 +65,10 @@ import { formatw } from './utils-game';
         skl.exp = 0;
         skl.lvl++;
         stats.skillLevelsGained++;
-        if (!scanbyid(you.skls, skl.id)) { you.skls.push(skl); msg('<span style="text-shadow:cyan 0px 0px 2px">New Skill Unlocked! <span style="text-shadow:red 0px 0px 2px;color:orange">"' + (!!skl.bname ? skl.bname : skl.name) + '"</span></span>', 'aqua', skl, 6); if (!flags.sklu) { dom.ct_bt2.innerHTML = 'skills'; flags.sklu = true } }
-        else { msg('Skill <span style="color:tomato">\'' + (!!skl.bname ? skl.bname : skl.name) + '\'</span> Leveled Up: ' + skl.lvl, 'deepskyblue', skl, 6); } skl.onLevel(you);
+        if (!scanbyid(you.skls, skl.id)) { you.skls.push(skl); emit('msg', '<span style="text-shadow:cyan 0px 0px 2px">New Skill Unlocked! <span style="text-shadow:red 0px 0px 2px;color:orange">"' + (!!skl.bname ? skl.bname : skl.name) + '"</span></span>', 'aqua', skl, 6); if (!flags.sklu) { emit('tab:unlock', 'skills'); flags.sklu = true } }
+        else { emit('msg', 'Skill <span style="color:tomato">\'' + (!!skl.bname ? skl.bname : skl.name) + '\'</span> Leveled Up: ' + skl.lvl, 'deepskyblue', skl, 6); } skl.onLevel(you);
         skl.expnext_t = skl.expnext();
-        if (!!skl.mlstn) for (let ss = 0; ss < skl.mlstn.length; ss++) if (skl.mlstn[ss].lv === skl.lvl && skl.mlstn[ss].g === false) { msg("NEW PERK UNLOCKED " + '<span style="color:tomato">("' + skl.name + '")<span style="color:orange">lvl: ' + skl.mlstn[ss].lv + '</span></span>', 'lime', { x: skl.name, y: 'Perk lvl ' + skl.mlstn[ss].lv + ': <span style="color:yellow">' + skl.mlstn[ss].p + '</span>' }, 7); skl.mlstn[ss].f(you); skl.mlstn[ss].g = true };
+        if (!!skl.mlstn) for (let ss = 0; ss < skl.mlstn.length; ss++) if (skl.mlstn[ss].lv === skl.lvl && skl.mlstn[ss].g === false) { emit('msg', "NEW PERK UNLOCKED " + '<span style="color:tomato">("' + skl.name + '")<span style="color:orange">lvl: ' + skl.mlstn[ss].lv + '</span></span>', 'lime', { x: skl.name, y: 'Perk lvl ' + skl.mlstn[ss].lv + ': <span style="color:yellow">' + skl.mlstn[ss].p + '</span>' }, 7); skl.mlstn[ss].f(you); skl.mlstn[ss].g = true };
         giveSkExp(skl, extra, false);
       } skl.onGive(you, exp);
     }
@@ -86,18 +82,18 @@ import { formatw } from './utils-game';
         if (!title.tget && title.talent) { title.talent(you); title.tget = true }
         title.onGet(you);
         for (let x in global.ttlschk) global.ttlschk[x]();
-        if (!silent) { msg('New Title Earned! ' + col('"' + title.name + '"', 'orange'), 'cyan', title, 5); dom.d3.update(); }
+        if (!silent) { emit('msg', 'New Title Earned! ' + col('"' + title.name + '"', 'orange'), 'cyan', title, 5); emit('stat:update'); }
       } else return;
     }
 
     export function giveRcp(rcp: Recipe) {
-      if (!flags.asbu) { flags.asbu = true; dom.ct_bt1.innerHTML = 'assemble' }
+      if (!flags.asbu) { flags.asbu = true; emit('tab:unlock', 'assemble') }
       if (rcp.have === false) {
         global.recipesDiscovered.push(rcp);
         rcp.have = true;
-        if (global.lastWindowOpen === 1) rsort(settings.recipeSortMode)
-        msg('New blueprint unlocked: ', 'cyan');
-        msg_add('"' + rcp.name + '"', 'orange');
+        if (global.lastWindowOpen === 1) emit('recipe:sort');
+        emit('msg', 'New blueprint unlocked: ', 'cyan');
+        emit('msg:add', '"' + rcp.name + '"', 'orange');
         return 1;
       } else return 0;
     }
@@ -108,10 +104,10 @@ import { formatw } from './utils-game';
 
     export function giveAction(action: Action) {
       if (action.have === false) {
-        if (!flags.actsu) { flags.actsu = true; dom.ct_bt3.innerHTML = 'actions' }
-        msg('You learned a new action: <span style="color:tomato">"' + action.name + '"</span>', 'lime', action, 9);
+        if (!flags.actsu) { flags.actsu = true; emit('tab:unlock', 'actions') }
+        emit('msg', 'You learned a new action: <span style="color:tomato">"' + action.name + '"</span>', 'lime', action, 9);
         action.have = true;
         acts.push(action);
-        if (acts.length >= 1 && dom.acccon) { empty(dom.acccon); for (let a in acts) renderAct(acts[a]) }
+        if (acts.length >= 1) emit('actions:refresh');
       }
     }
