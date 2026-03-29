@@ -6,7 +6,7 @@ import type { Recipe } from '../types';
 import { rand } from '../random';
 import { findworst } from '../utils';
 import { global, settings, inv } from '../state';
-import { isort } from '../ui/inventory';
+import { emit } from '../events';
 import { giveItem, removeItem } from './inventory';
 
 function evaluateSpecialRequirementsForRecipe(recipe: Recipe): (0 | 1 | 2)[] {
@@ -87,5 +87,5 @@ export function make(recipe: Recipe, preview?: boolean, times?: number): any {
       recipe.onmake();
     }
   }
-  isort(settings.sortMode);
+  emit('inventory:sort', settings.sortMode);
 }

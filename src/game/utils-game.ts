@@ -2,7 +2,7 @@ import type { Item, Equipment } from '../types';
 import { random, rand } from '../random';
 import { global, you, data, gameText, flags } from '../state';
 const { skl } = data;
-import { msg } from '../ui/messages';
+import { emit } from '../events';
 import { giveItem } from './inventory';
 
     export function roll(itm: Item | Equipment, chance: number, mi?: number, ma?: number): void {
@@ -25,11 +25,11 @@ import { giveItem } from './inventory';
     export function cansee(): boolean | undefined { if ((flags.isdark && you.mods.light > 0) || skl.ntst.lvl >= 12) return true }
 
     export function canRead(): boolean {
-      if (!flags.civil || flags.btl) { msg('It is too dangerous to read right now', 'red'); return false }
-      if (flags.rdng) { msg("You're already reading", 'orange'); return false }
-      if (flags.work) { msg("You have a job to do", 'orange'); return false }
-      if (flags.busy) { msg("You'll have to stop what you're doing first", 'orange'); return false }
-      if (flags.isshop) { msg("This isn't the library", 'orange'); return false }
-      if (flags.sleepmode) { msg("You can't read while sleeping", 'orange'); return false }
+      if (!flags.civil || flags.btl) { emit('msg', 'It is too dangerous to read right now', 'red'); return false }
+      if (flags.rdng) { emit('msg', "You're already reading", 'orange'); return false }
+      if (flags.work) { emit('msg', "You have a job to do", 'orange'); return false }
+      if (flags.busy) { emit('msg', "You'll have to stop what you're doing first", 'orange'); return false }
+      if (flags.isshop) { emit('msg', "This isn't the library", 'orange'); return false }
+      if (flags.sleepmode) { emit('msg', "You can't read while sleeping", 'orange'); return false }
       return true;
     }

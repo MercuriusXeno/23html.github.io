@@ -98,6 +98,29 @@ declare var InstallTrigger: any;
     on('moon:update', (lunar: string[]) => { empty(dom.d_moon); dom.d_moon.innerHTML = lunar[0]; addDesc(dom.d_moon, null, 2, 'Lunar Phase', lunar[1]) });
     on('moon:visibility', (visible: boolean) => { dom.d_moon.style.display = visible ? '' : 'none' });
     on('satiation:update', () => dom.d5_3_1.update());
+    // movement
+    on('monster:effects:clear', () => empty(dom.d101m));
+    on('monster:display', () => { updateMonsterDisplay(); dom.d5_1_1m.update(); if (!!dom.d7m) dom.d7m.update() });
+    on('location:effectors', (html: string) => { dom.d_lctte.innerHTML = html });
+    on('location:name', (txt: string) => { dom.d_lctt.innerHTML = txt });
+    on('choices:clear', () => clr_chs());
+    on('action:tab:reset', () => { dom.ct_bt3.style.backgroundColor = 'inherit' });
+    // combat
+    on('combat:crit:display', (html: string) => { dom.d8_2.innerHTML = html });
+    on('combat:shake', () => {
+      dom.d1m.style.left = parseInt(global.special_x) + rand(-3, 3) + 'px';
+      dom.d1m.style.top = parseInt(global.special_y) + rand(-3, 3) + 'px';
+      setTimeout(() => { dom.d1m.style.left = parseInt(global.special_x) + 'px'; dom.d1m.style.top = parseInt(global.special_y) + 'px'; }, 60);
+    });
+    // inventory
+    on('inventory:render', (obj: any) => renderItem(obj));
+    on('inventory:update', (idx: number) => updateInv(idx));
+    on('inventory:sort', (mode: number) => isort(mode));
+    on('equipment:unequip', (obj: any) => unequip(obj));
+    on('furniture:refresh', () => { empty(dom.ch_1h); for (let a in furn) renderFurniture(furn[a]) });
+    on('furniture:value', (v: number) => { if (dom.flsthdrbb) dom.flsthdrbb.innerHTML = v as any });
+    // exploration
+    on('action:deactivate', (act: any) => deactivateAct(act));
 
     // ==========================================================================
     // Bootstrap

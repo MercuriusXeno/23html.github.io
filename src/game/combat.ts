@@ -2,11 +2,10 @@ import type { Combatant, Creature, Ability } from '../types';
 import { random, rand, randf } from '../random';
 import { select } from '../utils';
 import { addElement } from '../dom-utils';
-import { dom, global, settings, you, timers, time, data, flags, stats, combat, } from '../state';
+import { global, settings, you, timers, time, data, flags, stats, combat } from '../state';
 const { abl, skl, effect, creature } = data;
-import { msg, msg_add } from '../ui/messages';
-import { updateCombatDisplay } from '../ui/stats';
 import { giveSkExp } from './progression';
+import { emit } from '../events';
 import { giveItem } from './inventory';
 import { cansee, formatw } from './utils-game';
 
@@ -24,9 +23,9 @@ function allbuff(who: Combatant) {
 
 export function fght(att: Combatant, def: Combatant) {
   /*if(flags.btlinterrupt===true){
-    msg('battle interrupted');
+    emit('msg', 'battle interrupted');
     if(combat.currentZone.size>0) {area_init(combat.currentZone);combat.currentZone.size--;}else if(combat.currentZone.size===-1)area_init(combat.currentZone);
-    else {msg('Area cleared','orange');combat.currentZone.onEnd();flags.civil=true;flags.btl=false;};
+    else {emit('msg', 'Area cleared','orange');combat.currentZone.onEnd();flags.civil=true;flags.btl=false;};
     dom.d7m.update();
     flags.btlinterrupt=false;
     return;
@@ -66,7 +65,7 @@ export function fght(att: Combatant, def: Combatant) {
         else
           printMultihitMessage(hts, inn.name, acc_dmg, !isyouinn);
       }
-      else if (flags.monsterBattleHide === false) msg(inn.name + ' missed', 'grey');
+      else if (flags.monsterBattleHide === false) emit('msg', inn.name + ' missed', 'grey');
       if (sc.hp <= 0 && sc.alive === true) { combat.attackDamageFromYou = [3, combat.attackDamageFromYouDamageType]; sc.onDeath(inn); sc.onDeathE(inn); }
       global.speedLevel = global.speedLevel % sc.spd;
     } else {
@@ -133,17 +132,16 @@ export function attack(att: Combatant, def: Combatant, atk?: Ability, power?: nu
     } else {
       if (you.eqp[1].id !== 10000 && !you.eqp[0].twoh) giveSkExp(skl.shdc, .2);
       you.stat_r();
-      if (you.mods.dodgeModifier !== 0) if (random() < you.mods.dodgeModifier) { global.miss++; if (flags.monsterBattleHide === false && (!flags.multih && flags.monsterBattleHide === false)) msg(att.name + ' missed', 'grey'); flags.missed = true; giveSkExp(skl.evas, .5); return 0 }
+      if (you.mods.dodgeModifier !== 0) if (random() < you.mods.dodgeModifier) { global.miss++; if (flags.monsterBattleHide === false && (!flags.multih && flags.monsterBattleHide === false)) emit('msg', att.name + ' missed', 'grey'); flags.missed = true; giveSkExp(skl.evas, .5); return 0 }
     }
     dmg = Math.round(atk.f(att, def, power));
     def.hp -= dmg;
     flags.missed = false;
     if (flags.monsterBattleHide === false && (!flags.multih && flags.monsterBattleHide === false)) printHitMessage(att.name, dmg, att.id === you.id ? false : true);
     if (isyou === true) {
-      dom.d8_2.innerHTML = 'Critical chance: ' + (Math.round(you.mods.critChanceFlat * 1000 + ((you.critChance * (2 - (you.sat / you.satmax + you.mods.satiationBonus) * 2) + you.critChance) * (you.luck / 25 + 1) + skl.seye.use()) * 1000) / 10) + '%'; if (you.eqp[0].id != 10000) you.eqp[0].dp > 0 ? you.eqp[0].dp -= .008 : you.eqp[0].dp = 0; stats.damageDealtTotal += dmg;
+      emit('combat:crit:display', 'Critical chance: ' + (Math.round(you.mods.critChanceFlat * 1000 + ((you.critChance * (2 - (you.sat / you.satmax + you.mods.satiationBonus) * 2) + you.critChance) * (you.luck / 25 + 1) + skl.seye.use()) * 1000) / 10) + '%'); if (you.eqp[0].id != 10000) you.eqp[0].dp > 0 ? you.eqp[0].dp -= .008 : you.eqp[0].dp = 0; stats.damageDealtTotal += dmg;
       if (flags.effectShake === true) {
-        dom.d1m.style.left = parseInt(global.special_x) + rand(-3, 3) + 'px'; dom.d1m.style.top = parseInt(global.special_y) + rand(-3, 3) + 'px';
-        setTimeout(() => { dom.d1m.style.left = parseInt(global.special_x) + 'px'; dom.d1m.style.top = parseInt(global.special_y) + 'px'; }, 60);
+        emit('combat:shake');
       }
     }
     else { if (global.target.id !== 10000) global.target.dp > 0 ? global.target.dp -= .008 : global.target.dp = 0; if (you.eqp[1].id !== 10000) you.eqp[1].dp > 0 ? you.eqp[1].dp -= .008 : you.eqp[1].dp = 0; if (dmg > 0) giveSkExp(skl.painr, 1); if (global.target.id === 10000 && dmg > 0) giveSkExp(skl.tghs, dmg * .05); stats.damageReceivedTotal += dmg }
@@ -151,11 +149,11 @@ export function attack(att: Combatant, def: Combatant, atk?: Ability, power?: nu
     global.miss++;
     stats.missesTotal++;
     ;
-    if (flags.monsterBattleHide === false && (!flags.multih && flags.monsterBattleHide === false)) msg(att.name + ' missed', 'grey');
+    if (flags.monsterBattleHide === false && (!flags.multih && flags.monsterBattleHide === false)) emit('msg', att.name + ' missed', 'grey');
     flags.missed = true;
     if (dk) giveSkExp(skl.ntst, .01);
     if (!isyou) stats.dodgesTotal++;
-  } updateCombatDisplay();
+  } emit('combat:update');
   if (!flags.multih) { if (isyou && dmg >= def.hpmax) stats.oneShotKills++; if (def.hp <= 0 && def.alive === true) { combat.attackDamageFromYou = [3, combat.attackDamageFromYouDamageType]; def.onDeath(att); def.onDeathE(att); } }
   return dmg || 0;
 }
@@ -174,15 +172,14 @@ export function tattack(pow: number, type: number, e: number) {
   if (rand(100) < hit) {
     dmg = Math.round(((1 + you.str_base * .05) * (you.efficiency() + 1) * pow * (ddat.a + 1)) / 2);
     stats.damageDealtTotal += dmg;
-    if (!flags.monsterBattleHide) msg('You hit ' + combat.currentMonster.name + ' for <span style="color:hotpink">' + dmg + '</span> damage', 'yellow');
+    if (!flags.monsterBattleHide) emit('msg', 'You hit ' + combat.currentMonster.name + ' for <span style="color:hotpink">' + dmg + '</span> damage', 'yellow');
     combat.currentMonster.hp -= dmg;
-    if (m.hp <= 0 && m.alive === true) { m.onDeath(you); m.onDeathE(); } dom.d5_1_1m.update();
+    if (m.hp <= 0 && m.alive === true) { m.onDeath(you); m.onDeathE(); } emit('monster:display');
     if (flags.effectShake === true) {
-      dom.d1m.style.left = parseInt(global.special_x) + rand(-3, 3) + 'px'; dom.d1m.style.top = parseInt(global.special_y) + rand(-3, 3) + 'px';
-      setTimeout(() => { dom.d1m.style.left = parseInt(global.special_x) + 'px'; dom.d1m.style.top = parseInt(global.special_y) + 'px'; }, 60);
+      emit('combat:shake');
     }
   } else {
-    if (flags.monsterBattleHide === false) msg(you.name + ' missed', 'grey');
+    if (flags.monsterBattleHide === false) emit('msg', you.name + ' missed', 'grey');
   }
 }
 
@@ -246,9 +243,7 @@ export function dmg_calc(att: Combatant, def: Combatant, atk: Ability) {
     let cpw = 1; let dmod = 1; let cbst = 1;
     if (isyou === true) {
       giveSkExp(skl.seye, 1); cpw = you.mods.critPower; cbst = 1 + skl.war.use();
-      dom.d1m.style.left = parseInt(global.special_x) + rand(-3, 3) + 'px';
-      dom.d1m.style.top = parseInt(global.special_y) + rand(-3, 3) + 'px';
-      setTimeout(() => { dom.d1m.style.left = parseInt(global.special_x) + 'px'; dom.d1m.style.top = parseInt(global.special_y) + 'px'; }, 60);
+      emit('combat:shake');
     } else {
       giveSkExp(skl.dngs, 1);
       let sk = skl.dngs.use();
@@ -386,21 +381,21 @@ function usePlayerWeaponSkill() {
 
 function printBodyPartHit(partNumber: number) {
   switch (partNumber) {
-    case 2: msg_add(' (head)', 'orange');
+    case 2: emit('msg:add', ' (head)', 'orange');
       break;
-    case 3: msg_add(' (body)', 'orange');
+    case 3: emit('msg:add', ' (body)', 'orange');
       break;
-    case 4: msg_add(' (L hand)', 'orange');
+    case 4: emit('msg:add', ' (L hand)', 'orange');
       break;
-    case 5: msg_add(' (R hand)', 'orange');
+    case 5: emit('msg:add', ' (R hand)', 'orange');
       break;
-    case 6: msg_add(' (legs)', 'orange');
+    case 6: emit('msg:add', ' (legs)', 'orange');
       break;
   }
 }
 
 function printCritIfCrit() {
-  if (flags.criticalHit) { msg_add(' CRIT! ', 'yellow'); flags.criticalHit = false }
+  if (flags.criticalHit) { emit('msg:add', ' CRIT! ', 'yellow'); flags.criticalHit = false }
 }
 
 function printDamageNumber(ddmg: number) {
@@ -427,17 +422,17 @@ function printDamageNumber(ddmg: number) {
       break;
   }
   if (ddmg > 9999) formatw(ddmg as any);
-  msg_add(ddmg as any, col, bcol, shd);
+  emit('msg:add', ddmg as any, col, bcol, shd);
 }
 
 function printHitMessage(attackerName: string, ddmg: number, targetsPlayer: boolean) {
-  if (global.mabl.id === 0) msg(attackerName + (targetsPlayer === true ? global.mabl.atrg : global.mabl.btrg));
-  else msg((targetsPlayer === true ? attackerName : '') + (targetsPlayer === true ? global.mabl.atrg : ('You ' + global.mabl.btrg)));
+  if (global.mabl.id === 0) emit('msg', attackerName + (targetsPlayer === true ? global.mabl.atrg : global.mabl.btrg));
+  else emit('msg', (targetsPlayer === true ? attackerName : '') + (targetsPlayer === true ? global.mabl.atrg : ('You ' + global.mabl.btrg)));
   printHitMessageResult(ddmg, targetsPlayer);
 }
 
 function printMultihitMessage(times: number, attackerName: string, acc_dmg: number, targetsPlayer: boolean) {
-  msg(attackerName + ' -> x' + (times - global.miss) + '(<span style="color:lightgrey">' + times + '</span>) for ');
+  emit('msg', attackerName + ' -> x' + (times - global.miss) + '(<span style="color:lightgrey">' + times + '</span>) for ');
   printHitMessageResult(acc_dmg, targetsPlayer);
   if (time - global.miss > 0) printBodyPartHit(global.target_g)
 }

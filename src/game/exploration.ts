@@ -4,11 +4,9 @@
 
 import { random } from '../random';
 import { select } from '../utils';
-import { dom, global, settings, you, inv, data, flags, stats, combat, } from '../state';
+import { global, settings, you, inv, data, flags, stats, combat } from '../state';
 const { skl, act } = data;
-import { msg } from '../ui/messages';
-import { updateInv } from '../ui/inventory';
-import { deactivateAct } from '../ui/panels';
+import { emit } from '../events';
 import { giveSkExp } from './progression';
 import { giveItem, removeItem } from './inventory';
 import { cansee } from './utils-game';
@@ -21,7 +19,7 @@ export function canScout(what: any): number {
 }
 
 export function scoutGeneric(chs: any): void {
-  if (flags.isdark && !cansee()) return msg('You can\'t see anything', 'grey')
+  if (flags.isdark && !cansee()) return emit('msg', 'You can\'t see anything', 'grey')
   let sct = select(chs.scout);
   let idx = chs.scout.indexOf(sct);
   giveSkExp(skl.scout, .3);
@@ -31,7 +29,7 @@ export function scoutGeneric(chs: any): void {
   if ((!sct.cond || sct.cond() === true) && !chs.data.gets[idx] && random() <= sct.c * m * (1 + skl.scout.lvl * .15) * (1 + chs.data.gotmod * .2)) { stats.discoveryTotal++; chs.data.gotmod++; sct.f(); giveSkExp(skl.scout, (sct.exp ? sct.exp : .5 / sct.c)) }
   let t = 2;
   for (let a in combat.currentLocation.sector) { let m = canScout(combat.currentLocation.sector![a as any]); if (m === 1) t = m }
-  if (canScout(combat.currentLocation) >= 2 && t >= 2) { deactivateAct(act.scout); msg('There doesn\'t seem to be anything of interest left in this area') }
+  if (canScout(combat.currentLocation) >= 2 && t >= 2) { emit('action:deactivate', act.scout); emit('msg', 'There doesn\'t seem to be anything of interest left in this area') }
 }
 
 export function disassembleGeneric(obj: any): void {
@@ -45,5 +43,5 @@ export function disassembleGeneric(obj: any): void {
     giveItem(obj.dss[a].item, am)
   } giveSkExp(skl.dssmb, (2 ** obj.rar || 1) * 5 - 9.5); stats.disassembleTotal++;
   if (obj.slot) removeItem(obj);
-  else { obj.amount--; if (obj.amount <= 0) removeItem(obj); else if (obj.stype === settings.sortMode) updateInv(global.slottedInventory.indexOf(obj)); else if (settings.sortMode === 1) updateInv(inv.indexOf(obj)) }
+  else { obj.amount--; if (obj.amount <= 0) removeItem(obj); else if (obj.stype === settings.sortMode) emit('inventory:update', global.slottedInventory.indexOf(obj)); else if (settings.sortMode === 1) emit('inventory:update', inv.indexOf(obj)) }
 }

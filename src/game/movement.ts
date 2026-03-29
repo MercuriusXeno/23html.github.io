@@ -5,14 +5,11 @@
 import type { Area, Sector, Creature } from '../types';
 import { random, rand } from '../random';
 import { copy, scanbyid } from '../utils';
-import { empty } from '../dom-utils';
-import { dom, global, you, sectors, effector, data, flags, stats, combat, } from '../state';
+import { global, you, sectors, effector, data, flags, stats, combat, } from '../state';
 const { creature, area, effect, act, skl } = data;
-import { msg } from '../ui/messages';
-import { clr_chs } from '../ui/choices';
-import { updateMonsterDisplay } from '../ui/stats';
 import { giveEff } from '../ui/effects';
 import { giveSkExp, lvlup } from './progression';
+import { emit } from '../events';
 
 export function Effector(this: any) {
   this.id = 0;
@@ -66,7 +63,7 @@ export function addtosector(sec: Sector, loc: Area) {
 function mon_gen(crt: Creature) {
   crt.eff = [];
   global.enemyEffects = [];
-  empty(dom.d101m);
+  emit('monster:effects:clear');
   let newobj = copy(crt);
   newobj.drop = crt.drop;
   if (!flags.inside) {
@@ -90,17 +87,13 @@ export function area_init(ar: Area) {
         lvlup(newobj, rand(temp.lvlmin - 1, temp.lvlmax - 1));
         //newobj.data.lasthp=newobj.hp;
         combat.currentMonster = newobj;
-        updateMonsterDisplay();
-        dom.d5_1_1m.update();
-        if (!!dom.d7m) dom.d7m.update();
+        emit('monster:display');
         //dom.d5m.update();
         return newobj;
       } else (area_init(ar));
     }
-  } else msg('nobody\'s here');
-  if (!!dom.d7m) dom.d7m.update();
-  updateMonsterDisplay();
-  dom.d5_1_1m.update();
+  } else emit('msg', 'nobody\'s here');
+  emit('monster:display');
 }
 
 function rfeff(what: Area) {
@@ -108,14 +101,14 @@ function rfeff(what: Area) {
   for (let a in what.sector) if ((what.sector as any)[a].effectors)
     for (let b in (what.sector as any)[a].effectors) t += '<span style="color:' + (what.sector as any)[a].effectors[b].e.c + ';font-size:1.2em">&nbsp' + (what.sector as any)[a].effectors[b].e.x + '<span>';
   if (what.effectors) for (let a in what.effectors) t += '<span style="color:' + what.effectors[a].e.c + ';font-size:1.2em">&nbsp' + what.effectors[a].e.x + '<span>';
-  dom.d_lctte.innerHTML = t;
+  emit('location:effectors', t);
 }
 
 export function d_loc(text: string) {
   let txt;
   if (flags.inside === true) txt = '|' + text + '|';
   else txt = text
-  dom.d_lctt.innerHTML = txt;
+  emit('location:name', txt);
   combat.currentLocation.locn = text;
 }
 
@@ -141,26 +134,25 @@ export function smove(where: Area, gainExp?: boolean | number) {
   flags.civil = true;
   flags.btl = false;
   combat.currentZone = area.nwh;
-  dom.d7m.update();
+  emit('monster:update');
   stats.sectorMoveTotal++
   flags.inside = false;
   for (let a in where.sector) { if ((where.sector as any)[a].inside || where.inside) flags.inside = true }
-  clr_chs();
+  emit('choices:clear');
   activateEffectors(where.effectors as any);
   where.sl!();
   combat.currentLocation = where;
   for (let a in sectors) sectors[a].onMove();
   global.current_a.deactivate();
   global.current_a = act.default;
-  dom.ct_bt3.style.backgroundColor = 'inherit';
+  emit('action:tab:reset');
   for (let a in combat.currentLocation.sector) if (!scanbyid(sectors, (combat.currentLocation.sector as any)[a].id)) { sectors.push((combat.currentLocation.sector as any)[a]); (combat.currentLocation.sector as any)[a].onEnter(); activateEffectors((combat.currentLocation.sector as any)[a].effectors) }
   combat.currentLocation.onEnter!();
   rfeff(combat.currentLocation)
   if (flags.btl === false) {
     combat.currentMonster = creature.default;
     combat.currentMonster.eff = [];
-    empty(dom.d101m);
-    dom.d5_1_1m.update();
-    updateMonsterDisplay();
+    emit('monster:effects:clear');
+    emit('monster:display');
   }
 }
