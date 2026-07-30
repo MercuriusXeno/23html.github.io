@@ -2,7 +2,7 @@
 
 ## Analysis of `styles.css`
 
-The current stylesheet has ~70 rules across 1,025 lines. While functional, it contains
+The current stylesheet, while functional, contains
 significant repetition that can be consolidated using CSS custom properties (design tokens)
 and semantic component classes.
 

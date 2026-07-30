@@ -1,6 +1,6 @@
 # CSS Class Name Mapping
 
-## Status: Phase 1.1 — Extraction Complete, Rename Pending
+## Status: Extraction Complete, Rename Pending
 
 This document maps original cryptic CSS class names to semantic names.
 The rename will be applied in a follow-up step using a script to ensure safety.
