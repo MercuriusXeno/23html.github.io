@@ -4,14 +4,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**Proto23** is a browser-based text RPG game, deployed as a GitHub Pages site (`23html.github.io`). The game is split across `src/main.ts` (~4,670 lines), `src/game/` (8 modules, ~1,260 lines), `src/ui/` (9 modules, ~1,540 lines), `src/data/` (13 modules, ~5,870 lines), and `src/systems/` (4 modules, ~1,710 lines), bundled via esbuild to `dist/bundle.js`, which `index.html` loads. CSS is in `styles.css`.
+**Proto23** is a browser-based text RPG game, deployed as a GitHub Pages site (`23html.github.io`). The game is split across `src/main.ts` (~1,939 lines), `src/game/` (9 modules, ~1,280 lines), `src/ui/` (11 modules, ~1,930 lines), `src/data/` (13 modules, ~5,870 lines), `src/systems/` (4 modules, ~1,710 lines), and `src/locations/` (6 modules, ~2,083 lines), bundled via esbuild to `dist/bundle.js`, which `index.html` loads. CSS is in `styles.css`.
 
 ## Architecture
 
 ### File structure
 - `index.html` — shell HTML, loads `styles.css` and `dist/bundle.js`
-- `src/main.ts` — core game logic, DOM setup, location scripts (~4,670 lines)
-- `src/game/` — 8 game logic modules (~1,260 lines):
+- `src/main.ts` — core game init, DOM setup, planners, debug, combat death text (~1,939 lines)
+- `src/game/` — 9 game logic modules (~1,280 lines):
   - `utils-game.ts` — Game utility functions (`formatw`, `cansee`, `kill`, `roll`, `canRead`)
   - `progression.ts` — XP/leveling (`giveExp`, `giveSkExp`, `giveCrExp`, `giveTitle`, `giveRcp`, `lvlup`, `giveAction`)
   - `economy.ts` — Wealth/shopping (`giveWealth`, `spend`, `restock`)
@@ -20,7 +20,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - `movement.ts` — Area transitions (`smove`, `area_init`, `inSector`, `Effector`, `addtosector`)
   - `crafting.ts` — Recipe crafting (`canMake`, `make`)
   - `exploration.ts` — Scouting/disassembly (`canScout`, `scoutGeneric`, `disassembleGeneric`)
-- `src/ui/` — 9 UI modules (~1,540 lines):
+  - `quests.ts` — quest system
+- `src/ui/` — 11 UI modules (~1,930 lines):
   - `messages.ts` — Game log (`msg`, `_msg`, `msg_add`)
   - `descriptions.ts` — Tooltip/description popups (`dscr`, `addDesc`, `descsinfo`)
   - `stats.ts` — Stat display updates (`updateStatDisplay`, `updateCombatDisplay`, `updateMonsterDisplay`, `updateWealthDisplay`)
@@ -30,12 +31,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - `choices.ts` — Choice buttons and icons (`chs`, `clr_chs`, `icon`, `Chs`)
   - `panels.ts` — Crafting/skill/action/furniture panels (`renderRcp`, `renderSkl`, `renderAct`, `deactivateAct`, `renderFurniture`, `showFurniturePanel`)
   - `shop.ts` — Shop UI rendering (`recshop`, `rendershopitem`, `buycbs`, `coinAnimation`)
+  - `settings.ts` — settings panel (extracted Phase 7.8)
+  - `special-panels.ts` — special panels (extracted Phase 7.9)
 - `src/data/` — 13 data definition modules (~5,870 lines): titles, effects, furniture, skills, items, equipment, abilities, creatures, world, crafting, vendors, actions, mastery
 - `src/systems/` — 4 system modules (~1,710 lines):
   - `weather.ts` — Weather/time/calendar system, callbacks, season display (`wdrseason`) (~620 lines)
   - `save-load.ts` — Save/load serialization (~880 lines)
   - `player.ts` — Player (`You`) constructor (~110 lines)
   - `loop.ts` — Game tick loop (`ontick`) (~50 lines)
+- `src/locations/` — 6 location script modules (~2,083 lines): dojo, forest, village, special, home, catacombs (extracted Phase 7.10)
+- `src/events.ts` — event bus decoupling game/ modules from DOM/UI (Phase 7.11)
 - `src/state.ts` — shared game state: grouped exports (`data`, `gameText`, `flags`, `stats`, `combat`, `settings`), namespace singletons (`dom`, `global`), setter functions (`setYou`, `resetFlags`, etc.)
 - `src/constants.ts`, `src/base64.ts`, `src/random.ts`, `src/utils.ts`, `src/dom-utils.ts` — utility modules
 - `styles.css` — extracted CSS (previously inline `<style>` block)
@@ -48,11 +53,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `changelog/changelog.html` — historical changelog
 - `ctst.png` — sprite sheet, `laugh6.wav` — sound effect, `favicon.ico`
 
-### Refactoring artifacts
-- `ROADMAP.md` — refactoring plan with checkboxes (Phases 1-5 complete, Phase 6.1+6.3-6.5 complete, Phase 6.2+7-8 future)
-- `CLASS_MAP.md` — CSS class rename mapping (cryptic → semantic, pending application)
-- `frontend-refactoring.md` — CSS design token and component class analysis (future work)
+### Work tracking and design docs
+Open work is tracked in the fleet work store (threads and tasks), not in-repo roadmap files. This repo's backlog lives in the `proto23-refactor` thread: test harness (was ROADMAP 7.12), conversation-tree system (7.13), data externalization (8.1), CSS class rename, CSS design tokens, random.ts strict typing. `ROADMAP.md` and `docs/phase7-plan.md` were migrated there and deleted; git history holds both. Design references that remain in-repo:
+- `docs/CLASS_MAP.md` — CSS class rename mapping (cryptic → semantic, pending application; consumed by the css-class-rename task)
+- `docs/frontend-refactoring.md` — CSS design token and component class analysis (consumed by the css-design-tokens task)
 - `src/types.ts` — 23 entity interfaces + 8 state interfaces (Player, Item, Creature, Effect, Skill, Area, Equipment, Flags, Stats, CombatState, Settings, etc.)
+
+### Typing endgame (Phase 6 vision)
+Every game entity deserves a real class, not a function+config-merge hack. The type aliases in `src/types.ts` are stepping stones, not destinations: they describe current shapes so `any` can be killed, and become class definitions when constructors are converted. Endgame is zero `any`, zero `[key: string]: any` index signatures, fully closed types. Treat every interim alias or index signature as tracked debt and eliminate it when the surrounding code is ready.
 
 ### Global namespace objects
 The game uses plain JS objects as namespaces (not modules). Key globals defined at the top of the script:
@@ -144,5 +152,31 @@ Copper-based: `SILVER = 100`, `GOLD = 10000`. Use `giveWealth()` / `spend()`.
 ### Workflow
 Edit files in `src/`, run `npm run build` (or use `npm run watch`), refresh `index.html` in browser. In VSCode, press F5 to build and launch in Chrome. The game uses `localStorage` for saves — clearing it resets progress. The game targets modern browsers and uses MS Gothic font.
 
+## Key gotchas
+
+### Modules and build
+- Data module import order matters (eval-time deps): titles → effects → furniture → skills → items → equipment → abilities → creatures → world → crafting → vendors → actions → mastery
+- esbuild wraps output in a CommonJS shim (~50kb overhead) when the entry has no exports; `export {}` in main.ts prevents it. With ES module imports esbuild uses the `__esm` lazy init pattern instead
+- Data modules can reference functions without importing them (closures that used to see main.ts scope). esbuild does not error; they silently become `undefined` globals and crash only when the closure executes. All 13 data modules were audited and fixed
+- Eval-time side effects that depend on DOM elements (e.g. `setWeather(...)`) cannot live in extracted modules; keep those init calls in main.ts after DOM setup
+- Runtime-only circular deps are fine with esbuild (imports used only inside function bodies). Known safe pairs: `game/inventory` ↔ `ui/panels`, `ui/shop` ↔ `game/economy`
+- `delete` on a bare identifier is invalid in ESM strict mode (the old `kill()` had one; it was a no-op anyway)
+- Strict-typing pattern: constructor functions take `this: any, cfg: any`; `new Foo(...)` calls get `// @ts-ignore: constructor function`; `random.ts` stays `@ts-nocheck` (vendored MersenneTwister)
+
+### Refactoring traps
+- Same-line statements get lost when folding assignments into constructor configs: `item.x.stype = 4; item.x.data.time=HOUR;` dropped the second statement and 28 reading items lost their duration. Check for multiple statements per line before refactoring
+- Semicolon-splitting formatters break on `//` comments containing semicolons
+- ASI trap when deleting a function between two statements: if the preceding line lacks `;` and the next starts with `(` or `[`, the value gets called as a function (`arr = [1,2,3]\n(function(){})()` parses as one expression)
+- Bulk line-range cuts are risky: main.ts had non-location code (Plan constructor, planner defs, `getlastd`, `addPlan`) interspersed between location scripts. Grep for function definitions in the range before cutting
+
+### DOM, CSS, and naming
+- `className` is only set via `addElement(parent, tag, id, cls)`; there is no classList usage
+- Some CSS classes double as IDs (`bbts`, `chs`, `sl`); renaming them is risky. Some appear unused in JS (`.doselect`, `.chbtsa`)
+- The `msg` function name conflicts with the `.msg` CSS class; no simple rename possible
+- `var global = new Object()` shadows `globalThis.global`; safe inside the bundle but watch for it
+
+### Save format
+- Pipe-delimited segments are numbered 0-19; segment 18 is the `savevalid` marker
+
 ## CSS conventions
-All styles are in `styles.css`. Classes use short abbreviated names (`.d`, `.dd`, `.bts`, `.chs`, `.inv_slot`, etc.). Hover effects use `background` or `background-color` changes. Firefox-specific fixes are in `@supports (-moz-appearance:none)`. See `CLASS_MAP.md` for the planned semantic rename mapping.
+All styles are in `styles.css`. Classes use short abbreviated names (`.d`, `.dd`, `.bts`, `.chs`, `.inv_slot`, etc.). Hover effects use `background` or `background-color` changes. Firefox-specific fixes are in `@supports (-moz-appearance:none)`. See `docs/CLASS_MAP.md` for the planned semantic rename mapping.
